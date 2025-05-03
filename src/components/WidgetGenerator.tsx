@@ -115,7 +115,7 @@ const WidgetGenerator: React.FC = () => {
     <section id="widget-generator" className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold mb-4">Create Your Chat Widget</h2>
+          <h2 className="text-3xl font-bold mb-4">Create Your Widgetify Widget</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Customize your chat widget in a few simple steps. Select your platform,
             enter your details, and we'll generate the code for you.
@@ -308,7 +308,7 @@ const WidgetGenerator: React.FC = () => {
           </div>
 
           <div className="flex flex-col">
-            <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-sm mb-4">
+            <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-sm mb-4 WidgetPreview-container">
               <h3 className="text-lg font-medium mb-4">Preview</h3>
               <div className="relative bg-white rounded-lg shadow-sm h-80 border border-gray-100 overflow-hidden">
                 <div className="h-10 bg-gray-100 border-b flex items-center px-4">

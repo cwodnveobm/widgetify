@@ -11,6 +11,16 @@ const HeroSection: React.FC = () => {
     }
   };
 
+  const scrollToPreview = () => {
+    const previewElement = document.querySelector('.WidgetPreview-container');
+    if (previewElement) {
+      previewElement.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      // Fallback to the generator section if preview isn't found directly
+      scrollToGenerator();
+    }
+  };
+
   return (
     <section className="relative py-20 md:py-28 overflow-hidden">
       {/* Background */}
@@ -19,7 +29,7 @@ const HeroSection: React.FC = () => {
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6">
-            <span className="gradient-text">Chat Spark</span> <br />
+            <span className="gradient-text">Widgetify</span> <br />
             <span className="mt-2 block">Connect with visitors instantly</span>
           </h1>
           
@@ -42,8 +52,9 @@ const HeroSection: React.FC = () => {
               variant="outline" 
               size="lg" 
               className="border-purple-200 text-purple-700 hover:bg-purple-50"
+              onClick={scrollToPreview}
             >
-              See Examples
+              See Demo
             </Button>
           </div>
           

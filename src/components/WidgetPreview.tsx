@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 
@@ -9,6 +9,7 @@ interface WidgetPreviewProps {
 
 const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   const { type, position, primaryColor, size } = config;
+  const [showChat, setShowChat] = useState(false);
 
   const sizeMap = {
     small: '50px',
@@ -30,6 +31,23 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
     cursor: 'pointer',
     transition: 'transform 0.3s ease',
+  } as React.CSSProperties;
+
+  const chatWindowStyle = {
+    position: 'absolute',
+    bottom: '90px',
+    [position || 'right']: '20px',
+    width: '250px',
+    height: '300px',
+    backgroundColor: 'white',
+    borderRadius: '10px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+    transition: 'all 0.3s ease',
+    opacity: showChat ? 1 : 0,
+    transform: showChat ? 'translateY(0)' : 'translateY(20px)',
+    visibility: showChat ? 'visible' : 'hidden',
+    display: 'flex',
+    flexDirection: 'column',
   } as React.CSSProperties;
 
   const getIcon = () => {
@@ -57,9 +75,44 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     }
   };
 
+  const toggleChat = () => {
+    setShowChat(!showChat);
+  };
+
   return (
     <div className="relative w-full h-full">
-      <div style={buttonStyle} className="hover:scale-105">
+      {showChat && (
+        <div style={chatWindowStyle}>
+          <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
+            <div className="font-medium">Chat</div>
+            <div className="text-xs text-gray-500">Powered by Widgetify</div>
+          </div>
+          <div className="flex-grow p-3 overflow-y-auto">
+            <div className="bg-gray-100 p-2 rounded-lg mb-2 max-w-[80%]">
+              <p className="text-xs">How can I help you today?</p>
+            </div>
+          </div>
+          <div className="p-3 border-t bg-gray-50 rounded-b-lg">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Type a message..."
+                className="flex-grow text-xs p-2 border rounded"
+                disabled
+              />
+              <button
+                className="bg-gray-200 p-2 rounded"
+                disabled
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <div style={buttonStyle} className="hover:scale-105" onClick={toggleChat}>
         {getIcon()}
       </div>
     </div>
