@@ -8,7 +8,7 @@ interface WidgetPreviewProps {
 }
 
 const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
-  const { type, position, primaryColor, size } = config;
+  const { type, position, primaryColor, size, animation } = config;
 
   const sizeMap = {
     small: '50px',
@@ -57,9 +57,14 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     }
   };
 
+  const animationClass = animation ? 
+    (animation === 'pulse' ? 'animate-pulse' : 
+     animation === 'bounce' ? 'animate-bounce' : 
+     animation === 'spin' ? 'animate-spin' : '') : '';
+
   return (
     <div className="relative w-full h-full">
-      <div style={buttonStyle} className="hover:scale-105">
+      <div style={buttonStyle} className={`hover:scale-105 ${animationClass}`}>
         {getIcon()}
       </div>
     </div>

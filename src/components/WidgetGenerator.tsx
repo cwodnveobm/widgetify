@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { WidgetConfig, WidgetType, generateWidgetCode } from '@/lib/widgetUtils';
+import { WidgetConfig, WidgetType, AnimationType, generateWidgetCode } from '@/lib/widgetUtils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,6 +17,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 
 const WidgetGenerator: React.FC = () => {
   const [widgetConfig, setWidgetConfig] = useState<WidgetConfig>({
@@ -25,10 +27,13 @@ const WidgetGenerator: React.FC = () => {
     position: 'right',
     primaryColor: '#25D366',
     size: 'medium',
+    animation: 'none',
+    isPremium: false,
   });
 
   const [code, setCode] = useState<string>('');
   const [showCode, setShowCode] = useState<boolean>(false);
+  const [showPremiumModal, setShowPremiumModal] = useState<boolean>(false);
 
   const handleTypeChange = (value: WidgetType) => {
     const colorMap: Record<WidgetType, string> = {
@@ -63,6 +68,33 @@ const WidgetGenerator: React.FC = () => {
     setWidgetConfig({
       ...widgetConfig,
       size: size as 'small' | 'medium' | 'large',
+    });
+  };
+
+  const handleAnimationChange = (animation: string) => {
+    // If user selects an animation but isn't premium, show modal
+    if (animation !== 'none' && !widgetConfig.isPremium) {
+      setShowPremiumModal(true);
+      return;
+    }
+
+    setWidgetConfig({
+      ...widgetConfig,
+      animation: animation as AnimationType,
+    });
+  };
+
+  const handlePremiumUpgrade = () => {
+    // Redirect to payment link
+    window.open('https://razorpay.me/@aznoxx?amount=CVDUr6Uxp2FOGZGwAHntNg%3D%3D', '_blank');
+    toast.success('Thank you for upgrading! After payment, refresh and animations will be available.');
+    setShowPremiumModal(false);
+    
+    // For demo purposes, enable premium features immediately
+    // In a real app, this would happen after payment verification
+    setWidgetConfig({
+      ...widgetConfig,
+      isPremium: true,
     });
   };
 
@@ -120,6 +152,32 @@ const WidgetGenerator: React.FC = () => {
             Customize your chat widget in a few simple steps. Select your platform,
             enter your details, and we'll generate the code for you.
           </p>
+        </div>
+
+        {/* Freemium Banner */}
+        <div className="bg-gradient-to-r from-purple-100 to-indigo-100 p-4 rounded-lg mb-8 text-center">
+          <div className="flex justify-between items-center">
+            <div className="flex-1">
+              <h3 className="text-xl font-semibold text-gray-800">Free Plan</h3>
+              <p className="text-gray-600">Basic chat widget creation</p>
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-semibold text-purple-800">Premium Plan</h3>
+              <p className="text-gray-600">Animated widgets + more features</p>
+              <p className="text-lg font-bold text-purple-700">Just ₹99 one-time</p>
+              {!widgetConfig.isPremium && (
+                <Button 
+                  onClick={handlePremiumUpgrade} 
+                  className="mt-2 bg-purple-600 hover:bg-purple-700"
+                >
+                  Upgrade Now
+                </Button>
+              )}
+              {widgetConfig.isPremium && (
+                <div className="mt-2 text-green-600 font-medium">Premium Active ✓</div>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
@@ -279,6 +337,35 @@ const WidgetGenerator: React.FC = () => {
               </div>
             </div>
 
+            {/* Animation Selection (Premium Feature) */}
+            <div className="mb-6">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="animation">Animation Effect</Label>
+                {!widgetConfig.isPremium && (
+                  <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                    Premium Feature
+                  </span>
+                )}
+              </div>
+              <Select 
+                value={widgetConfig.animation} 
+                onValueChange={handleAnimationChange}
+                disabled={!widgetConfig.isPremium}
+              >
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select animation" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="pulse">Pulse</SelectItem>
+                    <SelectItem value="bounce">Bounce</SelectItem>
+                    <SelectItem value="spin">Spin</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="mb-6">
               <Label htmlFor="primaryColor">Color</Label>
               <div className="flex items-center gap-3 mt-1">
@@ -349,6 +436,32 @@ const WidgetGenerator: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Premium Modal */}
+      {showPremiumModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+            <h3 className="text-xl font-bold mb-2">Unlock Premium Features</h3>
+            <p className="mb-4">
+              Animations are a premium feature. Upgrade to premium for just ₹99 (one-time payment) to access all animation effects and future premium features.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <Button 
+                onClick={() => setShowPremiumModal(false)} 
+                variant="outline"
+              >
+                Not Now
+              </Button>
+              <Button 
+                onClick={handlePremiumUpgrade} 
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                Upgrade Now
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
