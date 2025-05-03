@@ -1,6 +1,5 @@
 
 export type WidgetType = 'whatsapp' | 'facebook' | 'instagram' | 'twitter';
-export type AnimationType = 'none' | 'pulse' | 'bounce' | 'spin';
 
 export interface WidgetConfig {
   type: WidgetType;
@@ -9,20 +8,11 @@ export interface WidgetConfig {
   position?: 'left' | 'right';
   primaryColor?: string;
   size?: 'small' | 'medium' | 'large';
-  animation?: AnimationType;
-  isPremium?: boolean;
 }
 
 // Generate WhatsApp Widget Code
 export const generateWhatsAppWidget = (config: WidgetConfig): string => {
-  const { 
-    handle, 
-    welcomeMessage = "Hello! How can we help you?", 
-    position = "right", 
-    primaryColor = "#25D366", 
-    size = "medium",
-    animation = "none" 
-  } = config;
+  const { handle, welcomeMessage = "Hello! How can we help you?", position = "right", primaryColor = "#25D366", size = "medium" } = config;
   
   // Format phone number by removing non-digit characters
   const formattedPhone = handle.replace(/\D/g, '');
@@ -36,40 +26,6 @@ export const generateWhatsAppWidget = (config: WidgetConfig): string => {
   
   const buttonSize = sizeMap[size];
   const positionStyle = position === "right" ? "right: 20px;" : "left: 20px;";
-  
-  // Animation CSS
-  let animationCSS = '';
-  if (animation !== 'none') {
-    if (animation === 'pulse') {
-      animationCSS = `
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-  }
-  .chat-button {
-    animation: pulse 2s infinite;
-  }`;
-    } else if (animation === 'bounce') {
-      animationCSS = `
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-  .chat-button {
-    animation: bounce 2s infinite;
-  }`;
-    } else if (animation === 'spin') {
-      animationCSS = `
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  .chat-button {
-    animation: spin 4s linear infinite;
-  }`;
-    }
-  }
   
   return `
 <!-- WhatsApp Widget by ChatSpark -->
@@ -97,7 +53,6 @@ export const generateWhatsAppWidget = (config: WidgetConfig): string => {
   .chat-button:hover {
     transform: scale(1.05);
   }
-  ${animationCSS}
 </style>
 
 <div class="chat-widget">
@@ -115,7 +70,7 @@ export const generateWhatsAppWidget = (config: WidgetConfig): string => {
 
 // Generate Facebook Messenger Widget Code
 export const generateFacebookWidget = (config: WidgetConfig): string => {
-  const { handle, position = "right", primaryColor = "#0084FF", size = "medium", animation = "none" } = config;
+  const { handle, position = "right", primaryColor = "#0084FF", size = "medium" } = config;
   
   // Size in pixels
   const sizeMap = {
@@ -126,40 +81,6 @@ export const generateFacebookWidget = (config: WidgetConfig): string => {
   
   const buttonSize = sizeMap[size];
   const positionStyle = position === "right" ? "right: 20px;" : "left: 20px;";
-  
-  // Animation CSS
-  let animationCSS = '';
-  if (animation !== 'none') {
-    if (animation === 'pulse') {
-      animationCSS = `
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-  }
-  .chat-button {
-    animation: pulse 2s infinite;
-  }`;
-    } else if (animation === 'bounce') {
-      animationCSS = `
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-  .chat-button {
-    animation: bounce 2s infinite;
-  }`;
-    } else if (animation === 'spin') {
-      animationCSS = `
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  .chat-button {
-    animation: spin 4s linear infinite;
-  }`;
-    }
-  }
   
   return `
 <!-- Facebook Messenger Widget by ChatSpark -->
@@ -187,7 +108,6 @@ export const generateFacebookWidget = (config: WidgetConfig): string => {
   .chat-button:hover {
     transform: scale(1.05);
   }
-  ${animationCSS}
 </style>
 
 <div class="chat-widget">
@@ -205,7 +125,7 @@ export const generateFacebookWidget = (config: WidgetConfig): string => {
 
 // Generate Instagram Widget Code
 export const generateInstagramWidget = (config: WidgetConfig): string => {
-  const { handle, position = "right", primaryColor = "#E1306C", size = "medium", animation = "none" } = config;
+  const { handle, position = "right", primaryColor = "#E1306C", size = "medium" } = config;
   
   // Size in pixels
   const sizeMap = {
@@ -216,40 +136,6 @@ export const generateInstagramWidget = (config: WidgetConfig): string => {
   
   const buttonSize = sizeMap[size];
   const positionStyle = position === "right" ? "right: 20px;" : "left: 20px;";
-  
-  // Animation CSS
-  let animationCSS = '';
-  if (animation !== 'none') {
-    if (animation === 'pulse') {
-      animationCSS = `
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-  }
-  .chat-button {
-    animation: pulse 2s infinite;
-  }`;
-    } else if (animation === 'bounce') {
-      animationCSS = `
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-  .chat-button {
-    animation: bounce 2s infinite;
-  }`;
-    } else if (animation === 'spin') {
-      animationCSS = `
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  .chat-button {
-    animation: spin 4s linear infinite;
-  }`;
-    }
-  }
   
   return `
 <!-- Instagram Widget by ChatSpark -->
@@ -277,7 +163,6 @@ export const generateInstagramWidget = (config: WidgetConfig): string => {
   .chat-button:hover {
     transform: scale(1.05);
   }
-  ${animationCSS}
 </style>
 
 <div class="chat-widget">
@@ -295,7 +180,7 @@ export const generateInstagramWidget = (config: WidgetConfig): string => {
 
 // Generate Twitter Widget Code
 export const generateTwitterWidget = (config: WidgetConfig): string => {
-  const { handle, position = "right", primaryColor = "#1DA1F2", size = "medium", animation = "none" } = config;
+  const { handle, position = "right", primaryColor = "#1DA1F2", size = "medium" } = config;
   
   // Size in pixels
   const sizeMap = {
@@ -307,40 +192,6 @@ export const generateTwitterWidget = (config: WidgetConfig): string => {
   const buttonSize = sizeMap[size];
   const positionStyle = position === "right" ? "right: 20px;" : "left: 20px;";
   const formattedHandle = handle.startsWith('@') ? handle.substring(1) : handle;
-  
-  // Animation CSS
-  let animationCSS = '';
-  if (animation !== 'none') {
-    if (animation === 'pulse') {
-      animationCSS = `
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-  }
-  .chat-button {
-    animation: pulse 2s infinite;
-  }`;
-    } else if (animation === 'bounce') {
-      animationCSS = `
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-  .chat-button {
-    animation: bounce 2s infinite;
-  }`;
-    } else if (animation === 'spin') {
-      animationCSS = `
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  .chat-button {
-    animation: spin 4s linear infinite;
-  }`;
-    }
-  }
   
   return `
 <!-- Twitter Widget by ChatSpark -->
@@ -368,7 +219,6 @@ export const generateTwitterWidget = (config: WidgetConfig): string => {
   .chat-button:hover {
     transform: scale(1.05);
   }
-  ${animationCSS}
 </style>
 
 <div class="chat-widget">
@@ -399,3 +249,4 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
       return '<!-- Invalid widget type -->';
   }
 };
+
