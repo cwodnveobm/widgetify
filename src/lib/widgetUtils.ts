@@ -1,4 +1,5 @@
-export type WidgetType = 'whatsapp' | 'facebook' | 'instagram' | 'twitter' | 'telegram' | 'linkedin';
+
+export type WidgetType = 'whatsapp' | 'facebook' | 'instagram' | 'twitter' | 'telegram' | 'linkedin' | 'social-share';
 
 export interface WidgetConfig {
   type: WidgetType;
@@ -7,6 +8,9 @@ export interface WidgetConfig {
   position?: 'left' | 'right';
   primaryColor?: string;
   size?: 'small' | 'medium' | 'large';
+  networks?: string[]; // For social share buttons
+  shareText?: string;  // For social share buttons
+  shareUrl?: string;   // For social share buttons
 }
 
 // Generate WhatsApp Widget Code
@@ -131,7 +135,9 @@ export const generateWhatsAppWidget = (config: WidgetConfig): string => {
         Start Chat
       </a>
       <div class="widgetify-branding" style="margin-top: 20px;">
-        Powered by Widgetify
+        <a href="https://widgetify.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+          Powered by Widgetify
+        </a>
       </div>
     </div>
   </div>
@@ -264,7 +270,9 @@ export const generateFacebookWidget = (config: WidgetConfig): string => {
         Start Chat
       </a>
       <div class="widgetify-branding" style="margin-top: 20px;">
-        Powered by Widgetify
+        <a href="https://widgetify.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+          Powered by Widgetify
+        </a>
       </div>
     </div>
   </div>
@@ -397,7 +405,9 @@ export const generateInstagramWidget = (config: WidgetConfig): string => {
         Go to Profile
       </a>
       <div class="widgetify-branding" style="margin-top: 20px;">
-        Powered by Widgetify
+        <a href="https://widgetify.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+          Powered by Widgetify
+        </a>
       </div>
     </div>
   </div>
@@ -531,7 +541,9 @@ export const generateTwitterWidget = (config: WidgetConfig): string => {
         Message
       </a>
       <div class="widgetify-branding" style="margin-top: 20px;">
-        Powered by Widgetify
+        <a href="https://widgetify.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+          Powered by Widgetify
+        </a>
       </div>
     </div>
   </div>
@@ -664,7 +676,9 @@ export const generateTelegramWidget = (config: WidgetConfig): string => {
         Start Chat
       </a>
       <div class="widgetify-branding" style="margin-top: 20px;">
-        Powered by Widgetify
+        <a href="https://widgetify.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+          Powered by Widgetify
+        </a>
       </div>
     </div>
   </div>
@@ -797,7 +811,9 @@ export const generateLinkedInWidget = (config: WidgetConfig): string => {
         View Profile
       </a>
       <div class="widgetify-branding" style="margin-top: 20px;">
-        Powered by Widgetify
+        <a href="https://widgetify.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+          Powered by Widgetify
+        </a>
       </div>
     </div>
   </div>
@@ -816,6 +832,155 @@ export const generateLinkedInWidget = (config: WidgetConfig): string => {
   `.trim();
 };
 
+// Generate Social Share Buttons Widget Code
+export const generateSocialShareWidget = (config: WidgetConfig): string => {
+  const { position = "right", primaryColor = "#6B7280", size = "medium", networks = ['facebook', 'twitter', 'linkedin'], shareText = '', shareUrl = window.location.href } = config;
+  
+  // Size in pixels
+  const sizeMap = {
+    small: 40,
+    medium: 50,
+    large: 60
+  };
+  
+  const buttonSize = sizeMap[size];
+  const positionStyle = position === "right" ? "right: 20px;" : "left: 20px;";
+  const encodedText = encodeURIComponent(shareText);
+  const encodedUrl = encodeURIComponent(shareUrl);
+  
+  // Generate buttons for selected networks
+  const generateSocialButtons = () => {
+    let buttons = '';
+    
+    if (networks.includes('facebook')) {
+      buttons += `
+      <a href="https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}" target="_blank" rel="noopener noreferrer" class="widgetify-social-button" style="background-color: #1877F2;">
+        <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
+          <path d="M20 3H4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h8.61v-6.97h-2.34V11.3h2.34V9.39c0-2.32 1.41-3.58 3.48-3.58.99 0 1.84.07 2.09.1v2.43h-1.43c-1.12 0-1.34.53-1.34 1.32v1.73h2.68l-.35 2.74h-2.33V21H20a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1z"/>
+        </svg>
+      </a>
+      `;
+    }
+    
+    if (networks.includes('twitter')) {
+      buttons += `
+      <a href="https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}" target="_blank" rel="noopener noreferrer" class="widgetify-social-button" style="background-color: #1DA1F2;">
+        <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
+          <path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/>
+        </svg>
+      </a>
+      `;
+    }
+    
+    if (networks.includes('linkedin')) {
+      buttons += `
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}" target="_blank" rel="noopener noreferrer" class="widgetify-social-button" style="background-color: #0077B5;">
+        <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
+          <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+        </svg>
+      </a>
+      `;
+    }
+    
+    return buttons;
+  };
+  
+  return `
+<!-- Social Share Widget by Widgetify -->
+<style>
+  .widgetify-share-widget {
+    position: fixed;
+    bottom: 20px;
+    ${positionStyle}
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .widgetify-share-toggle {
+    width: ${buttonSize}px;
+    height: ${buttonSize}px;
+    border-radius: 50%;
+    background-color: ${primaryColor};
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .widgetify-share-toggle:hover {
+    transform: scale(1.05);
+  }
+  
+  .widgetify-social-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s;
+  }
+  
+  .widgetify-social-buttons.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  
+  .widgetify-social-button {
+    width: ${buttonSize}px;
+    height: ${buttonSize}px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s;
+  }
+  
+  .widgetify-social-button:hover {
+    transform: scale(1.1);
+  }
+  
+  .widgetify-branding {
+    font-size: 10px;
+    margin-top: 8px;
+    opacity: 0.7;
+    color: #888;
+    text-align: center;
+  }
+</style>
+
+<div class="widgetify-share-widget">
+  <div class="widgetify-social-buttons" id="widgetify-social-buttons">
+    ${generateSocialButtons()}
+    <div class="widgetify-branding">
+      <a href="https://widgetify.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+        Powered by Widgetify
+      </a>
+    </div>
+  </div>
+  <div class="widgetify-share-toggle" id="widgetify-share-toggle">
+    <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
+      <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/>
+    </svg>
+  </div>
+</div>
+
+<script>
+  document.getElementById('widgetify-share-toggle').addEventListener('click', function() {
+    document.getElementById('widgetify-social-buttons').classList.toggle('show');
+  });
+</script>
+<!-- End Social Share Widget by Widgetify -->
+  `.trim();
+};
+
 // Main function to generate widget code based on type
 export const generateWidgetCode = (config: WidgetConfig): string => {
   switch (config.type) {
@@ -831,6 +996,8 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
       return generateTelegramWidget(config);
     case 'linkedin':
       return generateLinkedInWidget(config);
+    case 'social-share':
+      return generateSocialShareWidget(config);
     default:
       return '<!-- Invalid widget type -->';
   }

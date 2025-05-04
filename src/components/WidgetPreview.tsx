@@ -8,8 +8,9 @@ interface WidgetPreviewProps {
 }
 
 const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
-  const { type, position, primaryColor, size } = config;
+  const { type, position, primaryColor, size, networks } = config;
   const [showChat, setShowChat] = useState(false);
+  const [showSocialButtons, setShowSocialButtons] = useState(false);
 
   const sizeMap = {
     small: '50px',
@@ -50,6 +51,31 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     flexDirection: 'column',
   } as React.CSSProperties;
 
+  const socialButtonsContainerStyle = {
+    position: 'absolute',
+    bottom: '90px',
+    [position || 'right']: '20px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px',
+    transition: 'all 0.3s ease',
+    opacity: showSocialButtons ? 1 : 0,
+    transform: showSocialButtons ? 'translateY(0)' : 'translateY(20px)',
+    visibility: showSocialButtons ? 'visible' : 'hidden',
+  } as React.CSSProperties;
+
+  const socialButtonStyle = (color: string) => ({
+    width: parseInt(sizeMap[size || 'medium'], 10) * 0.8 + 'px',
+    height: parseInt(sizeMap[size || 'medium'], 10) * 0.8 + 'px',
+    backgroundColor: color,
+    borderRadius: '50%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+    cursor: 'pointer',
+  });
+
   const WhatsAppIcon = ({ size }: { size: number }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g>
@@ -77,6 +103,12 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     </svg>
   );
 
+  const ShareIcon = ({ size }: { size: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="white">
+      <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/>
+    </svg>
+  );
+
   const getIcon = () => {
     const iconSize = parseInt(sizeMap[size || 'medium'], 10) * 0.5;
     
@@ -93,22 +125,71 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return <TelegramIcon size={iconSize} />;
       case 'linkedin':
         return <LinkedInIcon size={iconSize} />;
+      case 'social-share':
+        return <ShareIcon size={iconSize} />;
       default:
         return <WhatsAppIcon size={iconSize} />;
     }
   };
 
   const toggleChat = () => {
-    setShowChat(!showChat);
+    if (type === 'social-share') {
+      setShowSocialButtons(!showSocialButtons);
+    } else {
+      setShowChat(!showChat);
+    }
+  };
+
+  const renderSocialButtons = () => {
+    if (type !== 'social-share' || !networks) return null;
+    
+    return (
+      <div style={socialButtonsContainerStyle} className="animate-fade-in">
+        {networks.includes('facebook') && (
+          <div style={socialButtonStyle('#1877F2')}>
+            <Facebook size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
+          </div>
+        )}
+        {networks.includes('twitter') && (
+          <div style={socialButtonStyle('#1DA1F2')}>
+            <Twitter size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
+          </div>
+        )}
+        {networks.includes('linkedin') && (
+          <div style={socialButtonStyle('#0077B5')}>
+            <Linkedin size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
+          </div>
+        )}
+        <div className="text-xs text-gray-500 text-center mt-1">
+          <a 
+            href="https://widgetify.vercel.app/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-gray-500 no-underline"
+          >
+            Powered by Widgetify
+          </a>
+        </div>
+      </div>
+    );
   };
 
   return (
     <div className="relative w-full h-full">
-      {showChat && (
+      {showChat && type !== 'social-share' && (
         <div style={chatWindowStyle} className="animate-fade-in">
           <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
             <div className="font-medium">Chat</div>
-            <div className="text-xs text-gray-500">Powered by Widgetify</div>
+            <div className="text-xs text-gray-500">
+              <a 
+                href="https://widgetify.vercel.app/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-500 no-underline"
+              >
+                Powered by Widgetify
+              </a>
+            </div>
           </div>
           <div className="flex-grow p-3 overflow-y-auto">
             <div className="bg-gray-100 p-2 rounded-lg mb-2 max-w-[80%]">
@@ -135,6 +216,9 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
           </div>
         </div>
       )}
+
+      {renderSocialButtons()}
+
       <div 
         style={buttonStyle} 
         className="hover:scale-105 hover:shadow-lg" 

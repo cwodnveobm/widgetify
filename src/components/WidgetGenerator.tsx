@@ -17,6 +17,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const WidgetGenerator: React.FC = () => {
   const [widgetConfig, setWidgetConfig] = useState<WidgetConfig>({
@@ -26,6 +27,9 @@ const WidgetGenerator: React.FC = () => {
     position: 'right',
     primaryColor: '#25D366',
     size: 'medium',
+    networks: ['facebook', 'twitter', 'linkedin'],
+    shareText: 'Check out this awesome website!',
+    shareUrl: ''
   });
 
   const [code, setCode] = useState<string>('');
@@ -39,6 +43,7 @@ const WidgetGenerator: React.FC = () => {
       twitter: '#1DA1F2',
       telegram: '#0088cc',
       linkedin: '#0077b5',
+      'social-share': '#6B7280',
     };
 
     setWidgetConfig({
@@ -69,10 +74,39 @@ const WidgetGenerator: React.FC = () => {
     });
   };
 
+  const handleNetworkToggle = (network: string) => {
+    const currentNetworks = widgetConfig.networks || [];
+    
+    if (currentNetworks.includes(network)) {
+      setWidgetConfig({
+        ...widgetConfig,
+        networks: currentNetworks.filter(n => n !== network)
+      });
+    } else {
+      setWidgetConfig({
+        ...widgetConfig,
+        networks: [...currentNetworks, network]
+      });
+    }
+  };
+
   const generateWidget = () => {
-    if (!widgetConfig.handle) {
+    if (widgetConfig.type !== 'social-share' && !widgetConfig.handle) {
       toast.error('Please enter your handle/number');
       return;
+    }
+
+    if (widgetConfig.type === 'social-share' && widgetConfig.networks && widgetConfig.networks.length === 0) {
+      toast.error('Please select at least one social network');
+      return;
+    }
+    
+    // Use the current URL if shareUrl is not provided for social-share widgets
+    if (widgetConfig.type === 'social-share' && !widgetConfig.shareUrl) {
+      setWidgetConfig(prev => ({
+        ...prev,
+        shareUrl: window.location.href
+      }));
     }
     
     const generatedCode = generateWidgetCode(widgetConfig);
@@ -100,6 +134,8 @@ const WidgetGenerator: React.FC = () => {
         return 'Your Telegram username (e.g. @username)';
       case 'linkedin':
         return 'Your LinkedIn username (e.g. johndoe)';
+      case 'social-share':
+        return 'Optional URL to share (defaults to current page)';
       default:
         return 'Enter your handle';
     }
@@ -127,6 +163,12 @@ const WidgetGenerator: React.FC = () => {
     </svg>
   );
 
+  const ShareIcon = () => (
+    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z" fill="#6B7280"/>
+    </svg>
+  );
+
   const socialIcons = {
     whatsapp: <WhatsAppIcon />,
     facebook: <Facebook className="h-6 w-6" />,
@@ -134,6 +176,7 @@ const WidgetGenerator: React.FC = () => {
     twitter: <Twitter className="h-6 w-6" />,
     telegram: <TelegramIcon />,
     linkedin: <Linkedin className="h-6 w-6" />,
+    'social-share': <ShareIcon />,
   };
 
   return (
@@ -246,11 +289,94 @@ const WidgetGenerator: React.FC = () => {
                     LinkedIn
                   </Label>
                 </div>
+
+                <div>
+                  <RadioGroupItem
+                    value="social-share"
+                    id="social-share"
+                    className="peer sr-only"
+                  />
+                  <Label
+                    htmlFor="social-share"
+                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                  >
+                    <ShareIcon />
+                    Social Share
+                  </Label>
+                </div>
               </RadioGroup>
             </div>
 
+            {widgetConfig.type === 'social-share' ? (
+              <>
+                <div className="mb-4">
+                  <Label>Select Social Networks</Label>
+                  <div className="mt-2 space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="facebook-network" 
+                        checked={widgetConfig.networks?.includes('facebook')}
+                        onCheckedChange={() => handleNetworkToggle('facebook')}
+                      />
+                      <label
+                        htmlFor="facebook-network"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2"
+                      >
+                        <Facebook className="h-5 w-5 text-[#1877F2]" />
+                        Facebook
+                      </label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="twitter-network" 
+                        checked={widgetConfig.networks?.includes('twitter')}
+                        onCheckedChange={() => handleNetworkToggle('twitter')}
+                      />
+                      <label
+                        htmlFor="twitter-network"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2"
+                      >
+                        <Twitter className="h-5 w-5 text-[#1DA1F2]" />
+                        Twitter
+                      </label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="linkedin-network" 
+                        checked={widgetConfig.networks?.includes('linkedin')}
+                        onCheckedChange={() => handleNetworkToggle('linkedin')}
+                      />
+                      <label
+                        htmlFor="linkedin-network"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2"
+                      >
+                        <Linkedin className="h-5 w-5 text-[#0077B5]" />
+                        LinkedIn
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mb-4">
+                  <Label htmlFor="shareText">Share Text</Label>
+                  <Textarea
+                    id="shareText"
+                    name="shareText"
+                    value={widgetConfig.shareText}
+                    onChange={handleInputChange}
+                    placeholder="Share this awesome content!"
+                    className="mt-1"
+                  />
+                </div>
+              </>
+            ) : null}
+
             <div className="mb-4">
-              <Label htmlFor="handle">Account Handle/Number</Label>
+              <Label htmlFor="handle">
+                {widgetConfig.type === 'social-share' ? 'URL to Share' : 'Account Handle/Number'}
+              </Label>
               <Input
                 id="handle"
                 name="handle"
