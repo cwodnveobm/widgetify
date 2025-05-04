@@ -25,18 +25,18 @@ const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className="relative py-16 md:py-20 lg:py-28 overflow-hidden">
+    <section className="relative py-12 md:py-16 lg:py-24 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-white z-0"></div>
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-3xl md:text-4xl lg:text-6xl font-extrabold mb-4 md:mb-6 leading-tight">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 md:mb-6 leading-tight">
             <span className="gradient-text">Widgetify</span> <br />
-            <span className="mt-2 block text-2xl md:text-3xl lg:text-5xl">Connect with visitors instantly</span>
+            <span className="mt-2 block text-xl md:text-2xl lg:text-4xl">Connect with visitors instantly</span>
           </h1>
           
-          <p className="text-base md:text-lg lg:text-xl text-gray-600 mb-6 md:mb-8 px-4">
+          <p className="text-sm md:text-base lg:text-lg text-gray-600 mb-6 md:mb-8 px-2 md:px-4">
             Generate customized chat widgets for your website in seconds.
             No coding required. Connect your social media accounts and
             start engaging with your visitors today.
@@ -61,9 +61,9 @@ const HeroSection: React.FC = () => {
             </Button>
           </div>
           
-          <div className="mt-10 md:mt-12 flex justify-center animate-bounce hidden md:flex">
+          <div className="mt-8 md:mt-10 flex justify-center animate-bounce hidden md:flex">
             <ArrowDownCircle 
-              className="h-8 w-8 md:h-10 md:w-10 text-purple-400 cursor-pointer" 
+              className="h-6 w-6 md:h-8 md:w-8 text-purple-400 cursor-pointer" 
               onClick={scrollToGenerator}
             />
           </div>
