@@ -14,15 +14,22 @@ export function useIsMobile() {
     // Initial check
     checkMobile();
     
-    // Add event listener for resize
-    window.addEventListener("resize", checkMobile);
+    // Add event listener for resize with debounce
+    let timeoutId: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(checkMobile, 100);
+    };
+    
+    window.addEventListener("resize", handleResize);
     
     return () => {
-      window.removeEventListener("resize", checkMobile);
+      clearTimeout(timeoutId);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
-  // While server-side rendering, assume not mobile
+  // Return false during SSR and until first client-side check
   if (isMobile === undefined) {
     return false;
   }
