@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Facebook, Instagram, Twitter, Linkedin, Telegram } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
 
 const WidgetGenerator: React.FC = () => {
   const [widgetConfig, setWidgetConfig] = useState<WidgetConfig>({
@@ -120,12 +120,19 @@ const WidgetGenerator: React.FC = () => {
     </svg>
   );
 
+  // Custom Telegram icon component
+  const TelegramIcon = () => (
+    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5.46 7.12l-1.68 7.9c-.12.59-.5.84-1.01.52l-2.8-2.07-1.35 1.3c-.15.15-.27.27-.56.27-.36 0-.3-.14-.42-.47l-.95-3.12-2.77-1c-.6-.2-.6-.6.13-.9l10.8-4.15c.5-.18.96.12.61 1.32z" fill="#0088cc"/>
+    </svg>
+  );
+
   const socialIcons = {
     whatsapp: <WhatsAppIcon />,
     facebook: <Facebook className="h-6 w-6" />,
     instagram: <Instagram className="h-6 w-6" />,
     twitter: <Twitter className="h-6 w-6" />,
-    telegram: <Telegram className="h-6 w-6" />,
+    telegram: <TelegramIcon />,
     linkedin: <Linkedin className="h-6 w-6" />,
   };
 
@@ -220,7 +227,7 @@ const WidgetGenerator: React.FC = () => {
                     htmlFor="telegram"
                     className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
                   >
-                    <Telegram className="mb-3 h-6 w-6" />
+                    <TelegramIcon />
                     Telegram
                   </Label>
                 </div>

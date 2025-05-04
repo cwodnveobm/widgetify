@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
-import { Facebook, Instagram, Twitter, Linkedin, Telegram } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
 
 interface WidgetPreviewProps {
   config: WidgetConfig;
