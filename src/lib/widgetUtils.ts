@@ -1,5 +1,4 @@
-
-export type WidgetType = 'whatsapp' | 'facebook' | 'instagram' | 'twitter';
+export type WidgetType = 'whatsapp' | 'facebook' | 'instagram' | 'twitter' | 'telegram' | 'linkedin';
 
 export interface WidgetConfig {
   type: WidgetType;
@@ -551,6 +550,272 @@ export const generateTwitterWidget = (config: WidgetConfig): string => {
   `.trim();
 };
 
+// Generate Telegram Widget Code
+export const generateTelegramWidget = (config: WidgetConfig): string => {
+  const { handle, position = "right", primaryColor = "#0088cc", size = "medium" } = config;
+  
+  // Size in pixels
+  const sizeMap = {
+    small: 50,
+    medium: 60,
+    large: 70
+  };
+  
+  const buttonSize = sizeMap[size];
+  const positionStyle = position === "right" ? "right: 20px;" : "left: 20px;";
+  
+  return `
+<!-- Telegram Widget by Widgetify -->
+<style>
+  .widgetify-chat-widget {
+    position: fixed;
+    bottom: 20px;
+    ${positionStyle}
+    z-index: 1000;
+  }
+  
+  .widgetify-chat-button {
+    width: ${buttonSize}px;
+    height: ${buttonSize}px;
+    border-radius: 50%;
+    background-color: ${primaryColor};
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .widgetify-chat-button:hover {
+    transform: scale(1.05);
+  }
+  
+  .widgetify-chat-popup {
+    position: fixed;
+    bottom: 90px;
+    ${positionStyle}
+    width: 300px;
+    height: 400px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: none;
+    flex-direction: column;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+    overflow: hidden;
+  }
+  
+  .widgetify-chat-popup.show {
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
+  }
+  
+  .widgetify-chat-header {
+    padding: 15px;
+    background-color: ${primaryColor};
+    color: white;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .widgetify-chat-body {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .widgetify-branding {
+    font-size: 10px;
+    opacity: 0.7;
+  }
+  
+  .widgetify-close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+</style>
+
+<div class="widgetify-chat-widget">
+  <div class="widgetify-chat-button" id="widgetify-telegram-btn">
+    <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5.46 7.12l-1.68 7.9c-.12.59-.5.84-1.01.52l-2.8-2.07-1.35 1.3c-.15.15-.27.27-.56.27-.36 0-.3-.14-.42-.47l-.95-3.12-2.77-1c-.6-.2-.6-.6.13-.9l10.8-4.15c.5-.18.96.12.61 1.32z"/>
+    </svg>
+  </div>
+  
+  <div class="widgetify-chat-popup" id="widgetify-telegram-popup">
+    <div class="widgetify-chat-header">
+      <div>Telegram</div>
+      <button class="widgetify-close-btn" id="widgetify-close-popup-tg">×</button>
+    </div>
+    <div class="widgetify-chat-body">
+      <p>Continue to Telegram?</p>
+      <a href="https://t.me/${handle.replace('@', '')}" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-top: 15px; background-color: ${primaryColor}; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
+        Start Chat
+      </a>
+      <div class="widgetify-branding" style="margin-top: 20px;">
+        Powered by Widgetify
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('widgetify-telegram-btn').addEventListener('click', function() {
+    document.getElementById('widgetify-telegram-popup').classList.add('show');
+  });
+  
+  document.getElementById('widgetify-close-popup-tg').addEventListener('click', function() {
+    document.getElementById('widgetify-telegram-popup').classList.remove('show');
+  });
+</script>
+<!-- End Telegram Widget by Widgetify -->
+  `.trim();
+};
+
+// Generate LinkedIn Widget Code
+export const generateLinkedInWidget = (config: WidgetConfig): string => {
+  const { handle, position = "right", primaryColor = "#0077b5", size = "medium" } = config;
+  
+  // Size in pixels
+  const sizeMap = {
+    small: 50,
+    medium: 60,
+    large: 70
+  };
+  
+  const buttonSize = sizeMap[size];
+  const positionStyle = position === "right" ? "right: 20px;" : "left: 20px;";
+  
+  return `
+<!-- LinkedIn Widget by Widgetify -->
+<style>
+  .widgetify-chat-widget {
+    position: fixed;
+    bottom: 20px;
+    ${positionStyle}
+    z-index: 1000;
+  }
+  
+  .widgetify-chat-button {
+    width: ${buttonSize}px;
+    height: ${buttonSize}px;
+    border-radius: 50%;
+    background-color: ${primaryColor};
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .widgetify-chat-button:hover {
+    transform: scale(1.05);
+  }
+  
+  .widgetify-chat-popup {
+    position: fixed;
+    bottom: 90px;
+    ${positionStyle}
+    width: 300px;
+    height: 400px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: none;
+    flex-direction: column;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+    overflow: hidden;
+  }
+  
+  .widgetify-chat-popup.show {
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
+  }
+  
+  .widgetify-chat-header {
+    padding: 15px;
+    background-color: ${primaryColor};
+    color: white;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .widgetify-chat-body {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .widgetify-branding {
+    font-size: 10px;
+    opacity: 0.7;
+  }
+  
+  .widgetify-close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+</style>
+
+<div class="widgetify-chat-widget">
+  <div class="widgetify-chat-button" id="widgetify-linkedin-btn">
+    <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
+      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+    </svg>
+  </div>
+  
+  <div class="widgetify-chat-popup" id="widgetify-linkedin-popup">
+    <div class="widgetify-chat-header">
+      <div>LinkedIn</div>
+      <button class="widgetify-close-btn" id="widgetify-close-popup-li">×</button>
+    </div>
+    <div class="widgetify-chat-body">
+      <p>Visit LinkedIn profile?</p>
+      <a href="https://www.linkedin.com/in/${handle}" target="_blank" rel="noopener noreferrer" style="display: inline-block; margin-top: 15px; background-color: ${primaryColor}; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">
+        View Profile
+      </a>
+      <div class="widgetify-branding" style="margin-top: 20px;">
+        Powered by Widgetify
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('widgetify-linkedin-btn').addEventListener('click', function() {
+    document.getElementById('widgetify-linkedin-popup').classList.add('show');
+  });
+  
+  document.getElementById('widgetify-close-popup-li').addEventListener('click', function() {
+    document.getElementById('widgetify-linkedin-popup').classList.remove('show');
+  });
+</script>
+<!-- End LinkedIn Widget by Widgetify -->
+  `.trim();
+};
+
 // Main function to generate widget code based on type
 export const generateWidgetCode = (config: WidgetConfig): string => {
   switch (config.type) {
@@ -562,6 +827,10 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
       return generateInstagramWidget(config);
     case 'twitter':
       return generateTwitterWidget(config);
+    case 'telegram':
+      return generateTelegramWidget(config);
+    case 'linkedin':
+      return generateLinkedInWidget(config);
     default:
       return '<!-- Invalid widget type -->';
   }

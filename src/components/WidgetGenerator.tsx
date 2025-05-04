@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { WidgetConfig, WidgetType, generateWidgetCode } from '@/lib/widgetUtils';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Facebook, Instagram, Twitter } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, Telegram } from 'lucide-react';
 
 const WidgetGenerator: React.FC = () => {
   const [widgetConfig, setWidgetConfig] = useState<WidgetConfig>({
@@ -36,6 +37,8 @@ const WidgetGenerator: React.FC = () => {
       facebook: '#0084FF',
       instagram: '#E1306C',
       twitter: '#1DA1F2',
+      telegram: '#0088cc',
+      linkedin: '#0077b5',
     };
 
     setWidgetConfig({
@@ -93,6 +96,10 @@ const WidgetGenerator: React.FC = () => {
         return 'Your Instagram username (e.g. @username)';
       case 'twitter':
         return 'Your Twitter handle (e.g. @username)';
+      case 'telegram':
+        return 'Your Telegram username (e.g. @username)';
+      case 'linkedin':
+        return 'Your LinkedIn username (e.g. johndoe)';
       default:
         return 'Enter your handle';
     }
@@ -118,6 +125,8 @@ const WidgetGenerator: React.FC = () => {
     facebook: <Facebook className="h-6 w-6" />,
     instagram: <Instagram className="h-6 w-6" />,
     twitter: <Twitter className="h-6 w-6" />,
+    telegram: <Telegram className="h-6 w-6" />,
+    linkedin: <Linkedin className="h-6 w-6" />,
   };
 
   return (
@@ -139,7 +148,7 @@ const WidgetGenerator: React.FC = () => {
                 defaultValue="whatsapp"
                 value={widgetConfig.type}
                 onValueChange={(value) => handleTypeChange(value as WidgetType)}
-                className="grid grid-cols-2 md:grid-cols-4 gap-3"
+                className="grid grid-cols-2 md:grid-cols-3 gap-3"
               >
                 <div>
                   <RadioGroupItem
@@ -198,6 +207,36 @@ const WidgetGenerator: React.FC = () => {
                   >
                     <Twitter className="mb-3 h-6 w-6" />
                     Twitter
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem
+                    value="telegram"
+                    id="telegram"
+                    className="peer sr-only"
+                  />
+                  <Label
+                    htmlFor="telegram"
+                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                  >
+                    <Telegram className="mb-3 h-6 w-6" />
+                    Telegram
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem
+                    value="linkedin"
+                    id="linkedin"
+                    className="peer sr-only"
+                  />
+                  <Label
+                    htmlFor="linkedin"
+                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                  >
+                    <Linkedin className="mb-3 h-6 w-6" />
+                    LinkedIn
                   </Label>
                 </div>
               </RadioGroup>
