@@ -13,15 +13,7 @@ const Footer: React.FC = () => {
             
           </div>
           
-          <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              <li><a href="#" className="hover:text-white">Home</a></li>
-              <li><a href="#" className="hover:text-white">Features</a></li>
-              <li><a href="#" className="hover:text-white">Pricing</a></li>
-              <li><a href="#" className="hover:text-white">Support</a></li>
-            </ul>
-          </div>
+          
           
           
         </div>
@@ -29,8 +21,8 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p>&copy; 2025 Chat Spark. All rights reserved.</p>
           <div className="flex gap-6 mt-4 md:mt-0">
-            <a href="#" className="text-sm hover:text-white">Privacy Policy</a>
-            <a href="#" className="text-sm hover:text-white">Terms of Service</a>
+            
+            
           </div>
         </div>
       </div>
