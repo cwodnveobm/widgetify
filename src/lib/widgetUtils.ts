@@ -1,3 +1,4 @@
+
 export type WidgetType = 'whatsapp' | 'facebook' | 'instagram' | 'twitter' | 'telegram' | 'linkedin' | 'social-share' | 'google-translate';
 
 export interface WidgetConfig {
@@ -1239,4 +1240,59 @@ export const generateGoogleTranslateWidget = (config: WidgetConfig): string => {
               var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
               var items = innerDoc.querySelectorAll('.goog-te-menu2-item');
               
-              for (var i
+              for (var i = 0; i < items.length; i++) {
+                var itemText = items[i].textContent;
+                if (itemText.indexOf(langCode) !== -1) {
+                  items[i].click();
+                  return;
+                }
+              }
+            } catch (e) {
+              console.error('Error accessing iframe content:', e);
+            }
+          }
+          
+          // If we get here, none of the methods worked, try again after a delay
+          setTimeout(function() {
+            doTranslation(attempts - 1);
+          }, 200);
+        };
+        
+        // Start translation attempt with 5 retries
+        doTranslation(5);
+        
+        // Close popup after selection
+        document.getElementById('widgetify-translate-popup').classList.remove('show');
+      } catch (error) {
+        console.error('Error during translation:', error);
+      }
+    });
+  });
+</script>
+<!-- End Google Translate Widget by Widgetify -->
+  `.trim();
+};
+
+// General widget generator function
+export const generateWidgetCode = (config: WidgetConfig): string => {
+  switch (config.type) {
+    case 'whatsapp':
+      return generateWhatsAppWidget(config);
+    case 'facebook':
+      return generateFacebookWidget(config);
+    case 'instagram':
+      return generateInstagramWidget(config);
+    case 'twitter':
+      return generateTwitterWidget(config);
+    case 'telegram':
+      return generateTelegramWidget(config);
+    case 'linkedin':
+      return generateLinkedInWidget(config);
+    case 'social-share':
+      return generateSocialShareWidget(config);
+    case 'google-translate':
+      return generateGoogleTranslateWidget(config);
+    default:
+      return generateWhatsAppWidget(config);
+  }
+};
