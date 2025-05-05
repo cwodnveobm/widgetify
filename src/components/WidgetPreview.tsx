@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
 import { Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
@@ -109,6 +108,12 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     </svg>
   );
 
+  const GoogleTranslateIcon = ({ size }: { size: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="white">
+      <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+    </svg>
+  );
+
   const getIcon = () => {
     const iconSize = parseInt(sizeMap[size || 'medium'], 10) * 0.5;
     
@@ -127,6 +132,8 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return <LinkedInIcon size={iconSize} />;
       case 'social-share':
         return <ShareIcon size={iconSize} />;
+      case 'google-translate':
+        return <GoogleTranslateIcon size={iconSize} />;
       default:
         return <WhatsAppIcon size={iconSize} />;
     }
@@ -176,7 +183,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
 
   return (
     <div className="relative w-full h-full">
-      {showChat && type !== 'social-share' && (
+      {showChat && type !== 'social-share' && type !== 'google-translate' && (
         <div style={chatWindowStyle} className="animate-fade-in">
           <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
             <div className="font-medium">Chat</div>
@@ -212,6 +219,37 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
                   <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                 </svg>
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showChat && type === 'google-translate' && (
+        <div style={chatWindowStyle} className="animate-fade-in">
+          <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
+            <div className="font-medium">Translate</div>
+            <div className="text-xs text-gray-500">
+              <a 
+                href="https://widgetify.vercel.app/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-500 no-underline"
+              >
+                Powered by Widgetify
+              </a>
+            </div>
+          </div>
+          <div className="flex-grow p-3">
+            <p className="text-sm mb-3">Select language:</p>
+            <div className="grid grid-cols-3 gap-2">
+              {['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Russian', 'Japanese', 'Chinese'].map((lang) => (
+                <div 
+                  key={lang} 
+                  className="bg-gray-100 text-center p-2 rounded text-xs cursor-pointer hover:bg-gray-200"
+                >
+                  {lang}
+                </div>
+              ))}
             </div>
           </div>
         </div>
