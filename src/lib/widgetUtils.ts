@@ -1,5 +1,4 @@
-
-export type WidgetType = 'whatsapp' | 'facebook' | 'instagram' | 'twitter' | 'telegram' | 'linkedin' | 'social-share';
+export type WidgetType = 'whatsapp' | 'facebook' | 'instagram' | 'twitter' | 'telegram' | 'linkedin' | 'social-share' | 'google-translate';
 
 export interface WidgetConfig {
   type: WidgetType;
@@ -11,6 +10,7 @@ export interface WidgetConfig {
   networks?: string[]; // For social share buttons
   shareText?: string;  // For social share buttons
   shareUrl?: string;   // For social share buttons
+  languages?: string[]; // For Google Translate widget
 }
 
 // Generate WhatsApp Widget Code
@@ -390,7 +390,7 @@ export const generateInstagramWidget = (config: WidgetConfig): string => {
 <div class="widgetify-chat-widget">
   <div class="widgetify-chat-button" id="widgetify-instagram-btn">
     <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
-      <path d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.254 1.216.598 1.772 1.153.509.5.902 1.105 1.153 1.772.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772c-.5.508-1.105.902-1.772 1.153-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.904 4.904 0 0 1-1.153-1.772c-.247-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2zm0 1.802c-2.67 0-2.987.01-4.04.059-.976.045-1.505.207-1.858.344-.466.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.048 1.053-.058 1.37-.058 4.04 0 2.67.01 2.988.058 4.04.045.977.207 1.505.344 1.858.182.466.398.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.04.058 2.67 0 2.987-.01 4.04-.058.977-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.054.058-1.37.058-4.04 0-2.67-.01-2.987-.058-4.04-.045-.977-.207-1.505-.344-1.858a3.097 3.097 0 0 0-.748-1.15 3.098 3.098 0 0 0-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.054-.048-1.37-.058-4.04-.058zm0 3.063a5.135 5.135 0 1 1 0 10.27 5.135 5.135 0 0 1 0-10.27zm0 8.468a3.333 3.333 0 1 0 0-6.666 3.333 3.333 0 0 0 0 6.666zm6.538-8.671a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z"/>
+      <path d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.254 1.216.598 1.772 1.153.509.5.902 1.105 1.153 1.772.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772c-.5.508-1.105.902-1.772 1.153-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.904 4.904 0 0 1-1.153-1.772c-.247-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2zm0 1.802c-2.67 0-2.987.01-4.04.059-.976.045-1.505.207-1.858.344-.466.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.048 1.053-.058 1.37-.058 4.04 0 2.67.01 2.988.058 4.04.045.977.207 1.505.344 1.858.182.466.398.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.04.058 2.67 0 2.987-.01 4.04-.058.977-.045 1.505-.207 1.858-.344a3.097 3.097 0 0 0-.748-1.15 3.098 3.098 0 0 0-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.054-.048-1.37-.058-4.04-.058zm0 3.063a5.135 5.135 0 1 1 0 10.27 5.135 5.135 0 0 1 0-10.27zm0 8.468a3.333 3.333 0 1 0 0-6.666 3.333 3.333 0 0 0 0 6.666zm6.538-8.671a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z"/>
     </svg>
   </div>
   
@@ -981,6 +981,209 @@ export const generateSocialShareWidget = (config: WidgetConfig): string => {
   `.trim();
 };
 
+// Generate Google Translate Widget Code
+export const generateGoogleTranslateWidget = (config: WidgetConfig): string => {
+  const { position = "right", primaryColor = "#4285F4", size = "medium" } = config;
+  
+  // Size in pixels
+  const sizeMap = {
+    small: 50,
+    medium: 60,
+    large: 70
+  };
+  
+  const buttonSize = sizeMap[size];
+  const positionStyle = position === "right" ? "right: 20px;" : "left: 20px;";
+  
+  return `
+<!-- Google Translate Widget by Widgetify -->
+<style>
+  .widgetify-translate-widget {
+    position: fixed;
+    bottom: 20px;
+    ${positionStyle}
+    z-index: 1000;
+  }
+  
+  .widgetify-translate-button {
+    width: ${buttonSize}px;
+    height: ${buttonSize}px;
+    border-radius: 50%;
+    background-color: ${primaryColor};
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .widgetify-translate-button:hover {
+    transform: scale(1.05);
+  }
+  
+  .widgetify-translate-popup {
+    position: fixed;
+    bottom: 90px;
+    ${positionStyle}
+    width: 300px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: none;
+    flex-direction: column;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+    overflow: hidden;
+  }
+  
+  .widgetify-translate-popup.show {
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
+  }
+  
+  .widgetify-translate-header {
+    padding: 15px;
+    background-color: ${primaryColor};
+    color: white;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .widgetify-translate-body {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .widgetify-translate-languages {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  
+  .widgetify-translate-language {
+    padding: 8px 0;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s;
+  }
+  
+  .widgetify-translate-language:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .widgetify-branding {
+    font-size: 10px;
+    opacity: 0.7;
+    margin-top: 10px;
+  }
+  
+  .widgetify-close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+</style>
+
+<div class="widgetify-translate-widget">
+  <div class="widgetify-translate-button" id="widgetify-translate-btn">
+    <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
+      <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+    </svg>
+  </div>
+  
+  <div class="widgetify-translate-popup" id="widgetify-translate-popup">
+    <div class="widgetify-translate-header">
+      <div>Translate</div>
+      <button class="widgetify-close-btn" id="widgetify-close-popup-translate">×</button>
+    </div>
+    <div class="widgetify-translate-body">
+      <p>Select language:</p>
+      <div class="widgetify-translate-languages">
+        <div class="widgetify-translate-language" data-lang="en">English</div>
+        <div class="widgetify-translate-language" data-lang="es">Spanish</div>
+        <div class="widgetify-translate-language" data-lang="fr">French</div>
+        <div class="widgetify-translate-language" data-lang="de">German</div>
+        <div class="widgetify-translate-language" data-lang="it">Italian</div>
+        <div class="widgetify-translate-language" data-lang="pt">Portuguese</div>
+        <div class="widgetify-translate-language" data-lang="ru">Russian</div>
+        <div class="widgetify-translate-language" data-lang="ja">Japanese</div>
+        <div class="widgetify-translate-language" data-lang="zh-CN">Chinese</div>
+      </div>
+      <div class="widgetify-branding">
+        <a href="https://widgetify.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+          Powered by Widgetify
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('widgetify-translate-btn').addEventListener('click', function() {
+    document.getElementById('widgetify-translate-popup').classList.add('show');
+  });
+  
+  document.getElementById('widgetify-close-popup-translate').addEventListener('click', function() {
+    document.getElementById('widgetify-translate-popup').classList.remove('show');
+  });
+  
+  // Add Google Translate script
+  function loadGoogleTranslate() {
+    var googleTranslateScript = document.createElement('script');
+    googleTranslateScript.type = 'text/javascript';
+    googleTranslateScript.async = true;
+    googleTranslateScript.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    document.body.appendChild(googleTranslateScript);
+    
+    window.googleTranslateElementInit = function() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'auto',
+        autoDisplay: false
+      });
+    };
+  }
+  
+  // Initialize Google Translate when page loads
+  loadGoogleTranslate();
+  
+  // Add click handlers for language selection
+  document.querySelectorAll('.widgetify-translate-language').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var langCode = this.getAttribute('data-lang');
+      var translateCombo = document.querySelector('.goog-te-combo');
+      
+      if (translateCombo) {
+        translateCombo.value = langCode;
+        translateCombo.dispatchEvent(new Event('change'));
+      } else {
+        // If Google Translate hasn't loaded yet
+        setTimeout(function() {
+          var translateCombo = document.querySelector('.goog-te-combo');
+          if (translateCombo) {
+            translateCombo.value = langCode;
+            translateCombo.dispatchEvent(new Event('change'));
+          }
+        }, 1000);
+      }
+    });
+  });
+</script>
+<!-- End Google Translate Widget by Widgetify -->
+  `.trim();
+};
+
 // Main function to generate widget code based on type
 export const generateWidgetCode = (config: WidgetConfig): string => {
   switch (config.type) {
@@ -998,6 +1201,8 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
       return generateLinkedInWidget(config);
     case 'social-share':
       return generateSocialShareWidget(config);
+    case 'google-translate':
+      return generateGoogleTranslateWidget(config);
     default:
       return '<!-- Invalid widget type -->';
   }

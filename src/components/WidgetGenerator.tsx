@@ -44,6 +44,7 @@ const WidgetGenerator: React.FC = () => {
       telegram: '#0088cc',
       linkedin: '#0077b5',
       'social-share': '#6B7280',
+      'google-translate': '#4285F4',
     };
 
     setWidgetConfig({
@@ -91,7 +92,7 @@ const WidgetGenerator: React.FC = () => {
   };
 
   const generateWidget = () => {
-    if (widgetConfig.type !== 'social-share' && !widgetConfig.handle) {
+    if (widgetConfig.type !== 'social-share' && widgetConfig.type !== 'google-translate' && !widgetConfig.handle) {
       toast.error('Please enter your handle/number');
       return;
     }
@@ -169,6 +170,13 @@ const WidgetGenerator: React.FC = () => {
     </svg>
   );
 
+  // New Google Translate icon component
+  const GoogleTranslateIcon = () => (
+    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" fill="#4285F4"/>
+    </svg>
+  );
+
   const socialIcons = {
     whatsapp: <WhatsAppIcon />,
     facebook: <Facebook className="h-6 w-6" />,
@@ -177,6 +185,7 @@ const WidgetGenerator: React.FC = () => {
     telegram: <TelegramIcon />,
     linkedin: <Linkedin className="h-6 w-6" />,
     'social-share': <ShareIcon />,
+    'google-translate': <GoogleTranslateIcon />,
   };
 
   return (
@@ -302,6 +311,21 @@ const WidgetGenerator: React.FC = () => {
                   >
                     <ShareIcon />
                     Social Share
+                  </Label>
+                </div>
+                
+                <div>
+                  <RadioGroupItem
+                    value="google-translate"
+                    id="google-translate"
+                    className="peer sr-only"
+                  />
+                  <Label
+                    htmlFor="google-translate"
+                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                  >
+                    <GoogleTranslateIcon />
+                    Translate
                   </Label>
                 </div>
               </RadioGroup>
