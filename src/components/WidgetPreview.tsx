@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
 import { Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
@@ -142,6 +143,9 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   const toggleChat = () => {
     if (type === 'social-share') {
       setShowSocialButtons(!showSocialButtons);
+    } else if (type === 'google-translate') {
+      // For Google Translate, don't show any popup in the preview
+      return;
     } else {
       setShowChat(!showChat);
     }
@@ -224,10 +228,11 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         </div>
       )}
 
+      {/* Replace the Google Translate popup with a simple code snippet preview */}
       {showChat && type === 'google-translate' && (
         <div style={chatWindowStyle} className="animate-fade-in">
           <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
-            <div className="font-medium">Translate</div>
+            <div className="font-medium">Google Translate</div>
             <div className="text-xs text-gray-500">
               <a 
                 href="https://widgetify.vercel.app/" 
@@ -239,17 +244,12 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
               </a>
             </div>
           </div>
-          <div className="flex-grow p-3">
-            <p className="text-sm mb-3">Select language:</p>
-            <div className="grid grid-cols-3 gap-2">
-              {['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Russian', 'Japanese', 'Chinese'].map((lang) => (
-                <div 
-                  key={lang} 
-                  className="bg-gray-100 text-center p-2 rounded text-xs cursor-pointer hover:bg-gray-200"
-                >
-                  {lang}
-                </div>
-              ))}
+          <div className="flex-grow p-3 overflow-y-auto">
+            <div className="bg-gray-100 p-2 rounded-lg mb-2">
+              <p className="text-xs text-center">Standard Google Translate Element</p>
+              <div className="border border-dashed p-2 mt-2 text-center">
+                <code className="text-xs">&lt;div id="google_translate_element"&gt;&lt;/div&gt;</code>
+              </div>
             </div>
           </div>
         </div>
