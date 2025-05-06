@@ -102,11 +102,12 @@ const WidgetGenerator: React.FC = () => {
       return;
     }
     
-    // Use the current URL if shareUrl is not provided for social-share widgets
-    if (widgetConfig.type === 'social-share' && !widgetConfig.shareUrl) {
+    // For social-share widgets, use the URL provided by the user or default to current URL
+    if (widgetConfig.type === 'social-share') {
+      const shareUrl = widgetConfig.handle || window.location.href;
       setWidgetConfig(prev => ({
         ...prev,
-        shareUrl: window.location.href
+        shareUrl
       }));
     }
     

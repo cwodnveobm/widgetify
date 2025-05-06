@@ -846,7 +846,7 @@ export const generateSocialShareWidget = (config: WidgetConfig): string => {
   const buttonSize = sizeMap[size];
   const positionStyle = position === "right" ? "right: 20px;" : "left: 20px;";
   const encodedText = encodeURIComponent(shareText);
-  const encodedUrl = encodeURIComponent(shareUrl);
+  const encodedUrl = encodeURIComponent(shareUrl || window.location.href);
   
   // Generate buttons for selected networks
   const generateSocialButtons = () => {
