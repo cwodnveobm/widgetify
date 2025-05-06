@@ -8,8 +8,9 @@ import WidgetPreview from '@/components/WidgetPreview';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Facebook, Instagram, Twitter, Linkedin } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Twitch, Slack, Discord } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+
 const WidgetGenerator: React.FC = () => {
   const [widgetConfig, setWidgetConfig] = useState<WidgetConfig>({
     type: 'whatsapp',
@@ -24,6 +25,7 @@ const WidgetGenerator: React.FC = () => {
   });
   const [code, setCode] = useState<string>('');
   const [showCode, setShowCode] = useState<boolean>(false);
+
   const handleTypeChange = (value: WidgetType) => {
     const colorMap: Record<WidgetType, string> = {
       whatsapp: '#25D366',
@@ -33,7 +35,12 @@ const WidgetGenerator: React.FC = () => {
       telegram: '#0088cc',
       linkedin: '#0077b5',
       'social-share': '#6B7280',
-      'google-translate': '#4285F4'
+      'google-translate': '#4285F4',
+      youtube: '#FF0000',
+      github: '#333333',
+      twitch: '#6441A4',
+      slack: '#4A154B',
+      discord: '#7289DA'
     };
     setWidgetConfig({
       ...widgetConfig,
@@ -41,24 +48,28 @@ const WidgetGenerator: React.FC = () => {
       primaryColor: colorMap[value]
     });
   };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setWidgetConfig({
       ...widgetConfig,
       [e.target.name]: e.target.value
     });
   };
+
   const handlePositionChange = (position: 'left' | 'right') => {
     setWidgetConfig({
       ...widgetConfig,
       position
     });
   };
+
   const handleSizeChange = (size: string) => {
     setWidgetConfig({
       ...widgetConfig,
       size: size as 'small' | 'medium' | 'large'
     });
   };
+
   const handleNetworkToggle = (network: string) => {
     const currentNetworks = widgetConfig.networks || [];
     if (currentNetworks.includes(network)) {
@@ -73,6 +84,7 @@ const WidgetGenerator: React.FC = () => {
       });
     }
   };
+
   const generateWidget = () => {
     if (widgetConfig.type !== 'social-share' && widgetConfig.type !== 'google-translate' && !widgetConfig.handle) {
       toast.error('Please enter your handle/number');
@@ -96,10 +108,12 @@ const WidgetGenerator: React.FC = () => {
     setShowCode(true);
     toast.success('Widget code generated successfully!');
   };
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(code);
     toast.success('Code copied to clipboard!');
   };
+
   const getPlaceholderText = () => {
     switch (widgetConfig.type) {
       case 'whatsapp':
@@ -116,10 +130,22 @@ const WidgetGenerator: React.FC = () => {
         return 'Your LinkedIn username (e.g. johndoe)';
       case 'social-share':
         return 'Optional URL to share (defaults to current page)';
+      case 'youtube':
+        return 'Your YouTube channel ID or username';
+      case 'github':
+        return 'Your GitHub username';
+      case 'twitch':
+        return 'Your Twitch channel name';
+      case 'slack':
+        return 'Your Slack workspace URL';
+      case 'discord':
+        return 'Your Discord invite code';
       default:
         return 'Enter your handle';
     }
   };
+
+  // Custom WhatsApp icon component
   const WhatsAppIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
       <g>
         <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z" fill="#006A8E" />
@@ -145,6 +171,32 @@ const WidgetGenerator: React.FC = () => {
   const GoogleTranslateIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
       <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" fill="#4285F4" />
     </svg>;
+
+  // New YouTube icon component
+  const YoutubeIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" fill="#FF0000" />
+  </svg>;
+
+  // New GitHub icon component
+  const GithubIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" fill="#333333" />
+  </svg>;
+
+  // New Twitch icon component
+  const TwitchIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z" fill="#6441A4" />
+  </svg>;
+
+  // New Slack icon component
+  const SlackIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" fill="#4A154B" />
+  </svg>;
+
+  // New Discord icon component
+  const DiscordIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.608 1.2495-1.8447-.2762-3.6677-.2762-5.4724 0-.1634-.3933-.4058-.8742-.6091-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" fill="#7289DA" />
+  </svg>;
+
   const socialIcons = {
     whatsapp: <WhatsAppIcon />,
     facebook: <Facebook className="h-6 w-6" />,
@@ -153,8 +205,14 @@ const WidgetGenerator: React.FC = () => {
     telegram: <TelegramIcon />,
     linkedin: <Linkedin className="h-6 w-6" />,
     'social-share': <ShareIcon />,
-    'google-translate': <GoogleTranslateIcon />
+    'google-translate': <GoogleTranslateIcon />,
+    youtube: <YoutubeIcon />,
+    github: <GithubIcon />,
+    twitch: <TwitchIcon />,
+    slack: <SlackIcon />,
+    discord: <DiscordIcon />
   };
+
   return <section id="widget-generator" className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
@@ -219,8 +277,51 @@ const WidgetGenerator: React.FC = () => {
                 </div>
 
                 <div>
+                  <RadioGroupItem value="youtube" id="youtube" className="peer sr-only" />
+                  <Label htmlFor="youtube" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <YoutubeIcon />
+                    YouTube
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem value="github" id="github" className="peer sr-only" />
+                  <Label htmlFor="github" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <GithubIcon />
+                    GitHub
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem value="twitch" id="twitch" className="peer sr-only" />
+                  <Label htmlFor="twitch" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <TwitchIcon />
+                    Twitch
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem value="slack" id="slack" className="peer sr-only" />
+                  <Label htmlFor="slack" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <SlackIcon />
+                    Slack
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem value="discord" id="discord" className="peer sr-only" />
+                  <Label htmlFor="discord" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <DiscordIcon />
+                    Discord
+                  </Label>
+                </div>
+                
+                <div>
                   <RadioGroupItem value="social-share" id="social-share" className="peer sr-only" />
-                  
+                  <Label htmlFor="social-share" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <ShareIcon />
+                    Share
+                  </Label>
                 </div>
                 
                 <div>
@@ -332,6 +433,24 @@ const WidgetGenerator: React.FC = () => {
           </div>
 
           <div className="flex flex-col">
+            {/* RetailX sidebar ad */}
+            <div className="bg-white p-4 rounded-lg shadow-sm mb-4 border border-purple-100">
+              <a href="https://www.retailx.site/" target="_blank" rel="noopener noreferrer" className="block">
+                <div className="flex flex-col items-center">
+                  <img 
+                    src="/lovable-uploads/08c2f5ff-5a6f-4a3e-8470-7f98661e663f.png" 
+                    alt="RetailX" 
+                    className="h-20 mb-2" 
+                  />
+                  <p className="text-sm text-purple-800 font-medium text-center">Transform your retail business with RetailX</p>
+                  <p className="text-xs text-gray-600 text-center mt-1">Powerful retail solutions for growing businesses</p>
+                  <Button variant="outline" className="mt-3 text-sm border-purple-300 hover:bg-purple-50 text-purple-700">
+                    Learn More
+                  </Button>
+                </div>
+              </a>
+            </div>
+            
             <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-sm mb-4 WidgetPreview-container">
               <h3 className="text-lg font-medium mb-4">Preview</h3>
               <div className="relative bg-white rounded-lg shadow-sm h-80 border border-gray-100 overflow-hidden">
