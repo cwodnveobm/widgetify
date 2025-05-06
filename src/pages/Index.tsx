@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import HeroSection from '@/components/HeroSection';
 import WidgetGenerator from '@/components/WidgetGenerator';
 import FeaturesSection from '@/components/FeaturesSection';
+import FounderSection from '@/components/FounderSection';
 import Footer from '@/components/Footer';
 import { Menu, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -92,11 +93,25 @@ const Index: React.FC = () => {
                   Features
                 </a>
                 <a 
-                  href="#" 
+                  href="#founder" 
                   className="text-gray-600 hover:text-purple-600 py-2 flex items-center justify-between border-b border-gray-50 pb-2"
                   onClick={handleMenuItemClick}
                 >
-                  Contact
+                  Founder
+                </a>
+                <a 
+                  href="/documentation" 
+                  className="text-gray-600 hover:text-purple-600 py-2 flex items-center justify-between border-b border-gray-50 pb-2"
+                  onClick={handleMenuItemClick}
+                >
+                  Documentation
+                </a>
+                <a 
+                  href="/support" 
+                  className="text-gray-600 hover:text-purple-600 py-2 flex items-center justify-between border-b border-gray-50 pb-2"
+                  onClick={handleMenuItemClick}
+                >
+                  Support
                 </a>
                 <div className="pt-2">
                   <a 
@@ -117,7 +132,9 @@ const Index: React.FC = () => {
                 <a href="#" className="text-gray-600 hover:text-purple-600">Home</a>
                 <a href="#widget-generator" className="text-gray-600 hover:text-purple-600">Generate</a>
                 <a href="#features" className="text-gray-600 hover:text-purple-600">Features</a>
-                <a href="#" className="text-gray-600 hover:text-purple-600">Contact</a>
+                <a href="#founder" className="text-gray-600 hover:text-purple-600">Founder</a>
+                <a href="/documentation" className="text-gray-600 hover:text-purple-600">Documentation</a>
+                <a href="/support" className="text-gray-600 hover:text-purple-600">Support</a>
               </nav>
               <div>
                 <a href="https://razorpay.me/@aznoxx?amount=zPcDiUDYF4mzSgsG00XV0w%3D%3D" target="_blank" rel="noopener noreferrer" className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md inline-block">
@@ -133,6 +150,7 @@ const Index: React.FC = () => {
         <HeroSection />
         <WidgetGenerator />
         <FeaturesSection />
+        <FounderSection />
       </main>
       
       <Footer />
