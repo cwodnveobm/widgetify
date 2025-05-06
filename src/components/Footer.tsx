@@ -24,6 +24,11 @@ const Footer: React.FC = () => {
                 <Twitter className="w-5 h-5 md:w-6 md:h-6" />
               </a>
             </div>
+            <div className="mt-4">
+              <a href="https://www.producthunt.com/posts/widgetify-2?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-widgetify&#0045;2" target="_blank" rel="noopener noreferrer">
+                <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=961430&theme=light&t=1746523667957" alt="Widgetify - Chat&#0032;widgets | Product Hunt" style={{ width: "250px", height: "54px" }} width="250" height="54" />
+              </a>
+            </div>
           </div>
           <div className="col-span-1">
             <h4 className="text-white font-medium mb-4">Links</h4>
