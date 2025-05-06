@@ -1,4 +1,4 @@
-export type WidgetType = 'whatsapp' | 'facebook' | 'instagram' | 'twitter' | 'telegram' | 'linkedin' | 'social-share' | 'google-translate';
+export type WidgetType = 'whatsapp' | 'facebook' | 'instagram' | 'twitter' | 'telegram' | 'linkedin' | 'social-share' | 'google-translate' | 'youtube' | 'github' | 'twitch' | 'slack' | 'discord';
 
 export interface WidgetConfig {
   type: WidgetType;
