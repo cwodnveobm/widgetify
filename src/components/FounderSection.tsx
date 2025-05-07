@@ -16,9 +16,7 @@ const FounderSection: React.FC = () => {
             <p className="text-purple-600 font-medium mb-4">Founder & CEO</p>
             
             <div className="mb-6">
-              <p className="text-gray-600 leading-relaxed">
-                With a passion for technology and business, Muhammed Adnan founded Retail X with a vision to democratize e-commerce for entrepreneurs worldwide. His innovative approach has transformed how businesses establish their online presence.
-              </p>
+              <p className="text-gray-600 leading-relaxed"> Muhammed Adnan, the founder of Widgetify. With a strong passion for technology and business, he created Widgetify to make widget creation easier for online stores and websites</p>
             </div>
             
             <div className="flex justify-center md:justify-start gap-4">
