@@ -981,9 +981,10 @@ export const generateSocialShareWidget = (config: WidgetConfig): string => {
   
   .widgetify-branding {
     font-size: 10px;
-    opacity: 0.7;
-    color: #888;
     text-align: center;
+    padding: 5px;
+    opacity: 0.7;
+    border-top: 1px solid #eee;
   }
 </style>
 
@@ -1032,6 +1033,317 @@ function googleTranslateElementInit() {
   </a>
 </div>
 <!-- End Google Translate Widget by Widgetify -->
+  `.trim();
+};
+
+// Generate Chat Widget Code
+export const generateChatWidget = (config: WidgetConfig): string => {
+  const { title = 'Need help?', message = 'Chat with us!', buttonText = 'Open Chat', backgroundColor = '#4CAF50', textColor = '#ffffff', position = "right" } = config as ChatWidgetConfig;
+  
+  // Position style
+  const positionStyle = position === "right" ? "right: 20px;" : "left: 20px;";
+  
+  return `
+<!-- Chat Widget by Widgetify -->
+<style>
+  .widgetify-chat-widget {
+    position: fixed;
+    bottom: 20px;
+    ${positionStyle}
+    z-index: 1000;
+  }
+  
+  .widgetify-chat-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: ${backgroundColor};
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .widgetify-chat-button:hover {
+    transform: scale(1.05);
+  }
+  
+  .widgetify-chat-popup {
+    position: fixed;
+    bottom: 90px;
+    ${positionStyle}
+    width: 300px;
+    height: 400px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: none;
+    flex-direction: column;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+    overflow: hidden;
+  }
+  
+  .widgetify-chat-popup.show {
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
+  }
+  
+  .widgetify-chat-header {
+    padding: 15px;
+    background-color: ${backgroundColor};
+    color: ${textColor};
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .widgetify-chat-body {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+  
+  .widgetify-chat-messages {
+    flex-grow: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
+  }
+  
+  .widgetify-message {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    max-width: 80%;
+  }
+  
+  .widgetify-message.operator {
+    background-color: ${backgroundColor};
+    color: ${textColor};
+    align-self: flex-start;
+  }
+  
+  .widgetify-message.user {
+    background-color: #f0f0f0;
+    color: #333;
+    align-self: flex-end;
+  }
+  
+  .widgetify-chat-input {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .widgetify-chat-input input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  .widgetify-chat-input button {
+    background-color: ${backgroundColor};
+    color: ${textColor};
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .widgetify-chat-input button:hover {
+    opacity: 0.9;
+  }
+  
+  .widgetify-branding {
+    font-size: 10px;
+    text-align: center;
+    padding: 5px;
+    opacity: 0.7;
+    border-top: 1px solid #eee;
+  }
+  
+  .widgetify-close-btn {
+    background: transparent;
+    border: none;
+    color: ${textColor};
+    cursor: pointer;
+    font-size: 20px;
+  }
+</style>
+
+<div class="widgetify-chat-widget">
+  <div class="widgetify-chat-button" id="widgetify-chat-btn">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="${textColor}">
+      <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"/>
+    </svg>
+  </div>
+  
+  <div class="widgetify-chat-popup" id="widgetify-chat-popup">
+    <div class="widgetify-chat-header">
+      <div>${title}</div>
+      <button class="widgetify-close-btn" id="widgetify-close-popup">×</button>
+    </div>
+    <div class="widgetify-chat-body">
+      <div class="widgetify-chat-messages">
+        <div class="widgetify-message operator">
+          ${message}
+        </div>
+      </div>
+      <div class="widgetify-chat-input">
+        <input type="text" placeholder="Type your message..." id="widgetify-chat-input">
+        <button id="widgetify-send-btn">${buttonText}</button>
+      </div>
+    </div>
+    <div class="widgetify-branding">
+      <a href="https://widgetify.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+        Powered by Widgetify
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('widgetify-chat-btn').addEventListener('click', function() {
+    document.getElementById('widgetify-chat-popup').classList.add('show');
+  });
+  
+  document.getElementById('widgetify-close-popup').addEventListener('click', function() {
+    document.getElementById('widgetify-chat-popup').classList.remove('show');
+  });
+  
+  document.getElementById('widgetify-send-btn').addEventListener('click', function() {
+    const input = document.getElementById('widgetify-chat-input');
+    const message = input.value.trim();
+    if (message) {
+      const chatMessages = document.querySelector('.widgetify-chat-messages');
+      const userMessage = document.createElement('div');
+      userMessage.className = 'widgetify-message user';
+      userMessage.textContent = message;
+      chatMessages.appendChild(userMessage);
+      input.value = '';
+      
+      // Simulate a response after a short delay
+      setTimeout(() => {
+        const botMessage = document.createElement('div');
+        botMessage.className = 'widgetify-message operator';
+        botMessage.textContent = "Thanks for your message! We'll get back to you soon.";
+        chatMessages.appendChild(botMessage);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }, 1000);
+    }
+  });
+  
+  document.getElementById('widgetify-chat-input').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      document.getElementById('widgetify-send-btn').click();
+    }
+  });
+</script>
+<!-- End Chat Widget by Widgetify -->
+  `.trim();
+};
+
+// Generate Banner Ad Widget Code
+export const generateBannerAd = (config: WidgetConfig): string => {
+  const { position = 'top', message = 'Special offer!', backgroundColor = '#9b87f5', textColor = '#ffffff' } = config;
+  
+  const positionStyle = position === 'top' ? 'top: 0;' : 'bottom: 0;';
+  
+  return `
+<!-- Banner Ad Widget by Widgetify -->
+<style>
+  .widgetify-banner {
+    position: fixed;
+    left: 0;
+    right: 0;
+    ${positionStyle}
+    background-color: ${backgroundColor};
+    color: ${textColor};
+    padding: 10px 0;
+    text-align: center;
+    z-index: 1000;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .widgetify-banner-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .widgetify-banner-message {
+    margin: 0;
+    padding-right: 30px;
+  }
+  
+  .widgetify-banner-close {
+    position: absolute;
+    right: 20px;
+    background: transparent;
+    border: none;
+    color: ${textColor};
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+  }
+  
+  .widgetify-banner-close:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .widgetify-branding {
+    position: absolute;
+    right: 5px;
+    bottom: 0;
+    font-size: 8px;
+    opacity: 0.7;
+  }
+  
+  @media (max-width: 768px) {
+    .widgetify-banner {
+      font-size: 14px;
+    }
+  }
+</style>
+
+<div class="widgetify-banner" id="widgetify-banner">
+  <div class="widgetify-banner-content">
+    <p class="widgetify-banner-message">${message}</p>
+    <button class="widgetify-banner-close" id="widgetify-banner-close">×</button>
+    <div class="widgetify-branding">
+      <a href="https://widgetify.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+        Widgetify
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('widgetify-banner-close').addEventListener('click', function() {
+    document.getElementById('widgetify-banner').style.display = 'none';
+  });
+</script>
+<!-- End Banner Ad Widget by Widgetify -->
   `.trim();
 };
 
