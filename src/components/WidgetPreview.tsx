@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
-import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, PhoneCall, Star } from 'lucide-react';
 import BannerAd from './BannerAd';
 
 interface WidgetPreviewProps {
@@ -28,7 +28,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     );
   }
 
-  // For chat widget type - simplified for now
+  // For chat widget type
   if (type === 'chat-widget') {
     // Just show a placeholder for now
     return (
@@ -44,7 +44,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     );
   }
 
-  // For social share type - simplified for now
+  // For social share type
   if (type === 'social-share') {
     return (
       <div className="fixed bottom-5 right-5 flex flex-col gap-2">
@@ -72,7 +72,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     );
   }
 
-  // For google translate type - simplified for now
+  // For google translate type
   if (type === 'google-translate') {
     return (
       <div className="fixed bottom-5 right-5 bg-blue-500 text-white p-3 rounded-lg shadow-lg">
@@ -82,6 +82,94 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
           </svg>
           <span>Translate</span>
         </div>
+      </div>
+    );
+  }
+  
+  // For call-now widget type
+  if (type === 'call-now') {
+    const callConfig = config as any;
+    const buttonPos = position === 'left' ? 'left-5' : 'right-5';
+    
+    return (
+      <div className={`fixed bottom-5 ${buttonPos} flex flex-col items-center`}>
+        <a 
+          className="w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+          style={{ backgroundColor: primaryColor || '#FF5722' }}
+          href={`tel:${callConfig.phoneNumber || '1234567890'}`}
+        >
+          <PhoneCall size={24} />
+        </a>
+        <div className="text-xs mt-2 bg-white px-2 py-1 rounded shadow">Call Now</div>
+      </div>
+    );
+  }
+  
+  // For review-now widget type
+  if (type === 'review-now') {
+    const reviewConfig = config as any;
+    const buttonPos = position === 'left' ? 'left-5' : 'right-5';
+    
+    return (
+      <div className={`fixed bottom-5 ${buttonPos} flex flex-col items-center`}>
+        <a 
+          className="w-12 h-12 bg-yellow-500 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+          style={{ backgroundColor: primaryColor || '#FFC107' }}
+          href={reviewConfig.reviewUrl || '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Star size={24} />
+        </a>
+        <div className="text-xs mt-2 bg-white px-2 py-1 rounded shadow">
+          {reviewConfig.reviewText || 'Leave a Review'}
+        </div>
+      </div>
+    );
+  }
+  
+  // For follow-us widget type
+  if (type === 'follow-us') {
+    const followConfig = config as any;
+    const buttonPos = position === 'left' ? 'left-5' : 'right-5';
+    const platform = followConfig.platform || 'linkedin';
+    
+    let platformIcon;
+    let platformColor = primaryColor;
+    let platformText = followConfig.buttonText || 'Follow Us';
+    
+    switch (platform) {
+      case 'linkedin':
+        platformIcon = <Linkedin size={24} />;
+        platformColor = primaryColor || '#0077B5';
+        platformText = followConfig.buttonText || 'Connect on LinkedIn';
+        break;
+      case 'instagram':
+        platformIcon = <Instagram size={24} />;
+        platformColor = primaryColor || '#E1306C';
+        platformText = followConfig.buttonText || 'Follow on Instagram';
+        break;
+      case 'youtube':
+        platformIcon = <Youtube size={24} />;
+        platformColor = primaryColor || '#FF0000';
+        platformText = followConfig.buttonText || 'Subscribe on YouTube';
+        break;
+      default:
+        platformIcon = <Linkedin size={24} />;
+    }
+    
+    return (
+      <div className={`fixed bottom-5 ${buttonPos} flex flex-col items-center`}>
+        <a 
+          className="w-12 h-12 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+          style={{ backgroundColor: platformColor }}
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {platformIcon}
+        </a>
+        <div className="text-xs mt-2 bg-white px-2 py-1 rounded shadow">{platformText}</div>
       </div>
     );
   }
@@ -173,6 +261,10 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return <Slack size={iconSize} color="white" />;
       case 'discord':
         return <MessageCircle size={iconSize} color="white" />;
+      case 'call-now':
+        return <PhoneCall size={iconSize} color="white" />;
+      case 'review-now':
+        return <Star size={iconSize} color="white" />;
       default:
         return <MessageCircle size={iconSize} color="white" />;
     }

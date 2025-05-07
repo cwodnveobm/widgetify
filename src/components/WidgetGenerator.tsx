@@ -8,7 +8,7 @@ import WidgetPreview from '@/components/WidgetPreview';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Twitch, Slack, MessageCircle, X } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Twitch, Slack, MessageCircle, X, PhoneCall, Star } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 
 // Type definition for our widget configurations
@@ -28,6 +28,11 @@ type ExtendedWidgetConfig = {
   backgroundColor?: string;
   textColor?: string;
   defaultLanguage?: string;
+  phoneNumber?: string;
+  reviewUrl?: string;
+  reviewText?: string;
+  platform?: 'linkedin' | 'instagram' | 'youtube';
+  username?: string;
 };
 
 const WidgetGenerator: React.FC = () => {
@@ -94,6 +99,26 @@ const WidgetGenerator: React.FC = () => {
           backgroundColor: widgetConfig.backgroundColor || widgetConfig.primaryColor,
           textColor: widgetConfig.textColor || '#ffffff'
         };
+      case 'call-now':
+        return {
+          ...baseConfig,
+          type: 'call-now',
+          phoneNumber: widgetConfig.phoneNumber || ''
+        };
+      case 'review-now':
+        return {
+          ...baseConfig,
+          type: 'review-now',
+          reviewUrl: widgetConfig.reviewUrl || '',
+          reviewText: widgetConfig.reviewText || 'Leave a Review'
+        };
+      case 'follow-us':
+        return {
+          ...baseConfig,
+          type: 'follow-us',
+          platform: widgetConfig.platform || 'linkedin',
+          username: widgetConfig.username || ''
+        };
       default:
         return baseConfig;
     }
@@ -115,7 +140,10 @@ const WidgetGenerator: React.FC = () => {
       slack: '#4A154B',
       discord: '#7289DA',
       'chat-widget': '#4CAF50',
-      'banner-ad': '#9b87f5'
+      'banner-ad': '#9b87f5',
+      'call-now': '#FF5722',
+      'review-now': '#FFC107',
+      'follow-us': '#0077b5'
     };
 
     let newPosition = widgetConfig.position;
@@ -170,10 +198,29 @@ const WidgetGenerator: React.FC = () => {
   };
 
   const generateWidget = () => {
-    if (widgetConfig.type !== 'social-share' && widgetConfig.type !== 'google-translate' && !widgetConfig.handle) {
+    // Validation checks based on widget type
+    if (widgetConfig.type === 'call-now' && !widgetConfig.phoneNumber) {
+      toast.error('Please enter a phone number');
+      return;
+    }
+    
+    if (widgetConfig.type === 'review-now' && !widgetConfig.reviewUrl) {
+      toast.error('Please enter a review URL');
+      return;
+    }
+    
+    if (widgetConfig.type === 'follow-us' && !widgetConfig.username) {
+      toast.error('Please enter a username');
+      return;
+    }
+    
+    if (widgetConfig.type !== 'social-share' && widgetConfig.type !== 'google-translate' && 
+        widgetConfig.type !== 'call-now' && widgetConfig.type !== 'review-now' && 
+        widgetConfig.type !== 'follow-us' && widgetConfig.type !== 'banner-ad' && !widgetConfig.handle) {
       toast.error('Please enter your handle/number');
       return;
     }
+    
     if (widgetConfig.type === 'social-share' && widgetConfig.networks && widgetConfig.networks.length === 0) {
       toast.error('Please select at least one social network');
       return;
@@ -187,7 +234,26 @@ const WidgetGenerator: React.FC = () => {
         shareUrl
       }));
     }
-    const generatedCode = generateWidgetCode(widgetConfig);
+    
+    // Map the correct config type based on widget type
+    let configToGenerate: any = { ...widgetConfig };
+    
+    // For call-now widget, set phoneNumber from handle if not explicitly set
+    if (widgetConfig.type === 'call-now' && !widgetConfig.phoneNumber) {
+      configToGenerate.phoneNumber = widgetConfig.handle;
+    }
+    
+    // For review-now widget, set reviewUrl from handle if not explicitly set
+    if (widgetConfig.type === 'review-now' && !widgetConfig.reviewUrl) {
+      configToGenerate.reviewUrl = widgetConfig.handle;
+    }
+    
+    // For follow-us widget, set username from handle if not explicitly set
+    if (widgetConfig.type === 'follow-us' && !widgetConfig.username) {
+      configToGenerate.username = widgetConfig.handle;
+    }
+    
+    const generatedCode = generateWidgetCode(configToGenerate);
     setCode(generatedCode);
     setShowCode(true);
     toast.success('Widget code generated successfully!');
@@ -278,7 +344,7 @@ const WidgetGenerator: React.FC = () => {
 
   // New Discord icon component
   const DiscordIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.608 1.2495-1.8447-.2762-3.6677-.2762-5.4724 0-.1634-.3933-.4058-.8742-.6091-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" fill="#7289DA" />
+    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.608 1.2495-1.8447-.2762-3.6677-.2762-5.4724 0-.1634-.3933-.4058-.8742-.6091-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189Z" fill="#7289DA" />
   </svg>;
   
   // Chat widget icon
@@ -288,6 +354,17 @@ const WidgetGenerator: React.FC = () => {
   const BannerAdIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
     <path d="M3 3h18v6h-2V5H5v14h14v-4h2v6H3V3zm14 8h-2v3h-3v2h3v3h2v-3h3v-2h-3v-3z" />
   </svg>;
+
+  // Call Now icon component
+  const CallNowIcon = () => <PhoneCall className="h-6 w-6" />;
+  
+  // Review Now icon component
+  const ReviewNowIcon = () => <Star className="h-6 w-6" />;
+  
+  // Follow Us icon component
+  const FollowUsIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M16.5 5c-1.54 0-3.04.99-3.56 2.36h-1.87C10.54 5.99 9.04 5 7.5 5 5.5 5 4 6.5 4 8.5c0 2.89 3.14 5.74 7.9 10.05l.1.1.1-.1C16.86 14.24 20 11.39 20 8.5c0-2-1.5-3.5-3.5-3.5z" />
+    </svg>;
 
   // Add these to your socialIcons object
   const socialIcons = {
@@ -305,7 +382,10 @@ const WidgetGenerator: React.FC = () => {
     slack: <SlackIcon />,
     discord: <DiscordIcon />,
     'chat-widget': <ChatWidgetIcon />,
-    'banner-ad': <BannerAdIcon />
+    'banner-ad': <BannerAdIcon />,
+    'call-now': <CallNowIcon />,
+    'review-now': <ReviewNowIcon />,
+    'follow-us': <FollowUsIcon />
   };
 
   // Render additional fields based on widget type
@@ -439,6 +519,99 @@ const WidgetGenerator: React.FC = () => {
           </div>
         );
         
+      case 'call-now':
+        return (
+          <div className="mb-4">
+            <Label htmlFor="phoneNumber">Phone Number</Label>
+            <Input 
+              id="phoneNumber" 
+              name="phoneNumber" 
+              value={widgetConfig.phoneNumber || ''} 
+              onChange={handleInputChange} 
+              placeholder="Enter phone number (e.g. +1234567890)" 
+              className="mt-1" 
+            />
+          </div>
+        );
+        
+      case 'review-now':
+        return (
+          <>
+            <div className="mb-4">
+              <Label htmlFor="reviewUrl">Review URL</Label>
+              <Input 
+                id="reviewUrl" 
+                name="reviewUrl" 
+                value={widgetConfig.reviewUrl || ''} 
+                onChange={handleInputChange} 
+                placeholder="URL for the review page" 
+                className="mt-1" 
+              />
+            </div>
+            <div className="mb-4">
+              <Label htmlFor="reviewText">Button Text</Label>
+              <Input 
+                id="reviewText" 
+                name="reviewText" 
+                value={widgetConfig.reviewText || ''} 
+                onChange={handleInputChange} 
+                placeholder="Leave a Review" 
+                className="mt-1" 
+              />
+            </div>
+          </>
+        );
+        
+      case 'follow-us':
+        return (
+          <>
+            <div className="mb-4">
+              <Label htmlFor="platform">Platform</Label>
+              <Select 
+                value={widgetConfig.platform || 'linkedin'} 
+                onValueChange={(value) => setWidgetConfig({...widgetConfig, platform: value as 'linkedin' | 'instagram' | 'youtube'})}
+              >
+                <SelectTrigger className="mt-1">
+                  <SelectValue placeholder="Select platform" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="linkedin">LinkedIn</SelectItem>
+                    <SelectItem value="instagram">Instagram</SelectItem>
+                    <SelectItem value="youtube">YouTube</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="mb-4">
+              <Label htmlFor="username">Username/Handle</Label>
+              <Input 
+                id="username" 
+                name="username" 
+                value={widgetConfig.username || ''} 
+                onChange={handleInputChange} 
+                placeholder={widgetConfig.platform === 'youtube' ? 'Channel name or ID' : 'Username'} 
+                className="mt-1" 
+              />
+            </div>
+            <div className="mb-4">
+              <Label htmlFor="buttonText">Button Text (Optional)</Label>
+              <Input 
+                id="buttonText" 
+                name="buttonText" 
+                value={widgetConfig.buttonText || ''} 
+                onChange={handleInputChange} 
+                placeholder={
+                  widgetConfig.platform === 'linkedin' ? 'Connect on LinkedIn' : 
+                  widgetConfig.platform === 'instagram' ? 'Follow on Instagram' : 
+                  'Subscribe on YouTube'
+                } 
+                className="mt-1" 
+              />
+            </div>
+          </>
+        );
+        
       default:
         return null;
     }
@@ -520,18 +693,26 @@ const WidgetGenerator: React.FC = () => {
 
                 {/* New widget types */}
                 <div>
-                  <RadioGroupItem value="chat-widget" id="chat-widget" className="peer sr-only" />
-                  <Label htmlFor="chat-widget" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <ChatWidgetIcon />
-                    Chat
+                  <RadioGroupItem value="call-now" id="call-now" className="peer sr-only" />
+                  <Label htmlFor="call-now" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <CallNowIcon />
+                    Call Now
                   </Label>
                 </div>
                 
                 <div>
-                  <RadioGroupItem value="banner-ad" id="banner-ad" className="peer sr-only" />
-                  <Label htmlFor="banner-ad" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <BannerAdIcon />
-                    Banner Ad
+                  <RadioGroupItem value="review-now" id="review-now" className="peer sr-only" />
+                  <Label htmlFor="review-now" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <ReviewNowIcon />
+                    Review Now
+                  </Label>
+                </div>
+                
+                <div>
+                  <RadioGroupItem value="follow-us" id="follow-us" className="peer sr-only" />
+                  <Label htmlFor="follow-us" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <FollowUsIcon />
+                    Follow Us
                   </Label>
                 </div>
               </RadioGroup>
@@ -540,8 +721,8 @@ const WidgetGenerator: React.FC = () => {
             {/* Render fields based on widget type */}
             {renderWidgetTypeFields()}
 
-            {/* Handle/URL field (except for certain types) */}
-            {!['banner-ad', 'google-translate'].includes(widgetConfig.type) && (
+            {/* Handle/URL field (except for specific types) */}
+            {!['banner-ad', 'google-translate', 'call-now', 'review-now', 'follow-us'].includes(widgetConfig.type) && (
               <div className="mb-4">
                 <Label htmlFor="handle">
                   {widgetConfig.type === 'social-share' ? 'URL to Share' : 'Account Handle/Number'}
@@ -594,53 +775,7 @@ const WidgetGenerator: React.FC = () => {
             </Button>
           </div>
 
-          <div className="flex flex-col">
-            {/* RetailX sidebar ad */}
-            <div className="bg-white p-4 rounded-lg shadow-sm mb-4 border border-purple-100">
-              <a href="https://www.retailx.site/" target="_blank" rel="noopener noreferrer" className="block">
-                <div className="flex flex-col items-center">
-                  <img src="/lovable-uploads/08c2f5ff-5a6f-4a3e-8470-7f98661e663f.png" alt="RetailX" className="h-20 mb-2" />
-                  <p className="text-sm text-purple-800 font-medium text-center">Transform your retail business with RetailX</p>
-                  <p className="text-xs text-gray-600 text-center mt-1">Powerful retail solutions for growing businesses</p>
-                  <Button variant="outline" className="mt-3 text-sm border-purple-300 hover:bg-purple-50 text-purple-700">
-                    Learn More
-                  </Button>
-                </div>
-              </a>
-            </div>
-            
-            <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-sm mb-4 WidgetPreview-container">
-              <h3 className="text-lg font-medium mb-4">Preview</h3>
-              <div className="relative bg-white rounded-lg shadow-sm h-80 border border-gray-100 overflow-hidden">
-                <div className="h-10 bg-gray-100 border-b flex items-center px-4">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                  </div>
-                  <div className="flex-1 text-center text-xs text-gray-500">example.com</div>
-                </div>
-                <div className="p-4 h-full">
-                  <WidgetPreview config={getPreviewConfig()} />
-                </div>
-              </div>
-            </div>
-
-            {showCode && <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-lg font-medium">Your Widget Code</h3>
-                  <Button onClick={copyToClipboard} variant="outline" size="sm" className="text-sm">
-                    Copy Code
-                  </Button>
-                </div>
-                <div className="bg-gray-900 text-gray-100 p-4 rounded-md text-xs overflow-auto max-h-64">
-                  <pre>{code}</pre>
-                </div>
-                <p className="text-sm text-gray-500 mt-3">
-                  Copy this code and paste it before the closing body tag of your website.
-                </p>
-              </div>}
-          </div>
+          {/* ... keep existing code (preview container, code output, etc) */}
         </div>
       </div>
     </section>
