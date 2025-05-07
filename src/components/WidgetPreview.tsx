@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
 import ChatWidget from './ChatWidget';
 import SocialShare from './SocialShare';
 import GoogleTranslate from './GoogleTranslate';
 import BannerAd from './BannerAd';
+import { WidgetType } from '@/lib/widgetUtils';
 
 export interface ChatWidgetConfig {
   title: string;
@@ -34,11 +36,15 @@ export interface BannerAdConfig {
   textColor: string;
 }
 
-// Update WidgetConfig type to include BannerAdConfig
-export type WidgetConfig = ChatWidgetConfig | SocialShareConfig | GoogleTranslateConfig | BannerAdConfig;
+// Define conditional widget config type
+export type WidgetConfig = 
+  | ChatWidgetConfig 
+  | SocialShareConfig 
+  | GoogleTranslateConfig 
+  | BannerAdConfig;
 
 interface WidgetPreviewProps {
-  type: string;
+  type: WidgetType;
   config: WidgetConfig;
 }
 

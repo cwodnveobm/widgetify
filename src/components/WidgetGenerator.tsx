@@ -1,12 +1,13 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/hooks/use-toast";
 import { Copy, Check } from 'lucide-react';
 import WidgetPreview from './WidgetPreview';
-import { WIDGET_TYPES } from '@/lib/widgetUtils';
+import { WIDGET_TYPES, WidgetType } from '@/lib/widgetUtils';
 
 const WidgetGenerator: React.FC = () => {
-  const [selectedWidget, setSelectedWidget] = useState(WIDGET_TYPES[0].id);
+  const [selectedWidget, setSelectedWidget] = useState<WidgetType>('chat-widget');
   const [widgetCode, setWidgetCode] = useState<string | null>(null);
   const [isCodeCopied, setIsCodeCopied] = useState(false);
   const { toast } = useToast();
@@ -84,7 +85,7 @@ const WidgetGenerator: React.FC = () => {
 
     // Add banner ad code generation
     if (selectedWidget === 'banner-ad') {
-      return `
+      generatedCode = `
 <div id="widget-banner-ad" style="position: fixed; ${bannerPosition === 'top' ? 'top: 0;' : 'bottom: 0;'} left: 0; right: 0; background-color: ${bannerBackgroundColor}; color: ${bannerTextColor}; padding: 12px; z-index: 9999; display: flex; justify-content: space-between; align-items: center;">
   <div style="flex-grow: 1; text-align: center;">${bannerMessage}</div>
   <button onclick="document.getElementById('widget-banner-ad').style.display='none'" style="background: transparent; border: none; cursor: pointer; padding: 4px;">
@@ -100,17 +101,47 @@ const WidgetGenerator: React.FC = () => {
     setWidgetCode(generatedCode);
   };
 
-  const widgetConfig = {
-    chatButtonText,
-    chatButtonColor,
-    chatTextColor,
-    shareUrl,
-    socialButtons,
-	translateLanguages,
-    position: bannerPosition,
-    message: bannerMessage,
-    backgroundColor: bannerBackgroundColor,
-    textColor: bannerTextColor,
+  // Create proper configuration object based on the selected widget
+  const getWidgetConfig = () => {
+    if (selectedWidget === 'chat-widget') {
+      return {
+        title: 'Need help?',
+        message: 'Chat with us!',
+        buttonText: chatButtonText,
+        backgroundColor: chatButtonColor,
+        textColor: chatTextColor
+      };
+    }
+    
+    if (selectedWidget === 'social-share') {
+      return {
+        platforms: {
+          facebook: socialButtons.includes('facebook'),
+          twitter: socialButtons.includes('twitter'),
+          linkedin: socialButtons.includes('linkedin'),
+          whatsapp: socialButtons.includes('whatsapp'),
+          email: socialButtons.includes('email')
+        },
+        url: shareUrl
+      };
+    }
+    
+    if (selectedWidget === 'google-translate') {
+      return {
+        defaultLanguage: translateLanguages[0] || 'en'
+      };
+    }
+    
+    if (selectedWidget === 'banner-ad') {
+      return {
+        position: bannerPosition,
+        message: bannerMessage,
+        backgroundColor: bannerBackgroundColor,
+        textColor: bannerTextColor
+      };
+    }
+    
+    return {};
   };
 
   return (
@@ -126,13 +157,12 @@ const WidgetGenerator: React.FC = () => {
               <label className="block text-gray-700 font-medium mb-2">Widget Type</label>
               <select 
                 value={selectedWidget} 
-                onChange={(e) => setSelectedWidget(e.target.value)}
+                onChange={(e) => setSelectedWidget(e.target.value as WidgetType)}
                 className="block w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
               >
                 {WIDGET_TYPES.map(widget => (
                   <option key={widget.id} value={widget.id}>{widget.name}</option>
                 ))}
-                <option value="banner-ad">Banner Ad</option>
               </select>
             </div>
 
@@ -336,7 +366,7 @@ const WidgetGenerator: React.FC = () => {
             <div className="mb-4">
               <h4 className="font-medium text-gray-700 mb-2">Widget Preview:</h4>
               <div className="border border-gray-200 rounded-md overflow-hidden">
-                <WidgetPreview type={selectedWidget} config={widgetConfig} />
+                <WidgetPreview type={selectedWidget} config={getWidgetConfig()} />
               </div>
             </div>
             
