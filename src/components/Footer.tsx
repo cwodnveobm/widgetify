@@ -43,7 +43,7 @@ const Footer: React.FC = () => {
         </div>
         
         <div className="border-t border-gray-800 mt-8 md:mt-12 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-xs md:text-sm text-center md:text-left">© 2025 Widgetify. All rights reserved | Powered by Adwebcomic Agency</p>
+          <p className="text-xs md:text-sm text-center md:text-left">© 2025 Widgetify. All rights reserved | Powered by Muhammed Adnan</p>
           <div className="flex gap-4 mt-4 md:mt-0">
             <a href="https://razorpay.me/@aznoxx?amount=zPcDiUDYF4mzSgsG00XV0w%3D%3D" target="_blank" rel="noopener noreferrer" className="text-xs md:text-sm bg-primary/80 hover:bg-primary text-white px-3 py-1.5 rounded-md transition-colors">
               Donate ₹14
