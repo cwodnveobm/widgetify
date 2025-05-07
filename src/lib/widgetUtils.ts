@@ -1,58 +1,49 @@
-export type WidgetType = 'whatsapp' | 'facebook' | 'instagram' | 'twitter' | 'telegram' | 'linkedin' | 'social-share' | 'google-translate' | 'youtube' | 'github' | 'twitch' | 'slack' | 'discord';
+export type WidgetType = 'whatsapp' | 'facebook' | 'instagram' | 'twitter' | 'telegram' | 'linkedin' | 'social-share' | 'google-translate' | 'youtube' | 'github' | 'twitch' | 'slack' | 'discord' | 'chat-widget' | 'banner-ad';
 
-export interface WidgetConfig {
+export interface BaseWidgetConfig {
   type: WidgetType;
-  handle: string;
+  handle?: string;
   welcomeMessage?: string;
-  position?: 'left' | 'right';
+  position?: 'left' | 'right' | 'top' | 'bottom';
   primaryColor?: string;
   size?: 'small' | 'medium' | 'large';
-  networks?: string[]; // For social share buttons
-  shareText?: string;  // For social share buttons
-  shareUrl?: string;   // For social share buttons
-  languages?: string[]; // For Google Translate widget
+  networks?: string[];
+  shareText?: string;
+  shareUrl?: string;
+  message?: string;
+  backgroundColor?: string;
+  textColor?: string;
 }
 
-export interface ChatWidgetConfig extends WidgetConfig {
-  title: string;
-  message: string;
-  buttonText: string;
-  backgroundColor: string;
-  textColor: string;
+export interface ChatWidgetConfig extends BaseWidgetConfig {
+  type: 'chat-widget';
+  title?: string;
+  message?: string;
+  buttonText?: string;
+  backgroundColor?: string;
+  textColor?: string;
 }
 
-export interface SocialShareConfig extends WidgetConfig {
-  platforms: string[];
-  url: string;
+export interface SocialShareConfig extends BaseWidgetConfig {
+  type: 'social-share';
+  platforms?: string[];
+  url?: string;
 }
 
-export interface GoogleTranslateConfig extends WidgetConfig {
-  defaultLanguage: string;
+export interface GoogleTranslateConfig extends BaseWidgetConfig {
+  type: 'google-translate';
+  defaultLanguage?: string;
 }
 
-export interface BannerAdConfig extends WidgetConfig {
-  position: 'top' | 'bottom';
-  message: string;
-  backgroundColor: string;
-  textColor: string;
+export interface BannerAdConfig extends BaseWidgetConfig {
+  type: 'banner-ad';
+  position?: 'top' | 'bottom';
+  message?: string;
+  backgroundColor?: string;
+  textColor?: string;
 }
 
-export type WidgetConfig = 
-  | ChatWidgetConfig
-  | SocialShareConfig
-  | GoogleTranslateConfig
-  | BannerAdConfig
-  | {
-      type: WidgetType;
-      handle: string;
-      welcomeMessage?: string;
-      position?: 'left' | 'right';
-      primaryColor?: string;
-      size?: 'small' | 'medium' | 'large';
-      networks?: string[];
-      shareText?: string;
-      shareUrl?: string;
-    };
+export type WidgetConfig = BaseWidgetConfig | ChatWidgetConfig | SocialShareConfig | GoogleTranslateConfig | BannerAdConfig;
 
 // Generate WhatsApp Widget Code
 export const generateWhatsAppWidget = (config: WidgetConfig): string => {
@@ -1063,6 +1054,10 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
       return generateSocialShareWidget(config);
     case 'google-translate':
       return generateGoogleTranslateWidget(config);
+    case 'chat-widget':
+      return generateChatWidget(config);
+    case 'banner-ad':
+      return generateBannerAd(config);
     default:
       return generateWhatsAppWidget(config);
   }

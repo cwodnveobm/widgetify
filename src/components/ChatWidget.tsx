@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { X } from 'lucide-react';
+import { MessageCircle, X } from 'lucide-react';
 
 interface ChatWidgetProps {
   title: string;
@@ -22,59 +22,53 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({
   onToggle
 }) => {
   return (
-    <div className="fixed bottom-5 right-5 z-50 max-w-sm">
+    <div className="fixed bottom-5 right-5 z-50">
       {isOpen ? (
-        <div className="bg-white rounded-lg shadow-xl overflow-hidden flex flex-col w-72 h-96">
+        <div className="bg-white rounded-lg shadow-lg w-80 overflow-hidden">
           <div 
             className="p-4 flex justify-between items-center"
             style={{ backgroundColor, color: textColor }}
           >
             <h3 className="font-medium">{title}</h3>
             <button 
-              onClick={onToggle} 
-              className="text-white hover:bg-white/20 rounded-full p-1 transition-colors"
+              onClick={onToggle}
+              className="p-1 rounded-full hover:bg-black hover:bg-opacity-10"
             >
-              <X size={18} />
+              <X size={18} color={textColor} />
             </button>
           </div>
-          <div className="flex-1 p-4 overflow-y-auto">
-            <div className="bg-gray-100 p-3 rounded-lg mb-2 inline-block">
-              <p className="text-sm">{message}</p>
-            </div>
+          <div className="p-4">
+            <p className="text-gray-700 mb-4">{message}</p>
+            <textarea 
+              className="w-full border rounded-md p-2 text-sm mb-2" 
+              placeholder="Type your message..."
+              rows={3}
+            />
+            <button
+              className="w-full py-2 rounded-md font-medium"
+              style={{ backgroundColor, color: textColor }}
+            >
+              {buttonText}
+            </button>
           </div>
-          <div className="border-t p-3 bg-gray-50">
-            <div className="flex">
-              <input
-                type="text"
-                className="flex-1 border rounded-l-md px-3 py-2 text-sm focus:outline-none"
-                placeholder="Type a message..."
-              />
-              <button 
-                className="px-4 py-2 rounded-r-md text-sm"
-                style={{ backgroundColor, color: textColor }}
-              >
-                Send
-              </button>
-            </div>
-            <div className="text-xs text-center text-gray-500 mt-2">
-              <a 
-                href="https://widgetify.vercel.app/" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="text-gray-500 no-underline"
-              >
-                Powered by Widgetify
-              </a>
-            </div>
+          <div className="border-t p-2 text-center text-xs text-gray-500">
+            <a 
+              href="https://widgetify.vercel.app/" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="no-underline text-gray-500"
+            >
+              Powered by Widgetify
+            </a>
           </div>
         </div>
       ) : (
-        <button 
-          onClick={onToggle}
-          className="rounded-full shadow-lg p-4 flex items-center justify-center transition-transform hover:scale-105"
+        <button
+          className="w-14 h-14 rounded-full flex items-center justify-center shadow-lg"
           style={{ backgroundColor, color: textColor }}
+          onClick={onToggle}
         >
-          <span>{buttonText}</span>
+          <MessageCircle size={24} />
         </button>
       )}
     </div>

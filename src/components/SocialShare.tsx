@@ -8,50 +8,52 @@ interface SocialShareProps {
 }
 
 const SocialShare: React.FC<SocialShareProps> = ({ platforms, url }) => {
-  const shareToSocial = (platform: string) => {
-    let shareUrl = '';
-    
-    switch (platform) {
-      case 'facebook':
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
-        break;
-      case 'twitter':
-        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`;
-        break;
-      case 'linkedin':
-        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
-        break;
-      default:
-        return;
-    }
-    
-    window.open(shareUrl, '_blank', 'width=600,height=400');
-  };
-
+  const shareUrl = url || window.location.href;
+  const encodedUrl = encodeURIComponent(shareUrl);
+  
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-3">
-      {platforms.map((platform) => (
-        <button
-          key={platform}
-          onClick={() => shareToSocial(platform)}
-          className="w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-transform hover:scale-110"
-          style={{ 
-            backgroundColor: platform === 'facebook' ? '#1877F2' : 
-                            platform === 'twitter' ? '#1DA1F2' : 
-                            platform === 'linkedin' ? '#0A66C2' : '#6B7280' 
-          }}
-        >
-          {platform === 'facebook' && <Facebook color="white" size={24} />}
-          {platform === 'twitter' && <Twitter color="white" size={24} />}
-          {platform === 'linkedin' && <Linkedin color="white" size={24} />}
-        </button>
-      ))}
-      <div className="text-xs text-center text-gray-500 mt-1">
+    <div className="fixed bottom-5 right-5 z-50 bg-white rounded-lg shadow-lg p-3">
+      <div className="text-center text-sm font-medium mb-2">Share this page</div>
+      <div className="flex justify-center gap-2">
+        {platforms.includes('facebook') && (
+          <a 
+            href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center"
+          >
+            <Facebook size={18} />
+          </a>
+        )}
+        
+        {platforms.includes('twitter') && (
+          <a 
+            href={`https://twitter.com/intent/tweet?url=${encodedUrl}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-10 h-10 bg-blue-400 text-white rounded-full flex items-center justify-center"
+          >
+            <Twitter size={18} />
+          </a>
+        )}
+        
+        {platforms.includes('linkedin') && (
+          <a 
+            href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-10 h-10 bg-blue-700 text-white rounded-full flex items-center justify-center"
+          >
+            <Linkedin size={18} />
+          </a>
+        )}
+      </div>
+      <div className="text-xs text-center text-gray-500 mt-2">
         <a 
           href="https://widgetify.vercel.app/" 
           target="_blank" 
           rel="noopener noreferrer" 
-          className="text-gray-500 no-underline"
+          className="no-underline text-gray-500"
         >
           Powered by Widgetify
         </a>
