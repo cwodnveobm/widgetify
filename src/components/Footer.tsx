@@ -28,18 +28,7 @@ const Footer: React.FC = () => {
               <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
             </ul>
           </div>
-          <div className="col-span-1">
-            <h4 className="text-white font-medium mb-4">Support</h4>
-            <ul className="space-y-2 text-sm md:text-base">
-              
-              
-              <li>
-                <a href="https://razorpay.me/@aznoxx?amount=zPcDiUDYF4mzSgsG00XV0w%3D%3D" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-                  Donate
-                </a>
-              </li>
-            </ul>
-          </div>
+          
         </div>
         
         <div className="border-t border-gray-800 mt-8 md:mt-12 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center">
