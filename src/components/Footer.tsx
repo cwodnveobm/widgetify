@@ -31,7 +31,7 @@ const Footer: React.FC = () => {
           <div className="col-span-1">
             <h4 className="text-white font-medium mb-4">Support</h4>
             <ul className="space-y-2 text-sm md:text-base">
-              <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
+              
               
               <li>
                 <a href="https://razorpay.me/@aznoxx?amount=zPcDiUDYF4mzSgsG00XV0w%3D%3D" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
