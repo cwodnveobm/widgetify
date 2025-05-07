@@ -2,6 +2,10 @@
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
 import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle } from 'lucide-react';
+import ChatWidget from './ChatWidget';
+import SocialShare from './SocialShare';
+import GoogleTranslate from './GoogleTranslate';
+import BannerAd from './BannerAd';
 
 interface WidgetPreviewProps {
   config: WidgetConfig;
@@ -10,7 +14,59 @@ interface WidgetPreviewProps {
 const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   const { type, position, primaryColor, size, networks } = config;
   const [showPopup, setShowPopup] = useState(false);
+  const [showBanner, setShowBanner] = useState(true);
+  const [chatOpen, setChatOpen] = useState(false);
 
+  // For banner ad type
+  if (type === 'banner-ad' && showBanner) {
+    const bannerConfig = config as any;
+    return (
+      <BannerAd
+        position={bannerConfig.position || 'top'}
+        message={bannerConfig.message || 'Special offer!'}
+        backgroundColor={bannerConfig.backgroundColor || primaryColor || '#9b87f5'}
+        textColor={bannerConfig.textColor || '#ffffff'}
+        onClose={() => setShowBanner(false)}
+      />
+    );
+  }
+
+  // For chat widget type
+  if (type === 'chat-widget') {
+    const chatConfig = config as any;
+    return (
+      <ChatWidget
+        title={chatConfig.title || 'Need help?'}
+        message={chatConfig.message || 'Chat with us!'}
+        buttonText={chatConfig.buttonText || 'Open Chat'}
+        backgroundColor={chatConfig.backgroundColor || primaryColor || '#4CAF50'}
+        textColor={chatConfig.textColor || '#fff'}
+        isOpen={chatOpen}
+        onToggle={() => setChatOpen(!chatOpen)}
+      />
+    );
+  }
+
+  // For social share type
+  if (type === 'social-share') {
+    return (
+      <SocialShare
+        platforms={networks || ['facebook', 'twitter', 'linkedin']}
+        url={(config as any).shareUrl || window.location.href}
+      />
+    );
+  }
+
+  // For google translate type
+  if (type === 'google-translate') {
+    return (
+      <GoogleTranslate
+        defaultLanguage={(config as any).defaultLanguage || 'en'}
+      />
+    );
+  }
+
+  // Default widget behavior (from original code)
   const sizeMap = {
     small: '50px',
     medium: '60px',
