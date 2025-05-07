@@ -10,17 +10,7 @@ const Footer: React.FC = () => {
             <p className="mb-4 text-sm md:text-base">
               The easiest way to add chat widgets to your website and connect with your visitors via their preferred social media platform.
             </p>
-            <div className="flex gap-4 mt-6 mb-8 md:mb-0">
-              <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                <Facebook className="w-5 h-5 md:w-6 md:h-6" />
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                <Instagram className="w-5 h-5 md:w-6 md:h-6" />
-              </a>
-              <a href="#" className="text-gray-300 hover:text-white transition-colors">
-                <Twitter className="w-5 h-5 md:w-6 md:h-6" />
-              </a>
-            </div>
+            
             <div className="mt-4">
               <a href="https://www.producthunt.com/posts/widgetify-2?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-widgetify&#0045;2" target="_blank" rel="noopener noreferrer">
                 <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=961430&theme=light&t=1746523667957" alt="Widgetify - Chat&#0032;widgets | Product Hunt" style={{
