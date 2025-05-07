@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { WidgetConfig, WidgetType, generateWidgetCode } from '@/lib/widgetUtils';
 import { Button } from '@/components/ui/button';
@@ -11,7 +10,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Twitch, Slack, Phone, Star } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
-
 const WidgetGenerator: React.FC = () => {
   const [widgetConfig, setWidgetConfig] = useState<WidgetConfig>({
     type: 'whatsapp',
@@ -27,10 +25,8 @@ const WidgetGenerator: React.FC = () => {
     reviewUrl: '',
     followPlatform: 'linkedin'
   });
-  
   const [code, setCode] = useState<string>('');
   const [showCode, setShowCode] = useState<boolean>(false);
-  
   const handleTypeChange = (value: WidgetType) => {
     const colorMap: Record<WidgetType, string> = {
       whatsapp: '#25D366',
@@ -50,35 +46,30 @@ const WidgetGenerator: React.FC = () => {
       'review-now': '#FFC107',
       'follow-us': '#0077b5'
     };
-    
     setWidgetConfig({
       ...widgetConfig,
       type: value,
       primaryColor: colorMap[value]
     });
   };
-  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setWidgetConfig({
       ...widgetConfig,
       [e.target.name]: e.target.value
     });
   };
-  
   const handlePositionChange = (position: 'left' | 'right') => {
     setWidgetConfig({
       ...widgetConfig,
       position
     });
   };
-  
   const handleSizeChange = (size: string) => {
     setWidgetConfig({
       ...widgetConfig,
       size: size as 'small' | 'medium' | 'large'
     });
   };
-  
   const handleNetworkToggle = (network: string) => {
     const currentNetworks = widgetConfig.networks || [];
     if (currentNetworks.includes(network)) {
@@ -93,14 +84,12 @@ const WidgetGenerator: React.FC = () => {
       });
     }
   };
-
   const handleFollowPlatformChange = (platform: string) => {
     setWidgetConfig({
       ...widgetConfig,
       followPlatform: platform as 'linkedin' | 'instagram' | 'youtube'
     });
   };
-  
   const generateWidget = () => {
     // Validate based on widget type
     switch (widgetConfig.type) {
@@ -111,48 +100,44 @@ const WidgetGenerator: React.FC = () => {
         }
         // Use the URL provided by the user or default to current URL
         const shareUrl = widgetConfig.handle || window.location.href;
-        setWidgetConfig(prev => ({ ...prev, shareUrl }));
+        setWidgetConfig(prev => ({
+          ...prev,
+          shareUrl
+        }));
         break;
-        
       case 'call-now':
         if (!widgetConfig.phoneNumber) {
           toast.error('Please enter a phone number');
           return;
         }
         break;
-        
       case 'review-now':
         if (!widgetConfig.reviewUrl) {
           toast.error('Please enter a review URL');
           return;
         }
         break;
-        
       case 'follow-us':
         if (!widgetConfig.handle) {
           toast.error('Please enter a username/handle');
           return;
         }
         break;
-        
       default:
         if (widgetConfig.type !== 'google-translate' && !widgetConfig.handle) {
           toast.error('Please enter your handle/number');
           return;
         }
     }
-
     const generatedCode = generateWidgetCode(widgetConfig);
     setCode(generatedCode);
     setShowCode(true);
     toast.success('Widget code generated successfully!');
   };
-  
   const copyToClipboard = () => {
     navigator.clipboard.writeText(code);
     toast.success('Code copied to clipboard!');
   };
-  
   const getPlaceholderText = () => {
     switch (widgetConfig.type) {
       case 'whatsapp':
@@ -189,7 +174,6 @@ const WidgetGenerator: React.FC = () => {
         return 'Enter your handle';
     }
   };
-
   const getInputLabel = () => {
     switch (widgetConfig.type) {
       case 'social-share':
@@ -223,7 +207,6 @@ const WidgetGenerator: React.FC = () => {
   const TelegramIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
       <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5.46 7.12l-1.68 7.9c-.12.59-.5.84-1.01.52l-2.8-2.07-1.35 1.3c-.15.15-.27.27-.56.27-.36 0-.3-.14-.42-.47l-.95-3.12-2.77-1c-.6-.2-.6-.6.13-.9l10.8-4.15c.5-.18.96.12.61 1.32z" fill="#0088cc" />
     </svg>;
-    
   const ShareIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
       <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" fill="#6B7280" />
     </svg>;
@@ -277,7 +260,6 @@ const WidgetGenerator: React.FC = () => {
     'review-now': <Star className="h-6 w-6" />,
     'follow-us': <Linkedin className="h-6 w-6" />
   };
-  
   return <section id="widget-generator" className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
@@ -391,10 +373,7 @@ const WidgetGenerator: React.FC = () => {
 
                 <div>
                   <RadioGroupItem value="social-share" id="social-share" className="peer sr-only" />
-                  <Label htmlFor="social-share" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <ShareIcon />
-                    Social Share
-                  </Label>
+                  
                 </div>
 
                 <div>
@@ -423,8 +402,7 @@ const WidgetGenerator: React.FC = () => {
               </RadioGroup>
             </div>
 
-            {widgetConfig.type === 'social-share' && (
-              <>
+            {widgetConfig.type === 'social-share' && <>
                 <div className="mb-4">
                   <Label>Select Social Networks</Label>
                   <div className="mt-2 space-y-2">
@@ -458,11 +436,9 @@ const WidgetGenerator: React.FC = () => {
                   <Label htmlFor="shareText">Share Text</Label>
                   <Textarea id="shareText" name="shareText" value={widgetConfig.shareText} onChange={handleInputChange} placeholder="Share this awesome content!" className="mt-1" />
                 </div>
-              </>
-            )}
+              </>}
 
-            {widgetConfig.type === 'follow-us' && (
-              <div className="mb-4">
+            {widgetConfig.type === 'follow-us' && <div className="mb-4">
                 <Label>Select Platform</Label>
                 <RadioGroup defaultValue="linkedin" value={widgetConfig.followPlatform} onValueChange={handleFollowPlatformChange} className="grid grid-cols-3 gap-3 mt-2">
                   <div>
@@ -489,56 +465,19 @@ const WidgetGenerator: React.FC = () => {
                     </Label>
                   </div>
                 </RadioGroup>
-              </div>
-            )}
+              </div>}
 
             <div className="mb-4">
               <Label htmlFor={widgetConfig.type === 'call-now' ? 'phoneNumber' : widgetConfig.type === 'review-now' ? 'reviewUrl' : 'handle'}>
                 {getInputLabel()}
               </Label>
-              {widgetConfig.type === 'call-now' ? (
-                <Input 
-                  id="phoneNumber" 
-                  name="phoneNumber" 
-                  value={widgetConfig.phoneNumber} 
-                  onChange={handleInputChange} 
-                  placeholder={getPlaceholderText()} 
-                  className="mt-1" 
-                />
-              ) : widgetConfig.type === 'review-now' ? (
-                <Input 
-                  id="reviewUrl" 
-                  name="reviewUrl" 
-                  value={widgetConfig.reviewUrl} 
-                  onChange={handleInputChange} 
-                  placeholder={getPlaceholderText()} 
-                  className="mt-1" 
-                />
-              ) : (
-                <Input 
-                  id="handle" 
-                  name="handle" 
-                  value={widgetConfig.handle} 
-                  onChange={handleInputChange} 
-                  placeholder={getPlaceholderText()} 
-                  className="mt-1" 
-                />
-              )}
+              {widgetConfig.type === 'call-now' ? <Input id="phoneNumber" name="phoneNumber" value={widgetConfig.phoneNumber} onChange={handleInputChange} placeholder={getPlaceholderText()} className="mt-1" /> : widgetConfig.type === 'review-now' ? <Input id="reviewUrl" name="reviewUrl" value={widgetConfig.reviewUrl} onChange={handleInputChange} placeholder={getPlaceholderText()} className="mt-1" /> : <Input id="handle" name="handle" value={widgetConfig.handle} onChange={handleInputChange} placeholder={getPlaceholderText()} className="mt-1" />}
             </div>
 
-            {widgetConfig.type === 'whatsapp' && (
-              <div className="mb-4">
+            {widgetConfig.type === 'whatsapp' && <div className="mb-4">
                 <Label htmlFor="welcomeMessage">Welcome Message</Label>
-                <Textarea 
-                  id="welcomeMessage" 
-                  name="welcomeMessage" 
-                  value={widgetConfig.welcomeMessage} 
-                  onChange={handleInputChange} 
-                  placeholder="Hello! How can I help you today?" 
-                  className="mt-1" 
-                />
-              </div>
-            )}
+                <Textarea id="welcomeMessage" name="welcomeMessage" value={widgetConfig.welcomeMessage} onChange={handleInputChange} placeholder="Hello! How can I help you today?" className="mt-1" />
+              </div>}
 
             <div className="grid grid-cols-2 gap-4 mb-6">
               <div>
@@ -641,5 +580,4 @@ const WidgetGenerator: React.FC = () => {
       </div>
     </section>;
 };
-
 export default WidgetGenerator;
