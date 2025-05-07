@@ -916,4 +916,167 @@ export const generateSocialShareWidget = (config: WidgetConfig): string => {
       buttons += `
       <a href="https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}" target="_blank" rel="noopener noreferrer" class="widgetify-social-button" style="background-color: #1DA1F2;">
         <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
-          <path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.9
+          <path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/>
+        </svg>
+      </a>
+      `;
+    }
+    
+    if (networks.includes('linkedin')) {
+      buttons += `
+      <a href="https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedText}" target="_blank" rel="noopener noreferrer" class="widgetify-social-button" style="background-color: #0077B5;">
+        <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
+          <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+        </svg>
+      </a>
+      `;
+    }
+    
+    if (networks.includes('pinterest')) {
+      buttons += `
+      <a href="https://pinterest.com/pin/create/button/?url=${encodedUrl}&description=${encodedText}" target="_blank" rel="noopener noreferrer" class="widgetify-social-button" style="background-color: #E60023;">
+        <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
+          <path d="M12 2C6.48 2 2 6.48 2 12c0 4.21 2.59 7.82 6.25 9.3-.09-.79-.17-2.01.03-2.88.18-.78 1.17-4.97 1.17-4.97s-.3-.6-.3-1.49c0-1.39.81-2.43 1.81-2.43.85 0 1.26.64 1.26 1.41 0 .86-.55 2.14-.83 3.33-.24.99.5 1.8 1.48 1.8 1.78 0 3.14-1.88 3.14-4.57 0-2.39-1.72-4.06-4.18-4.06-2.85 0-4.51 2.13-4.51 4.33 0 .86.33 1.78.74 2.28.08.1.09.19.07.29-.08.31-.26.97-.3 1.1-.05.2-.16.24-.37.14-1.37-.65-2.22-2.69-2.22-4.34 0-3.51 2.55-6.72 7.34-6.72 3.86 0 6.87 2.75 6.87 6.42 0 3.82-2.41 6.9-5.74 6.9-1.12 0-2.17-.58-2.53-1.27 0 0-.55 2.11-.69 2.63-.25.93-.93 2.09-1.39 2.8 1.04.32 2.15.5 3.3.5 5.52 0 10-4.48 10-10S17.52 2 12 2z"/>
+        </svg>
+      </a>
+      `;
+    }
+    
+    if (networks.includes('whatsapp')) {
+      buttons += `
+      <a href="https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}" target="_blank" rel="noopener noreferrer" class="widgetify-social-button" style="background-color: #25D366;">
+        <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
+          <path d="M17.498 14.382c-.301-.15-1.767-.867-2.04-.966-.273-.101-.473-.15-.673.15-.197.295-.771.964-.944 1.162-.175.195-.349.21-.646.075-.3-.15-1.263-.465-2.403-1.485-.888-.795-1.484-1.77-1.66-2.07-.174-.3-.019-.465.13-.615.136-.135.301-.345.451-.523.146-.181.194-.301.297-.496.1-.21.049-.375-.025-.524-.075-.15-.672-1.62-.922-2.206-.24-.584-.487-.51-.672-.51-.172-.015-.371-.015-.571-.015-.2 0-.523.074-.797.359-.273.3-1.045 1.02-1.045 2.475s1.07 2.865 1.219 3.075c.149.195 2.105 3.195 5.1 4.485.714.3 1.27.48 1.704.629.714.227 1.365.195 1.88.121.574-.091 1.767-.721 2.016-1.426.255-.705.255-1.29.18-1.425-.074-.135-.27-.21-.57-.345m-5.446 7.443h-.016c-1.77 0-3.524-.48-5.055-1.38l-.36-.214-3.75.975 1.005-3.645-.239-.375c-.99-1.576-1.516-3.391-1.516-5.26 0-5.445 4.455-9.885 9.942-9.885 2.654 0 5.145 1.035 7.021 2.91 1.875 1.859 2.909 4.35 2.909 6.99-.004 5.444-4.46 9.885-9.935 9.885M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.893c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652c1.746.943 3.71 1.444 5.71 1.447h.006c6.585 0 11.946-5.336 11.949-11.896 0-3.176-1.24-6.165-3.495-8.411"/>
+        </svg>
+      </a>
+      `;
+    }
+    
+    if (networks.includes('email')) {
+      buttons += `
+      <a href="mailto:?subject=${encodedText}&body=${encodedUrl}" target="_blank" rel="noopener noreferrer" class="widgetify-social-button" style="background-color: #6B7280;">
+        <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
+          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+        </svg>
+      </a>
+      `;
+    }
+    
+    return buttons;
+  };
+  
+  return `
+<!-- Social Share Widget by Widgetify -->
+<style>
+  .widgetify-share-widget {
+    position: fixed;
+    bottom: 20px;
+    ${positionStyle}
+    z-index: 1000;
+  }
+  
+  .widgetify-share-button {
+    width: ${buttonSize}px;
+    height: ${buttonSize}px;
+    border-radius: 50%;
+    background-color: ${primaryColor};
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  
+  .widgetify-share-button:hover {
+    transform: scale(1.05);
+  }
+  
+  .widgetify-share-popup {
+    position: fixed;
+    bottom: ${buttonSize * 1.5}px;
+    ${positionStyle}
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 15px;
+    display: none;
+    flex-direction: column;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+  }
+  
+  .widgetify-share-popup.show {
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
+  }
+  
+  .widgetify-social-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .widgetify-social-button {
+    width: ${buttonSize * 0.9}px;
+    height: ${buttonSize * 0.9}px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s;
+  }
+  
+  .widgetify-social-button:hover {
+    transform: scale(1.1);
+  }
+  
+  .widgetify-branding {
+    font-size: 10px;
+    opacity: 0.7;
+    margin-top: 10px;
+    text-align: center;
+  }
+</style>
+
+<div class="widgetify-share-widget">
+  <div class="widgetify-share-button" id="widgetify-share-btn">
+    <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
+      <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
+    </svg>
+  </div>
+  
+  <div class="widgetify-share-popup" id="widgetify-share-popup">
+    <div style="font-weight: bold; margin-bottom: 10px;">Share this page</div>
+    <div class="widgetify-social-buttons">
+      ${generateSocialButtons()}
+    </div>
+    <div class="widgetify-branding">
+      <a href="https://widgetify.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+        Powered by Widgetify
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('widgetify-share-btn').addEventListener('click', function() {
+    document.getElementById('widgetify-share-popup').classList.toggle('show');
+  });
+  
+  // Close popup when clicking outside
+  document.addEventListener('click', function(event) {
+    const shareButton = document.getElementById('widgetify-share-btn');
+    const sharePopup = document.getElementById('widgetify-share-popup');
+    
+    if (!shareButton.contains(event.target) && !sharePopup.contains(event.target)) {
+      sharePopup.classList.remove('show');
+    }
+  });
+</script>
+<!-- End Social Share Widget by Widgetify -->
+  `.trim();
+};
