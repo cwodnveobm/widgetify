@@ -1,67 +1,17 @@
-export type WidgetType = 'whatsapp' | 'facebook' | 'instagram' | 'twitter' | 'telegram' | 'linkedin' | 'social-share' | 'google-translate' | 'youtube' | 'github' | 'twitch' | 'slack' | 'discord' | 'chat-widget' | 'banner-ad' | 'call-now' | 'review-now' | 'follow-us';
+export type WidgetType = 'whatsapp' | 'facebook' | 'instagram' | 'twitter' | 'telegram' | 'linkedin' | 'social-share' | 'google-translate' | 'youtube' | 'github' | 'twitch' | 'slack' | 'discord';
 
-export interface BaseWidgetConfig {
+export interface WidgetConfig {
   type: WidgetType;
-  handle?: string;
+  handle: string;
   welcomeMessage?: string;
-  position?: 'left' | 'right' | 'top' | 'bottom';
+  position?: 'left' | 'right';
   primaryColor?: string;
   size?: 'small' | 'medium' | 'large';
-  networks?: string[];
-  shareText?: string;
-  shareUrl?: string;
-  message?: string;
-  backgroundColor?: string;
-  textColor?: string;
+  networks?: string[]; // For social share buttons
+  shareText?: string;  // For social share buttons
+  shareUrl?: string;   // For social share buttons
+  languages?: string[]; // For Google Translate widget
 }
-
-export interface ChatWidgetConfig extends BaseWidgetConfig {
-  type: 'chat-widget';
-  title?: string;
-  message?: string;
-  buttonText?: string;
-  backgroundColor?: string;
-  textColor?: string;
-}
-
-export interface SocialShareConfig extends BaseWidgetConfig {
-  type: 'social-share';
-  platforms?: string[];
-  url?: string;
-}
-
-export interface GoogleTranslateConfig extends BaseWidgetConfig {
-  type: 'google-translate';
-  defaultLanguage?: string;
-}
-
-export interface BannerAdConfig extends BaseWidgetConfig {
-  type: 'banner-ad';
-  position?: 'top' | 'bottom';
-  message?: string;
-  backgroundColor?: string;
-  textColor?: string;
-}
-
-export interface CallNowConfig extends BaseWidgetConfig {
-  type: 'call-now';
-  phoneNumber: string;
-}
-
-export interface ReviewNowConfig extends BaseWidgetConfig {
-  type: 'review-now';
-  reviewUrl: string;
-  reviewText?: string;
-}
-
-export interface FollowUsConfig extends BaseWidgetConfig {
-  type: 'follow-us';
-  platform: 'linkedin' | 'instagram' | 'youtube';
-  username: string;
-  buttonText?: string;
-}
-
-export type WidgetConfig = BaseWidgetConfig | ChatWidgetConfig | SocialShareConfig | GoogleTranslateConfig | BannerAdConfig | CallNowConfig | ReviewNowConfig | FollowUsConfig;
 
 // Generate WhatsApp Widget Code
 export const generateWhatsAppWidget = (config: WidgetConfig): string => {
@@ -440,7 +390,7 @@ export const generateInstagramWidget = (config: WidgetConfig): string => {
 <div class="widgetify-chat-widget">
   <div class="widgetify-chat-button" id="widgetify-instagram-btn">
     <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
-      <path d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.254 1.216.598 1.772 1.153.509.5.902 1.105 1.153 1.772.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772c-.5.508-1.105.902-1.772 1.153-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.904 4.904 0 0 1-1.153-1.772c-.247-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2zm0 1.802c-2.67 0-2.987.01-4.04.059-.976.045-1.505.207-1.858.344-.466.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.048 1.053-.058 1.37-.058 4.04 0 2.67.01 2.988.058 4.04.045.977.207 1.505.344 1.858.182.466.398.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.04.058 2.67 0 2.987-.01 4.04-.058.977-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.054.058-1.37.058-4.04 0-2.67-.01-2.988-.058-4.04-.045-.977-.207-1.505-.344-1.858a3.097 3.097 0 0 0-.748-1.15 3.098 3.098 0 0 0-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.054-.048-1.37-.058-4.04-.058zm0 3.063a5.135 5.135 0 1 1 0 10.27 5.135 5.135 0 0 1 0-10.27zm0 8.468a3.333 3.333 0 1 0 0-6.666 3.333 3.333 0 0 0 0 6.666zm6.538-8.469a1.2 1.2 0 1 1-2.4 0 1.2 1.2 0 0 1 2.4 0z"/>
+      <path d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.254 1.216.598 1.772 1.153.509.5.902 1.105 1.153 1.772.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772c-.5.508-1.105.902-1.772 1.153-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.904 4.904 0 0 1-1.153-1.772c-.247-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2zm0 1.802c-2.67 0-2.987.01-4.04.059-.976.045-1.505.207-1.858.344-.466.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.048 1.053-.058 1.37-.058 4.04 0 2.67.01 2.988.058 4.04.045.977.207 1.505.344 1.858.182.466.398.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.04.058 2.67 0 2.987-.01 4.04-.058.977-.045 1.505-.207 1.858-.344v.06c0 2.257 1.605 4.14 3.737 4.568-.392.106-.803.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/>
     </svg>
   </div>
   
@@ -924,39 +874,9 @@ export const generateSocialShareWidget = (config: WidgetConfig): string => {
     
     if (networks.includes('linkedin')) {
       buttons += `
-      <a href="https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedText}" target="_blank" rel="noopener noreferrer" class="widgetify-social-button" style="background-color: #0077B5;">
+      <a href="https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}" target="_blank" rel="noopener noreferrer" class="widgetify-social-button" style="background-color: #0077B5;">
         <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
           <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
-        </svg>
-      </a>
-      `;
-    }
-    
-    if (networks.includes('pinterest')) {
-      buttons += `
-      <a href="https://pinterest.com/pin/create/button/?url=${encodedUrl}&description=${encodedText}" target="_blank" rel="noopener noreferrer" class="widgetify-social-button" style="background-color: #E60023;">
-        <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
-          <path d="M12 2C6.48 2 2 6.48 2 12c0 4.21 2.59 7.82 6.25 9.3-.09-.79-.17-2.01.03-2.88.18-.78 1.17-4.97 1.17-4.97s-.3-.6-.3-1.49c0-1.39.81-2.43 1.81-2.43.85 0 1.26.64 1.26 1.41 0 .86-.55 2.14-.83 3.33-.24.99.5 1.8 1.48 1.8 1.78 0 3.14-1.88 3.14-4.57 0-2.39-1.72-4.06-4.18-4.06-2.85 0-4.51 2.13-4.51 4.33 0 .86.33 1.78.74 2.28.08.1.09.19.07.29-.08.31-.26.97-.3 1.1-.05.2-.16.24-.37.14-1.37-.65-2.22-2.69-2.22-4.34 0-3.51 2.55-6.72 7.34-6.72 3.86 0 6.87 2.75 6.87 6.42 0 3.82-2.41 6.9-5.74 6.9-1.12 0-2.17-.58-2.53-1.27 0 0-.55 2.11-.69 2.63-.25.93-.93 2.09-1.39 2.8 1.04.32 2.15.5 3.3.5 5.52 0 10-4.48 10-10S17.52 2 12 2z"/>
-        </svg>
-      </a>
-      `;
-    }
-    
-    if (networks.includes('whatsapp')) {
-      buttons += `
-      <a href="https://api.whatsapp.com/send?text=${encodedText}%20${encodedUrl}" target="_blank" rel="noopener noreferrer" class="widgetify-social-button" style="background-color: #25D366;">
-        <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
-          <path d="M17.498 14.382c-.301-.15-1.767-.867-2.04-.966-.273-.101-.473-.15-.673.15-.197.295-.771.964-.944 1.162-.175.195-.349.21-.646.075-.3-.15-1.263-.465-2.403-1.485-.888-.795-1.484-1.77-1.66-2.07-.174-.3-.019-.465.13-.615.136-.135.301-.345.451-.523.146-.181.194-.301.297-.496.1-.21.049-.375-.025-.524-.075-.15-.672-1.62-.922-2.206-.24-.584-.487-.51-.672-.51-.172-.015-.371-.015-.571-.015-.2 0-.523.074-.797.359-.273.3-1.045 1.02-1.045 2.475s1.07 2.865 1.219 3.075c.149.195 2.105 3.195 5.1 4.485.714.3 1.27.48 1.704.629.714.227 1.365.195 1.88.121.574-.091 1.767-.721 2.016-1.426.255-.705.255-1.29.18-1.425-.074-.135-.27-.21-.57-.345m-5.446 7.443h-.016c-1.77 0-3.524-.48-5.055-1.38l-.36-.214-3.75.975 1.005-3.645-.239-.375c-.99-1.576-1.516-3.391-1.516-5.26 0-5.445 4.455-9.885 9.942-9.885 2.654 0 5.145 1.035 7.021 2.91 1.875 1.859 2.909 4.35 2.909 6.99-.004 5.444-4.46 9.885-9.935 9.885M20.52 3.449C18.24 1.245 15.24 0 12.045 0 5.463 0 .104 5.334.101 11.893c0 2.096.549 4.14 1.595 5.945L0 24l6.335-1.652c1.746.943 3.71 1.444 5.71 1.447h.006c6.585 0 11.946-5.336 11.949-11.896 0-3.176-1.24-6.165-3.495-8.411"/>
-        </svg>
-      </a>
-      `;
-    }
-    
-    if (networks.includes('email')) {
-      buttons += `
-      <a href="mailto:?subject=${encodedText}&body=${encodedUrl}" target="_blank" rel="noopener noreferrer" class="widgetify-social-button" style="background-color: #6B7280;">
-        <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
-          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
         </svg>
       </a>
       `;
@@ -973,9 +893,13 @@ export const generateSocialShareWidget = (config: WidgetConfig): string => {
     bottom: 20px;
     ${positionStyle}
     z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
   }
   
-  .widgetify-share-button {
+  .widgetify-share-toggle {
     width: ${buttonSize}px;
     height: ${buttonSize}px;
     border-radius: 50%;
@@ -988,45 +912,34 @@ export const generateSocialShareWidget = (config: WidgetConfig): string => {
     transition: all 0.3s;
   }
   
-  .widgetify-share-button:hover {
+  .widgetify-share-toggle:hover {
     transform: scale(1.05);
-  }
-  
-  .widgetify-share-popup {
-    position: fixed;
-    bottom: ${buttonSize * 1.5}px;
-    ${positionStyle}
-    background-color: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    padding: 15px;
-    display: none;
-    flex-direction: column;
-    transform: translateY(20px);
-    opacity: 0;
-    transition: transform 0.3s, opacity 0.3s;
-  }
-  
-  .widgetify-share-popup.show {
-    display: flex;
-    transform: translateY(0);
-    opacity: 1;
   }
   
   .widgetify-social-buttons {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     gap: 10px;
-    margin-top: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s;
+  }
+  
+  .widgetify-social-buttons.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
   }
   
   .widgetify-social-button {
-    width: ${buttonSize * 0.9}px;
-    height: ${buttonSize * 0.9}px;
+    width: ${buttonSize}px;
+    height: ${buttonSize}px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     transition: transform 0.2s;
   }
   
@@ -1037,46 +950,79 @@ export const generateSocialShareWidget = (config: WidgetConfig): string => {
   .widgetify-branding {
     font-size: 10px;
     opacity: 0.7;
-    margin-top: 10px;
+    color: #888;
     text-align: center;
   }
 </style>
 
 <div class="widgetify-share-widget">
-  <div class="widgetify-share-button" id="widgetify-share-btn">
-    <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
-      <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/>
-    </svg>
-  </div>
-  
-  <div class="widgetify-share-popup" id="widgetify-share-popup">
-    <div style="font-weight: bold; margin-bottom: 10px;">Share this page</div>
-    <div class="widgetify-social-buttons">
-      ${generateSocialButtons()}
-    </div>
+  <div class="widgetify-social-buttons" id="widgetify-social-buttons">
+    ${generateSocialButtons()}
     <div class="widgetify-branding">
       <a href="https://widgetify.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
         Powered by Widgetify
       </a>
     </div>
   </div>
+  <div class="widgetify-share-toggle" id="widgetify-share-toggle">
+    <svg width="${buttonSize * 0.5}" height="${buttonSize * 0.5}" viewBox="0 0 24 24" fill="white">
+      <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/>
+    </svg>
+  </div>
 </div>
 
 <script>
-  document.getElementById('widgetify-share-btn').addEventListener('click', function() {
-    document.getElementById('widgetify-share-popup').classList.toggle('show');
-  });
-  
-  // Close popup when clicking outside
-  document.addEventListener('click', function(event) {
-    const shareButton = document.getElementById('widgetify-share-btn');
-    const sharePopup = document.getElementById('widgetify-share-popup');
-    
-    if (!shareButton.contains(event.target) && !sharePopup.contains(event.target)) {
-      sharePopup.classList.remove('show');
-    }
+  document.getElementById('widgetify-share-toggle').addEventListener('click', function() {
+    document.getElementById('widgetify-social-buttons').classList.toggle('show');
   });
 </script>
 <!-- End Social Share Widget by Widgetify -->
   `.trim();
+};
+
+// Generate Google Translate Widget Code
+export const generateGoogleTranslateWidget = (config: WidgetConfig): string => {
+  return `
+<!-- Google Translate Widget by Widgetify -->
+<div id="google_translate_element"></div>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({pageLanguage: 'en'}, 'google_translate_element');
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+<div style="font-size: 10px; margin-top: 10px; opacity: 0.7; text-align: center;">
+  <a href="https://widgetify.vercel.app/" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">
+    Powered by Widgetify
+  </a>
+</div>
+<!-- End Google Translate Widget by Widgetify -->
+  `.trim();
+};
+
+// General widget generator function
+export const generateWidgetCode = (config: WidgetConfig): string => {
+  switch (config.type) {
+    case 'whatsapp':
+      return generateWhatsAppWidget(config);
+    case 'facebook':
+      return generateFacebookWidget(config);
+    case 'instagram':
+      return generateInstagramWidget(config);
+    case 'twitter':
+      return generateTwitterWidget(config);
+    case 'telegram':
+      return generateTelegramWidget(config);
+    case 'linkedin':
+      return generateLinkedInWidget(config);
+    case 'social-share':
+      return generateSocialShareWidget(config);
+    case 'google-translate':
+      return generateGoogleTranslateWidget(config);
+    default:
+      return generateWhatsAppWidget(config);
+  }
 };

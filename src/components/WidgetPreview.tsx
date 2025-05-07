@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
-import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, PhoneCall, Star } from 'lucide-react';
-import BannerAd from './BannerAd';
+import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle } from 'lucide-react';
 
 interface WidgetPreviewProps {
   config: WidgetConfig;
@@ -11,184 +10,20 @@ interface WidgetPreviewProps {
 const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   const { type, position, primaryColor, size, networks } = config;
   const [showPopup, setShowPopup] = useState(false);
-  const [showBanner, setShowBanner] = useState(true);
-  const [chatOpen, setChatOpen] = useState(false);
 
-  // For banner ad type
-  if (type === 'banner-ad' && showBanner) {
-    const bannerConfig = config as any;
-    return (
-      <BannerAd
-        position={bannerConfig.position || 'top'}
-        message={bannerConfig.message || 'Special offer!'}
-        backgroundColor={bannerConfig.backgroundColor || primaryColor || '#9b87f5'}
-        textColor={bannerConfig.textColor || '#ffffff'}
-        onClose={() => setShowBanner(false)}
-      />
-    );
-  }
-
-  // For chat widget type
-  if (type === 'chat-widget') {
-    // Just show a placeholder for now
-    return (
-      <div 
-        className="fixed bottom-5 right-5 bg-green-500 text-white p-4 rounded-lg shadow-lg cursor-pointer"
-        style={{ backgroundColor: primaryColor || '#4CAF50' }}
-      >
-        <div className="flex items-center gap-2">
-          <MessageCircle size={20} />
-          <span>Chat with us</span>
-        </div>
-      </div>
-    );
-  }
-
-  // For social share type
-  if (type === 'social-share') {
-    return (
-      <div className="fixed bottom-5 right-5 flex flex-col gap-2">
-        <div className="bg-white p-2 rounded-lg shadow-lg text-xs text-center">
-          Share on social media
-        </div>
-        <div className="flex gap-2">
-          {networks?.includes('facebook') && (
-            <div className="bg-blue-600 text-white p-2 rounded-full">
-              <Facebook size={16} />
-            </div>
-          )}
-          {networks?.includes('twitter') && (
-            <div className="bg-blue-400 text-white p-2 rounded-full">
-              <Twitter size={16} />
-            </div>
-          )}
-          {networks?.includes('linkedin') && (
-            <div className="bg-blue-800 text-white p-2 rounded-full">
-              <Linkedin size={16} />
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // For google translate type
-  if (type === 'google-translate') {
-    return (
-      <div className="fixed bottom-5 right-5 bg-blue-500 text-white p-3 rounded-lg shadow-lg">
-        <div className="flex items-center gap-2">
-          <svg width={20} height={20} viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" />
-          </svg>
-          <span>Translate</span>
-        </div>
-      </div>
-    );
-  }
-  
-  // For call-now widget type
-  if (type === 'call-now') {
-    const callConfig = config as any;
-    const buttonPos = position === 'left' ? 'left-5' : 'right-5';
-    
-    return (
-      <div className={`fixed bottom-5 ${buttonPos} flex flex-col items-center`}>
-        <a 
-          className="w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
-          style={{ backgroundColor: primaryColor || '#FF5722' }}
-          href={`tel:${callConfig.phoneNumber || '1234567890'}`}
-        >
-          <PhoneCall size={24} />
-        </a>
-        <div className="text-xs mt-2 bg-white px-2 py-1 rounded shadow">Call Now</div>
-      </div>
-    );
-  }
-  
-  // For review-now widget type
-  if (type === 'review-now') {
-    const reviewConfig = config as any;
-    const buttonPos = position === 'left' ? 'left-5' : 'right-5';
-    
-    return (
-      <div className={`fixed bottom-5 ${buttonPos} flex flex-col items-center`}>
-        <a 
-          className="w-12 h-12 bg-yellow-500 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
-          style={{ backgroundColor: primaryColor || '#FFC107' }}
-          href={reviewConfig.reviewUrl || '#'}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Star size={24} />
-        </a>
-        <div className="text-xs mt-2 bg-white px-2 py-1 rounded shadow">
-          {reviewConfig.reviewText || 'Leave a Review'}
-        </div>
-      </div>
-    );
-  }
-  
-  // For follow-us widget type
-  if (type === 'follow-us') {
-    const followConfig = config as any;
-    const buttonPos = position === 'left' ? 'left-5' : 'right-5';
-    const platform = followConfig.platform || 'linkedin';
-    
-    let platformIcon;
-    let platformColor = primaryColor;
-    let platformText = followConfig.buttonText || 'Follow Us';
-    
-    switch (platform) {
-      case 'linkedin':
-        platformIcon = <Linkedin size={24} />;
-        platformColor = primaryColor || '#0077B5';
-        platformText = followConfig.buttonText || 'Connect on LinkedIn';
-        break;
-      case 'instagram':
-        platformIcon = <Instagram size={24} />;
-        platformColor = primaryColor || '#E1306C';
-        platformText = followConfig.buttonText || 'Follow on Instagram';
-        break;
-      case 'youtube':
-        platformIcon = <Youtube size={24} />;
-        platformColor = primaryColor || '#FF0000';
-        platformText = followConfig.buttonText || 'Subscribe on YouTube';
-        break;
-      default:
-        platformIcon = <Linkedin size={24} />;
-    }
-    
-    return (
-      <div className={`fixed bottom-5 ${buttonPos} flex flex-col items-center`}>
-        <a 
-          className="w-12 h-12 text-white rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
-          style={{ backgroundColor: platformColor }}
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {platformIcon}
-        </a>
-        <div className="text-xs mt-2 bg-white px-2 py-1 rounded shadow">{platformText}</div>
-      </div>
-    );
-  }
-
-  // Default widget behavior (from original code)
   const sizeMap = {
     small: '50px',
     medium: '60px',
     large: '70px',
   };
 
-  const buttonSize = sizeMap[size || 'medium'];
   const buttonStyle = {
-    width: buttonSize,
-    height: buttonSize,
+    width: sizeMap[size || 'medium'],
+    height: sizeMap[size || 'medium'],
     backgroundColor: primaryColor || '#25D366',
     position: 'absolute',
     bottom: '20px',
-    [position === 'left' ? 'left' : 'right']: '20px',
+    [position || 'right']: '20px',
     borderRadius: '50%',
     display: 'flex',
     justifyContent: 'center',
@@ -202,7 +37,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   const popupStyle = {
     position: 'absolute',
     bottom: '90px',
-    [position === 'left' ? 'left' : 'right']: '20px',
+    [position || 'right']: '20px',
     width: '280px',
     height: '350px',
     backgroundColor: 'white',
@@ -218,9 +53,30 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     overflow: 'hidden',
   } as React.CSSProperties;
 
-  const togglePopup = () => {
-    setShowPopup(!showPopup);
-  };
+  const socialButtonsContainerStyle = {
+    position: 'absolute',
+    bottom: '90px',
+    [position || 'right']: '20px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '10px',
+    transition: 'all 0.3s ease',
+    opacity: showPopup ? 1 : 0,
+    transform: showPopup ? 'translateY(0)' : 'translateY(20px)',
+    visibility: showPopup ? 'visible' : 'hidden',
+  } as React.CSSProperties;
+
+  const socialButtonStyle = (color: string) => ({
+    width: parseInt(sizeMap[size || 'medium'], 10) * 0.8 + 'px',
+    height: parseInt(sizeMap[size || 'medium'], 10) * 0.8 + 'px',
+    backgroundColor: color,
+    borderRadius: '50%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+    cursor: 'pointer',
+  });
 
   // Custom Icon Components
   const WhatsAppIcon = ({ size }: { size: number }) => (
@@ -235,8 +91,32 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     </svg>
   );
 
+  const LinkedInIcon = ({ size }: { size: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="white">
+      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+    </svg>
+  );
+
+  const ShareIcon = ({ size }: { size: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="white">
+      <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/>
+    </svg>
+  );
+
+  const GoogleTranslateIcon = ({ size }: { size: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="white">
+      <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+    </svg>
+  );
+
+  const DiscordIcon = ({ size }: { size: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="white">
+      <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.39-.444.898-.608 1.297a19.42 19.42 0 0 0-5.834 0 12.517 12.517 0 0 0-.617-1.297.077.077 0 0 0-.079-.036c-1.714.29-3.354.8-4.885 1.49a.07.07 0 0 0-.032.028C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.209 13.209 0 0 1-1.872-.878.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.291.074.074 0 0 1 .077-.01c3.928 1.764 8.18 1.764 12.061 0a.074.074 0 0 1 .078.01c.12.098.245.198.372.292a.077.077 0 0 1-.006.127c-.598.344-1.22.635-1.873.877a.077.077 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.964 19.964 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/>
+    </svg>
+  );
+
   const getIcon = () => {
-    const iconSize = parseInt(buttonSize, 10) * 0.5;
+    const iconSize = parseInt(sizeMap[size || 'medium'], 10) * 0.5;
     
     switch (type) {
       case 'whatsapp':
@@ -250,7 +130,11 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       case 'telegram':
         return <TelegramIcon size={iconSize} />;
       case 'linkedin':
-        return <Linkedin size={iconSize} color="white" />;
+        return <LinkedInIcon size={iconSize} />;
+      case 'social-share':
+        return <ShareIcon size={iconSize} />;
+      case 'google-translate':
+        return <GoogleTranslateIcon size={iconSize} />;
       case 'youtube':
         return <Youtube size={iconSize} color="white" />;
       case 'github':
@@ -260,35 +144,140 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       case 'slack':
         return <Slack size={iconSize} color="white" />;
       case 'discord':
-        return <MessageCircle size={iconSize} color="white" />;
-      case 'call-now':
-        return <PhoneCall size={iconSize} color="white" />;
-      case 'review-now':
-        return <Star size={iconSize} color="white" />;
+        return <DiscordIcon size={iconSize} />;
       default:
         return <MessageCircle size={iconSize} color="white" />;
     }
   };
 
-  const widgetContent = showPopup && (
-    <div style={popupStyle} className="animate-fade-in">
-      <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
-        <div className="font-medium">{type.toUpperCase()}</div>
-        <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700">
-          ×
-        </button>
-      </div>
-      <div className="flex-grow p-3 overflow-y-auto bg-white">
-        <div className="bg-gray-100 p-2 rounded-lg mb-2 max-w-[80%]">
-          <p className="text-xs">How can I help you today?</p>
+  const togglePopup = () => {
+    setShowPopup(!showPopup);
+  };
+
+  const renderSocialButtons = () => {
+    if (type !== 'social-share' || !networks) return null;
+    
+    return (
+      <div style={socialButtonsContainerStyle} className="animate-fade-in">
+        {networks.includes('facebook') && (
+          <div style={socialButtonStyle('#1877F2')}>
+            <Facebook size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
+          </div>
+        )}
+        {networks.includes('twitter') && (
+          <div style={socialButtonStyle('#1DA1F2')}>
+            <Twitter size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
+          </div>
+        )}
+        {networks.includes('linkedin') && (
+          <div style={socialButtonStyle('#0077B5')}>
+            <Linkedin size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
+          </div>
+        )}
+        <div className="text-xs text-gray-500 text-center mt-1">
+          <a 
+            href="https://widgetify.vercel.app/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-gray-500 no-underline"
+          >
+            Powered by Widgetify
+          </a>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
+
+  const getWidgetTitle = () => {
+    switch (type) {
+      case 'whatsapp': return 'WhatsApp Chat';
+      case 'facebook': return 'Facebook Messenger';
+      case 'instagram': return 'Instagram';
+      case 'twitter': return 'Twitter';
+      case 'telegram': return 'Telegram';
+      case 'linkedin': return 'LinkedIn';
+      case 'social-share': return 'Share';
+      case 'google-translate': return 'Google Translate';
+      case 'youtube': return 'YouTube';
+      case 'github': return 'GitHub';
+      case 'twitch': return 'Twitch';
+      case 'slack': return 'Slack';
+      case 'discord': return 'Discord';
+      default: return 'Chat';
+    }
+  };
+
+  const getWidgetContent = () => {
+    switch (type) {
+      case 'social-share':
+        return renderSocialButtons();
+      case 'google-translate':
+        return (
+          <div style={popupStyle} className="animate-fade-in">
+            <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
+              <div className="font-medium">{getWidgetTitle()}</div>
+              <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700">
+                ×
+              </button>
+            </div>
+            <div className="flex-grow p-3 overflow-y-auto bg-white">
+              <div className="bg-gray-100 p-2 rounded-lg mb-2">
+                <p className="text-xs text-center">Standard Google Translate Element</p>
+                <div className="border border-dashed p-2 mt-2 text-center">
+                  <code className="text-xs">&lt;div id="google_translate_element"&gt;&lt;/div&gt;</code>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      default:
+        return (
+          <div style={popupStyle} className="animate-fade-in">
+            <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
+              <div className="font-medium">{getWidgetTitle()}</div>
+              <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700 text-lg">
+                ×
+              </button>
+            </div>
+            <div className="flex-grow p-3 overflow-y-auto bg-white">
+              <div className="bg-gray-100 p-2 rounded-lg mb-2 max-w-[80%]">
+                <p className="text-xs">How can I help you today?</p>
+              </div>
+            </div>
+            <div className="p-3 border-t bg-gray-50 rounded-b-lg">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Type a message..."
+                  className="flex-grow text-xs p-2 border rounded"
+                />
+                <button
+                  className="bg-gray-200 p-2 rounded"
+                >
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                  </svg>
+                </button>
+              </div>
+              <div className="text-xs text-gray-500 text-center mt-2">
+                <a 
+                  href="https://widgetify.vercel.app/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-gray-500 no-underline"
+                >
+                  Powered by Widgetify
+                </a>
+              </div>
+            </div>
+          </div>
+        );
+    }
+  };
 
   return (
     <div className="relative w-full h-full">
-      {widgetContent}
+      {showPopup && getWidgetContent()}
       
       <div 
         style={buttonStyle} 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { WidgetConfig, WidgetType, generateWidgetCode, BaseWidgetConfig } from '@/lib/widgetUtils';
+import { WidgetConfig, WidgetType, generateWidgetCode } from '@/lib/widgetUtils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,35 +8,10 @@ import WidgetPreview from '@/components/WidgetPreview';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Twitch, Slack, MessageCircle, X, PhoneCall, Star } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Twitch, Slack } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
-
-// Type definition for our widget configurations
-type ExtendedWidgetConfig = {
-  type: WidgetType;
-  handle: string;
-  welcomeMessage: string;
-  position: 'left' | 'right' | 'top' | 'bottom';
-  primaryColor: string;
-  size: 'small' | 'medium' | 'large';
-  networks: string[];
-  shareText: string;
-  shareUrl: string;
-  title?: string;
-  message?: string;
-  buttonText?: string;
-  backgroundColor?: string;
-  textColor?: string;
-  defaultLanguage?: string;
-  phoneNumber?: string;
-  reviewUrl?: string;
-  reviewText?: string;
-  platform?: 'linkedin' | 'instagram' | 'youtube';
-  username?: string;
-};
-
 const WidgetGenerator: React.FC = () => {
-  const [widgetConfig, setWidgetConfig] = useState<ExtendedWidgetConfig>({
+  const [widgetConfig, setWidgetConfig] = useState<WidgetConfig>({
     type: 'whatsapp',
     handle: '',
     welcomeMessage: 'Hello! How can I help you today?',
@@ -47,85 +22,10 @@ const WidgetGenerator: React.FC = () => {
     shareText: 'Check out this awesome website!',
     shareUrl: ''
   });
-  
   const [code, setCode] = useState<string>('');
   const [showCode, setShowCode] = useState<boolean>(false);
-
-  // Function to convert our ExtendedWidgetConfig to the appropriate WidgetConfig type for the preview
-  const getPreviewConfig = (): WidgetConfig => {
-    const baseConfig: BaseWidgetConfig = {
-      type: widgetConfig.type,
-      handle: widgetConfig.handle,
-      welcomeMessage: widgetConfig.welcomeMessage,
-      position: widgetConfig.position,
-      primaryColor: widgetConfig.primaryColor,
-      size: widgetConfig.size,
-    };
-
-    switch (widgetConfig.type) {
-      case 'social-share':
-        return {
-          ...baseConfig,
-          type: 'social-share',
-          networks: widgetConfig.networks,
-          shareText: widgetConfig.shareText,
-          shareUrl: widgetConfig.shareUrl || window.location.href,
-          platforms: widgetConfig.networks
-        };
-      case 'google-translate':
-        return {
-          ...baseConfig,
-          type: 'google-translate',
-          defaultLanguage: widgetConfig.defaultLanguage || 'en'
-        };
-      case 'chat-widget':
-        return {
-          ...baseConfig,
-          type: 'chat-widget',
-          title: widgetConfig.title || 'Need help?',
-          message: widgetConfig.message || 'Chat with us!',
-          buttonText: widgetConfig.buttonText || 'Open Chat',
-          backgroundColor: widgetConfig.backgroundColor || widgetConfig.primaryColor,
-          textColor: widgetConfig.textColor || '#ffffff'
-        };
-      case 'banner-ad':
-        return {
-          ...baseConfig,
-          type: 'banner-ad',
-          position: (widgetConfig.position === 'top' || widgetConfig.position === 'bottom') 
-            ? widgetConfig.position 
-            : 'top',
-          message: widgetConfig.message || 'Special offer!',
-          backgroundColor: widgetConfig.backgroundColor || widgetConfig.primaryColor,
-          textColor: widgetConfig.textColor || '#ffffff'
-        };
-      case 'call-now':
-        return {
-          ...baseConfig,
-          type: 'call-now',
-          phoneNumber: widgetConfig.phoneNumber || ''
-        };
-      case 'review-now':
-        return {
-          ...baseConfig,
-          type: 'review-now',
-          reviewUrl: widgetConfig.reviewUrl || '',
-          reviewText: widgetConfig.reviewText || 'Leave a Review'
-        };
-      case 'follow-us':
-        return {
-          ...baseConfig,
-          type: 'follow-us',
-          platform: widgetConfig.platform || 'linkedin',
-          username: widgetConfig.username || ''
-        };
-      default:
-        return baseConfig;
-    }
-  };
-
   const handleTypeChange = (value: WidgetType) => {
-    const colorMap: Record<string, string> = {
+    const colorMap: Record<WidgetType, string> = {
       whatsapp: '#25D366',
       facebook: '#0084FF',
       instagram: '#E1306C',
@@ -138,50 +38,32 @@ const WidgetGenerator: React.FC = () => {
       github: '#333333',
       twitch: '#6441A4',
       slack: '#4A154B',
-      discord: '#7289DA',
-      'chat-widget': '#4CAF50',
-      'banner-ad': '#9b87f5',
-      'call-now': '#FF5722',
-      'review-now': '#FFC107',
-      'follow-us': '#0077b5'
+      discord: '#7289DA'
     };
-
-    let newPosition = widgetConfig.position;
-    
-    // For banner ads, default position should be 'top' or 'bottom'
-    if (value === 'banner-ad') {
-      newPosition = 'top';
-    }
-    
     setWidgetConfig({
       ...widgetConfig,
       type: value,
-      primaryColor: colorMap[value] || '#25D366',
-      position: newPosition
+      primaryColor: colorMap[value]
     });
   };
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setWidgetConfig({
       ...widgetConfig,
       [e.target.name]: e.target.value
     });
   };
-
-  const handlePositionChange = (position: 'left' | 'right' | 'top' | 'bottom') => {
+  const handlePositionChange = (position: 'left' | 'right') => {
     setWidgetConfig({
       ...widgetConfig,
       position
     });
   };
-
   const handleSizeChange = (size: string) => {
     setWidgetConfig({
       ...widgetConfig,
       size: size as 'small' | 'medium' | 'large'
     });
   };
-
   const handleNetworkToggle = (network: string) => {
     const currentNetworks = widgetConfig.networks || [];
     if (currentNetworks.includes(network)) {
@@ -196,31 +78,11 @@ const WidgetGenerator: React.FC = () => {
       });
     }
   };
-
   const generateWidget = () => {
-    // Validation checks based on widget type
-    if (widgetConfig.type === 'call-now' && !widgetConfig.phoneNumber) {
-      toast.error('Please enter a phone number');
-      return;
-    }
-    
-    if (widgetConfig.type === 'review-now' && !widgetConfig.reviewUrl) {
-      toast.error('Please enter a review URL');
-      return;
-    }
-    
-    if (widgetConfig.type === 'follow-us' && !widgetConfig.username) {
-      toast.error('Please enter a username');
-      return;
-    }
-    
-    if (widgetConfig.type !== 'social-share' && widgetConfig.type !== 'google-translate' && 
-        widgetConfig.type !== 'call-now' && widgetConfig.type !== 'review-now' && 
-        widgetConfig.type !== 'follow-us' && widgetConfig.type !== 'banner-ad' && !widgetConfig.handle) {
+    if (widgetConfig.type !== 'social-share' && widgetConfig.type !== 'google-translate' && !widgetConfig.handle) {
       toast.error('Please enter your handle/number');
       return;
     }
-    
     if (widgetConfig.type === 'social-share' && widgetConfig.networks && widgetConfig.networks.length === 0) {
       toast.error('Please select at least one social network');
       return;
@@ -234,36 +96,15 @@ const WidgetGenerator: React.FC = () => {
         shareUrl
       }));
     }
-    
-    // Map the correct config type based on widget type
-    let configToGenerate: any = { ...widgetConfig };
-    
-    // For call-now widget, set phoneNumber from handle if not explicitly set
-    if (widgetConfig.type === 'call-now' && !widgetConfig.phoneNumber) {
-      configToGenerate.phoneNumber = widgetConfig.handle;
-    }
-    
-    // For review-now widget, set reviewUrl from handle if not explicitly set
-    if (widgetConfig.type === 'review-now' && !widgetConfig.reviewUrl) {
-      configToGenerate.reviewUrl = widgetConfig.handle;
-    }
-    
-    // For follow-us widget, set username from handle if not explicitly set
-    if (widgetConfig.type === 'follow-us' && !widgetConfig.username) {
-      configToGenerate.username = widgetConfig.handle;
-    }
-    
-    const generatedCode = generateWidgetCode(configToGenerate);
+    const generatedCode = generateWidgetCode(widgetConfig);
     setCode(generatedCode);
     setShowCode(true);
     toast.success('Widget code generated successfully!');
   };
-
   const copyToClipboard = () => {
     navigator.clipboard.writeText(code);
     toast.success('Code copied to clipboard!');
   };
-
   const getPlaceholderText = () => {
     switch (widgetConfig.type) {
       case 'whatsapp':
@@ -329,7 +170,7 @@ const WidgetGenerator: React.FC = () => {
 
   // New GitHub icon component
   const GithubIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12.01 4.5C7.96 4.5 4.5 7.96 4.5 12.01C4.5 16.06 7.96 19.5 12.01 19.5C16.06 19.5 19.5 16.06 19.5 12.01C19.5 7.96 16.06 4.5 12.01 4.5ZM12.01 18.2C8.68 18.2 5.8 15.32 5.8 12.01C5.8 8.7 8.68 5.8 12.01 5.8C15.33 5.8 18.2 8.7 18.2 12.01C18.2 15.32 15.32 18.2 12.01 18.2Z" fill="white" />
+    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" fill="#333333" />
   </svg>;
 
   // New Twitch icon component
@@ -344,29 +185,8 @@ const WidgetGenerator: React.FC = () => {
 
   // New Discord icon component
   const DiscordIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.608 1.2495-1.8447-.2762-3.6677-.2762-5.4724 0-.1634-.3933-.4058-.8742-.6091-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189Z" fill="#7289DA" />
+    <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.608 1.2495-1.8447-.2762-3.6677-.2762-5.4724 0-.1634-.3933-.4058-.8742-.6091-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" fill="#7289DA" />
   </svg>;
-  
-  // Chat widget icon
-  const ChatWidgetIcon = () => <MessageCircle className="h-6 w-6" />;
-  
-  // Banner ad icon
-  const BannerAdIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M3 3h18v6h-2V5H5v14h14v-4h2v6H3V3zm14 8h-2v3h-3v2h3v3h2v-3h3v-2h-3v-3z" />
-  </svg>;
-
-  // Call Now icon component
-  const CallNowIcon = () => <PhoneCall className="h-6 w-6" />;
-  
-  // Review Now icon component
-  const ReviewNowIcon = () => <Star className="h-6 w-6" />;
-  
-  // Follow Us icon component
-  const FollowUsIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M16.5 5c-1.54 0-3.04.99-3.56 2.36h-1.87C10.54 5.99 9.04 5 7.5 5 5.5 5 4 6.5 4 8.5c0 2.89 3.14 5.74 7.9 10.05l.1.1.1-.1C16.86 14.24 20 11.39 20 8.5c0-2-1.5-3.5-3.5-3.5z" />
-    </svg>;
-
-  // Add these to your socialIcons object
   const socialIcons = {
     whatsapp: <WhatsAppIcon />,
     facebook: <Facebook className="h-6 w-6" />,
@@ -380,292 +200,9 @@ const WidgetGenerator: React.FC = () => {
     github: <GithubIcon />,
     twitch: <TwitchIcon />,
     slack: <SlackIcon />,
-    discord: <DiscordIcon />,
-    'chat-widget': <ChatWidgetIcon />,
-    'banner-ad': <BannerAdIcon />,
-    'call-now': <CallNowIcon />,
-    'review-now': <ReviewNowIcon />,
-    'follow-us': <FollowUsIcon />
+    discord: <DiscordIcon />
   };
-
-  // Render additional fields based on widget type
-  const renderWidgetTypeFields = () => {
-    switch (widgetConfig.type) {
-      case 'social-share':
-        return (
-          <>
-            <div className="mb-4">
-              <Label>Select Social Networks</Label>
-              <div className="mt-2 space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="facebook-network" checked={widgetConfig.networks?.includes('facebook')} onCheckedChange={() => handleNetworkToggle('facebook')} />
-                  <label htmlFor="facebook-network" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
-                    <Facebook className="h-5 w-5 text-[#1877F2]" />
-                    Facebook
-                  </label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="twitter-network" checked={widgetConfig.networks?.includes('twitter')} onCheckedChange={() => handleNetworkToggle('twitter')} />
-                  <label htmlFor="twitter-network" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
-                    <Twitter className="h-5 w-5 text-[#1DA1F2]" />
-                    Twitter
-                  </label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Checkbox id="linkedin-network" checked={widgetConfig.networks?.includes('linkedin')} onCheckedChange={() => handleNetworkToggle('linkedin')} />
-                  <label htmlFor="linkedin-network" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
-                    <Linkedin className="h-5 w-5 text-[#0077B5]" />
-                    LinkedIn
-                  </label>
-                </div>
-              </div>
-            </div>
-            
-            <div className="mb-4">
-              <Label htmlFor="shareText">Share Text</Label>
-              <Textarea id="shareText" name="shareText" value={widgetConfig.shareText} onChange={handleInputChange} placeholder="Share this awesome content!" className="mt-1" />
-            </div>
-          </>
-        );
-        
-      case 'chat-widget':
-        return (
-          <>
-            <div className="mb-4">
-              <Label htmlFor="title">Chat Title</Label>
-              <Input id="title" name="title" value={widgetConfig.title || ''} onChange={handleInputChange} placeholder="Chat with us" className="mt-1" />
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="message">Welcome Message</Label>
-              <Textarea id="message" name="message" value={widgetConfig.message || ''} onChange={handleInputChange} placeholder="How can we help you?" className="mt-1" />
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="buttonText">Button Text</Label>
-              <Input id="buttonText" name="buttonText" value={widgetConfig.buttonText || ''} onChange={handleInputChange} placeholder="Chat Now" className="mt-1" />
-            </div>
-          </>
-        );
-        
-      case 'banner-ad':
-        return (
-          <>
-            <div className="mb-4">
-              <Label htmlFor="message">Banner Message</Label>
-              <Textarea id="message" name="message" value={widgetConfig.message || ''} onChange={handleInputChange} placeholder="Special offer!" className="mt-1" />
-            </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div>
-                <Label htmlFor="position">Position</Label>
-                <RadioGroup defaultValue="top" value={widgetConfig.position} onValueChange={value => handlePositionChange(value as 'top' | 'bottom')} className="grid grid-cols-2 gap-3 mt-1">
-                  <div>
-                    <RadioGroupItem value="top" id="top" className="peer sr-only" />
-                    <Label htmlFor="top" className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                      Top
-                    </Label>
-                  </div>
-
-                  <div>
-                    <RadioGroupItem value="bottom" id="bottom" className="peer sr-only" />
-                    <Label htmlFor="bottom" className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                      Bottom
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </div>
-              <div>
-                <Label htmlFor="textColor">Text Color</Label>
-                <div className="flex items-center gap-3 mt-1">
-                  <Input id="textColor" name="textColor" type="color" value={widgetConfig.textColor || '#ffffff'} onChange={handleInputChange} className="w-12 h-12 p-1 rounded-md" />
-                  <Input name="textColor" value={widgetConfig.textColor || '#ffffff'} onChange={handleInputChange} className="flex-1" />
-                </div>
-              </div>
-            </div>
-          </>
-        );
-        
-      case 'google-translate':
-        return (
-          <div className="mb-4">
-            <Label htmlFor="defaultLanguage">Default Language</Label>
-            <Select value={widgetConfig.defaultLanguage || 'en'} onValueChange={(value) => setWidgetConfig({...widgetConfig, defaultLanguage: value})}>
-              <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Select language" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="es">Spanish</SelectItem>
-                  <SelectItem value="fr">French</SelectItem>
-                  <SelectItem value="de">German</SelectItem>
-                  <SelectItem value="it">Italian</SelectItem>
-                  <SelectItem value="pt">Portuguese</SelectItem>
-                  <SelectItem value="ru">Russian</SelectItem>
-                  <SelectItem value="zh-CN">Chinese (Simplified)</SelectItem>
-                  <SelectItem value="ja">Japanese</SelectItem>
-                  <SelectItem value="ko">Korean</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
-        );
-        
-      case 'whatsapp':
-        return (
-          <div className="mb-4">
-            <Label htmlFor="welcomeMessage">Welcome Message</Label>
-            <Textarea id="welcomeMessage" name="welcomeMessage" value={widgetConfig.welcomeMessage} onChange={handleInputChange} placeholder="Hello! How can I help you today?" className="mt-1" />
-          </div>
-        );
-        
-      case 'call-now':
-        return (
-          <div className="mb-4">
-            <Label htmlFor="phoneNumber">Phone Number</Label>
-            <Input 
-              id="phoneNumber" 
-              name="phoneNumber" 
-              value={widgetConfig.phoneNumber || ''} 
-              onChange={handleInputChange} 
-              placeholder="Enter phone number (e.g. +1234567890)" 
-              className="mt-1" 
-            />
-          </div>
-        );
-        
-      case 'review-now':
-        return (
-          <>
-            <div className="mb-4">
-              <Label htmlFor="reviewUrl">Review URL</Label>
-              <Input 
-                id="reviewUrl" 
-                name="reviewUrl" 
-                value={widgetConfig.reviewUrl || ''} 
-                onChange={handleInputChange} 
-                placeholder="URL for the review page" 
-                className="mt-1" 
-              />
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="reviewText">Button Text</Label>
-              <Input 
-                id="reviewText" 
-                name="reviewText" 
-                value={widgetConfig.reviewText || ''} 
-                onChange={handleInputChange} 
-                placeholder="Leave a Review" 
-                className="mt-1" 
-              />
-            </div>
-          </>
-        );
-        
-      case 'follow-us':
-        return (
-          <>
-            <div className="mb-4">
-              <Label htmlFor="platform">Platform</Label>
-              <Select 
-                value={widgetConfig.platform || 'linkedin'} 
-                onValueChange={(value) => setWidgetConfig({...widgetConfig, platform: value as 'linkedin' | 'instagram' | 'youtube'})}
-              >
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select platform" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="linkedin">LinkedIn</SelectItem>
-                    <SelectItem value="instagram">Instagram</SelectItem>
-                    <SelectItem value="youtube">YouTube</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="username">Username/Handle</Label>
-              <Input 
-                id="username" 
-                name="username" 
-                value={widgetConfig.username || ''} 
-                onChange={handleInputChange} 
-                placeholder={widgetConfig.platform === 'youtube' ? 'Channel name or ID' : 'Username'} 
-                className="mt-1" 
-              />
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="buttonText">Button Text (Optional)</Label>
-              <Input 
-                id="buttonText" 
-                name="buttonText" 
-                value={widgetConfig.buttonText || ''} 
-                onChange={handleInputChange} 
-                placeholder={
-                  widgetConfig.platform === 'linkedin' ? 'Connect on LinkedIn' : 
-                  widgetConfig.platform === 'instagram' ? 'Follow on Instagram' : 
-                  'Subscribe on YouTube'
-                } 
-                className="mt-1" 
-              />
-            </div>
-          </>
-        );
-        
-      default:
-        return null;
-    }
-  };
-
-  // Update the position options based on widget type
-  const renderPositionControl = () => {
-    if (widgetConfig.type === 'banner-ad') {
-      return (
-        <div>
-          <Label htmlFor="position">Position</Label>
-          <RadioGroup value={widgetConfig.position} onValueChange={value => handlePositionChange(value as 'top' | 'bottom')} className="grid grid-cols-2 gap-3 mt-1">
-            <div>
-              <RadioGroupItem value="top" id="top-position" className="peer sr-only" />
-              <Label htmlFor="top-position" className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                Top
-              </Label>
-            </div>
-
-            <div>
-              <RadioGroupItem value="bottom" id="bottom-position" className="peer sr-only" />
-              <Label htmlFor="bottom-position" className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                Bottom
-              </Label>
-            </div>
-          </RadioGroup>
-        </div>
-      );
-    }
-    
-    return (
-      <div>
-        <Label htmlFor="position">Position</Label>
-        <RadioGroup value={widgetConfig.position} onValueChange={value => handlePositionChange(value as 'left' | 'right')} className="grid grid-cols-2 gap-3 mt-1">
-          <div>
-            <RadioGroupItem value="left" id="left" className="peer sr-only" />
-            <Label htmlFor="left" className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-              Left
-            </Label>
-          </div>
-
-          <div>
-            <RadioGroupItem value="right" id="right" className="peer sr-only" />
-            <Label htmlFor="right" className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-              Right
-            </Label>
-          </div>
-        </RadioGroup>
-      </div>
-    );
-  };
-
-  return (
-    <section id="widget-generator" className="py-16 bg-white">
+  return <section id="widget-generator" className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
           <h2 className="text-3xl font-bold mb-4">Create Your Widgetify Widget</h2>
@@ -678,9 +215,8 @@ const WidgetGenerator: React.FC = () => {
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
             <div className="mb-6">
-              <h3 className="text-lg font-medium mb-3">Select Widget Type</h3>
+              <h3 className="text-lg font-medium mb-3">Select Platform</h3>
               <RadioGroup defaultValue="whatsapp" value={widgetConfig.type} onValueChange={value => handleTypeChange(value as WidgetType)} className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {/* Original widget types */}
                 <div>
                   <RadioGroupItem value="whatsapp" id="whatsapp" className="peer sr-only" />
                   <Label htmlFor="whatsapp" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
@@ -689,81 +225,188 @@ const WidgetGenerator: React.FC = () => {
                   </Label>
                 </div>
 
-                {/* ... keep existing code (other widget type radio options) */}
+                <div>
+                  <RadioGroupItem value="facebook" id="facebook" className="peer sr-only" />
+                  <Label htmlFor="facebook" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <Facebook className="mb-3 h-6 w-6" />
+                    Facebook
+                  </Label>
+                </div>
 
-                {/* New widget types */}
                 <div>
-                  <RadioGroupItem value="call-now" id="call-now" className="peer sr-only" />
-                  <Label htmlFor="call-now" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <CallNowIcon />
-                    Call Now
+                  <RadioGroupItem value="instagram" id="instagram" className="peer sr-only" />
+                  <Label htmlFor="instagram" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <Instagram className="mb-3 h-6 w-6" />
+                    Instagram
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem value="twitter" id="twitter" className="peer sr-only" />
+                  <Label htmlFor="twitter" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <Twitter className="mb-3 h-6 w-6" />
+                    Twitter
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem value="telegram" id="telegram" className="peer sr-only" />
+                  <Label htmlFor="telegram" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <TelegramIcon />
+                    Telegram
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem value="linkedin" id="linkedin" className="peer sr-only" />
+                  <Label htmlFor="linkedin" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <Linkedin className="mb-3 h-6 w-6" />
+                    LinkedIn
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem value="youtube" id="youtube" className="peer sr-only" />
+                  <Label htmlFor="youtube" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <YoutubeIcon />
+                    YouTube
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem value="github" id="github" className="peer sr-only" />
+                  <Label htmlFor="github" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <GithubIcon />
+                    GitHub
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem value="twitch" id="twitch" className="peer sr-only" />
+                  <Label htmlFor="twitch" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <TwitchIcon />
+                    Twitch
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem value="slack" id="slack" className="peer sr-only" />
+                  <Label htmlFor="slack" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <SlackIcon />
+                    Slack
+                  </Label>
+                </div>
+
+                <div>
+                  <RadioGroupItem value="discord" id="discord" className="peer sr-only" />
+                  <Label htmlFor="discord" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <DiscordIcon />
+                    Discord
                   </Label>
                 </div>
                 
                 <div>
-                  <RadioGroupItem value="review-now" id="review-now" className="peer sr-only" />
-                  <Label htmlFor="review-now" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <ReviewNowIcon />
-                    Review Now
-                  </Label>
+                  <RadioGroupItem value="social-share" id="social-share" className="peer sr-only" />
+                  
                 </div>
                 
                 <div>
-                  <RadioGroupItem value="follow-us" id="follow-us" className="peer sr-only" />
-                  <Label htmlFor="follow-us" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <FollowUsIcon />
-                    Follow Us
+                  <RadioGroupItem value="google-translate" id="google-translate" className="peer sr-only" />
+                  <Label htmlFor="google-translate" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <GoogleTranslateIcon />
+                    Translate
                   </Label>
                 </div>
               </RadioGroup>
             </div>
 
-            {/* Render fields based on widget type */}
-            {renderWidgetTypeFields()}
-
-            {/* Handle/URL field (except for specific types) */}
-            {!['banner-ad', 'google-translate', 'call-now', 'review-now', 'follow-us'].includes(widgetConfig.type) && (
-              <div className="mb-4">
-                <Label htmlFor="handle">
-                  {widgetConfig.type === 'social-share' ? 'URL to Share' : 'Account Handle/Number'}
-                </Label>
-                <Input 
-                  id="handle" 
-                  name="handle" 
-                  value={widgetConfig.handle} 
-                  onChange={handleInputChange} 
-                  placeholder={getPlaceholderText()} 
-                  className="mt-1" 
-                />
-              </div>
-            )}
-
-            {/* Position and Size controls */}
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              {renderPositionControl()}
-
-              {!['banner-ad'].includes(widgetConfig.type) && (
-                <div>
-                  <Label htmlFor="size">Button Size</Label>
-                  <Select value={widgetConfig.size} onValueChange={handleSizeChange}>
-                    <SelectTrigger className="mt-1">
-                      <SelectValue placeholder="Select size" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        <SelectItem value="small">Small</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="large">Large</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
+            {widgetConfig.type === 'social-share' ? <>
+                <div className="mb-4">
+                  <Label>Select Social Networks</Label>
+                  <div className="mt-2 space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="facebook-network" checked={widgetConfig.networks?.includes('facebook')} onCheckedChange={() => handleNetworkToggle('facebook')} />
+                      <label htmlFor="facebook-network" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
+                        <Facebook className="h-5 w-5 text-[#1877F2]" />
+                        Facebook
+                      </label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="twitter-network" checked={widgetConfig.networks?.includes('twitter')} onCheckedChange={() => handleNetworkToggle('twitter')} />
+                      <label htmlFor="twitter-network" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
+                        <Twitter className="h-5 w-5 text-[#1DA1F2]" />
+                        Twitter
+                      </label>
+                    </div>
+                    
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="linkedin-network" checked={widgetConfig.networks?.includes('linkedin')} onCheckedChange={() => handleNetworkToggle('linkedin')} />
+                      <label htmlFor="linkedin-network" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
+                        <Linkedin className="h-5 w-5 text-[#0077B5]" />
+                        LinkedIn
+                      </label>
+                    </div>
+                  </div>
                 </div>
-              )}
+                
+                <div className="mb-4">
+                  <Label htmlFor="shareText">Share Text</Label>
+                  <Textarea id="shareText" name="shareText" value={widgetConfig.shareText} onChange={handleInputChange} placeholder="Share this awesome content!" className="mt-1" />
+                </div>
+              </> : null}
+
+            <div className="mb-4">
+              <Label htmlFor="handle">
+                {widgetConfig.type === 'social-share' ? 'URL to Share' : 'Account Handle/Number'}
+              </Label>
+              <Input id="handle" name="handle" value={widgetConfig.handle} onChange={handleInputChange} placeholder={getPlaceholderText()} className="mt-1" />
             </div>
 
-            {/* Color picker */}
+            {widgetConfig.type === 'whatsapp' && <div className="mb-4">
+                <Label htmlFor="welcomeMessage">Welcome Message</Label>
+                <Textarea id="welcomeMessage" name="welcomeMessage" value={widgetConfig.welcomeMessage} onChange={handleInputChange} placeholder="Hello! How can I help you today?" className="mt-1" />
+              </div>}
+
+            <div className="grid grid-cols-2 gap-4 mb-6">
+              <div>
+                <Label htmlFor="position">Position</Label>
+                <RadioGroup defaultValue="right" value={widgetConfig.position} onValueChange={value => handlePositionChange(value as 'left' | 'right')} className="grid grid-cols-2 gap-3 mt-1">
+                  <div>
+                    <RadioGroupItem value="left" id="left" className="peer sr-only" />
+                    <Label htmlFor="left" className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                      Left
+                    </Label>
+                  </div>
+
+                  <div>
+                    <RadioGroupItem value="right" id="right" className="peer sr-only" />
+                    <Label htmlFor="right" className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                      Right
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <div>
+                <Label htmlFor="size">Button Size</Label>
+                <Select value={widgetConfig.size} onValueChange={handleSizeChange}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select size" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="small">Small</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="large">Large</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
             <div className="mb-6">
-              <Label htmlFor="primaryColor">{widgetConfig.type === 'banner-ad' ? 'Background Color' : 'Color'}</Label>
+              <Label htmlFor="primaryColor">Color</Label>
               <div className="flex items-center gap-3 mt-1">
                 <Input id="primaryColor" name="primaryColor" type="color" value={widgetConfig.primaryColor} onChange={handleInputChange} className="w-12 h-12 p-1 rounded-md" />
                 <Input name="primaryColor" value={widgetConfig.primaryColor} onChange={handleInputChange} className="flex-1" />
@@ -775,11 +418,55 @@ const WidgetGenerator: React.FC = () => {
             </Button>
           </div>
 
-          {/* ... keep existing code (preview container, code output, etc) */}
+          <div className="flex flex-col">
+            {/* RetailX sidebar ad */}
+            <div className="bg-white p-4 rounded-lg shadow-sm mb-4 border border-purple-100">
+              <a href="https://www.retailx.site/" target="_blank" rel="noopener noreferrer" className="block">
+                <div className="flex flex-col items-center">
+                  <img src="/lovable-uploads/08c2f5ff-5a6f-4a3e-8470-7f98661e663f.png" alt="RetailX" className="h-20 mb-2" />
+                  <p className="text-sm text-purple-800 font-medium text-center">Transform your retail business with RetailX</p>
+                  <p className="text-xs text-gray-600 text-center mt-1">Powerful retail solutions for growing businesses</p>
+                  <Button variant="outline" className="mt-3 text-sm border-purple-300 hover:bg-purple-50 text-purple-700">
+                    Learn More
+                  </Button>
+                </div>
+              </a>
+            </div>
+            
+            <div className="flex-1 bg-gray-50 p-6 rounded-lg shadow-sm mb-4 WidgetPreview-container">
+              <h3 className="text-lg font-medium mb-4">Preview</h3>
+              <div className="relative bg-white rounded-lg shadow-sm h-80 border border-gray-100 overflow-hidden">
+                <div className="h-10 bg-gray-100 border-b flex items-center px-4">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                  </div>
+                  <div className="flex-1 text-center text-xs text-gray-500">example.com</div>
+                </div>
+                <div className="p-4 h-full">
+                  <WidgetPreview config={widgetConfig} />
+                </div>
+              </div>
+            </div>
+
+            {showCode && <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-lg font-medium">Your Widget Code</h3>
+                  <Button onClick={copyToClipboard} variant="outline" size="sm" className="text-sm">
+                    Copy Code
+                  </Button>
+                </div>
+                <div className="bg-gray-900 text-gray-100 p-4 rounded-md text-xs overflow-auto max-h-64">
+                  <pre>{code}</pre>
+                </div>
+                <p className="text-sm text-gray-500 mt-3">
+                  Copy this code and paste it before the closing body tag of your website.
+                </p>
+              </div>}
+          </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default WidgetGenerator;
