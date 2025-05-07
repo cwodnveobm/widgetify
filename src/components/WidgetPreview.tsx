@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
-import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone } from 'lucide-react';
 
 interface WidgetPreviewProps {
   config: WidgetConfig;
@@ -78,6 +78,19 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     cursor: 'pointer',
   });
 
+  const tooltipStyle = {
+    position: 'absolute',
+    bottom: parseInt(sizeMap[size || 'medium']) + 10 + 'px',
+    [position || 'right']: '10px',
+    backgroundColor: 'white',
+    padding: '5px 10px',
+    borderRadius: '5px',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+    fontSize: '12px',
+    whiteSpace: 'nowrap' as const,
+    opacity: 0.8,
+  };
+
   // Custom Icon Components
   const WhatsAppIcon = ({ size }: { size: number }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -145,6 +158,15 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return <Slack size={iconSize} color="white" />;
       case 'discord':
         return <DiscordIcon size={iconSize} />;
+      case 'call-now':
+        return <Phone size={iconSize} color="white" />;
+      case 'review-now':
+        return <Star size={iconSize} color="white" />;
+      case 'follow-us':
+        const platform = config.followPlatform || 'linkedin';
+        if (platform === 'instagram') return <Instagram size={iconSize} color="white" />;
+        if (platform === 'youtube') return <Youtube size={iconSize} color="white" />;
+        return <Linkedin size={iconSize} color="white" />;
       default:
         return <MessageCircle size={iconSize} color="white" />;
     }
@@ -188,6 +210,20 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     );
   };
 
+  const getTooltipText = () => {
+    switch (type) {
+      case 'call-now':
+        return 'Call Now';
+      case 'review-now':
+        return 'Leave a Review';
+      case 'follow-us':
+        const platform = config.followPlatform || 'linkedin';
+        return `Follow on ${platform.charAt(0).toUpperCase() + platform.slice(1)}`;
+      default:
+        return null;
+    }
+  };
+
   const getWidgetTitle = () => {
     switch (type) {
       case 'whatsapp': return 'WhatsApp Chat';
@@ -203,6 +239,9 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       case 'twitch': return 'Twitch';
       case 'slack': return 'Slack';
       case 'discord': return 'Discord';
+      case 'call-now': return 'Call Now';
+      case 'review-now': return 'Leave a Review';
+      case 'follow-us': return 'Follow Us';
       default: return 'Chat';
     }
   };
@@ -230,6 +269,12 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             </div>
           </div>
         );
+      case 'call-now':
+      case 'review-now':
+      case 'follow-us':
+        // These types show tooltips instead of popups
+        const tooltipText = getTooltipText();
+        return tooltipText ? <div style={tooltipStyle}>{tooltipText}</div> : null;
       default:
         return (
           <div style={popupStyle} className="animate-fade-in">
@@ -278,6 +323,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   return (
     <div className="relative w-full h-full">
       {showPopup && getWidgetContent()}
+      {!showPopup && (type === 'call-now' || type === 'review-now' || type === 'follow-us') && getWidgetContent()}
       
       <div 
         style={buttonStyle} 
