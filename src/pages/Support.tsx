@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { LifeBuoy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,6 @@ const Support: React.FC = () => {
           <div className="text-2xl font-bold gradient-text">Widgetify</div>
           <nav className="hidden md:flex gap-6">
             <a href="/" className="text-gray-600 hover:text-purple-600">Home</a>
-            <a href="/documentation" className="text-gray-600 hover:text-purple-600">Documentation</a>
             <a href="/support" className="text-purple-600 font-medium">Support</a>
           </nav>
           <div className="md:hidden">

@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import HeroSection from '@/components/HeroSection';
 import WidgetGenerator from '@/components/WidgetGenerator';
@@ -87,9 +86,6 @@ const Index: React.FC = () => {
                 </a>
                 <a href="#founder" className="text-gray-600 hover:text-purple-600 py-3 flex items-center justify-between border-b border-gray-50 pb-2 min-h-[44px]" onClick={handleMenuItemClick}>
                   Founder
-                </a>
-                <a href="/documentation" className="text-gray-600 hover:text-purple-600 py-3 flex items-center justify-between border-b border-gray-50 pb-2 min-h-[44px]" onClick={handleMenuItemClick}>
-                  Documentation
                 </a>
                 <a href="/support" className="text-gray-600 hover:text-purple-600 py-3 flex items-center justify-between border-b border-gray-50 pb-2 min-h-[44px]" onClick={handleMenuItemClick}>
                   Support
