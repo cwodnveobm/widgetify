@@ -1,8 +1,6 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Facebook, Instagram, Twitter, HandHeart } from 'lucide-react';
-
 const Footer: React.FC = () => {
   return <footer className="bg-gray-900 text-gray-300">
       <div className="container mx-auto px-4 py-8 md:py-16">
@@ -14,19 +12,11 @@ const Footer: React.FC = () => {
             </p>
             
             <div className="mt-4 flex justify-center md:justify-start">
-              <a href="https://www.producthunt.com/posts/widgetify-2?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-widgetify&#0045;2" 
-                 target="_blank" 
-                 rel="noopener noreferrer"
-                 className="inline-block">
-                <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=961430&theme=light&t=1746523667957" 
-                     alt="Widgetify - Chat&#0032;widgets | Product Hunt" 
-                     style={{
-                       width: "250px",
-                       height: "54px"
-                     }} 
-                     width="250" 
-                     height="54" 
-                     className="max-w-full" />
+              <a href="https://www.producthunt.com/posts/widgetify-2?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-widgetify&#0045;2" target="_blank" rel="noopener noreferrer" className="inline-block">
+                <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=961430&theme=light&t=1746523667957" alt="Widgetify - Chat&#0032;widgets | Product Hunt" style={{
+                width: "250px",
+                height: "54px"
+              }} width="250" height="54" className="max-w-full" />
               </a>
             </div>
           </div>
@@ -45,12 +35,7 @@ const Footer: React.FC = () => {
               <p className="text-sm mb-3">
                 This platform is free to use and we don't charge anything — but maintaining it takes time and resources. If you find it valuable, consider donating to support its continued availability for everyone.
               </p>
-              <a 
-                href="https://razorpay.me/@aznoxx?amount=zPcDiUDYF4mzSgsG00XV0w%3D%3D" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="flex items-center justify-center gap-2 bg-primary/90 hover:bg-primary text-white px-4 py-2 rounded-md w-full transition-colors"
-              >
+              <a href="https://razorpay.me/@aznoxx?amount=zPcDiUDYF4mzSgsG00XV0w%3D%3D" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-primary/90 hover:bg-primary text-white px-4 py-2 rounded-md w-full transition-colors">
                 <HandHeart size={18} />
                 <span>Support This Project</span>
               </a>
@@ -61,14 +46,10 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 mt-8 md:mt-12 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-xs md:text-sm text-center md:text-left mb-4 md:mb-0">© 2025 Widgetify. All rights reserved | Powered by Muhammed Adnan</p>
           <div className="flex gap-4">
-            <a href="https://razorpay.me/@aznoxx?amount=zPcDiUDYF4mzSgsG00XV0w%3D%3D" target="_blank" rel="noopener noreferrer" className="text-xs md:text-sm bg-primary/80 hover:bg-primary text-white px-3 py-2 md:py-1.5 rounded-md transition-colors flex items-center gap-1">
-              <HandHeart size={14} />
-              Donate ₹14
-            </a>
+            
           </div>
         </div>
       </div>
     </footer>;
 };
-
 export default Footer;
