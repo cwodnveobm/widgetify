@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
-import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone, MessageSquare } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone } from 'lucide-react';
 
 interface WidgetPreviewProps {
   config: WidgetConfig;
@@ -162,8 +161,6 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return <Phone size={iconSize} color="white" />;
       case 'review-now':
         return <Star size={iconSize} color="white" />;
-      case 'live-chat':
-        return <MessageSquare size={iconSize} color="white" />;
       case 'follow-us':
         const platform = config.followPlatform || 'linkedin';
         if (platform === 'instagram') return <Instagram size={iconSize} color="white" />;
@@ -218,8 +215,6 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return 'Call Now';
       case 'review-now':
         return 'Leave a Review';
-      case 'live-chat':
-        return 'Live Chat';
       case 'follow-us':
         const platform = config.followPlatform || 'linkedin';
         return `Follow on ${platform.charAt(0).toUpperCase() + platform.slice(1)}`;
@@ -246,7 +241,6 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       case 'call-now': return 'Call Now';
       case 'review-now': return 'Leave a Review';
       case 'follow-us': return 'Follow Us';
-      case 'live-chat': return 'Live Chat';
       default: return 'Chat';
     }
   };
@@ -280,40 +274,6 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         // These types show tooltips instead of popups
         const tooltipText = getTooltipText();
         return tooltipText ? <div style={tooltipStyle}>{tooltipText}</div> : null;
-      case 'live-chat':
-        // Live Chat content
-        return (
-          <div style={popupStyle} className="animate-fade-in">
-            <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
-              <div className="font-medium">{getWidgetTitle()}</div>
-              <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700 text-lg">
-                ×
-              </button>
-            </div>
-            <div className="flex-grow p-3 overflow-y-auto bg-white flex flex-col justify-center items-center">
-              <div className="text-center p-4">
-                <MessageSquare className="mx-auto mb-3 text-purple-500" size={40} />
-                <h3 className="text-lg font-semibold mb-2">Live Chat</h3>
-                <p className="text-gray-600 mb-2">Coming Soon!</p>
-                <p className="text-sm text-gray-500">
-                  We're working hard to bring you real-time chat support.
-                </p>
-              </div>
-            </div>
-            <div className="p-3 border-t bg-gray-50 rounded-b-lg">
-              <div className="text-xs text-gray-500 text-center">
-                <a 
-                  href="https://widgetify.vercel.app/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-gray-500 no-underline"
-                >
-                  Powered by Widgetify
-                </a>
-              </div>
-            </div>
-          </div>
-        );
       default:
         return (
           <div style={popupStyle} className="animate-fade-in">
@@ -362,7 +322,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   return (
     <div className="relative w-full h-full">
       {showPopup && getWidgetContent()}
-      {!showPopup && (type === 'call-now' || type === 'review-now' || type === 'follow-us' || type === 'live-chat') && getWidgetContent()}
+      {!showPopup && (type === 'call-now' || type === 'review-now' || type === 'follow-us') && getWidgetContent()}
       
       <div 
         style={buttonStyle} 
