@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
 import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone, MessageSquare } from 'lucide-react';
@@ -276,11 +277,11 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       case 'call-now':
       case 'review-now':
       case 'follow-us':
-      case 'live-chat':
         // These types show tooltips instead of popups
         const tooltipText = getTooltipText();
         return tooltipText ? <div style={tooltipStyle}>{tooltipText}</div> : null;
       case 'live-chat':
+        // Live Chat content
         return (
           <div style={popupStyle} className="animate-fade-in">
             <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
