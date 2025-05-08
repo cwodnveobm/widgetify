@@ -1,12 +1,9 @@
-
 import React from 'react';
 import { LifeBuoy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
 const Support: React.FC = () => {
-  return (
-    <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col">
       <header className="bg-white border-b border-gray-100 py-4 px-6 sticky top-0 z-40">
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-2xl font-bold gradient-text">Widgetify</div>
@@ -17,7 +14,7 @@ const Support: React.FC = () => {
           </nav>
           <div className="md:hidden">
             <a href="/" className="text-gray-600 hover:text-purple-600">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
             </a>
           </div>
         </div>
@@ -31,17 +28,7 @@ const Support: React.FC = () => {
           </div>
           
           <div className="grid md:grid-cols-2 gap-6 mb-12">
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Help</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 mb-4">
-                  Need immediate assistance with your widget setup? Our quick help section provides solutions to the most common issues.
-                </p>
-                <a href="/documentation" className="text-purple-600 hover:underline">View Documentation →</a>
-              </CardContent>
-            </Card>
+            
             
             <Card>
               <CardHeader>
@@ -113,8 +100,6 @@ const Support: React.FC = () => {
           </div>
         </div>
       </main>
-    </div>
-  );
+    </div>;
 };
-
 export default Support;
