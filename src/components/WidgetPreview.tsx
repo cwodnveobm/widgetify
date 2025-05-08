@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
 import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone } from 'lucide-react';
@@ -21,7 +20,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     width: sizeMap[size || 'medium'],
     height: sizeMap[size || 'medium'],
     backgroundColor: primaryColor || '#25D366',
-    position: 'absolute',
+    position: 'absolute' as const,
     bottom: '20px',
     [position || 'right']: '20px',
     borderRadius: '50%',
@@ -35,7 +34,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   } as React.CSSProperties;
 
   const popupStyle = {
-    position: 'absolute',
+    position: 'absolute' as const,
     bottom: '90px',
     [position || 'right']: '20px',
     width: '280px',
@@ -54,7 +53,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   } as React.CSSProperties;
 
   const socialButtonsContainerStyle = {
-    position: 'absolute',
+    position: 'absolute' as const,
     bottom: '90px',
     [position || 'right']: '20px',
     display: 'flex',
@@ -79,7 +78,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   });
 
   const tooltipStyle = {
-    position: 'absolute',
+    position: 'absolute' as const,
     bottom: parseInt(sizeMap[size || 'medium']) + 10 + 'px',
     [position || 'right']: '10px',
     backgroundColor: 'white',
@@ -89,7 +88,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     fontSize: '12px',
     whiteSpace: 'nowrap' as const,
     opacity: 0.8,
-  };
+  } as React.CSSProperties;
 
   // Custom Icon Components
   const WhatsAppIcon = ({ size }: { size: number }) => (
@@ -112,7 +111,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
 
   const ShareIcon = ({ size }: { size: number }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="white">
-      <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/>
+      <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/>
     </svg>
   );
 
@@ -124,7 +123,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
 
   const DiscordIcon = ({ size }: { size: number }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="white">
-      <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.39-.444.898-.608 1.297a19.42 19.42 0 0 0-5.834 0 12.517 12.517 0 0 0-.617-1.297.077.077 0 0 0-.079-.036c-1.714.29-3.354.8-4.885 1.49a.07.07 0 0 0-.032.028C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.209 13.209 0 0 1-1.872-.878.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.291.074.074 0 0 1 .077-.01c3.928 1.764 8.18 1.764 12.061 0a.074.074 0 0 1 .078.01c.12.098.245.198.372.292a.077.077 0 0 1-.006.127c-.598.344-1.22.635-1.873.877a.077.077 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.964 19.964 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/>
+      <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.39-.444.898-.608 1.297a19.42 19.42 0 0 0-5.834 0 12.517 12.517 0 0 0-.617-1.297.077.077 0 0 0-.079-.036c-1.714.29-3.354.8-4.885 1.49a.07.07 0 0 0-.032.028C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.209 13.209 0 0 1-1.872-.878.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.291.074.074 0 0 1 .077-.01c3.928 1.764 8.18 1.764 12.061 0a.074.074 0 0 1 .078.01c.12.098.245.198.372.292a.077.077 0 0 0-.006.127c-.598.344-1.22.635-1.873.877a.077.077 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.964 19.964 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/>
     </svg>
   );
 

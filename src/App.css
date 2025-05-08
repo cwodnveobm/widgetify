@@ -2,11 +2,17 @@
 #root {
   max-width: 100%;
   margin: 0 auto;
-  padding: 0.5rem;
+  padding: 0;
   text-align: center;
 }
 
 @media (min-width: 768px) {
+  #root {
+    padding: 0.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
   #root {
     max-width: 1280px;
     padding: 2rem;
@@ -52,8 +58,8 @@
 /* Responsive utilities */
 .responsive-container {
   width: 100%;
-  padding-right: 1rem;
-  padding-left: 1rem;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
   margin-right: auto;
   margin-left: auto;
 }
@@ -61,6 +67,8 @@
 @media (min-width: 640px) {
   .responsive-container {
     max-width: 640px;
+    padding-right: 1rem;
+    padding-left: 1rem;
   }
 }
 
@@ -79,5 +87,30 @@
 @media (min-width: 1280px) {
   .responsive-container {
     max-width: 1280px;
+  }
+}
+
+/* Improved mobile responsiveness for widgets */
+@media (max-width: 640px) {
+  .widget-container {
+    padding: 0.5rem;
+  }
+  
+  .widget-preview-container {
+    min-height: 200px;
+  }
+}
+
+/* Improved touch interactions for mobile */
+@media (hover: none) {
+  .hover\:scale-105:hover {
+    transform: scale(1); /* Prevent hover effects on touch devices */
+  }
+  
+  button, 
+  [role="button"],
+  a {
+    min-height: 44px; /* Minimum touch target size */
+    min-width: 44px;
   }
 }
