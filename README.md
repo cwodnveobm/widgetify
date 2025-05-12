@@ -29,7 +29,7 @@ To install any widget, follow the integration guide provided for each specific w
 
 ## Usage
 
-Simply copy the provided code snippet into your website's HTML or follow the step-by-step instructions in the integration guide for each widget.
+Simply copy the provided code snippet into your website's HTML 
 
 Support us : https://razorpay.me/@aznoxx?amount=zPcDiUDYF4mzSgsG00XV0w%3D%3D
 
