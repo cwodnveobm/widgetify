@@ -1,4 +1,5 @@
 
+
 <a href="https://www.producthunt.com/posts/widgetify-2?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-widgetify&#0045;2" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=961430&theme=light&t=1747062621194" alt="Widgetify - Chat&#0032;widgets | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
 
@@ -24,6 +25,12 @@ Widgetify offers a variety of communication widgets that can be easily integrate
 - **Review Now Widget** by Widgetify
 - **Follow Us Widget** by Widgetify
 
+## Coming Soon
+
+- **Request Callback Widget** by Widgetify
+- **Live Chat Widget** by Widgetify
+- **Website Webcam Widget** by Widgetify
+
 ## Installation
 
 To install any widget, follow the integration guide provided for each specific widget. You will typically need to include a script tag and configuration options for the widget you wish to integrate.
@@ -41,3 +48,4 @@ Payment Methods:
 - Bank Transfer (Details available in the donation modal)
 
 Use it now: https://widgetify.vercel.app/
+
