@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,7 @@ interface DonationModalProps {
 const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
   const [amount, setAmount] = useState<number>(14);
   const [copied, setCopied] = useState<boolean>(false);
+  const [bankDetailsCopied, setBankDetailsCopied] = useState<boolean>(false);
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const [showQrCode, setShowQrCode] = useState<boolean>(false);
   
@@ -23,6 +24,12 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
     accountNumber: "19020100094298",
     ifscCode: "FDRL0001902"
   };
+
+  // Reset copied state when modal opens/closes
+  useEffect(() => {
+    setCopied(false);
+    setBankDetailsCopied(false);
+  }, [isOpen]);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
@@ -36,21 +43,40 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
   };
 
   const copyUpiId = () => {
-    navigator.clipboard.writeText(upiId);
-    setCopied(true);
-    toast.success("UPI ID copied to clipboard");
-    setTimeout(() => setCopied(false), 3000);
+    navigator.clipboard.writeText(upiId)
+      .then(() => {
+        setCopied(true);
+        toast.success("UPI ID copied to clipboard");
+        setTimeout(() => setCopied(false), 3000);
+      })
+      .catch(err => {
+        toast.error("Failed to copy UPI ID");
+        console.error("Could not copy text: ", err);
+      });
   };
 
   const copyBankDetails = () => {
     const details = `Name: ${bankDetails.name}\nAccount Number: ${bankDetails.accountNumber}\nIFSC Code: ${bankDetails.ifscCode}`;
-    navigator.clipboard.writeText(details);
-    toast.success("Bank details copied to clipboard");
+    navigator.clipboard.writeText(details)
+      .then(() => {
+        setBankDetailsCopied(true);
+        toast.success("Bank details copied to clipboard");
+        setTimeout(() => setBankDetailsCopied(false), 3000);
+      })
+      .catch(err => {
+        toast.error("Failed to copy bank details");
+        console.error("Could not copy text: ", err);
+      });
   };
 
   const generateQrCodeUrl = () => {
     // Format: upi://pay?pa=UPI_ID&pn=NAME&am=AMOUNT&cu=INR&tn=TRANSACTION_NOTE
     return `upi://pay?pa=${upiId}&pn=Widgetify&am=${amount}&cu=INR&tn=Donation to Widgetify`;
+  };
+
+  const generateQrCodeImageUrl = () => {
+    const upiDeepLink = generateQrCodeUrl();
+    return `https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(upiDeepLink)}&chs=200x200&choe=UTF-8&chld=L|2`;
   };
 
   return (
@@ -114,13 +140,16 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
               <div className="mt-4 flex flex-col items-center">
                 <div className="bg-white p-4 rounded-md border">
                   <img 
-                    src={`https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(generateQrCodeUrl())}&chs=200x200&choe=UTF-8&chld=L|2`} 
+                    src={generateQrCodeImageUrl()} 
                     alt="UPI QR Code"
                     className="w-48 h-48 mx-auto"
                   />
                 </div>
                 <p className="text-xs text-center mt-2 text-gray-500">
                   Scan this QR code with any UPI app to donate ₹{amount}
+                </p>
+                <p className="text-xs text-center mt-1 text-gray-500">
+                  QR code updates automatically when you change the amount
                 </p>
               </div>
             )}
@@ -152,7 +181,8 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
                   className="mt-2 h-8 text-xs" 
                   onClick={copyBankDetails}
                 >
-                  <CopyIcon className="h-4 w-4 mr-1" /> Copy bank details
+                  {bankDetailsCopied ? <Check className="h-4 w-4 mr-1" /> : <CopyIcon className="h-4 w-4 mr-1" />}
+                  {bankDetailsCopied ? "Copied" : "Copy bank details"}
                 </Button>
               </div>
             )}
