@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-import { CopyIcon, Check } from 'lucide-react';
+import { CopyIcon, Check, QrCode } from 'lucide-react';
 
 interface DonationModalProps {
   isOpen: boolean;
@@ -15,6 +15,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
   const [amount, setAmount] = useState<number>(14);
   const [copied, setCopied] = useState<boolean>(false);
   const [showDetails, setShowDetails] = useState<boolean>(false);
+  const [showQrCode, setShowQrCode] = useState<boolean>(false);
   
   const upiId = "adnanmuhammad4393@okicici";
   const bankDetails = {
@@ -45,6 +46,11 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
     const details = `Name: ${bankDetails.name}\nAccount Number: ${bankDetails.accountNumber}\nIFSC Code: ${bankDetails.ifscCode}`;
     navigator.clipboard.writeText(details);
     toast.success("Bank details copied to clipboard");
+  };
+
+  const generateQrCodeUrl = () => {
+    // Format: upi://pay?pa=UPI_ID&pn=NAME&am=AMOUNT&cu=INR&tn=TRANSACTION_NOTE
+    return `upi://pay?pa=${upiId}&pn=Widgetify&am=${amount}&cu=INR&tn=Donation to Widgetify`;
   };
 
   return (
@@ -79,19 +85,45 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
           <div className="mb-4 bg-gray-50 p-4 rounded-md">
             <div className="flex justify-between items-center mb-2">
               <span className="font-medium">UPI ID</span>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="h-8 px-2 text-xs" 
-                onClick={copyUpiId}
-              >
-                {copied ? <Check className="h-4 w-4 mr-1" /> : <CopyIcon className="h-4 w-4 mr-1" />}
-                {copied ? "Copied" : "Copy"}
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-8 px-2 text-xs" 
+                  onClick={() => setShowQrCode(!showQrCode)}
+                >
+                  <QrCode className="h-4 w-4 mr-1" />
+                  {showQrCode ? "Hide QR" : "Show QR"}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="h-8 px-2 text-xs" 
+                  onClick={copyUpiId}
+                >
+                  {copied ? <Check className="h-4 w-4 mr-1" /> : <CopyIcon className="h-4 w-4 mr-1" />}
+                  {copied ? "Copied" : "Copy"}
+                </Button>
+              </div>
             </div>
             <div className="text-sm font-mono bg-gray-100 p-2 rounded border border-gray-200 break-all">
               {upiId}
             </div>
+            
+            {showQrCode && (
+              <div className="mt-4 flex flex-col items-center">
+                <div className="bg-white p-4 rounded-md border">
+                  <img 
+                    src={`https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(generateQrCodeUrl())}&chs=200x200&choe=UTF-8&chld=L|2`} 
+                    alt="UPI QR Code"
+                    className="w-48 h-48 mx-auto"
+                  />
+                </div>
+                <p className="text-xs text-center mt-2 text-gray-500">
+                  Scan this QR code with any UPI app to donate ₹{amount}
+                </p>
+              </div>
+            )}
           </div>
           
           <div>
