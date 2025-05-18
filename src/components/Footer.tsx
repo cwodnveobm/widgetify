@@ -1,8 +1,14 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Facebook, Instagram, Twitter, HandHeart } from 'lucide-react';
+import { HandHeart } from 'lucide-react';
+import DonationModal from './DonationModal';
+
 const Footer: React.FC = () => {
-  return <footer className="bg-gray-900 text-gray-300">
+  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
+
+  return (
+    <footer className="bg-gray-900 text-gray-300">
       <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
@@ -35,10 +41,13 @@ const Footer: React.FC = () => {
               <p className="text-sm mb-3">
                 This platform is free to use and we don't charge anything — but maintaining it takes time and resources. If you find it valuable, consider donating to support its continued availability for everyone.
               </p>
-              <a href="https://razorpay.me/@aznoxx?amount=zPcDiUDYF4mzSgsG00XV0w%3D%3D" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-primary/90 hover:bg-primary text-white px-4 py-2 rounded-md w-full transition-colors">
+              <Button 
+                onClick={() => setIsDonationModalOpen(true)}
+                className="flex items-center justify-center gap-2 bg-primary/90 hover:bg-primary text-white px-4 py-2 rounded-md w-full transition-colors"
+              >
                 <HandHeart size={18} />
                 <span>Support This Project</span>
-              </a>
+              </Button>
             </div>
           </div>
         </div>
@@ -50,6 +59,13 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
-    </footer>;
+
+      <DonationModal 
+        isOpen={isDonationModalOpen}
+        onClose={() => setIsDonationModalOpen(false)}
+      />
+    </footer>
+  );
 };
+
 export default Footer;

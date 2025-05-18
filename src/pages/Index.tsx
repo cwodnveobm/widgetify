@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import HeroSection from '@/components/HeroSection';
 import WidgetGenerator from '@/components/WidgetGenerator';
 import FeaturesSection from '@/components/FeaturesSection';
@@ -6,9 +7,11 @@ import FounderSection from '@/components/FounderSection';
 import Footer from '@/components/Footer';
 import { Menu, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import DonationModal from '@/components/DonationModal';
 
 const Index: React.FC = () => {
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
   const isMobile = useIsMobile();
   
   const toggleMenu = () => {
@@ -51,7 +54,8 @@ const Index: React.FC = () => {
     }
   };
   
-  return <div className="min-h-screen flex flex-col">
+  return (
+    <div className="min-h-screen flex flex-col">
       <header className="bg-white border-b border-gray-100 py-3 md:py-4 px-4 md:px-6 sticky top-0 z-40">
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-xl md:text-2xl font-bold gradient-text">Widgetify</div>
@@ -91,9 +95,15 @@ const Index: React.FC = () => {
                   Support
                 </a>
                 <div className="pt-2 pb-3">
-                  <a href="https://razorpay.me/@aznoxx?amount=zPcDiUDYF4mzSgsG00XV0w%3D%3D" target="_blank" rel="noopener noreferrer" className="bg-primary hover:bg-primary/90 text-white px-4 py-3 rounded-md inline-block w-full text-center min-h-[44px]" onClick={handleMenuItemClick}>
-                    Donate ₹14
-                  </a>
+                  <button 
+                    onClick={() => {
+                      setIsDonationModalOpen(true);
+                      handleMenuItemClick();
+                    }}
+                    className="bg-primary hover:bg-primary/90 text-white px-4 py-3 rounded-md inline-block w-full text-center min-h-[44px]"
+                  >
+                    Donate
+                  </button>
                 </div>
               </div>
             </>
@@ -107,9 +117,12 @@ const Index: React.FC = () => {
                 <a href="/support" className="text-gray-600 hover:text-purple-600">Support</a>
               </nav>
               <div>
-                <a href="https://razorpay.me/@aznoxx?amount=zPcDiUDYF4mzSgsG00XV0w%3D%3D" target="_blank" rel="noopener noreferrer" className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md inline-block">
-                  Donate ₹14
-                </a>
+                <button 
+                  onClick={() => setIsDonationModalOpen(true)}
+                  className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md inline-block"
+                >
+                  Donate
+                </button>
               </div>
             </>
           )}
@@ -124,7 +137,13 @@ const Index: React.FC = () => {
       </main>
       
       <Footer />
-    </div>;
+      
+      <DonationModal
+        isOpen={isDonationModalOpen}
+        onClose={() => setIsDonationModalOpen(false)}
+      />
+    </div>
+  );
 };
 
 export default Index;

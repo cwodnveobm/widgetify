@@ -1,3 +1,4 @@
+
 <a href="https://www.producthunt.com/posts/widgetify-2?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-widgetify&#0045;2" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=961430&theme=light&t=1747062621194" alt="Widgetify - Chat&#0032;widgets | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 
 
@@ -31,8 +32,12 @@ To install any widget, follow the integration guide provided for each specific w
 
 Simply copy the provided code snippet into your website's HTML 
 
-Support us : https://razorpay.me/@aznoxx?amount=zPcDiUDYF4mzSgsG00XV0w%3D%3D
+## Support Us
 
+If you find Widgetify useful, please consider supporting the project through a donation. You can donate any amount between ₹14 and ₹2,214.
 
-Use it  now : https://widgetify.vercel.app/
+Payment Methods:
+- UPI: adnanmuhammad4393@okicici
+- Bank Transfer (Details available in the donation modal)
 
+Use it now: https://widgetify.vercel.app/
