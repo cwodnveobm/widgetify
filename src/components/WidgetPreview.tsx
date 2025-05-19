@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
 import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone } from 'lucide-react';
@@ -7,7 +8,7 @@ interface WidgetPreviewProps {
 }
 
 const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
-  const { type, position, primaryColor, size, networks } = config;
+  const { type, position, primaryColor, size, networks, bubbleStyle, bubbleBorderRadius, bubbleBackgroundColor, bubbleTextColor } = config;
   const [showPopup, setShowPopup] = useState(false);
 
   const sizeMap = {
@@ -89,6 +90,91 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     whiteSpace: 'nowrap' as const,
     opacity: 0.8,
   } as React.CSSProperties;
+
+  // Get the appropriate chat bubble style based on the config
+  const getChatBubbleStyle = (isUser: boolean) => {
+    const defaultBorderRadius = bubbleBorderRadius || '10px';
+    const defaultBackgroundColor = bubbleBackgroundColor || (isUser ? '#E5F7FF' : '#F1F0F0');
+    const defaultTextColor = bubbleTextColor || '#333333';
+    
+    // Base bubble style
+    const baseBubbleStyle = {
+      padding: '8px 12px',
+      marginBottom: '8px',
+      maxWidth: '80%',
+      borderRadius: defaultBorderRadius,
+      backgroundColor: defaultBackgroundColor,
+      color: defaultTextColor,
+      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
+      fontSize: '12px',
+      textAlign: 'left' as const,
+    };
+    
+    // Bubble position based on sender
+    const position = isUser ? { 
+      alignSelf: 'flex-end' as const,
+      borderBottomRightRadius: '2px'
+    } : { 
+      alignSelf: 'flex-start' as const,
+      borderBottomLeftRadius: '2px'
+    };
+    
+    // Apply custom bubble styles based on the selected style
+    switch(bubbleStyle) {
+      case 'rounded':
+        return {
+          ...baseBubbleStyle,
+          ...position,
+          borderRadius: '18px',
+        };
+      case 'modern':
+        return {
+          ...baseBubbleStyle,
+          ...position,
+          borderRadius: isUser ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+          backgroundColor: isUser ? '#E1F5FE' : '#F5F5F5',
+          boxShadow: '0 1px 2px rgba(0, 0, 0, 0.15)',
+        };
+      case 'minimal':
+        return {
+          ...baseBubbleStyle,
+          ...position,
+          borderRadius: '4px',
+          backgroundColor: isUser ? '#EBF8FF' : '#F0F0F0',
+          boxShadow: 'none',
+        };
+      case 'bubble':
+        return {
+          ...baseBubbleStyle,
+          ...position,
+          borderRadius: '20px',
+          backgroundColor: isUser ? '#DCF8C6' : '#FFFFFF',
+          border: isUser ? 'none' : '1px solid #E0E0E0',
+        };
+      case 'flat':
+        return {
+          ...baseBubbleStyle,
+          ...position,
+          borderRadius: '0px',
+          backgroundColor: isUser ? '#E3F2FD' : '#FAFAFA',
+          border: '1px solid #E0E0E0',
+          boxShadow: 'none',
+        };
+      case 'custom':
+        return {
+          ...baseBubbleStyle,
+          ...position,
+          borderRadius: defaultBorderRadius,
+          backgroundColor: defaultBackgroundColor,
+          color: defaultTextColor,
+        };
+      default:
+        return {
+          ...baseBubbleStyle,
+          ...position,
+        };
+    }
+  };
 
   // Custom Icon Components
   const WhatsAppIcon = ({ size }: { size: number }) => (
@@ -283,9 +369,20 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
                 ×
               </button>
             </div>
-            <div className="flex-grow p-3 overflow-y-auto bg-white">
-              <div className="bg-gray-100 p-2 rounded-lg mb-2 max-w-[80%]">
-                <p className="text-xs">How can I help you today?</p>
+            <div className="flex-grow p-3 overflow-y-auto bg-white flex flex-col">
+              {/* Demo message from business */}
+              <div style={getChatBubbleStyle(false)}>
+                <p>How can I help you today?</p>
+              </div>
+              
+              {/* Demo message from user */}
+              <div style={getChatBubbleStyle(true)}>
+                <p>I have a question about your services.</p>
+              </div>
+              
+              {/* Another demo message from business */}
+              <div style={getChatBubbleStyle(false)}>
+                <p>I'd be happy to assist you! What would you like to know?</p>
               </div>
             </div>
             <div className="p-3 border-t bg-gray-50 rounded-b-lg">

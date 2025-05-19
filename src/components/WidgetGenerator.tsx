@@ -10,6 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Twitch, Slack, Phone, Star } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 const WidgetGenerator: React.FC = () => {
   const [widgetConfig, setWidgetConfig] = useState<WidgetConfig>({
     type: 'whatsapp',
@@ -23,10 +25,16 @@ const WidgetGenerator: React.FC = () => {
     shareUrl: '',
     phoneNumber: '',
     reviewUrl: '',
-    followPlatform: 'linkedin'
+    followPlatform: 'linkedin',
+    bubbleStyle: 'modern',
+    bubbleBorderRadius: '10px',
+    bubbleBackgroundColor: '#E5F7FF',
+    bubbleTextColor: '#333333'
   });
   const [code, setCode] = useState<string>('');
   const [showCode, setShowCode] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<string>('general');
+
   const handleTypeChange = (value: WidgetType) => {
     const colorMap: Record<WidgetType, string> = {
       whatsapp: '#25D366',
@@ -52,24 +60,28 @@ const WidgetGenerator: React.FC = () => {
       primaryColor: colorMap[value]
     });
   };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setWidgetConfig({
       ...widgetConfig,
       [e.target.name]: e.target.value
     });
   };
+
   const handlePositionChange = (position: 'left' | 'right') => {
     setWidgetConfig({
       ...widgetConfig,
       position
     });
   };
+
   const handleSizeChange = (size: string) => {
     setWidgetConfig({
       ...widgetConfig,
       size: size as 'small' | 'medium' | 'large'
     });
   };
+
   const handleNetworkToggle = (network: string) => {
     const currentNetworks = widgetConfig.networks || [];
     if (currentNetworks.includes(network)) {
@@ -84,12 +96,28 @@ const WidgetGenerator: React.FC = () => {
       });
     }
   };
+
   const handleFollowPlatformChange = (platform: string) => {
     setWidgetConfig({
       ...widgetConfig,
       followPlatform: platform as 'linkedin' | 'instagram' | 'youtube'
     });
   };
+
+  const handleBubbleStyleChange = (style: string) => {
+    setWidgetConfig({
+      ...widgetConfig,
+      bubbleStyle: style as 'modern' | 'rounded' | 'minimal' | 'bubble' | 'flat' | 'custom'
+    });
+  };
+
+  const handleBubbleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setWidgetConfig({
+      ...widgetConfig,
+      [e.target.name]: e.target.value
+    });
+  };
+
   const generateWidget = () => {
     // Validate based on widget type
     switch (widgetConfig.type) {
@@ -134,10 +162,12 @@ const WidgetGenerator: React.FC = () => {
     setShowCode(true);
     toast.success('Widget code generated successfully!');
   };
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(code);
     toast.success('Code copied to clipboard!');
   };
+
   const getPlaceholderText = () => {
     switch (widgetConfig.type) {
       case 'whatsapp':
@@ -169,11 +199,12 @@ const WidgetGenerator: React.FC = () => {
       case 'review-now':
         return 'URL for reviews (e.g. Google or Yelp review page)';
       case 'follow-us':
-        return 'Your social media username';
+        return `${widgetConfig.followPlatform?.charAt(0).toUpperCase()}${widgetConfig.followPlatform?.slice(1)} Username`;
       default:
         return 'Enter your handle';
     }
   };
+
   const getInputLabel = () => {
     switch (widgetConfig.type) {
       case 'social-share':
@@ -260,6 +291,7 @@ const WidgetGenerator: React.FC = () => {
     'review-now': <Star className="h-6 w-6" />,
     'follow-us': <Linkedin className="h-6 w-6" />
   };
+
   return <section id="widget-generator" className="py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-10">
@@ -272,259 +304,503 @@ const WidgetGenerator: React.FC = () => {
 
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
-            <div className="mb-6">
-              <h3 className="text-lg font-medium mb-3">Select Platform</h3>
-              <RadioGroup defaultValue="whatsapp" value={widgetConfig.type} onValueChange={value => handleTypeChange(value as WidgetType)} className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                <div>
-                  <RadioGroupItem value="whatsapp" id="whatsapp" className="peer sr-only" />
-                  <Label htmlFor="whatsapp" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <WhatsAppIcon />
-                    WhatsApp
-                  </Label>
-                </div>
+            <Tabs defaultValue="general" value={activeTab} onValueChange={setActiveTab}>
+              <TabsList className="grid grid-cols-2 mb-6">
+                <TabsTrigger value="general">General Settings</TabsTrigger>
+                <TabsTrigger value="appearance">Appearance</TabsTrigger>
+              </TabsList>
 
-                <div>
-                  <RadioGroupItem value="facebook" id="facebook" className="peer sr-only" />
-                  <Label htmlFor="facebook" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <Facebook className="mb-3 h-6 w-6" />
-                    Facebook
-                  </Label>
-                </div>
+              <TabsContent value="general">
+                <div className="mb-6">
+                  <h3 className="text-lg font-medium mb-3">Select Platform</h3>
+                  <RadioGroup defaultValue="whatsapp" value={widgetConfig.type} onValueChange={value => handleTypeChange(value as WidgetType)} className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <div>
+                      <RadioGroupItem value="whatsapp" id="whatsapp" className="peer sr-only" />
+                      <Label htmlFor="whatsapp" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <WhatsAppIcon />
+                        WhatsApp
+                      </Label>
+                    </div>
 
-                <div>
-                  <RadioGroupItem value="instagram" id="instagram" className="peer sr-only" />
-                  <Label htmlFor="instagram" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <Instagram className="mb-3 h-6 w-6" />
-                    Instagram
-                  </Label>
-                </div>
-
-                <div>
-                  <RadioGroupItem value="twitter" id="twitter" className="peer sr-only" />
-                  <Label htmlFor="twitter" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <Twitter className="mb-3 h-6 w-6" />
-                    Twitter
-                  </Label>
-                </div>
-
-                <div>
-                  <RadioGroupItem value="telegram" id="telegram" className="peer sr-only" />
-                  <Label htmlFor="telegram" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <TelegramIcon />
-                    Telegram
-                  </Label>
-                </div>
-
-                <div>
-                  <RadioGroupItem value="linkedin" id="linkedin" className="peer sr-only" />
-                  <Label htmlFor="linkedin" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <Linkedin className="mb-3 h-6 w-6" />
-                    LinkedIn
-                  </Label>
-                </div>
-
-                <div>
-                  <RadioGroupItem value="youtube" id="youtube" className="peer sr-only" />
-                  <Label htmlFor="youtube" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <YoutubeIcon />
-                    YouTube
-                  </Label>
-                </div>
-
-                <div>
-                  <RadioGroupItem value="github" id="github" className="peer sr-only" />
-                  <Label htmlFor="github" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <GithubIcon />
-                    GitHub
-                  </Label>
-                </div>
-
-                <div>
-                  <RadioGroupItem value="twitch" id="twitch" className="peer sr-only" />
-                  <Label htmlFor="twitch" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <TwitchIcon />
-                    Twitch
-                  </Label>
-                </div>
-
-                <div>
-                  <RadioGroupItem value="slack" id="slack" className="peer sr-only" />
-                  <Label htmlFor="slack" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <SlackIcon />
-                    Slack
-                  </Label>
-                </div>
-
-                <div>
-                  <RadioGroupItem value="discord" id="discord" className="peer sr-only" />
-                  <Label htmlFor="discord" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <DiscordIcon />
-                    Discord
-                  </Label>
-                </div>
-                
-                <div>
-                  <RadioGroupItem value="google-translate" id="google-translate" className="peer sr-only" />
-                  <Label htmlFor="google-translate" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <GoogleTranslateIcon />
-                    Translate
-                  </Label>
-                </div>
-
-                <div>
-                  <RadioGroupItem value="social-share" id="social-share" className="peer sr-only" />
-                  
-                </div>
-
-                <div>
-                  <RadioGroupItem value="call-now" id="call-now" className="peer sr-only" />
-                  <Label htmlFor="call-now" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <Phone className="mb-3 h-6 w-6" />
-                    Call Now
-                  </Label>
-                </div>
-
-                <div>
-                  <RadioGroupItem value="review-now" id="review-now" className="peer sr-only" />
-                  <Label htmlFor="review-now" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <Star className="mb-3 h-6 w-6" />
-                    Reviews
-                  </Label>
-                </div>
-
-                <div>
-                  <RadioGroupItem value="follow-us" id="follow-us" className="peer sr-only" />
-                  <Label htmlFor="follow-us" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <Linkedin className="mb-3 h-6 w-6" />
-                    Follow Us
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            {widgetConfig.type === 'social-share' && <>
-                <div className="mb-4">
-                  <Label>Select Social Networks</Label>
-                  <div className="mt-2 space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="facebook-network" checked={widgetConfig.networks?.includes('facebook')} onCheckedChange={() => handleNetworkToggle('facebook')} />
-                      <label htmlFor="facebook-network" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
-                        <Facebook className="h-5 w-5 text-[#1877F2]" />
+                    <div>
+                      <RadioGroupItem value="facebook" id="facebook" className="peer sr-only" />
+                      <Label htmlFor="facebook" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <Facebook className="mb-3 h-6 w-6" />
                         Facebook
-                      </label>
+                      </Label>
                     </div>
-                    
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="twitter-network" checked={widgetConfig.networks?.includes('twitter')} onCheckedChange={() => handleNetworkToggle('twitter')} />
-                      <label htmlFor="twitter-network" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
-                        <Twitter className="h-5 w-5 text-[#1DA1F2]" />
+
+                    <div>
+                      <RadioGroupItem value="instagram" id="instagram" className="peer sr-only" />
+                      <Label htmlFor="instagram" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <Instagram className="mb-3 h-6 w-6" />
+                        Instagram
+                      </Label>
+                    </div>
+
+                    <div>
+                      <RadioGroupItem value="twitter" id="twitter" className="peer sr-only" />
+                      <Label htmlFor="twitter" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <Twitter className="mb-3 h-6 w-6" />
                         Twitter
-                      </label>
+                      </Label>
+                    </div>
+
+                    <div>
+                      <RadioGroupItem value="telegram" id="telegram" className="peer sr-only" />
+                      <Label htmlFor="telegram" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <TelegramIcon />
+                        Telegram
+                      </Label>
+                    </div>
+
+                    <div>
+                      <RadioGroupItem value="linkedin" id="linkedin" className="peer sr-only" />
+                      <Label htmlFor="linkedin" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <Linkedin className="mb-3 h-6 w-6" />
+                        LinkedIn
+                      </Label>
+                    </div>
+
+                    <div>
+                      <RadioGroupItem value="youtube" id="youtube" className="peer sr-only" />
+                      <Label htmlFor="youtube" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <YoutubeIcon />
+                        YouTube
+                      </Label>
+                    </div>
+
+                    <div>
+                      <RadioGroupItem value="github" id="github" className="peer sr-only" />
+                      <Label htmlFor="github" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <GithubIcon />
+                        GitHub
+                      </Label>
+                    </div>
+
+                    <div>
+                      <RadioGroupItem value="twitch" id="twitch" className="peer sr-only" />
+                      <Label htmlFor="twitch" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <TwitchIcon />
+                        Twitch
+                      </Label>
+                    </div>
+
+                    <div>
+                      <RadioGroupItem value="slack" id="slack" className="peer sr-only" />
+                      <Label htmlFor="slack" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <SlackIcon />
+                        Slack
+                      </Label>
+                    </div>
+
+                    <div>
+                      <RadioGroupItem value="discord" id="discord" className="peer sr-only" />
+                      <Label htmlFor="discord" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <DiscordIcon />
+                        Discord
+                      </Label>
                     </div>
                     
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="linkedin-network" checked={widgetConfig.networks?.includes('linkedin')} onCheckedChange={() => handleNetworkToggle('linkedin')} />
-                      <label htmlFor="linkedin-network" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
-                        <Linkedin className="h-5 w-5 text-[#0077B5]" />
-                        LinkedIn
-                      </label>
+                    <div>
+                      <RadioGroupItem value="google-translate" id="google-translate" className="peer sr-only" />
+                      <Label htmlFor="google-translate" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <GoogleTranslateIcon />
+                        Translate
+                      </Label>
                     </div>
-                  </div>
+
+                    <div>
+                      <RadioGroupItem value="social-share" id="social-share" className="peer sr-only" />
+                      
+                    </div>
+
+                    <div>
+                      <RadioGroupItem value="call-now" id="call-now" className="peer sr-only" />
+                      <Label htmlFor="call-now" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <Phone className="mb-3 h-6 w-6" />
+                        Call Now
+                      </Label>
+                    </div>
+
+                    <div>
+                      <RadioGroupItem value="review-now" id="review-now" className="peer sr-only" />
+                      <Label htmlFor="review-now" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <Star className="mb-3 h-6 w-6" />
+                        Reviews
+                      </Label>
+                    </div>
+
+                    <div>
+                      <RadioGroupItem value="follow-us" id="follow-us" className="peer sr-only" />
+                      <Label htmlFor="follow-us" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                        <Linkedin className="mb-3 h-6 w-6" />
+                        Follow Us
+                      </Label>
+                    </div>
+                  </RadioGroup>
                 </div>
-                
+
+                {widgetConfig.type === 'social-share' && (
+                  <>
+                    <div className="mb-4">
+                      <Label>Select Social Networks</Label>
+                      <div className="mt-2 space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="facebook-network" checked={widgetConfig.networks?.includes('facebook')} onCheckedChange={() => handleNetworkToggle('facebook')} />
+                          <label htmlFor="facebook-network" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
+                            <Facebook className="h-5 w-5 text-[#1877F2]" />
+                            Facebook
+                          </label>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="twitter-network" checked={widgetConfig.networks?.includes('twitter')} onCheckedChange={() => handleNetworkToggle('twitter')} />
+                          <label htmlFor="twitter-network" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
+                            <Twitter className="h-5 w-5 text-[#1DA1F2]" />
+                            Twitter
+                          </label>
+                        </div>
+                        
+                        <div className="flex items-center space-x-2">
+                          <Checkbox id="linkedin-network" checked={widgetConfig.networks?.includes('linkedin')} onCheckedChange={() => handleNetworkToggle('linkedin')} />
+                          <label htmlFor="linkedin-network" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
+                            <Linkedin className="h-5 w-5 text-[#0077B5]" />
+                            LinkedIn
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="mb-4">
+                      <Label htmlFor="shareText">Share Text</Label>
+                      <Textarea id="shareText" name="shareText" value={widgetConfig.shareText} onChange={handleInputChange} placeholder="Share this awesome content!" className="mt-1" />
+                    </div>
+                  </>
+                )}
+
+                {widgetConfig.type === 'follow-us' && (
+                  <div className="mb-4">
+                    <Label>Select Platform</Label>
+                    <RadioGroup defaultValue="linkedin" value={widgetConfig.followPlatform} onValueChange={handleFollowPlatformChange} className="grid grid-cols-3 gap-3 mt-2">
+                      <div>
+                        <RadioGroupItem value="linkedin" id="follow-linkedin" className="peer sr-only" />
+                        <Label htmlFor="follow-linkedin" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                          <Linkedin className="h-5 w-5 text-[#0077B5]" />
+                          <span className="text-xs mt-1">LinkedIn</span>
+                        </Label>
+                      </div>
+                      
+                      <div>
+                        <RadioGroupItem value="instagram" id="follow-instagram" className="peer sr-only" />
+                        <Label htmlFor="follow-instagram" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                          <Instagram className="h-5 w-5 text-[#E1306C]" />
+                          <span className="text-xs mt-1">Instagram</span>
+                        </Label>
+                      </div>
+                      
+                      <div>
+                        <RadioGroupItem value="youtube" id="follow-youtube" className="peer sr-only" />
+                        <Label htmlFor="follow-youtube" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                          <Youtube className="h-5 w-5 text-[#FF0000]" />
+                          <span className="text-xs mt-1">YouTube</span>
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                )}
+
                 <div className="mb-4">
-                  <Label htmlFor="shareText">Share Text</Label>
-                  <Textarea id="shareText" name="shareText" value={widgetConfig.shareText} onChange={handleInputChange} placeholder="Share this awesome content!" className="mt-1" />
+                  <Label htmlFor={widgetConfig.type === 'call-now' ? 'phoneNumber' : widgetConfig.type === 'review-now' ? 'reviewUrl' : 'handle'}>
+                    {getInputLabel()}
+                  </Label>
+                  {widgetConfig.type === 'call-now' ? (
+                    <Input 
+                      id="phoneNumber" 
+                      name="phoneNumber" 
+                      value={widgetConfig.phoneNumber} 
+                      onChange={handleInputChange} 
+                      placeholder={getPlaceholderText()} 
+                      className="mt-1" 
+                    />
+                  ) : widgetConfig.type === 'review-now' ? (
+                    <Input 
+                      id="reviewUrl" 
+                      name="reviewUrl" 
+                      value={widgetConfig.reviewUrl} 
+                      onChange={handleInputChange} 
+                      placeholder={getPlaceholderText()} 
+                      className="mt-1" 
+                    />
+                  ) : (
+                    <Input 
+                      id="handle" 
+                      name="handle" 
+                      value={widgetConfig.handle} 
+                      onChange={handleInputChange} 
+                      placeholder={getPlaceholderText()} 
+                      className="mt-1" 
+                    />
+                  )}
                 </div>
-              </>}
 
-            {widgetConfig.type === 'follow-us' && <div className="mb-4">
-                <Label>Select Platform</Label>
-                <RadioGroup defaultValue="linkedin" value={widgetConfig.followPlatform} onValueChange={handleFollowPlatformChange} className="grid grid-cols-3 gap-3 mt-2">
-                  <div>
-                    <RadioGroupItem value="linkedin" id="follow-linkedin" className="peer sr-only" />
-                    <Label htmlFor="follow-linkedin" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                      <Linkedin className="h-5 w-5 text-[#0077B5]" />
-                      <span className="text-xs mt-1">LinkedIn</span>
-                    </Label>
+                {widgetConfig.type === 'whatsapp' && (
+                  <div className="mb-4">
+                    <Label htmlFor="welcomeMessage">Welcome Message</Label>
+                    <Textarea id="welcomeMessage" name="welcomeMessage" value={widgetConfig.welcomeMessage} onChange={handleInputChange} placeholder="Hello! How can I help you today?" className="mt-1" />
                   </div>
-                  
-                  <div>
-                    <RadioGroupItem value="instagram" id="follow-instagram" className="peer sr-only" />
-                    <Label htmlFor="follow-instagram" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                      <Instagram className="h-5 w-5 text-[#E1306C]" />
-                      <span className="text-xs mt-1">Instagram</span>
-                    </Label>
-                  </div>
-                  
-                  <div>
-                    <RadioGroupItem value="youtube" id="follow-youtube" className="peer sr-only" />
-                    <Label htmlFor="follow-youtube" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                      <Youtube className="h-5 w-5 text-[#FF0000]" />
-                      <span className="text-xs mt-1">YouTube</span>
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </div>}
+                )}
 
-            <div className="mb-4">
-              <Label htmlFor={widgetConfig.type === 'call-now' ? 'phoneNumber' : widgetConfig.type === 'review-now' ? 'reviewUrl' : 'handle'}>
-                {getInputLabel()}
-              </Label>
-              {widgetConfig.type === 'call-now' ? <Input id="phoneNumber" name="phoneNumber" value={widgetConfig.phoneNumber} onChange={handleInputChange} placeholder={getPlaceholderText()} className="mt-1" /> : widgetConfig.type === 'review-now' ? <Input id="reviewUrl" name="reviewUrl" value={widgetConfig.reviewUrl} onChange={handleInputChange} placeholder={getPlaceholderText()} className="mt-1" /> : <Input id="handle" name="handle" value={widgetConfig.handle} onChange={handleInputChange} placeholder={getPlaceholderText()} className="mt-1" />}
-            </div>
-
-            {widgetConfig.type === 'whatsapp' && <div className="mb-4">
-                <Label htmlFor="welcomeMessage">Welcome Message</Label>
-                <Textarea id="welcomeMessage" name="welcomeMessage" value={widgetConfig.welcomeMessage} onChange={handleInputChange} placeholder="Hello! How can I help you today?" className="mt-1" />
-              </div>}
-
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div>
-                <Label htmlFor="position">Position</Label>
-                <RadioGroup defaultValue="right" value={widgetConfig.position} onValueChange={value => handlePositionChange(value as 'left' | 'right')} className="grid grid-cols-2 gap-3 mt-1">
+                <div className="grid grid-cols-2 gap-4 mb-6">
                   <div>
-                    <RadioGroupItem value="left" id="left" className="peer sr-only" />
-                    <Label htmlFor="left" className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                      Left
-                    </Label>
+                    <Label htmlFor="position">Position</Label>
+                    <RadioGroup defaultValue="right" value={widgetConfig.position} onValueChange={value => handlePositionChange(value as 'left' | 'right')} className="grid grid-cols-2 gap-3 mt-1">
+                      <div>
+                        <RadioGroupItem value="left" id="left" className="peer sr-only" />
+                        <Label htmlFor="left" className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                          Left
+                        </Label>
+                      </div>
+
+                      <div>
+                        <RadioGroupItem value="right" id="right" className="peer sr-only" />
+                        <Label htmlFor="right" className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                          Right
+                        </Label>
+                      </div>
+                    </RadioGroup>
                   </div>
 
                   <div>
-                    <RadioGroupItem value="right" id="right" className="peer sr-only" />
-                    <Label htmlFor="right" className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-2 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                      Right
-                    </Label>
+                    <Label htmlFor="size">Button Size</Label>
+                    <Select value={widgetConfig.size} onValueChange={handleSizeChange}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select size" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="small">Small</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="large">Large</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   </div>
-                </RadioGroup>
-              </div>
+                </div>
 
-              <div>
-                <Label htmlFor="size">Button Size</Label>
-                <Select value={widgetConfig.size} onValueChange={handleSizeChange}>
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Select size" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="small">Small</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="large">Large</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                <div className="mb-6">
+                  <Label htmlFor="primaryColor">Button Color</Label>
+                  <div className="flex items-center gap-3 mt-1">
+                    <Input id="primaryColor" name="primaryColor" type="color" value={widgetConfig.primaryColor} onChange={handleInputChange} className="w-12 h-12 p-1 rounded-md" />
+                    <Input name="primaryColor" value={widgetConfig.primaryColor} onChange={handleInputChange} className="flex-1" />
+                  </div>
+                </div>
+              </TabsContent>
 
-            <div className="mb-6">
-              <Label htmlFor="primaryColor">Color</Label>
-              <div className="flex items-center gap-3 mt-1">
-                <Input id="primaryColor" name="primaryColor" type="color" value={widgetConfig.primaryColor} onChange={handleInputChange} className="w-12 h-12 p-1 rounded-md" />
-                <Input name="primaryColor" value={widgetConfig.primaryColor} onChange={handleInputChange} className="flex-1" />
-              </div>
-            </div>
+              <TabsContent value="appearance">
+                {(widgetConfig.type === 'whatsapp' || 
+                 widgetConfig.type === 'facebook' || 
+                 widgetConfig.type === 'telegram' || 
+                 widgetConfig.type === 'discord') && (
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-medium mb-3">Chat Bubble Style</h3>
+                      <div className="grid grid-cols-3 gap-3">
+                        <div>
+                          <input 
+                            type="radio" 
+                            id="modern" 
+                            name="bubbleStyle" 
+                            value="modern" 
+                            checked={widgetConfig.bubbleStyle === 'modern'} 
+                            onChange={() => handleBubbleStyleChange('modern')} 
+                            className="sr-only peer" 
+                          />
+                          <label 
+                            htmlFor="modern" 
+                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-checked:border-primary cursor-pointer"
+                          >
+                            <div className="w-full h-8 bg-[#E1F5FE] rounded-[18px] rounded-br-[4px] mb-1"></div>
+                            <span className="text-xs">Modern</span>
+                          </label>
+                        </div>
 
-            <Button onClick={generateWidget} className="w-full bg-accent hover:bg-accent/90 text-white font-medium py-2 px-4 rounded">
+                        <div>
+                          <input 
+                            type="radio" 
+                            id="rounded" 
+                            name="bubbleStyle" 
+                            value="rounded" 
+                            checked={widgetConfig.bubbleStyle === 'rounded'} 
+                            onChange={() => handleBubbleStyleChange('rounded')} 
+                            className="sr-only peer" 
+                          />
+                          <label 
+                            htmlFor="rounded" 
+                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-checked:border-primary cursor-pointer"
+                          >
+                            <div className="w-full h-8 bg-[#E5F7FF] rounded-[18px] mb-1"></div>
+                            <span className="text-xs">Rounded</span>
+                          </label>
+                        </div>
+
+                        <div>
+                          <input 
+                            type="radio" 
+                            id="minimal" 
+                            name="bubbleStyle" 
+                            value="minimal" 
+                            checked={widgetConfig.bubbleStyle === 'minimal'} 
+                            onChange={() => handleBubbleStyleChange('minimal')} 
+                            className="sr-only peer" 
+                          />
+                          <label 
+                            htmlFor="minimal" 
+                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-checked:border-primary cursor-pointer"
+                          >
+                            <div className="w-full h-8 bg-[#EBF8FF] rounded-[4px] mb-1"></div>
+                            <span className="text-xs">Minimal</span>
+                          </label>
+                        </div>
+
+                        <div>
+                          <input 
+                            type="radio" 
+                            id="bubble" 
+                            name="bubbleStyle" 
+                            value="bubble" 
+                            checked={widgetConfig.bubbleStyle === 'bubble'} 
+                            onChange={() => handleBubbleStyleChange('bubble')} 
+                            className="sr-only peer" 
+                          />
+                          <label 
+                            htmlFor="bubble" 
+                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-checked:border-primary cursor-pointer"
+                          >
+                            <div className="w-full h-8 bg-[#DCF8C6] rounded-[20px] mb-1"></div>
+                            <span className="text-xs">Bubble</span>
+                          </label>
+                        </div>
+
+                        <div>
+                          <input 
+                            type="radio" 
+                            id="flat" 
+                            name="bubbleStyle" 
+                            value="flat" 
+                            checked={widgetConfig.bubbleStyle === 'flat'} 
+                            onChange={() => handleBubbleStyleChange('flat')} 
+                            className="sr-only peer" 
+                          />
+                          <label 
+                            htmlFor="flat" 
+                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-checked:border-primary cursor-pointer"
+                          >
+                            <div className="w-full h-8 bg-[#E3F2FD] border border-[#E0E0E0] mb-1"></div>
+                            <span className="text-xs">Flat</span>
+                          </label>
+                        </div>
+
+                        <div>
+                          <input 
+                            type="radio" 
+                            id="custom" 
+                            name="bubbleStyle" 
+                            value="custom" 
+                            checked={widgetConfig.bubbleStyle === 'custom'} 
+                            onChange={() => handleBubbleStyleChange('custom')} 
+                            className="sr-only peer" 
+                          />
+                          <label 
+                            htmlFor="custom" 
+                            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-checked:border-primary cursor-pointer"
+                          >
+                            <div className="w-full h-8 bg-gradient-to-r from-blue-200 to-cyan-200 rounded-md mb-1"></div>
+                            <span className="text-xs">Custom</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {widgetConfig.bubbleStyle === 'custom' && (
+                      <div className="space-y-4">
+                        <div>
+                          <Label htmlFor="bubbleBorderRadius">Border Radius</Label>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Input 
+                              id="bubbleBorderRadius" 
+                              name="bubbleBorderRadius" 
+                              type="range" 
+                              min="0" 
+                              max="20" 
+                              step="1" 
+                              value={parseInt(widgetConfig.bubbleBorderRadius || '10')} 
+                              onChange={(e) => setWidgetConfig({
+                                ...widgetConfig,
+                                bubbleBorderRadius: `${e.target.value}px`
+                              })} 
+                              className="flex-1" 
+                            />
+                            <span className="text-sm w-8">{parseInt(widgetConfig.bubbleBorderRadius || '10')}px</span>
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="bubbleBackgroundColor">Background Color</Label>
+                          <div className="flex items-center gap-3 mt-1">
+                            <Input 
+                              id="bubbleBackgroundColor" 
+                              name="bubbleBackgroundColor" 
+                              type="color" 
+                              value={widgetConfig.bubbleBackgroundColor || '#E5F7FF'} 
+                              onChange={handleBubbleColorChange} 
+                              className="w-12 h-12 p-1 rounded-md" 
+                            />
+                            <Input 
+                              name="bubbleBackgroundColor" 
+                              value={widgetConfig.bubbleBackgroundColor || '#E5F7FF'} 
+                              onChange={handleBubbleColorChange} 
+                              className="flex-1" 
+                            />
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="bubbleTextColor">Text Color</Label>
+                          <div className="flex items-center gap-3 mt-1">
+                            <Input 
+                              id="bubbleTextColor" 
+                              name="bubbleTextColor" 
+                              type="color" 
+                              value={widgetConfig.bubbleTextColor || '#333333'} 
+                              onChange={handleBubbleColorChange} 
+                              className="w-12 h-12 p-1 rounded-md" 
+                            />
+                            <Input 
+                              name="bubbleTextColor" 
+                              value={widgetConfig.bubbleTextColor || '#333333'} 
+                              onChange={handleBubbleColorChange} 
+                              className="flex-1" 
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {(widgetConfig.type !== 'whatsapp' && 
+                  widgetConfig.type !== 'facebook' && 
+                  widgetConfig.type !== 'telegram' && 
+                  widgetConfig.type !== 'discord') && (
+                  <div className="flex items-center justify-center h-40 text-gray-500">
+                    <p>Chat bubble styling is only available for messaging platforms.</p>
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+
+            <Button onClick={generateWidget} className="w-full mt-6 bg-accent hover:bg-accent/90 text-white font-medium py-2 px-4 rounded">
               Generate Widget Code
             </Button>
           </div>
@@ -561,7 +837,8 @@ const WidgetGenerator: React.FC = () => {
               </div>
             </div>
 
-            {showCode && <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+            {showCode && (
+              <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="text-lg font-medium">Your Widget Code</h3>
                   <Button onClick={copyToClipboard} variant="outline" size="sm" className="text-sm">
@@ -574,10 +851,12 @@ const WidgetGenerator: React.FC = () => {
                 <p className="text-sm text-gray-500 mt-3">
                   Copy this code and paste it before the closing body tag of your website.
                 </p>
-              </div>}
+              </div>
+            )}
           </div>
         </div>
       </div>
     </section>;
 };
+
 export default WidgetGenerator;
