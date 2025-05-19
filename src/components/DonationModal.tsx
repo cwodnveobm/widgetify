@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -76,7 +75,8 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
 
   const generateQrCodeImageUrl = () => {
     const upiDeepLink = generateQrCodeUrl();
-    return `https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(upiDeepLink)}&chs=200x200&choe=UTF-8&chld=L|2`;
+    // Add cache-busting parameter to ensure QR code updates when amount changes
+    return `https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(upiDeepLink)}&chs=200x200&choe=UTF-8&chld=L|2&t=${Date.now()}`;
   };
 
   return (
@@ -143,6 +143,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
                     src={generateQrCodeImageUrl()} 
                     alt="UPI QR Code"
                     className="w-48 h-48 mx-auto"
+                    key={amount} // Force re-render when amount changes
                   />
                 </div>
                 <p className="text-xs text-center mt-2 text-gray-500">
@@ -151,6 +152,23 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
                 <p className="text-xs text-center mt-1 text-gray-500">
                   QR code updates automatically when you change the amount
                 </p>
+                <Button 
+                  variant="secondary" 
+                  size="sm" 
+                  className="mt-3 h-8 text-xs"
+                  onClick={() => {
+                    // Create an anchor element to download QR code
+                    const link = document.createElement('a');
+                    link.href = generateQrCodeImageUrl();
+                    link.download = `widgetify-donation-qr-${amount}.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    toast.success("QR code downloaded");
+                  }}
+                >
+                  Download QR Code
+                </Button>
               </div>
             )}
           </div>
