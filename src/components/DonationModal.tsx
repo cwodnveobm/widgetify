@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -75,8 +76,8 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
 
   const generateQrCodeImageUrl = () => {
     const upiDeepLink = generateQrCodeUrl();
-    // Add cache-busting parameter to ensure QR code updates when amount changes
-    return `https://chart.googleapis.com/chart?cht=qr&chl=${encodeURIComponent(upiDeepLink)}&chs=200x200&choe=UTF-8&chld=L|2&t=${Date.now()}`;
+    // Use UPI QR code generator
+    return `https://upiqr.in/api/qr?name=Widgetify&vpa=${upiId}&amount=${amount}&currency=INR`;
   };
 
   return (
