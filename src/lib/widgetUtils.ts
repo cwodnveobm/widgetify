@@ -1,3 +1,4 @@
+
 import { WidgetType, WidgetSize } from '@/types';
 
 export interface WidgetConfig {
@@ -13,6 +14,11 @@ export interface WidgetConfig {
   phoneNumber?: string;
   reviewUrl?: string;
   followPlatform?: 'linkedin' | 'instagram' | 'youtube';
+  paymentApiKey?: string;
+  amount?: number;
+  currency?: string;
+  successUrl?: string;
+  cancelUrl?: string;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
@@ -20,7 +26,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
     type,
     handle,
     welcomeMessage,
-    position,
+    position = 'right',
     primaryColor,
     size,
     networks,
@@ -28,7 +34,12 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
     shareUrl,
     phoneNumber,
     reviewUrl,
-    followPlatform
+    followPlatform,
+    paymentApiKey,
+    amount = 10,
+    currency = 'USD',
+    successUrl,
+    cancelUrl
   } = config;
 
   // The ID for the container that will hold the widget
@@ -79,7 +90,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
 
       // Handle click based on widget type
       function handleWidgetClick() {
-        ${getClickHandlerCode(type, handle, welcomeMessage, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, networks)}
+        ${getClickHandlerCode(type, handle, welcomeMessage, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, networks, paymentApiKey, amount, currency, successUrl, cancelUrl, containerId, position)}
       }
     })();
   </script>
@@ -165,6 +176,10 @@ function getIconSvg(type: WidgetType, size: WidgetSize = 'medium', followPlatfor
       return `<svg width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="white">
         <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
       </svg>`;
+    case 'dodo-payment':
+      return `<svg width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="white">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
+      </svg>`;
     case 'follow-us':
       if (followPlatform === 'instagram') {
         return `<svg width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="white">
@@ -199,7 +214,14 @@ function getClickHandlerCode(
   phoneNumber?: string,
   reviewUrl?: string,
   followPlatform?: string,
-  networks?: string[]
+  networks?: string[],
+  paymentApiKey?: string,
+  amount?: number,
+  currency?: string,
+  successUrl?: string,
+  cancelUrl?: string,
+  containerId?: string,
+  position?: string
 ): string {
   switch (type) {
     case 'whatsapp':
@@ -235,6 +257,114 @@ function getClickHandlerCode(
     
     case 'discord':
       return `window.open('https://discord.gg/${handle}', '_blank');`;
+    
+    case 'dodo-payment':
+      return `
+        // Create payment popup
+        const paymentPopup = document.createElement('div');
+        paymentPopup.style.position = 'absolute';
+        paymentPopup.style.bottom = '90px';
+        paymentPopup.style.${position === 'left' ? 'left' : 'right'} = '20px';
+        paymentPopup.style.width = '300px';
+        paymentPopup.style.backgroundColor = 'white';
+        paymentPopup.style.borderRadius = '10px';
+        paymentPopup.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+        paymentPopup.style.zIndex = '9999';
+        paymentPopup.style.overflow = 'hidden';
+        
+        // Add payment content
+        paymentPopup.innerHTML = \`
+          <div style="background-color: #f3f4f6; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
+            <div style="font-weight: 500;">Dodo Payment</div>
+            <button id="close-payment-popup" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280;">×</button>
+          </div>
+          <div style="padding: 16px;">
+            <div style="margin-bottom: 12px; font-size: 14px;">
+              <label style="display: block; margin-bottom: 4px; font-weight: 500;">Amount (${currency || 'USD'})</label>
+              <div style="display: flex; align-items: center; border: 1px solid #d1d5db; border-radius: 4px; overflow: hidden;">
+                <span style="padding: 0 8px; background-color: #f3f4f6; border-right: 1px solid #d1d5db; font-weight: 500;">${currency || 'USD'}</span>
+                <input id="payment-amount" type="number" value="${amount || 10}" min="1" style="flex-grow: 1; padding: 8px; border: none; outline: none; font-size: 14px;">
+              </div>
+            </div>
+            <div style="margin-bottom: 16px; font-size: 14px;">
+              <label style="display: block; margin-bottom: 4px; font-weight: 500;">Card Information</label>
+              <input type="text" placeholder="Card Number" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;">
+              <div style="display: flex; gap: 8px;">
+                <input type="text" placeholder="MM/YY" style="width: 50%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;">
+                <input type="text" placeholder="CVC" style="width: 50%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;">
+              </div>
+            </div>
+            <button id="process-payment-btn" style="width: 100%; padding: 10px; background-color: #4f46e5; color: white; border: none; border-radius: 4px; font-weight: 500; cursor: pointer; transition: background-color 0.3s;">
+              Pay Now
+            </button>
+          </div>
+          <div style="font-size: 10px; text-align: center; margin-top: 5px; padding-bottom: 10px; color: #6b7280;">
+            <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none;">
+              Powered by Widgetify
+            </a>
+          </div>
+        \`;
+        
+        // Add the popup to the page
+        document.getElementById('${containerId}').appendChild(paymentPopup);
+        
+        // Add close button functionality
+        paymentPopup.querySelector('#close-payment-popup').addEventListener('click', function() {
+          paymentPopup.remove();
+        });
+        
+        // Add payment processing
+        paymentPopup.querySelector('#process-payment-btn').addEventListener('click', function() {
+          const paymentAmount = paymentPopup.querySelector('#payment-amount').value;
+          const paymentBtn = this;
+          
+          // Simulate payment processing
+          paymentBtn.textContent = 'Processing...';
+          paymentBtn.disabled = true;
+          paymentBtn.style.backgroundColor = '#818cf8';
+          
+          // Simulate API call with the Dodo Payment Gateway
+          setTimeout(function() {
+            // Use the API key in a real implementation
+            console.log('Processing payment with API key: ${paymentApiKey}');
+            console.log('Amount:', paymentAmount, currency);
+            
+            // Show success message
+            paymentPopup.innerHTML = \`
+              <div style="background-color: #f3f4f6; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
+                <div style="font-weight: 500;">Payment Successful</div>
+                <button id="close-success-popup" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280;">×</button>
+              </div>
+              <div style="padding: 24px 16px; text-align: center;">
+                <div style="width: 48px; height: 48px; margin: 0 auto 16px; background-color: #10b981; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                  </svg>
+                </div>
+                <h3 style="margin: 0 0 8px; font-size: 18px; font-weight: 500;">Payment Complete</h3>
+                <p style="margin: 0 0 16px; color: #6b7280; font-size: 14px;">Your payment of ${paymentAmount} ${currency || 'USD'} has been processed successfully.</p>
+                <p style="margin: 0; color: #6b7280; font-size: 12px;">Transaction ID: DDP-\${Math.random().toString(36).substring(2, 10).toUpperCase()}</p>
+              </div>
+              <div style="font-size: 10px; text-align: center; margin-top: 5px; padding-bottom: 10px; color: #6b7280;">
+                <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none;">
+                  Powered by Widgetify
+                </a>
+              </div>
+            \`;
+            
+            // Add close button functionality for success message
+            paymentPopup.querySelector('#close-success-popup').addEventListener('click', function() {
+              paymentPopup.remove();
+            });
+            
+            // In a real implementation, redirect to success URL if provided
+            if ('${successUrl}') {
+              // Optionally redirect after showing success message
+              // setTimeout(() => window.location.href = '${successUrl}', 3000);
+            }
+          }, 2000);
+        });
+      `;
     
     case 'social-share':
       const url = shareUrl || window.location.href;
