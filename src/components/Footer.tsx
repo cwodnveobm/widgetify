@@ -18,7 +18,7 @@ const Footer: React.FC = () => {
             </p>
             
             <div className="mt-4 flex justify-center md:justify-start">
-              <a href="https://www.producthunt.com/posts/widgetify-2?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-widgetify&#0045;2" target="_blank" rel="noopener noreferrer" className="inline-block">
+              <a href="https://widgetify-two.vercel.app/" target="_blank" rel="noopener noreferrer" className="inline-block">
                 <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=961430&theme=light&t=1746523667957" alt="Widgetify - Chat&#0032;widgets | Product Hunt" style={{
                 width: "250px",
                 height: "54px"
