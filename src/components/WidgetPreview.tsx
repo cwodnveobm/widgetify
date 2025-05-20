@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
 import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone } from 'lucide-react';
@@ -265,6 +266,16 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
                   <code className="text-xs">&lt;div id="google_translate_element"&gt;&lt;/div&gt;</code>
                 </div>
               </div>
+            </div>
+            <div className="text-xs text-gray-500 text-center mt-2 p-2">
+              <a 
+                href="https://widgetify-two.vercel.app/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-500 no-underline"
+              >
+                Powered by Widgetify
+              </a>
             </div>
           </div>
         );
