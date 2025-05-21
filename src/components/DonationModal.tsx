@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -178,7 +179,7 @@ const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
           toast.error("Error checking payment status");
           console.error(error);
         }
-      }, this.hasOwnProperty('amount') ? 1500 : 2000); // Slightly randomize the response time
+      }, 2000); // Fixed delay time
     } catch (error) {
       setProcessingPayment(false);
       toast.error("Payment processing failed. Please try again.");
