@@ -1,4 +1,3 @@
-
 import { WidgetType, WidgetSize } from '@/types';
 
 export interface WidgetConfig {
@@ -19,6 +18,8 @@ export interface WidgetConfig {
   currency?: string;
   successUrl?: string;
   cancelUrl?: string;
+  paymentAmount?: string;
+  paymentDescription?: string;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
@@ -42,17 +43,14 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
     cancelUrl
   } = config;
 
-  // The ID for the container that will hold the widget
   const containerId = `widgetify-${type}`;
 
-  // Convert sizes to pixel values
   const sizeMap: Record<WidgetSize, string> = {
     small: '50px',
     medium: '60px',
     large: '70px'
   };
 
-  // Base code that will be injected in all widget types
   const baseCode = `
   <div id="${containerId}" 
        style="position: fixed; 
@@ -64,7 +62,6 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
 
   <script>
     (function() {
-      // Create and inject the widget
       const widget = document.createElement('div');
       widget.innerHTML = \`
         <div style="width: ${sizeMap[size || 'medium']}; 
@@ -85,10 +82,8 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         </div>
       \`;
 
-      // Append to container
       document.getElementById('${containerId}').appendChild(widget);
 
-      // Handle click based on widget type
       function handleWidgetClick() {
         ${getClickHandlerCode(type, handle, welcomeMessage, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, networks, paymentApiKey, amount, currency, successUrl, cancelUrl, containerId, position)}
       }
@@ -105,7 +100,6 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
   return baseCode;
 };
 
-// Helper function to get the appropriate SVG icon for the button
 function getIconSvg(type: WidgetType, size: WidgetSize = 'medium', followPlatform?: string): string {
   const sizeMap: Record<WidgetSize, number> = {
     small: 20,
@@ -142,7 +136,7 @@ function getIconSvg(type: WidgetType, size: WidgetSize = 'medium', followPlatfor
       </svg>`;
     case 'social-share':
       return `<svg width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="white">
-        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/>
+        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12zm0 0z"/>
       </svg>`;
     case 'google-translate':
       return `<svg width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="white">
@@ -162,11 +156,11 @@ function getIconSvg(type: WidgetType, size: WidgetSize = 'medium', followPlatfor
       </svg>`;
     case 'slack':
       return `<svg width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="white">
-        <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52m0-10.123a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 5.042 2.527 2.527 0 0 1 2.521 2.52 2.527 2.527 0 0 1 5.042 5.042m10.125 0a2.528 2.528 0 0 1 2.521-2.52A2.528 2.528 0 0 1 20.21 5.042a2.528 2.528 0 0 1-2.521 2.522 2.528 2.528 0 0 1-2.521-2.522m0 10.123a2.528 2.528 0 0 1 2.521-2.52 2.528 2.528 0 0 1 2.521 2.52 2.528 2.528 0 0 1-2.521 2.523 2.528 2.528 0 0 1-2.521-2.523M8.834 8.834a2.528 2.528 0 0 1-2.521 2.521 2.527 2.527 0 0 1-2.521-2.521 2.527 2.527 0 0 1 2.521-2.521 2.527 2.527 0 0 1 2.521 2.521m10.125 0a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521 2.527 2.527 0 0 1 2.52-2.521 2.527 2.527 0 0 1 2.523 2.521m-5.063 5.062a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521 2.527 2.527 0 0 1 2.52-2.521 2.527 2.527 0 0 1 2.523 2.521m0-10.124a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521 2.527 2.527 0 0 1 2.52-2.521 2.527 2.527 0 0 1 2.523 2.521"/>
+        <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" fill="#4A154B"/>
       </svg>`;
     case 'discord':
       return `<svg width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="white">
-        <path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.39-.444.898-.608 1.297a19.42 19.42 0 0 0-5.834 0 12.517 12.517 0 0 0-.617-1.297.077.077 0 0 0-.079-.036c-1.714.29-3.354.8-4.885 1.49a.07.07 0 0 0-.032.028C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.209 13.209 0 0 1-1.872-.878.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.291.074.074 0 0 1 .077-.01c3.928 1.764 8.18 1.764 12.061 0a.074.074 0 0 1 .078.01c.12.098.245.198.372.292a.077.077 0 0 0-.006.127c-.598.344-1.22.635-1.873.877a.077.077 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.964 19.964 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312-.946 2.38-2.157 2.38z"/>
+        <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.608 1.2495-1.8447-.2762-3.6677-.2762-5.4724 0-.1634-.3933-.4058-.8742-.6091-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.462-.6304.874-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.094-.8382-9.5204-3.5495-13.442a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" fill="#7289DA"/>
       </svg>`;
     case 'call-now':
       return `<svg width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="white">
@@ -204,7 +198,6 @@ function getIconSvg(type: WidgetType, size: WidgetSize = 'medium', followPlatfor
   }
 }
 
-// Helper function to get the click handler code
 function getClickHandlerCode(
   type: WidgetType,
   handle?: string,
@@ -260,7 +253,6 @@ function getClickHandlerCode(
     
     case 'dodo-payment':
       return `
-        // Create payment popup
         const paymentPopup = document.createElement('div');
         paymentPopup.style.position = 'absolute';
         paymentPopup.style.bottom = '90px';
@@ -272,7 +264,6 @@ function getClickHandlerCode(
         paymentPopup.style.zIndex = '9999';
         paymentPopup.style.overflow = 'hidden';
         
-        // Add payment content
         paymentPopup.innerHTML = \`
           <div style="background-color: #f3f4f6; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
             <div style="font-weight: 500;">Dodo Payment</div>
@@ -305,31 +296,24 @@ function getClickHandlerCode(
           </div>
         \`;
         
-        // Add the popup to the page
         document.getElementById('${containerId}').appendChild(paymentPopup);
         
-        // Add close button functionality
         paymentPopup.querySelector('#close-payment-popup').addEventListener('click', function() {
           paymentPopup.remove();
         });
         
-        // Add payment processing
         paymentPopup.querySelector('#process-payment-btn').addEventListener('click', function() {
           const paymentAmount = document.getElementById('payment-amount').value;
           const paymentBtn = this;
           
-          // Simulate payment processing
           paymentBtn.textContent = 'Processing...';
           paymentBtn.disabled = true;
           paymentBtn.style.backgroundColor = '#818cf8';
           
-          // Simulate API call with the Dodo Payment Gateway
           setTimeout(function() {
-            // Use the API key in a real implementation
             console.log('Processing payment with API key: ${paymentApiKey}');
             console.log('Amount:', paymentAmount, currency);
             
-            // Show success message
             paymentPopup.innerHTML = \`
               <div style="background-color: #f3f4f6; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
                 <div style="font-weight: 500;">Payment Successful</div>
@@ -352,12 +336,10 @@ function getClickHandlerCode(
               </div>
             \`;
             
-            // Add close button functionality for success message
             paymentPopup.querySelector('#close-success-popup').addEventListener('click', function() {
               paymentPopup.remove();
             });
             
-            // In a real implementation, redirect to success URL if provided
             if ('${successUrl}') {
               // Optionally redirect after showing success message
               // setTimeout(() => window.location.href = '${successUrl}', 3000);
@@ -371,7 +353,6 @@ function getClickHandlerCode(
       const text = encodeURIComponent(shareText || 'Check out this page!');
       
       let socialPopup = `
-        // Create social share popup
         const socialPopup = document.createElement('div');
         socialPopup.style.position = 'absolute';
         socialPopup.style.bottom = '90px';
@@ -381,7 +362,6 @@ function getClickHandlerCode(
         socialPopup.style.gap = '10px';
         socialPopup.style.zIndex = '9999';
         
-        // Add social buttons
         let socialButtons = '';
       `;
       
@@ -446,7 +426,6 @@ function getClickHandlerCode(
       }
       
       socialPopup += `
-        // Add branding
         const branding = document.createElement('div');
         branding.style.fontSize = '10px';
         branding.style.textAlign = 'center';
@@ -454,7 +433,6 @@ function getClickHandlerCode(
         branding.innerHTML = '<a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #666; text-decoration: none;">Powered by Widgetify</a>';
         socialPopup.appendChild(branding);
         
-        // Toggle popup visibility
         const existingPopup = document.querySelector('.widgetify-social-popup');
         if (existingPopup) {
           existingPopup.remove();
@@ -468,9 +446,7 @@ function getClickHandlerCode(
     
     case 'google-translate':
       return `
-        // Check if Google Translate script is already loaded
         if (!window.googleTranslateElementInit) {
-          // Create translate popup
           const translatePopup = document.createElement('div');
           translatePopup.style.position = 'absolute';
           translatePopup.style.bottom = '90px';
@@ -482,7 +458,6 @@ function getClickHandlerCode(
           translatePopup.style.zIndex = '9999';
           translatePopup.style.overflow = 'hidden';
           
-          // Add header
           translatePopup.innerHTML = \`
             <div style="background-color: #f3f4f6; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
               <div style="font-weight: 500;">Google Translate</div>
@@ -498,15 +473,12 @@ function getClickHandlerCode(
             </div>
           \`;
           
-          // Add close button functionality
           translatePopup.querySelector('button').onclick = function() {
             translatePopup.remove();
           };
           
-          // Add the popup to the page
           document.getElementById('${containerId}').appendChild(translatePopup);
           
-          // Load Google Translate script
           window.googleTranslateElementInit = function() {
             new google.translate.TranslateElement({
               pageLanguage: 'auto',
@@ -518,12 +490,10 @@ function getClickHandlerCode(
           script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
           document.body.appendChild(script);
         } else {
-          // Toggle existing popup
           const existingPopup = document.querySelector('#${containerId} > div:not(.widgetify-button)');
           if (existingPopup) {
             existingPopup.remove();
           } else {
-            // Recreate the popup if it was removed
             googleTranslateElementInit();
           }
         }
@@ -546,7 +516,6 @@ function getClickHandlerCode(
     
     default:
       return `
-        // Create chat popup
         const chatPopup = document.createElement('div');
         chatPopup.style.position = 'absolute';
         chatPopup.style.bottom = '90px';
@@ -561,7 +530,6 @@ function getClickHandlerCode(
         chatPopup.style.flexDirection = 'column';
         chatPopup.style.overflow = 'hidden';
         
-        // Add chat interface
         chatPopup.innerHTML = \`
           <div style="background-color: #f3f4f6; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
             <div style="font-weight: 500;">Chat</div>
@@ -589,12 +557,10 @@ function getClickHandlerCode(
           </div>
         \`;
         
-        // Add close button functionality
         chatPopup.querySelector('button').onclick = function() {
           chatPopup.remove();
         };
         
-        // Toggle popup visibility
         const existingPopup = document.querySelector('#${containerId} > div:not(.widgetify-button)');
         if (existingPopup) {
           existingPopup.remove();

@@ -26,7 +26,7 @@ const WidgetGenerator: React.FC = () => {
     phoneNumber: '',
     reviewUrl: '',
     followPlatform: 'linkedin',
-    paymentAmount: '10.00',
+    amount: 10,
     currency: 'USD',
     paymentDescription: 'Product or service payment'
   });
@@ -136,7 +136,7 @@ const WidgetGenerator: React.FC = () => {
         }
         break;
       case 'dodo-payment':
-        if (!widgetConfig.paymentAmount || parseFloat(widgetConfig.paymentAmount) <= 0) {
+        if (!widgetConfig.amount || widgetConfig.amount <= 0) {
           toast.error('Please enter a valid payment amount');
           return;
         }
@@ -506,12 +506,16 @@ const WidgetGenerator: React.FC = () => {
             {widgetConfig.type === 'dodo-payment' && (
               <>
                 <div className="mb-4">
-                  <Label htmlFor="paymentAmount">Payment Amount</Label>
+                  <Label htmlFor="amount">Payment Amount</Label>
                   <Input 
-                    id="paymentAmount" 
-                    name="paymentAmount" 
-                    value={widgetConfig.paymentAmount} 
-                    onChange={handleInputChange} 
+                    id="amount" 
+                    name="amount" 
+                    type="number"
+                    value={widgetConfig.amount} 
+                    onChange={(e) => setWidgetConfig({
+                      ...widgetConfig,
+                      amount: parseFloat(e.target.value)
+                    })} 
                     placeholder="10.00"
                     className="mt-1" 
                   />
