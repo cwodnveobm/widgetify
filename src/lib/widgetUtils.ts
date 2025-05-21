@@ -1,3 +1,4 @@
+
 import { WidgetType, WidgetSize } from '@/types';
 
 export interface WidgetConfig {
@@ -253,6 +254,13 @@ function getClickHandlerCode(
     
     case 'dodo-payment':
       return `
+        // Check if popup already exists and remove it
+        const existingPopup = document.querySelector('#${containerId} > div:not(.widgetify-button)');
+        if (existingPopup) {
+          existingPopup.remove();
+          return;
+        }
+        
         const paymentPopup = document.createElement('div');
         paymentPopup.style.position = 'absolute';
         paymentPopup.style.bottom = '90px';
@@ -298,11 +306,11 @@ function getClickHandlerCode(
         
         document.getElementById('${containerId}').appendChild(paymentPopup);
         
-        paymentPopup.querySelector('#close-payment-popup').addEventListener('click', function() {
+        document.querySelector('#close-payment-popup').addEventListener('click', function() {
           paymentPopup.remove();
         });
         
-        paymentPopup.querySelector('#process-payment-btn').addEventListener('click', function() {
+        document.querySelector('#process-payment-btn').addEventListener('click', function() {
           const paymentAmount = document.getElementById('payment-amount').value;
           const paymentBtn = this;
           
@@ -311,8 +319,8 @@ function getClickHandlerCode(
           paymentBtn.style.backgroundColor = '#818cf8';
           
           setTimeout(function() {
-            console.log('Processing payment with API key: ${paymentApiKey}');
-            console.log('Amount:', paymentAmount, currency);
+            console.log('Processing payment with API key:', '${paymentApiKey}');
+            console.log('Amount:', paymentAmount, '${currency}');
             
             paymentPopup.innerHTML = \`
               <div style="background-color: #f3f4f6; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
@@ -336,13 +344,15 @@ function getClickHandlerCode(
               </div>
             \`;
             
-            paymentPopup.querySelector('#close-success-popup').addEventListener('click', function() {
+            document.querySelector('#close-success-popup').addEventListener('click', function() {
               paymentPopup.remove();
             });
             
             if ('${successUrl}') {
-              // Optionally redirect after showing success message
-              // setTimeout(() => window.location.href = '${successUrl}', 3000);
+              // Redirect if success URL provided
+              setTimeout(() => {
+                window.location.href = '${successUrl}';
+              }, 3000);
             }
           }, 2000);
         });
