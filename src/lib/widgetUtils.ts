@@ -315,7 +315,7 @@ function getClickHandlerCode(
         
         // Add payment processing
         paymentPopup.querySelector('#process-payment-btn').addEventListener('click', function() {
-          const paymentAmount = paymentPopup.querySelector('#payment-amount').value;
+          const paymentAmount = document.getElementById('payment-amount').value;
           const paymentBtn = this;
           
           // Simulate payment processing
@@ -342,7 +342,7 @@ function getClickHandlerCode(
                   </svg>
                 </div>
                 <h3 style="margin: 0 0 8px; font-size: 18px; font-weight: 500;">Payment Complete</h3>
-                <p style="margin: 0 0 16px; color: #6b7280; font-size: 14px;">Your payment of ${paymentAmount} ${currency || 'USD'} has been processed successfully.</p>
+                <p style="margin: 0 0 16px; color: #6b7280; font-size: 14px;">Your payment of \${paymentAmount} ${currency || 'USD'} has been processed successfully.</p>
                 <p style="margin: 0; color: #6b7280; font-size: 12px;">Transaction ID: DDP-\${Math.random().toString(36).substring(2, 10).toUpperCase()}</p>
               </div>
               <div style="font-size: 10px; text-align: center; margin-top: 5px; padding-bottom: 10px; color: #6b7280;">

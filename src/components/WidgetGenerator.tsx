@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { WidgetConfig, WidgetType, generateWidgetCode } from '@/lib/widgetUtils';
+import { WidgetConfig, generateWidgetCode } from '@/lib/widgetUtils';
+import { WidgetType, WidgetSize } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Twitch, Slack, Phone, Star } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
+
 const WidgetGenerator: React.FC = () => {
   const [widgetConfig, setWidgetConfig] = useState<WidgetConfig>({
     type: 'whatsapp',
@@ -64,7 +66,7 @@ const WidgetGenerator: React.FC = () => {
       position
     });
   };
-  const handleSizeChange = (size: string) => {
+  const handleSizeChange = (size: WidgetSize) => {
     setWidgetConfig({
       ...widgetConfig,
       size: size as 'small' | 'medium' | 'large'
@@ -169,7 +171,7 @@ const WidgetGenerator: React.FC = () => {
       case 'review-now':
         return 'URL for reviews (e.g. Google or Yelp review page)';
       case 'follow-us':
-        return 'Your social media username';
+        return `${widgetConfig.followPlatform?.charAt(0).toUpperCase()}${widgetConfig.followPlatform?.slice(1)} Username`;
       default:
         return 'Enter your handle';
     }
