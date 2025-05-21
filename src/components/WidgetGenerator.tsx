@@ -9,7 +9,7 @@ import WidgetPreview from '@/components/WidgetPreview';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Twitch, Slack, Phone, Star } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Twitch, Slack, Phone, Star, CreditCard } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 
 const WidgetGenerator: React.FC = () => {
@@ -25,7 +25,10 @@ const WidgetGenerator: React.FC = () => {
     shareUrl: '',
     phoneNumber: '',
     reviewUrl: '',
-    followPlatform: 'linkedin'
+    followPlatform: 'linkedin',
+    paymentAmount: '10.00',
+    currency: 'USD',
+    paymentDescription: 'Product or service payment'
   });
   const [code, setCode] = useState<string>('');
   const [showCode, setShowCode] = useState<boolean>(false);
@@ -46,7 +49,8 @@ const WidgetGenerator: React.FC = () => {
       discord: '#7289DA',
       'call-now': '#4CAF50',
       'review-now': '#FFC107',
-      'follow-us': '#0077b5'
+      'follow-us': '#0077b5',
+      'dodo-payment': '#6366F1'
     };
     setWidgetConfig({
       ...widgetConfig,
@@ -92,6 +96,12 @@ const WidgetGenerator: React.FC = () => {
       followPlatform: platform as 'linkedin' | 'instagram' | 'youtube'
     });
   };
+  const handleCurrencyChange = (currency: string) => {
+    setWidgetConfig({
+      ...widgetConfig,
+      currency
+    });
+  };
   const generateWidget = () => {
     // Validate based on widget type
     switch (widgetConfig.type) {
@@ -122,6 +132,12 @@ const WidgetGenerator: React.FC = () => {
       case 'follow-us':
         if (!widgetConfig.handle) {
           toast.error('Please enter a username/handle');
+          return;
+        }
+        break;
+      case 'dodo-payment':
+        if (!widgetConfig.paymentAmount || parseFloat(widgetConfig.paymentAmount) <= 0) {
+          toast.error('Please enter a valid payment amount');
           return;
         }
         break;
@@ -172,6 +188,8 @@ const WidgetGenerator: React.FC = () => {
         return 'URL for reviews (e.g. Google or Yelp review page)';
       case 'follow-us':
         return `${widgetConfig.followPlatform?.charAt(0).toUpperCase()}${widgetConfig.followPlatform?.slice(1)} Username`;
+      case 'dodo-payment':
+        return 'Payment amount';
       default:
         return 'Enter your handle';
     }
@@ -186,6 +204,8 @@ const WidgetGenerator: React.FC = () => {
         return 'Review URL';
       case 'follow-us':
         return `${widgetConfig.followPlatform?.charAt(0).toUpperCase()}${widgetConfig.followPlatform?.slice(1)} Username`;
+      case 'dodo-payment':
+        return 'Payment Amount';
       default:
         return 'Account Handle/Number';
     }
@@ -243,6 +263,11 @@ const WidgetGenerator: React.FC = () => {
     <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.608 1.2495-1.8447-.2762-3.6677-.2762-5.4724 0-.1634-.3933-.4058-.8742-.6091-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" fill="#7289DA" />
   </svg>;
 
+  // Dodo Payment icon component
+  const DodoPaymentIcon = () => <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" fill="#6366F1" />
+  </svg>;
+
   // Social media icons
   const socialIcons = {
     whatsapp: <WhatsAppIcon />,
@@ -260,7 +285,8 @@ const WidgetGenerator: React.FC = () => {
     discord: <DiscordIcon />,
     'call-now': <Phone className="h-6 w-6" />,
     'review-now': <Star className="h-6 w-6" />,
-    'follow-us': <Linkedin className="h-6 w-6" />
+    'follow-us': <Linkedin className="h-6 w-6" />,
+    'dodo-payment': <DodoPaymentIcon />
   };
   return <section id="widget-generator" className="py-16 bg-white">
       <div className="container mx-auto px-4">
@@ -401,6 +427,14 @@ const WidgetGenerator: React.FC = () => {
                     Follow Us
                   </Label>
                 </div>
+
+                <div>
+                  <RadioGroupItem value="dodo-payment" id="dodo-payment" className="peer sr-only" />
+                  <Label htmlFor="dodo-payment" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
+                    <DodoPaymentIcon />
+                    Payment
+                  </Label>
+                </div>
               </RadioGroup>
             </div>
 
@@ -468,6 +502,53 @@ const WidgetGenerator: React.FC = () => {
                   </div>
                 </RadioGroup>
               </div>}
+
+            {widgetConfig.type === 'dodo-payment' && (
+              <>
+                <div className="mb-4">
+                  <Label htmlFor="paymentAmount">Payment Amount</Label>
+                  <Input 
+                    id="paymentAmount" 
+                    name="paymentAmount" 
+                    value={widgetConfig.paymentAmount} 
+                    onChange={handleInputChange} 
+                    placeholder="10.00"
+                    className="mt-1" 
+                  />
+                </div>
+                
+                <div className="mb-4">
+                  <Label htmlFor="currency">Currency</Label>
+                  <Select value={widgetConfig.currency} onValueChange={handleCurrencyChange}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="USD">USD - US Dollar</SelectItem>
+                        <SelectItem value="EUR">EUR - Euro</SelectItem>
+                        <SelectItem value="GBP">GBP - British Pound</SelectItem>
+                        <SelectItem value="CAD">CAD - Canadian Dollar</SelectItem>
+                        <SelectItem value="AUD">AUD - Australian Dollar</SelectItem>
+                        <SelectItem value="JPY">JPY - Japanese Yen</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="mb-4">
+                  <Label htmlFor="paymentDescription">Payment Description</Label>
+                  <Textarea 
+                    id="paymentDescription" 
+                    name="paymentDescription" 
+                    value={widgetConfig.paymentDescription} 
+                    onChange={handleInputChange} 
+                    placeholder="Product or service description"
+                    className="mt-1" 
+                  />
+                </div>
+              </>
+            )}
 
             <div className="mb-4">
               <Label htmlFor={widgetConfig.type === 'call-now' ? 'phoneNumber' : widgetConfig.type === 'review-now' ? 'reviewUrl' : 'handle'}>
