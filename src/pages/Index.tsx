@@ -7,10 +7,13 @@ import Footer from '@/components/Footer';
 import { Menu, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import DonationModal from '@/components/DonationModal';
+import DonatingWidget from '@/components/DonatingWidget';
+
 const Index: React.FC = () => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
   const isMobile = useIsMobile();
+  
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
@@ -110,6 +113,14 @@ const Index: React.FC = () => {
       <Footer />
       
       <DonationModal isOpen={isDonationModalOpen} onClose={() => setIsDonationModalOpen(false)} />
+      
+      {/* Add the DonatingWidget */}
+      <DonatingWidget 
+        position="bottom-right"
+        primaryColor="#8B5CF6"
+        buttonText="Donate Us"
+      />
     </div>;
 };
+
 export default Index;
