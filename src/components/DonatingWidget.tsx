@@ -1,16 +1,25 @@
+
 import React from 'react';
 import { Heart } from 'lucide-react';
 import { useState } from 'react';
 import DonationModal from './DonationModal';
+
 interface DonatingWidgetProps {
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
   primaryColor?: string;
   buttonText?: string;
+  upiId?: string;
+  name?: string;
+  amount?: number;
 }
+
 const DonatingWidget: React.FC<DonatingWidgetProps> = ({
   position = 'bottom-right',
   primaryColor = '#8B5CF6',
-  buttonText = 'Donate Us'
+  buttonText = 'Donate Us',
+  upiId = 'adnanmuhammad4393@okicici',
+  name = 'Muhammed Adnan',
+  amount = 299
 }) => {
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
 
@@ -44,16 +53,51 @@ const DonatingWidget: React.FC<DonatingWidgetProps> = ({
         };
     }
   };
-  return <>
-      <div style={{
-      position: 'fixed',
-      zIndex: 9999,
-      ...getPositionStyles()
-    }}>
-        
+
+  return (
+    <>
+      <div
+        style={{
+          position: 'fixed',
+          zIndex: 9999,
+          ...getPositionStyles()
+        }}
+      >
+        <button
+          onClick={() => setIsDonationModalOpen(true)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            backgroundColor: primaryColor,
+            color: 'white',
+            border: 'none',
+            padding: '10px 16px',
+            borderRadius: '4px',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            fontSize: '14px',
+            cursor: 'pointer',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.boxShadow = '0 6px 8px rgba(0, 0, 0, 0.2)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
+          }}
+        >
+          <Heart size={16} />
+          {buttonText}
+        </button>
       </div>
       
-      <DonationModal isOpen={isDonationModalOpen} onClose={() => setIsDonationModalOpen(false)} />
-    </>;
+      <DonationModal 
+        isOpen={isDonationModalOpen} 
+        onClose={() => setIsDonationModalOpen(false)} 
+      />
+    </>
+  );
 };
+
 export default DonatingWidget;

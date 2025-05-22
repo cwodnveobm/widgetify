@@ -8,6 +8,7 @@ import { Menu, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import DonationModal from '@/components/DonationModal';
 import DonatingWidget from '@/components/DonatingWidget';
+import Button from '@/components/Button';
 
 const Index: React.FC = () => {
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -97,7 +98,13 @@ const Index: React.FC = () => {
                 <a href="/support" className="text-gray-600 hover:text-purple-600">Support</a>
               </nav>
               <div>
-                
+                <Button 
+                  variant="default" 
+                  className="bg-primary hover:bg-primary/90 text-white"
+                  onClick={() => setIsDonationModalOpen(true)}
+                >
+                  Donate
+                </Button>
               </div>
             </>}
         </div>
@@ -114,8 +121,11 @@ const Index: React.FC = () => {
       
       <DonationModal isOpen={isDonationModalOpen} onClose={() => setIsDonationModalOpen(false)} />
       
-      {/* Add the DonatingWidget */}
+      {/* Add the DonatingWidget with the specified properties */}
       <DonatingWidget 
+        upiId="adnanmuhammad4393@okicici"
+        name="Muhammed Adnan"
+        amount={299}
         position="bottom-right"
         primaryColor="#8B5CF6"
         buttonText="Donate Us"
