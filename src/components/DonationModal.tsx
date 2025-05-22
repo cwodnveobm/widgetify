@@ -1,196 +1,133 @@
 
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import React, { useState, useEffect, useRef } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
-import { CopyIcon, Check, QrCode } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface DonationModalProps {
   isOpen: boolean;
   onClose: () => void;
+  initialAmount?: number;
+  upiId?: string;
+  name?: string;
 }
 
-const DonationModal: React.FC<DonationModalProps> = ({ isOpen, onClose }) => {
-  const [amount, setAmount] = useState<number>(14);
-  const [copied, setCopied] = useState<boolean>(false);
-  const [bankDetailsCopied, setBankDetailsCopied] = useState<boolean>(false);
-  const [showDetails, setShowDetails] = useState<boolean>(false);
-  const [showQrCode, setShowQrCode] = useState<boolean>(false);
+const DonationModal: React.FC<DonationModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  initialAmount = 299,
+  upiId = "adnanmuhammad4393@okicici",
+  name = "Muhammed Adnan vv"
+}) => {
+  const [amount, setAmount] = useState<number>(initialAmount);
+  const qrContainerRef = useRef<HTMLDivElement>(null);
   
-  const upiId = "adnanmuhammad4393@okicici";
-  const bankDetails = {
-    name: "Muhammed Adnan vv",
-    accountNumber: "19020100094298",
-    ifscCode: "FDRL0001902"
-  };
-
-  // Reset states when modal opens/closes
   useEffect(() => {
-    if (isOpen) {
-      setCopied(false);
-      setBankDetailsCopied(false);
+    if (isOpen && amount) {
+      generateQR();
     }
-  }, [isOpen]);
+  }, [isOpen, amount]);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
-    if (value < 14) {
-      setAmount(14);
-    } else if (value > 2214) {
-      setAmount(2214);
-    } else {
-      setAmount(value);
+    setAmount(value);
+  };
+
+  const generateQR = async () => {
+    if (!qrContainerRef.current) return;
+    
+    try {
+      // Dynamic import for QRCode library
+      const QRCodeModule = await import('qrcode');
+      
+      // Clear previous QR code
+      qrContainerRef.current.innerHTML = '';
+      
+      // Create the UPI URL for donation
+      const baseUrl = 'upi://pay';
+      const params = new URLSearchParams();
+      params.append('pa', upiId);
+      params.append('pn', name);
+      params.append('am', amount.toString());
+      params.append('tn', 'Donation');
+      const upiUrl = `${baseUrl}?${params.toString()}`;
+      
+      // Generate QR code
+      const canvas = document.createElement('canvas');
+      QRCodeModule.default.toCanvas(canvas, upiUrl, { width: 200 }, function(error) {
+        if (error) console.error('Error generating QR code:', error);
+      });
+      
+      if (qrContainerRef.current) {
+        qrContainerRef.current.appendChild(canvas);
+      }
+    } catch (error) {
+      console.error('Failed to load QRCode library or generate QR code:', error);
+      
+      // Fallback to using API-based QR code if the library fails
+      if (qrContainerRef.current) {
+        const img = document.createElement('img');
+        img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&tn=Donation`)}`;
+        img.alt = "QR Code for UPI payment";
+        img.width = 200;
+        img.height = 200;
+        qrContainerRef.current.innerHTML = '';
+        qrContainerRef.current.appendChild(img);
+      }
     }
-  };
-
-  const copyUpiId = () => {
-    navigator.clipboard.writeText(upiId)
-      .then(() => {
-        setCopied(true);
-        toast.success("UPI ID copied to clipboard");
-        setTimeout(() => setCopied(false), 3000);
-      })
-      .catch(err => {
-        toast.error("Failed to copy UPI ID");
-        console.error("Could not copy text: ", err);
-      });
-  };
-
-  const copyBankDetails = () => {
-    const details = `Name: ${bankDetails.name}\nAccount Number: ${bankDetails.accountNumber}\nIFSC Code: ${bankDetails.ifscCode}`;
-    navigator.clipboard.writeText(details)
-      .then(() => {
-        setBankDetailsCopied(true);
-        toast.success("Bank details copied to clipboard");
-        setTimeout(() => setBankDetailsCopied(false), 3000);
-      })
-      .catch(err => {
-        toast.error("Failed to copy bank details");
-        console.error("Could not copy text: ", err);
-      });
-  };
-
-  const generateQrCodeImageUrl = () => {
-    // Use UPI QR code generator
-    return `https://upiqr.in/api/qr?name=Widgetify&vpa=${upiId}&amount=${amount}&currency=INR`;
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Support Widgetify</DialogTitle>
-          <DialogDescription>
-            Choose your donation amount to support the continued development of Widgetify
-          </DialogDescription>
+      <DialogContent className="sm:max-w-[375px] p-0 overflow-hidden">
+        <DialogHeader className="p-4 pb-2">
+          <DialogTitle className="text-center">Support Us</DialogTitle>
+          <button 
+            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+            onClick={onClose}
+          >
+            <X className="h-4 w-4" />
+            <span className="sr-only">Close</span>
+          </button>
         </DialogHeader>
         
-        <div className="py-4">
+        <div className="p-4 pt-0">
+          <p className="text-center text-sm text-gray-500 mb-4">
+            Scan this QR code to make a donation
+          </p>
+          
+          <div className="flex justify-center mb-4">
+            <div 
+              ref={qrContainerRef} 
+              className="w-[200px] h-[200px] bg-gray-100 flex items-center justify-center text-sm text-gray-500"
+            >
+              Loading QR Code...
+            </div>
+          </div>
+          
           <div className="mb-4">
             <label htmlFor="amount" className="block text-sm font-medium mb-1">
-              Donation Amount (₹)
+              Amount (₹)
             </label>
             <Input
               id="amount"
               type="number"
               value={amount}
               onChange={handleAmountChange}
-              min={14}
-              max={2214}
-              className="w-full"
+              onBlur={generateQR}
+              className="w-full text-right"
             />
-            <span className="text-xs text-gray-500 mt-1 block">
-              Min: ₹14 - Max: ₹2214
-            </span>
           </div>
           
-          <div className="bg-gray-50 p-4 rounded-md mb-4">
-            <div className="text-center mb-2">
-              <h3 className="font-medium">Pay with UPI</h3>
-            </div>
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm">UPI ID</span>
-              <div className="flex gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="h-8 px-2 text-xs" 
-                  onClick={() => setShowQrCode(!showQrCode)}
-                >
-                  <QrCode className="h-4 w-4 mr-1" />
-                  {showQrCode ? "Hide QR" : "Show QR"}
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="h-8 px-2 text-xs" 
-                  onClick={copyUpiId}
-                >
-                  {copied ? <Check className="h-4 w-4 mr-1" /> : <CopyIcon className="h-4 w-4 mr-1" />}
-                  {copied ? "Copied" : "Copy"}
-                </Button>
-              </div>
-            </div>
-            <div className="text-sm font-mono bg-gray-100 p-2 rounded border border-gray-200 break-all">
-              {upiId}
-            </div>
-            
-            {showQrCode && (
-              <div className="mt-4 flex flex-col items-center">
-                <div className="bg-white p-4 rounded-md border">
-                  <img 
-                    src={generateQrCodeImageUrl()} 
-                    alt="UPI QR Code"
-                    className="w-48 h-48 mx-auto"
-                    key={amount} // Force re-render when amount changes
-                  />
-                </div>
-                <p className="text-xs text-center mt-2 text-gray-500">
-                  Scan this QR code with any UPI app to donate ₹{amount}
-                </p>
-              </div>
-            )}
-          </div>
+          <p className="text-center text-sm mb-1">
+            UPI ID: <strong>{upiId}</strong>
+          </p>
           
-          <div>
-            <Button 
-              variant="link" 
-              className="p-0 h-auto text-sm" 
-              onClick={() => setShowDetails(!showDetails)}
-            >
-              {showDetails ? "Hide bank details" : "Show bank details"}
-            </Button>
-            
-            {showDetails && (
-              <div className="mt-2 bg-gray-50 p-4 rounded-md space-y-2">
-                <div className="text-sm">
-                  <span className="font-medium">Beneficiary name:</span> {bankDetails.name}
-                </div>
-                <div className="text-sm">
-                  <span className="font-medium">Account number:</span> {bankDetails.accountNumber}
-                </div>
-                <div className="text-sm">
-                  <span className="font-medium">IFSC code:</span> {bankDetails.ifscCode}
-                </div>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="mt-2 h-8 text-xs" 
-                  onClick={copyBankDetails}
-                >
-                  {bankDetailsCopied ? <Check className="h-4 w-4 mr-1" /> : <CopyIcon className="h-4 w-4 mr-1" />}
-                  {bankDetailsCopied ? "Copied" : "Copy bank details"}
-                </Button>
-              </div>
-            )}
-          </div>
+          <p className="text-center text-xs text-gray-500 mt-2">
+            Thank you for your support!
+          </p>
         </div>
-        
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={onClose}>Done</Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

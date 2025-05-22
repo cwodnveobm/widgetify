@@ -119,7 +119,10 @@ const Index: React.FC = () => {
       
       <Footer />
       
-      <DonationModal isOpen={isDonationModalOpen} onClose={() => setIsDonationModalOpen(false)} />
+      <DonationModal 
+        isOpen={isDonationModalOpen} 
+        onClose={() => setIsDonationModalOpen(false)} 
+      />
       
       {/* Add the DonatingWidget with the specified properties */}
       <DonatingWidget 
@@ -127,8 +130,8 @@ const Index: React.FC = () => {
         name="Muhammed Adnan"
         amount={299}
         position="bottom-right"
-        primaryColor="#8B5CF6"
-        buttonText="Donate Us"
+        primaryColor="#fa0000"
+        buttonText="Donate"
       />
     </div>;
 };
