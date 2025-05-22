@@ -8,7 +8,7 @@ import { Menu, X } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import DonationModal from '@/components/DonationModal';
 import DonatingWidget from '@/components/DonatingWidget';
-import Button from '@/components/Button';
+import { Button } from '@/components/ui/button';
 
 const Index: React.FC = () => {
   const [menuOpen, setMenuOpen] = React.useState(false);
