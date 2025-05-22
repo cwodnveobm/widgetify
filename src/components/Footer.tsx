@@ -1,14 +1,10 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { HandHeart } from 'lucide-react';
 import DonationModal from './DonationModal';
-
 const Footer: React.FC = () => {
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
-
-  return (
-    <footer className="bg-gray-900 text-gray-300">
+  return <footer className="bg-gray-900 text-gray-300">
       <div className="container mx-auto px-4 py-8 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
@@ -35,21 +31,7 @@ const Footer: React.FC = () => {
             </ul>
           </div>
           
-          <div className="col-span-1">
-            <h4 className="text-white font-medium mb-4">Support Us</h4>
-            <div className="bg-gray-800 p-4 rounded-lg">
-              <p className="text-sm mb-3">
-                This platform is free to use and we don't charge anything — but maintaining it takes time and resources. If you find it valuable, consider donating to support its continued availability for everyone.
-              </p>
-              <Button 
-                onClick={() => setIsDonationModalOpen(true)}
-                className="flex items-center justify-center gap-2 bg-primary/90 hover:bg-primary text-white px-4 py-2 rounded-md w-full transition-colors"
-              >
-                <HandHeart size={18} />
-                <span>Support This Project</span>
-              </Button>
-            </div>
-          </div>
+          
         </div>
         
         <div className="border-t border-gray-800 mt-8 md:mt-12 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center">
@@ -60,12 +42,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
 
-      <DonationModal 
-        isOpen={isDonationModalOpen}
-        onClose={() => setIsDonationModalOpen(false)}
-      />
-    </footer>
-  );
+      <DonationModal isOpen={isDonationModalOpen} onClose={() => setIsDonationModalOpen(false)} />
+    </footer>;
 };
-
 export default Footer;
