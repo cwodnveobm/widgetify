@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { X, QrCode, Loader, Image } from 'lucide-react';
+
 interface DonationModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -10,6 +11,7 @@ interface DonationModalProps {
   upiId?: string;
   name?: string;
 }
+
 const DonationModal: React.FC<DonationModalProps> = ({
   isOpen,
   onClose,
@@ -22,17 +24,20 @@ const DonationModal: React.FC<DonationModalProps> = ({
   const [qrCodeGenerated, setQrCodeGenerated] = useState<boolean>(false);
   const [qrCodeFailed, setQrCodeFailed] = useState<boolean>(false);
   const qrContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (isOpen && amount) {
       generateQR();
     }
   }, [isOpen, amount]);
+
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
     if (!isNaN(value) && value > 0) {
       setAmount(value);
     }
   };
+
   const generateQR = async () => {
     if (!qrContainerRef.current) return;
     try {
@@ -43,41 +48,24 @@ const DonationModal: React.FC<DonationModalProps> = ({
       // Clear previous QR code
       qrContainerRef.current.innerHTML = '';
 
-      // Dynamic import for QRCode library
-      const QRCodeModule = await import('qrcode');
-
-      // Create the UPI URL for donation
-      const baseUrl = 'upi://pay';
-      const params = new URLSearchParams();
-      params.append('pa', upiId);
-      params.append('pn', name);
-      params.append('am', amount.toString());
-      params.append('tn', 'Donation');
-      const upiUrl = `${baseUrl}?${params.toString()}`;
-
-      // Generate QR code
-      const canvas = document.createElement('canvas');
-      QRCodeModule.default.toCanvas(canvas, upiUrl, {
-        width: 200
-      }, function (error) {
-        if (error) {
-          console.error('Error generating QR code:', error);
-          fallbackQRCode();
-        } else {
-          if (qrContainerRef.current) {
-            qrContainerRef.current.innerHTML = '';
-            qrContainerRef.current.appendChild(canvas);
-            setQrCodeGenerated(true);
-          }
-        }
-        setIsGenerating(false);
-      });
+      // Use the uploaded QR code image
+      const img = document.createElement('img');
+      img.src = '/lovable-uploads/20d2f0ed-b9a7-4342-a47a-f886ae3f0e2c.png';
+      img.alt = "QR Code for UPI payment";
+      img.width = 200;
+      img.height = 200;
+      img.style.objectFit = 'contain';
+      
+      qrContainerRef.current.appendChild(img);
+      setQrCodeGenerated(true);
+      setIsGenerating(false);
     } catch (error) {
-      console.error('Failed to load QRCode library or generate QR code:', error);
+      console.error('Failed to load QR code:', error);
       fallbackQRCode();
       setIsGenerating(false);
     }
   };
+
   const fallbackQRCode = () => {
     if (!qrContainerRef.current) return;
     try {
@@ -102,6 +90,7 @@ const DonationModal: React.FC<DonationModalProps> = ({
       useStaticFallbackImage();
     }
   };
+
   const useStaticFallbackImage = () => {
     if (!qrContainerRef.current) return;
 
@@ -117,6 +106,7 @@ const DonationModal: React.FC<DonationModalProps> = ({
     setQrCodeFailed(true);
     setQrCodeGenerated(true);
   };
+
   return <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[375px] p-0 overflow-hidden">
         <DialogHeader className="p-4 pb-2">
@@ -133,7 +123,14 @@ const DonationModal: React.FC<DonationModalProps> = ({
           </p>
           
           <div className="flex justify-center mb-4">
-            
+            {isGenerating ? (
+              <div className="flex flex-col items-center justify-center p-4">
+                <Loader className="h-8 w-8 animate-spin text-gray-400" />
+                <span className="mt-2 text-sm text-gray-500">Generating QR code...</span>
+              </div>
+            ) : (
+              <div ref={qrContainerRef} className="border border-gray-200 rounded-md p-4 bg-white"></div>
+            )}
           </div>
           
           {qrCodeFailed && <p className="text-center text-xs text-amber-600 mb-3">
@@ -141,8 +138,26 @@ const DonationModal: React.FC<DonationModalProps> = ({
             </p>}
           
           <div className="mb-4">
-            
-            
+            <label htmlFor="amount" className="block text-sm font-medium mb-1">
+              Donation Amount (₹)
+            </label>
+            <Input
+              id="amount"
+              type="number"
+              value={amount}
+              onChange={handleAmountChange}
+              className="w-full"
+              min="1"
+              onBlur={() => generateQR()}
+            />
+            <Button 
+              onClick={generateQR} 
+              className="w-full mt-2"
+              disabled={isGenerating}
+            >
+              {isGenerating ? <Loader className="mr-2 h-4 w-4 animate-spin" /> : <QrCode className="mr-2 h-4 w-4" />}
+              {isGenerating ? 'Generating...' : 'Refresh QR Code'}
+            </Button>
           </div>
           
           <p className="text-center text-sm mb-1">
@@ -156,4 +171,5 @@ const DonationModal: React.FC<DonationModalProps> = ({
       </DialogContent>
     </Dialog>;
 };
+
 export default DonationModal;
