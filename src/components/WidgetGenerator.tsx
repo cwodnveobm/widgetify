@@ -11,7 +11,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Twitch, Slack, Phone, Star, CreditCard } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
-
 const WidgetGenerator: React.FC = () => {
   const [widgetConfig, setWidgetConfig] = useState<WidgetConfig>({
     type: 'whatsapp',
@@ -430,10 +429,7 @@ const WidgetGenerator: React.FC = () => {
 
                 <div>
                   <RadioGroupItem value="dodo-payment" id="dodo-payment" className="peer sr-only" />
-                  <Label htmlFor="dodo-payment" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
-                    <DodoPaymentIcon />
-                    Payment
-                  </Label>
+                  
                 </div>
               </RadioGroup>
             </div>
@@ -503,22 +499,13 @@ const WidgetGenerator: React.FC = () => {
                 </RadioGroup>
               </div>}
 
-            {widgetConfig.type === 'dodo-payment' && (
-              <>
+            {widgetConfig.type === 'dodo-payment' && <>
                 <div className="mb-4">
                   <Label htmlFor="amount">Payment Amount</Label>
-                  <Input 
-                    id="amount" 
-                    name="amount" 
-                    type="number"
-                    value={widgetConfig.amount} 
-                    onChange={(e) => setWidgetConfig({
-                      ...widgetConfig,
-                      amount: parseFloat(e.target.value)
-                    })} 
-                    placeholder="10.00"
-                    className="mt-1" 
-                  />
+                  <Input id="amount" name="amount" type="number" value={widgetConfig.amount} onChange={e => setWidgetConfig({
+                ...widgetConfig,
+                amount: parseFloat(e.target.value)
+              })} placeholder="10.00" className="mt-1" />
                 </div>
                 
                 <div className="mb-4">
@@ -542,17 +529,9 @@ const WidgetGenerator: React.FC = () => {
                 
                 <div className="mb-4">
                   <Label htmlFor="paymentDescription">Payment Description</Label>
-                  <Textarea 
-                    id="paymentDescription" 
-                    name="paymentDescription" 
-                    value={widgetConfig.paymentDescription} 
-                    onChange={handleInputChange} 
-                    placeholder="Product or service description"
-                    className="mt-1" 
-                  />
+                  <Textarea id="paymentDescription" name="paymentDescription" value={widgetConfig.paymentDescription} onChange={handleInputChange} placeholder="Product or service description" className="mt-1" />
                 </div>
-              </>
-            )}
+              </>}
 
             <div className="mb-4">
               <Label htmlFor={widgetConfig.type === 'call-now' ? 'phoneNumber' : widgetConfig.type === 'review-now' ? 'reviewUrl' : 'handle'}>
