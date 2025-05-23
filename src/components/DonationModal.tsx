@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -113,9 +112,9 @@ const DonationModal: React.FC<DonationModalProps> = ({
   const useStaticFallbackImage = () => {
     if (!qrContainerRef.current) return;
     
-    // Use static fallback image
+    // Use static fallback image - updated to use the newly uploaded image
     const fallbackImg = document.createElement('img');
-    fallbackImg.src = '/lovable-uploads/aa8cd09e-0b9b-452c-8be5-dcfffe4c46da.png';
+    fallbackImg.src = '/lovable-uploads/f3abf221-51f1-4f78-86e7-68587902f35a.png';
     fallbackImg.alt = "QR Code for UPI payment";
     fallbackImg.width = 200;
     fallbackImg.height = 200;
