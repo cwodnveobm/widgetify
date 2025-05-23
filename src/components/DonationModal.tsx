@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { X, QrCode, Loader } from 'lucide-react';
+import { X, QrCode, Loader, Image } from 'lucide-react';
 
 interface DonationModalProps {
   isOpen: boolean;
@@ -23,6 +23,7 @@ const DonationModal: React.FC<DonationModalProps> = ({
   const [amount, setAmount] = useState<number>(initialAmount);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [qrCodeGenerated, setQrCodeGenerated] = useState<boolean>(false);
+  const [qrCodeFailed, setQrCodeFailed] = useState<boolean>(false);
   const qrContainerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
@@ -44,6 +45,7 @@ const DonationModal: React.FC<DonationModalProps> = ({
     try {
       setIsGenerating(true);
       setQrCodeGenerated(false);
+      setQrCodeFailed(false);
       
       // Clear previous QR code
       qrContainerRef.current.innerHTML = '';
@@ -85,17 +87,44 @@ const DonationModal: React.FC<DonationModalProps> = ({
   const fallbackQRCode = () => {
     if (!qrContainerRef.current) return;
     
-    // Fallback to using API-based QR code if the library fails
-    const img = document.createElement('img');
-    img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&tn=Donation`)}`;
-    img.alt = "QR Code for UPI payment";
-    img.width = 200;
-    img.height = 200;
-    img.onload = () => {
-      setQrCodeGenerated(true);
-    };
+    try {
+      // First try using API-based QR code service
+      const img = document.createElement('img');
+      img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&tn=Donation`)}`;
+      img.alt = "QR Code for UPI payment";
+      img.width = 200;
+      img.height = 200;
+      img.onload = () => {
+        setQrCodeGenerated(true);
+        setQrCodeFailed(false);
+      };
+      img.onerror = () => {
+        // If the API fails too, use the static fallback image
+        useStaticFallbackImage();
+      };
+      qrContainerRef.current.innerHTML = '';
+      qrContainerRef.current.appendChild(img);
+    } catch (error) {
+      console.error('Failed to load fallback QR code from API:', error);
+      useStaticFallbackImage();
+    }
+  };
+
+  const useStaticFallbackImage = () => {
+    if (!qrContainerRef.current) return;
+    
+    // Use static fallback image
+    const fallbackImg = document.createElement('img');
+    fallbackImg.src = '/lovable-uploads/aa8cd09e-0b9b-452c-8be5-dcfffe4c46da.png';
+    fallbackImg.alt = "QR Code for UPI payment";
+    fallbackImg.width = 200;
+    fallbackImg.height = 200;
+    fallbackImg.style.objectFit = 'contain';
+    
     qrContainerRef.current.innerHTML = '';
-    qrContainerRef.current.appendChild(img);
+    qrContainerRef.current.appendChild(fallbackImg);
+    setQrCodeFailed(true);
+    setQrCodeGenerated(true);
   };
 
   return (
@@ -135,6 +164,12 @@ const DonationModal: React.FC<DonationModalProps> = ({
               ) : null}
             </div>
           </div>
+          
+          {qrCodeFailed && (
+            <p className="text-center text-xs text-amber-600 mb-3">
+              Using fallback QR code. You can manually enter UPI details.
+            </p>
+          )}
           
           <div className="mb-4">
             <label htmlFor="amount" className="block text-sm font-medium mb-1">
