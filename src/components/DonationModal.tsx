@@ -10,6 +10,8 @@ interface DonationModalProps {
   initialAmount?: number;
   upiId?: string;
   name?: string;
+  title?: string;
+  description?: string;
 }
 
 const DonationModal: React.FC<DonationModalProps> = ({
@@ -17,7 +19,9 @@ const DonationModal: React.FC<DonationModalProps> = ({
   onClose,
   initialAmount = 299,
   upiId = "adnanmuhammad4393@okicici",
-  name = "Muhammed Adnan vv"
+  name = "Muhammed Adnan vv",
+  title = "Support Us",
+  description = "Scan this QR code to make a donation"
 }) => {
   const [amount, setAmount] = useState<number>(initialAmount);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
@@ -110,7 +114,7 @@ const DonationModal: React.FC<DonationModalProps> = ({
   return <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[375px] p-0 overflow-hidden">
         <DialogHeader className="p-4 pb-2">
-          <DialogTitle className="text-center">Support Us</DialogTitle>
+          <DialogTitle className="text-center">{title}</DialogTitle>
           <button className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none" onClick={onClose}>
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>
@@ -119,7 +123,7 @@ const DonationModal: React.FC<DonationModalProps> = ({
         
         <div className="p-4 pt-0">
           <p className="text-center text-sm text-gray-500 mb-4">
-            Scan this QR code to make a donation
+            {description}
           </p>
           
           <div className="flex justify-center mb-4">
