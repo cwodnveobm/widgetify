@@ -1,4 +1,3 @@
-
 import { WidgetType, WidgetSize } from '@/types';
 
 export interface WidgetConfig {
@@ -220,37 +219,37 @@ function getClickHandlerCode(
   switch (type) {
     case 'whatsapp':
       const whatsappMessage = encodeURIComponent(welcomeMessage || 'Hello! I have a question.');
-      return `window.open('https://wa.me/${handle?.replace(/[^0-9]/g, '')}?text=${whatsappMessage}', '_blank');`;
+      return `window.location.href = 'https://wa.me/${handle?.replace(/[^0-9]/g, '')}?text=${whatsappMessage}';`;
     
     case 'facebook':
-      return `window.open('https://m.me/${handle}', '_blank');`;
+      return `window.location.href = 'https://m.me/${handle}';`;
     
     case 'instagram':
-      return `window.open('https://instagram.com/${handle?.replace('@', '')}', '_blank');`;
+      return `window.location.href = 'https://instagram.com/${handle?.replace('@', '')}';`;
     
     case 'twitter':
-      return `window.open('https://twitter.com/messages/compose?recipient_id=${handle?.replace('@', '')}', '_blank');`;
+      return `window.location.href = 'https://twitter.com/messages/compose?recipient_id=${handle?.replace('@', '')}';`;
     
     case 'telegram':
-      return `window.open('https://t.me/${handle?.replace('@', '')}', '_blank');`;
+      return `window.location.href = 'https://t.me/${handle?.replace('@', '')}';`;
     
     case 'linkedin':
-      return `window.open('https://www.linkedin.com/in/${handle}', '_blank');`;
+      return `window.location.href = 'https://www.linkedin.com/in/${handle}';`;
     
     case 'youtube':
-      return `window.open('https://www.youtube.com/${handle}', '_blank');`;
+      return `window.location.href = 'https://www.youtube.com/${handle}';`;
     
     case 'github':
-      return `window.open('https://github.com/${handle}', '_blank');`;
+      return `window.location.href = 'https://github.com/${handle}';`;
     
     case 'twitch':
-      return `window.open('https://twitch.tv/${handle}', '_blank');`;
+      return `window.location.href = 'https://twitch.tv/${handle}';`;
     
     case 'slack':
-      return `window.open('${handle}', '_blank');`;
+      return `window.location.href = '${handle}';`;
     
     case 'discord':
-      return `window.open('https://discord.gg/${handle}', '_blank');`;
+      return `window.location.href = 'https://discord.gg/${handle}';`;
     
     case 'dodo-payment':
       return `
@@ -389,7 +388,7 @@ function getClickHandlerCode(
           fbButton.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
           fbButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>';
           fbButton.onclick = function() {
-            window.open('https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}', '_blank', 'width=600,height=400');
+            window.location.href = 'https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}';
           };
           socialPopup.appendChild(fbButton);
         `;
@@ -409,7 +408,7 @@ function getClickHandlerCode(
           twitterButton.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
           twitterButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>';
           twitterButton.onclick = function() {
-            window.open('https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}', '_blank', 'width=600,height=400');
+            window.location.href = 'https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}';
           };
           socialPopup.appendChild(twitterButton);
         `;
@@ -429,7 +428,7 @@ function getClickHandlerCode(
           linkedinButton.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
           linkedinButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>';
           linkedinButton.onclick = function() {
-            window.open('https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}', '_blank', 'width=600,height=400');
+            window.location.href = 'https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}';
           };
           socialPopup.appendChild(linkedinButton);
         `;
@@ -513,15 +512,15 @@ function getClickHandlerCode(
       return `window.location.href = 'tel:${phoneNumber}';`;
     
     case 'review-now':
-      return `window.open('${reviewUrl}', '_blank');`;
+      return `window.location.href = '${reviewUrl}';`;
     
     case 'follow-us':
       if (followPlatform === 'instagram') {
-        return `window.open('https://instagram.com/${handle?.replace('@', '')}', '_blank');`;
+        return `window.location.href = 'https://instagram.com/${handle?.replace('@', '')}';`;
       } else if (followPlatform === 'youtube') {
-        return `window.open('https://www.youtube.com/${handle}', '_blank');`;
+        return `window.location.href = 'https://www.youtube.com/${handle}';`;
       } else {
-        return `window.open('https://www.linkedin.com/in/${handle}', '_blank');`;
+        return `window.location.href = 'https://www.linkedin.com/in/${handle}';`;
       }
     
     default:
