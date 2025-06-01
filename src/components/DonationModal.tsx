@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect, useRef } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { X, QrCode, Loader, Image } from 'lucide-react';
@@ -111,21 +112,24 @@ const DonationModal: React.FC<DonationModalProps> = ({
     setQrCodeGenerated(true);
   };
 
-  return <Dialog open={isOpen} onOpenChange={onClose}>
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[375px] p-0 overflow-hidden">
         <DialogHeader className="p-4 pb-2">
           <DialogTitle className="text-center">{title}</DialogTitle>
-          <button className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none" onClick={onClose}>
+          <DialogDescription className="text-center text-sm text-gray-500">
+            {description}
+          </DialogDescription>
+          <button 
+            className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none" 
+            onClick={onClose}
+          >
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>
           </button>
         </DialogHeader>
         
         <div className="p-4 pt-0">
-          <p className="text-center text-sm text-gray-500 mb-4">
-            {description}
-          </p>
-          
           <div className="flex justify-center mb-4">
             {isGenerating ? (
               <div className="flex flex-col items-center justify-center p-4">
@@ -137,9 +141,11 @@ const DonationModal: React.FC<DonationModalProps> = ({
             )}
           </div>
           
-          {qrCodeFailed && <p className="text-center text-xs text-amber-600 mb-3">
+          {qrCodeFailed && (
+            <p className="text-center text-xs text-amber-600 mb-3">
               Using fallback QR code. You can manually enter UPI details.
-            </p>}
+            </p>
+          )}
           
           <div className="mb-4">
             <label htmlFor="amount" className="block text-sm font-medium mb-1">
@@ -159,7 +165,11 @@ const DonationModal: React.FC<DonationModalProps> = ({
               className="w-full mt-2"
               disabled={isGenerating}
             >
-              {isGenerating ? <Loader className="mr-2 h-4 w-4 animate-spin" /> : <QrCode className="mr-2 h-4 w-4" />}
+              {isGenerating ? (
+                <Loader className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <QrCode className="mr-2 h-4 w-4" />
+              )}
               {isGenerating ? 'Generating...' : 'Refresh QR Code'}
             </Button>
           </div>
@@ -173,7 +183,8 @@ const DonationModal: React.FC<DonationModalProps> = ({
           </p>
         </div>
       </DialogContent>
-    </Dialog>;
+    </Dialog>
+  );
 };
 
 export default DonationModal;
