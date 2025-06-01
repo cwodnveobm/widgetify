@@ -103,8 +103,14 @@ const WidgetGenerator: React.FC = () => {
     });
   };
   const generateWidget = () => {
-    // Validate based on widget type
+    // Enhanced validation with better error messages
     switch (widgetConfig.type) {
+      case 'whatsapp':
+        if (!widgetConfig.handle || widgetConfig.handle.trim() === '') {
+          toast.error('Please enter a valid WhatsApp number');
+          return;
+        }
+        break;
       case 'social-share':
         if (widgetConfig.networks && widgetConfig.networks.length === 0) {
           toast.error('Please select at least one social network');
@@ -118,39 +124,49 @@ const WidgetGenerator: React.FC = () => {
         }));
         break;
       case 'call-now':
-        if (!widgetConfig.phoneNumber) {
-          toast.error('Please enter a phone number');
+        if (!widgetConfig.phoneNumber || widgetConfig.phoneNumber.trim() === '') {
+          toast.error('Please enter a valid phone number');
           return;
         }
         break;
       case 'review-now':
-        if (!widgetConfig.reviewUrl) {
-          toast.error('Please enter a review URL');
+        if (!widgetConfig.reviewUrl || widgetConfig.reviewUrl.trim() === '') {
+          toast.error('Please enter a valid review URL');
           return;
         }
         break;
       case 'follow-us':
-        if (!widgetConfig.handle) {
-          toast.error('Please enter a username/handle');
+        if (!widgetConfig.handle || widgetConfig.handle.trim() === '') {
+          toast.error('Please enter a valid username/handle');
           return;
         }
         break;
       case 'dodo-payment':
         if (!widgetConfig.amount || widgetConfig.amount <= 0) {
-          toast.error('Please enter a valid payment amount');
+          toast.error('Please enter a valid payment amount greater than 0');
           return;
         }
         break;
+      case 'google-translate':
+        // No validation needed for Google Translate
+        break;
       default:
-        if (widgetConfig.type !== 'google-translate' && !widgetConfig.handle) {
-          toast.error('Please enter your handle/number');
+        // For all other widget types that require a handle
+        if (!widgetConfig.handle || widgetConfig.handle.trim() === '') {
+          toast.error(`Please enter your ${widgetConfig.type} handle/username`);
           return;
         }
     }
-    const generatedCode = generateWidgetCode(widgetConfig);
-    setCode(generatedCode);
-    setShowCode(true);
-    toast.success('Widget code generated successfully!');
+
+    try {
+      const generatedCode = generateWidgetCode(widgetConfig);
+      setCode(generatedCode);
+      setShowCode(true);
+      toast.success('Widget code generated successfully!');
+    } catch (error) {
+      console.error('Error generating widget code:', error);
+      toast.error('Failed to generate widget code. Please try again.');
+    }
   };
   const copyToClipboard = () => {
     navigator.clipboard.writeText(code);
@@ -302,7 +318,12 @@ const WidgetGenerator: React.FC = () => {
           <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
             <div className="mb-6">
               <h3 className="text-lg font-medium mb-3">Select Platform</h3>
-              <RadioGroup defaultValue="whatsapp" value={widgetConfig.type} onValueChange={value => handleTypeChange(value as WidgetType)} className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              <RadioGroup 
+                defaultValue="whatsapp" 
+                value={widgetConfig.type} 
+                onValueChange={value => handleTypeChange(value as WidgetType)} 
+                className="grid grid-cols-2 md:grid-cols-3 gap-3"
+              >
                 <div>
                   <RadioGroupItem value="whatsapp" id="whatsapp" className="peer sr-only" />
                   <Label htmlFor="whatsapp" className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary">
@@ -544,7 +565,37 @@ const WidgetGenerator: React.FC = () => {
               <Label htmlFor={widgetConfig.type === 'call-now' ? 'phoneNumber' : widgetConfig.type === 'review-now' ? 'reviewUrl' : 'handle'}>
                 {getInputLabel()}
               </Label>
-              {widgetConfig.type === 'call-now' ? <Input id="phoneNumber" name="phoneNumber" value={widgetConfig.phoneNumber} onChange={handleInputChange} placeholder={getPlaceholderText()} className="mt-1" /> : widgetConfig.type === 'review-now' ? <Input id="reviewUrl" name="reviewUrl" value={widgetConfig.reviewUrl} onChange={handleInputChange} placeholder={getPlaceholderText()} className="mt-1" /> : <Input id="handle" name="handle" value={widgetConfig.handle} onChange={handleInputChange} placeholder={getPlaceholderText()} className="mt-1" />}
+              {widgetConfig.type === 'call-now' ? (
+                <Input 
+                  id="phoneNumber" 
+                  name="phoneNumber" 
+                  value={widgetConfig.phoneNumber || ''} 
+                  onChange={handleInputChange} 
+                  placeholder={getPlaceholderText()} 
+                  className="mt-1"
+                  required
+                />
+              ) : widgetConfig.type === 'review-now' ? (
+                <Input 
+                  id="reviewUrl" 
+                  name="reviewUrl" 
+                  value={widgetConfig.reviewUrl || ''} 
+                  onChange={handleInputChange} 
+                  placeholder={getPlaceholderText()} 
+                  className="mt-1"
+                  required
+                />
+              ) : widgetConfig.type !== 'google-translate' ? (
+                <Input 
+                  id="handle" 
+                  name="handle" 
+                  value={widgetConfig.handle} 
+                  onChange={handleInputChange} 
+                  placeholder={getPlaceholderText()} 
+                  className="mt-1"
+                  required={widgetConfig.type !== 'social-share'}
+                />
+              ) : null}
             </div>
 
             {widgetConfig.type === 'whatsapp' && <div className="mb-4">
@@ -597,7 +648,11 @@ const WidgetGenerator: React.FC = () => {
               </div>
             </div>
 
-            <Button onClick={generateWidget} className="w-full bg-accent hover:bg-accent/90 text-white font-medium py-2 px-4 rounded">
+            <Button 
+              onClick={generateWidget} 
+              className="w-full bg-accent hover:bg-accent/90 text-white font-medium py-2 px-4 rounded"
+              disabled={!widgetConfig.type}
+            >
               Generate Widget Code
             </Button>
           </div>
