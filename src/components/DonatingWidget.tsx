@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import DonationModal from './DonationModal';
-import { Coffee, Heart, Gift, Star } from 'lucide-react';
+import { Coffee, Heart, Gift, Star, DollarSign } from 'lucide-react';
 
 interface DonatingWidgetProps {
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
@@ -10,8 +10,8 @@ interface DonatingWidgetProps {
   upiId?: string;
   name?: string;
   amount?: number;
-  theme?: 'default' | 'premium' | 'minimal';
-  icon?: 'heart' | 'coffee' | 'gift' | 'star';
+  theme?: 'default' | 'premium' | 'minimal' | 'modern';
+  icon?: 'heart' | 'coffee' | 'gift' | 'star' | 'dollar';
   showPulse?: boolean;
   showGradient?: boolean;
   title?: string;
@@ -64,6 +64,8 @@ const DonatingWidget: React.FC<DonatingWidgetProps> = ({
         return <Gift {...iconProps} />;
       case 'star':
         return <Star {...iconProps} />;
+      case 'dollar':
+        return <DollarSign {...iconProps} />;
       case 'heart':
       default:
         return <Heart {...iconProps} />;
@@ -77,24 +79,34 @@ const DonatingWidget: React.FC<DonatingWidgetProps> = ({
       gap: '10px',
       color: 'white',
       border: 'none',
-      padding: theme === 'minimal' ? '12px 16px' : '14px 20px',
-      borderRadius: theme === 'premium' ? '16px' : theme === 'minimal' ? '8px' : '12px',
+      padding: theme === 'minimal' ? '12px 16px' : theme === 'modern' ? '16px 24px' : '14px 20px',
+      borderRadius: theme === 'premium' ? '16px' : theme === 'minimal' ? '8px' : theme === 'modern' ? '20px' : '12px',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-      fontSize: '15px',
-      fontWeight: '600',
+      fontSize: theme === 'modern' ? '16px' : '15px',
+      fontWeight: theme === 'modern' ? '700' : '600',
       cursor: 'pointer',
       transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
       boxShadow: isHovered 
-        ? '0 12px 24px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1)' 
-        : '0 8px 16px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)',
-      transform: isHovered ? 'translateY(-2px) scale(1.02)' : 'translateY(0) scale(1)',
+        ? theme === 'modern' 
+          ? '0 20px 40px rgba(0, 0, 0, 0.2), 0 0 0 2px rgba(255, 255, 255, 0.1)' 
+          : '0 12px 24px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+        : theme === 'modern'
+          ? '0 12px 24px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05)'
+          : '0 8px 16px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.05)',
+      transform: isHovered 
+        ? theme === 'modern' 
+          ? 'translateY(-4px) scale(1.05)' 
+          : 'translateY(-2px) scale(1.02)' 
+        : 'translateY(0) scale(1)',
       backdropFilter: 'blur(10px)',
     };
 
     if (showGradient) {
       return {
         ...baseStyles,
-        background: `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd, ${primaryColor}bb)`
+        background: theme === 'modern' 
+          ? `linear-gradient(135deg, ${primaryColor}, ${primaryColor}cc, ${primaryColor}88, ${primaryColor}dd)`
+          : `linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd, ${primaryColor}bb)`
       };
     }
 
@@ -102,7 +114,9 @@ const DonatingWidget: React.FC<DonatingWidgetProps> = ({
       ...baseStyles,
       backgroundColor: primaryColor,
       backgroundImage: isHovered 
-        ? `linear-gradient(135deg, transparent, rgba(255,255,255,0.1))` 
+        ? theme === 'modern'
+          ? `linear-gradient(135deg, transparent, rgba(255,255,255,0.2), transparent)`
+          : `linear-gradient(135deg, transparent, rgba(255,255,255,0.1))`
         : 'none'
     };
   };
@@ -124,11 +138,11 @@ const DonatingWidget: React.FC<DonatingWidgetProps> = ({
           onMouseLeave={() => setIsHovered(false)}
           aria-label={`${buttonText} - ${title}`}
         >
-          {/* Shine effect */}
-          <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+          {/* Enhanced shine effect for modern theme */}
+          <div className={`absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform ${theme === 'modern' ? 'duration-700' : 'duration-1000'} bg-gradient-to-r from-transparent ${theme === 'modern' ? 'via-white/30' : 'via-white/20'} to-transparent`}></div>
           
           <div className="relative z-10 flex items-center gap-2">
-            <div className={`transition-transform duration-300 ${isHovered ? 'scale-110' : 'scale-100'}`}>
+            <div className={`transition-transform duration-300 ${isHovered ? theme === 'modern' ? 'scale-125' : 'scale-110' : 'scale-100'}`}>
               {getIcon()}
             </div>
             <span className="relative">

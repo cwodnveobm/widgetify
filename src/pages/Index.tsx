@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import HeroSection from '@/components/HeroSection';
 import WidgetGenerator from '@/components/WidgetGenerator';
@@ -153,20 +152,20 @@ const Index: React.FC = () => {
         onClose={() => setIsDonationModalOpen(false)} 
       />
       
-      {/* Enhanced DonatingWidget */}
+      {/* Updated DonatingWidget with your specifications */}
       <DonatingWidget 
         upiId="adnanmuhammad4393@okicici"
         name="Muhammed Adnan"
-        amount={299}
+        amount={599}
         position="bottom-right"
         primaryColor="#8B5CF6"
-        buttonText="Support"
-        theme="premium"
-        icon="heart"
-        showPulse={true}
+        buttonText="Donate"
+        theme="modern"
+        icon="dollar"
+        showPulse={false}
         showGradient={true}
-        title="Support Our Mission"
-        description="Help us build amazing tools for everyone"
+        title="Support Us"
+        description="Scan this QR code to make a donation"
       />
     </div>
   );
