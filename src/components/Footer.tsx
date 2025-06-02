@@ -1,15 +1,10 @@
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { HandHeart } from 'lucide-react';
-import DonationModal from './DonationModal';
+import React from 'react';
 
 const Footer: React.FC = () => {
-  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
-  
   return <footer className="bg-gray-900 text-gray-300">
       <div className="container mx-auto px-4 py-8 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-xl md:text-2xl font-bold text-white mb-4">Widgetify</h3>
             <p className="mb-4 text-sm md:text-base">
@@ -25,6 +20,7 @@ const Footer: React.FC = () => {
               </a>
             </div>
           </div>
+          
           <div className="col-span-1">
             <h4 className="text-white font-medium mb-4">Links</h4>
             <ul className="space-y-2 text-sm md:text-base">
@@ -32,18 +28,6 @@ const Footer: React.FC = () => {
               <li><a href="#widget-generator" className="hover:text-white transition-colors">Generate Widget</a></li>
               <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
             </ul>
-          </div>
-          
-          <div className="col-span-1">
-            <h4 className="text-white font-medium mb-4">Support Us</h4>
-            <Button 
-              variant="outline" 
-              className="bg-purple-600 hover:bg-purple-700 border-none text-white"
-              onClick={() => setIsDonationModalOpen(true)}
-            >
-              <HandHeart className="mr-2 h-4 w-4" />
-              Donate Now
-            </Button>
           </div>
         </div>
         
@@ -54,8 +38,6 @@ const Footer: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <DonationModal isOpen={isDonationModalOpen} onClose={() => setIsDonationModalOpen(false)} />
     </footer>;
 };
 

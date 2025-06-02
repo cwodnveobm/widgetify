@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import HeroSection from '@/components/HeroSection';
 import WidgetGenerator from '@/components/WidgetGenerator';
@@ -6,13 +7,11 @@ import FounderSection from '@/components/FounderSection';
 import Footer from '@/components/Footer';
 import { Menu, X, Sparkles } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import DonationModal from '@/components/DonationModal';
 import DonatingWidget from '@/components/DonatingWidget';
 import { Button } from '@/components/ui/button';
 
 const Index: React.FC = () => {
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
   const isMobile = useIsMobile();
   
   const toggleMenu = () => {
@@ -100,40 +99,16 @@ const Index: React.FC = () => {
                 <a href="/support" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
                   Support
                 </a>
-                <div className="pt-4 pb-2">
-                  <button 
-                    onClick={() => {
-                      setIsDonationModalOpen(true);
-                      handleMenuItemClick();
-                    }} 
-                    className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white px-6 py-4 rounded-xl inline-block w-full text-center min-h-[44px] font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
-                    <Sparkles className="w-4 h-4 inline mr-2" />
-                    Donate
-                  </button>
-                </div>
               </div>
             </>
           ) : (
-            <>
-              <nav className="hidden md:flex gap-8">
-                <a href="#" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Home</a>
-                <a href="#widget-generator" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Generate</a>
-                <a href="#features" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Features</a>
-                <a href="#founder" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Founder</a>
-                <a href="/support" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Support</a>
-              </nav>
-              <div>
-                <Button 
-                  variant="default" 
-                  className="bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white font-semibold px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                  onClick={() => setIsDonationModalOpen(true)}
-                >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Donate
-                </Button>
-              </div>
-            </>
+            <nav className="hidden md:flex gap-8">
+              <a href="#" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Home</a>
+              <a href="#widget-generator" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Generate</a>
+              <a href="#features" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Features</a>
+              <a href="#founder" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Founder</a>
+              <a href="/support" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Support</a>
+            </nav>
           )}
         </div>
       </header>
@@ -147,12 +122,7 @@ const Index: React.FC = () => {
       
       <Footer />
       
-      <DonationModal 
-        isOpen={isDonationModalOpen} 
-        onClose={() => setIsDonationModalOpen(false)} 
-      />
-      
-      {/* Updated DonatingWidget with your specifications */}
+      {/* New DonatingWidget with your specifications */}
       <DonatingWidget 
         upiId="adnanmuhammad4393@okicici"
         name="Muhammed Adnan"
