@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { X, QrCode, Loader, Image } from 'lucide-react';
+import { X, QrCode, Loader } from 'lucide-react';
 
 interface DonationModalProps {
   isOpen: boolean;
@@ -20,7 +20,7 @@ const DonationModal: React.FC<DonationModalProps> = ({
   onClose,
   initialAmount = 299,
   upiId = "adnanmuhammad4393@okicici",
-  name = "Muhammed Adnan vv",
+  name = "Muhammed Adnan",
   title = "Support Us",
   description = "Scan this QR code to make a donation"
 }) => {
@@ -45,15 +45,14 @@ const DonationModal: React.FC<DonationModalProps> = ({
 
   const generateQR = async () => {
     if (!qrContainerRef.current) return;
+    
     try {
       setIsGenerating(true);
       setQrCodeGenerated(false);
       setQrCodeFailed(false);
 
-      // Clear previous QR code
       qrContainerRef.current.innerHTML = '';
 
-      // Use the uploaded QR code image
       const img = document.createElement('img');
       img.src = '/lovable-uploads/20d2f0ed-b9a7-4342-a47a-f886ae3f0e2c.png';
       img.alt = "QR Code for UPI payment";
@@ -61,33 +60,42 @@ const DonationModal: React.FC<DonationModalProps> = ({
       img.height = 200;
       img.style.objectFit = 'contain';
       
+      img.onload = () => {
+        setQrCodeGenerated(true);
+        setIsGenerating(false);
+      };
+      
+      img.onerror = () => {
+        fallbackQRCode();
+      };
+      
       qrContainerRef.current.appendChild(img);
-      setQrCodeGenerated(true);
-      setIsGenerating(false);
     } catch (error) {
       console.error('Failed to load QR code:', error);
       fallbackQRCode();
-      setIsGenerating(false);
     }
   };
 
   const fallbackQRCode = () => {
     if (!qrContainerRef.current) return;
+    
     try {
-      // First try using API-based QR code service
       const img = document.createElement('img');
       img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&tn=Donation`)}`;
       img.alt = "QR Code for UPI payment";
       img.width = 200;
       img.height = 200;
+      
       img.onload = () => {
         setQrCodeGenerated(true);
         setQrCodeFailed(false);
+        setIsGenerating(false);
       };
+      
       img.onerror = () => {
-        // If the API fails too, use the static fallback image
         useStaticFallbackImage();
       };
+      
       qrContainerRef.current.innerHTML = '';
       qrContainerRef.current.appendChild(img);
     } catch (error) {
@@ -99,17 +107,21 @@ const DonationModal: React.FC<DonationModalProps> = ({
   const useStaticFallbackImage = () => {
     if (!qrContainerRef.current) return;
 
-    // Use static fallback image - updated to use the newly uploaded image
     const fallbackImg = document.createElement('img');
     fallbackImg.src = '/lovable-uploads/f3abf221-51f1-4f78-86e7-68587902f35a.png';
     fallbackImg.alt = "QR Code for UPI payment";
     fallbackImg.width = 200;
     fallbackImg.height = 200;
     fallbackImg.style.objectFit = 'contain';
+    
+    fallbackImg.onload = () => {
+      setQrCodeFailed(true);
+      setQrCodeGenerated(true);
+      setIsGenerating(false);
+    };
+    
     qrContainerRef.current.innerHTML = '';
     qrContainerRef.current.appendChild(fallbackImg);
-    setQrCodeFailed(true);
-    setQrCodeGenerated(true);
   };
 
   return (
@@ -123,6 +135,7 @@ const DonationModal: React.FC<DonationModalProps> = ({
           <button 
             className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none" 
             onClick={onClose}
+            aria-label="Close dialog"
           >
             <X className="h-4 w-4" />
             <span className="sr-only">Close</span>
