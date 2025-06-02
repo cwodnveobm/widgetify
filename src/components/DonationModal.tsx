@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { X, QrCode, Loader, Sparkles, Heart } from 'lucide-react';
+import { X, QrCode, Loader, Sparkles, Heart, Copy, CheckCircle } from 'lucide-react';
 
 interface DonationModalProps {
   isOpen: boolean;
@@ -27,17 +27,25 @@ const DonationModal: React.FC<DonationModalProps> = ({
   const [amount, setAmount] = useState<number>(initialAmount);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [qrCodeGenerated, setQrCodeGenerated] = useState<boolean>(false);
-  const [qrCodeFailed, setQrCodeFailed] = useState<boolean>(false);
+  const [qrCodeError, setQrCodeError] = useState<boolean>(false);
+  const [copied, setCopied] = useState<boolean>(false);
   const qrContainerRef = useRef<HTMLDivElement>(null);
 
   // Preset amounts for quick selection
   const presetAmounts = [99, 199, 299, 499, 999];
 
+  // Generate UPI payment string
+  const generateUpiString = () => {
+    const encodedName = encodeURIComponent(name);
+    const transactionNote = encodeURIComponent(`Donation of ₹${amount}`);
+    return `upi://pay?pa=${upiId}&pn=${encodedName}&am=${amount}&tn=${transactionNote}&cu=INR`;
+  };
+
   useEffect(() => {
-    if (isOpen && amount) {
+    if (isOpen && amount > 0) {
       generateQR();
     }
-  }, [isOpen, amount]);
+  }, [isOpen, amount, upiId, name]);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
@@ -52,85 +60,120 @@ const DonationModal: React.FC<DonationModalProps> = ({
     try {
       setIsGenerating(true);
       setQrCodeGenerated(false);
-      setQrCodeFailed(false);
+      setQrCodeError(false);
 
       qrContainerRef.current.innerHTML = '';
 
+      const upiString = generateUpiString();
+      const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&format=png&ecc=M&data=${encodeURIComponent(upiString)}`;
+
       const img = document.createElement('img');
-      img.src = '/lovable-uploads/20d2f0ed-b9a7-4342-a47a-f886ae3f0e2c.png';
+      img.src = qrCodeUrl;
       img.alt = "QR Code for UPI payment";
-      img.width = 220;
-      img.height = 220;
+      img.width = 250;
+      img.height = 250;
       img.style.objectFit = 'contain';
       img.style.borderRadius = '12px';
       img.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.1)';
+      img.style.backgroundColor = 'white';
+      img.style.padding = '8px';
       
       img.onload = () => {
         setQrCodeGenerated(true);
         setIsGenerating(false);
+        setQrCodeError(false);
       };
       
       img.onerror = () => {
-        fallbackQRCode();
+        console.error('Primary QR code failed, trying alternative');
+        tryAlternativeQRService();
       };
       
       qrContainerRef.current.appendChild(img);
     } catch (error) {
-      console.error('Failed to load QR code:', error);
-      fallbackQRCode();
+      console.error('Failed to generate QR code:', error);
+      setQrCodeError(true);
+      setIsGenerating(false);
     }
   };
 
-  const fallbackQRCode = () => {
+  const tryAlternativeQRService = () => {
     if (!qrContainerRef.current) return;
     
     try {
+      const upiString = generateUpiString();
+      const alternativeUrl = `https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=${encodeURIComponent(upiString)}`;
+      
       const img = document.createElement('img');
-      img.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(`upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&am=${amount}&tn=Donation`)}`;
+      img.src = alternativeUrl;
       img.alt = "QR Code for UPI payment";
-      img.width = 220;
-      img.height = 220;
+      img.width = 250;
+      img.height = 250;
+      img.style.objectFit = 'contain';
       img.style.borderRadius = '12px';
       img.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.1)';
+      img.style.backgroundColor = 'white';
+      img.style.padding = '8px';
       
       img.onload = () => {
         setQrCodeGenerated(true);
-        setQrCodeFailed(false);
+        setQrCodeError(false);
         setIsGenerating(false);
       };
       
       img.onerror = () => {
-        useStaticFallbackImage();
+        showManualUpiInstructions();
       };
       
       qrContainerRef.current.innerHTML = '';
       qrContainerRef.current.appendChild(img);
     } catch (error) {
-      console.error('Failed to load fallback QR code from API:', error);
-      useStaticFallbackImage();
+      console.error('Alternative QR service failed:', error);
+      showManualUpiInstructions();
     }
   };
 
-  const useStaticFallbackImage = () => {
+  const showManualUpiInstructions = () => {
     if (!qrContainerRef.current) return;
-
-    const fallbackImg = document.createElement('img');
-    fallbackImg.src = '/lovable-uploads/f3abf221-51f1-4f78-86e7-68587902f35a.png';
-    fallbackImg.alt = "QR Code for UPI payment";
-    fallbackImg.width = 220;
-    fallbackImg.height = 220;
-    fallbackImg.style.objectFit = 'contain';
-    fallbackImg.style.borderRadius = '12px';
-    fallbackImg.style.boxShadow = '0 8px 24px rgba(0, 0, 0, 0.1)';
     
-    fallbackImg.onload = () => {
-      setQrCodeFailed(true);
-      setQrCodeGenerated(true);
-      setIsGenerating(false);
-    };
+    const container = document.createElement('div');
+    container.className = 'text-center p-6 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl border border-purple-200';
+    container.innerHTML = `
+      <div class="text-red-500 mb-4">
+        <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-800 mb-2">QR Code Unavailable</h3>
+      <p class="text-sm text-gray-600 mb-4">Please use manual UPI payment with the details below</p>
+    `;
+    
+    setQrCodeError(true);
+    setQrCodeGenerated(true);
+    setIsGenerating(false);
     
     qrContainerRef.current.innerHTML = '';
-    qrContainerRef.current.appendChild(fallbackImg);
+    qrContainerRef.current.appendChild(container);
+  };
+
+  const copyUpiId = async () => {
+    try {
+      await navigator.clipboard.writeText(upiId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy UPI ID:', error);
+    }
+  };
+
+  const copyUpiString = async () => {
+    try {
+      await navigator.clipboard.writeText(generateUpiString());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy UPI string:', error);
+    }
   };
 
   return (
@@ -168,17 +211,33 @@ const DonationModal: React.FC<DonationModalProps> = ({
                 <span className="mt-3 text-sm text-gray-600 font-medium">Generating QR code...</span>
               </div>
             ) : (
-              <div className="p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl border border-purple-100">
-                <div ref={qrContainerRef}></div>
+              <div className="relative">
+                <div className="p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl border border-purple-100">
+                  <div ref={qrContainerRef}></div>
+                </div>
+                {qrCodeGenerated && !qrCodeError && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={copyUpiString}
+                    className="absolute -bottom-2 -right-2 bg-white shadow-lg hover:shadow-xl transition-all duration-200"
+                  >
+                    {copied ? (
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                    ) : (
+                      <Copy className="w-4 h-4" />
+                    )}
+                  </Button>
+                )}
               </div>
             )}
           </div>
           
-          {qrCodeFailed && (
+          {qrCodeError && (
             <div className="text-center mb-4 p-3 bg-amber-50 border border-amber-200 rounded-xl">
               <p className="text-xs text-amber-700 font-medium">
                 <Sparkles className="w-4 h-4 inline mr-1" />
-                Using fallback QR code. You can manually enter UPI details.
+                QR code service unavailable. Please use manual UPI payment below.
               </p>
             </div>
           )}
@@ -243,9 +302,23 @@ const DonationModal: React.FC<DonationModalProps> = ({
             <p className="text-sm mb-1 text-gray-600">
               UPI ID
             </p>
-            <p className="font-bold text-purple-700 text-lg">
-              {upiId}
-            </p>
+            <div className="flex items-center justify-center gap-2">
+              <p className="font-bold text-purple-700 text-lg">
+                {upiId}
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={copyUpiId}
+                className="p-1 h-auto hover:bg-purple-100"
+              >
+                {copied ? (
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                ) : (
+                  <Copy className="w-4 h-4 text-purple-600" />
+                )}
+              </Button>
+            </div>
           </div>
           
           <p className="text-center text-sm text-gray-500 mt-4 flex items-center justify-center gap-1">
