@@ -1,3 +1,4 @@
+
 import { WidgetType, WidgetSize } from '@/types';
 
 export interface WidgetConfig {
@@ -84,7 +85,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
 
       document.getElementById('${containerId}').appendChild(widget);
 
-      function handleWidgetClick() {
+      window.handleWidgetClick = function() {
         ${getClickHandlerCode(type, handle, welcomeMessage, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, networks, paymentApiKey, amount, currency, successUrl, cancelUrl, containerId, position)}
       }
     })();
@@ -136,11 +137,11 @@ function getIconSvg(type: WidgetType, size: WidgetSize = 'medium', followPlatfor
       </svg>`;
     case 'social-share':
       return `<svg width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="white">
-        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12zm0 0z"/>
+        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 7.81C7.5 7.31 6.79 7 6 7c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
       </svg>`;
     case 'google-translate':
       return `<svg width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="white">
-        <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0 0 4.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+        <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
       </svg>`;
     case 'youtube':
       return `<svg width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="white">
@@ -156,11 +157,11 @@ function getIconSvg(type: WidgetType, size: WidgetSize = 'medium', followPlatfor
       </svg>`;
     case 'slack':
       return `<svg width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="white">
-        <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" fill="#4A154B"/>
+        <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/>
       </svg>`;
     case 'discord':
       return `<svg width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="white">
-        <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.608 1.2495-1.8447-.2762-3.6677-.2762-5.4724 0-.1634-.3933-.4058-.8742-.6091-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.462-.6304.874-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.094-.8382-9.5204-3.5495-13.442a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z" fill="#7289DA"/>
+        <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.608 1.2495-1.8447-.2762-3.6677-.2762-5.4724 0-.1634-.3933-.4058-.8742-.6091-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.462-.6304.874-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.094-.8382-9.5204-3.5495-13.442a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>
       </svg>`;
     case 'call-now':
       return `<svg width="${iconSize}" height="${iconSize}" viewBox="0 0 24 24" fill="white">
@@ -219,37 +220,37 @@ function getClickHandlerCode(
   switch (type) {
     case 'whatsapp':
       const whatsappMessage = encodeURIComponent(welcomeMessage || 'Hello! I have a question.');
-      return `window.location.href = 'https://wa.me/${handle?.replace(/[^0-9]/g, '')}?text=${whatsappMessage}';`;
+      return `window.open('https://wa.me/${handle?.replace(/[^0-9]/g, '')}?text=${whatsappMessage}', '_blank');`;
     
     case 'facebook':
-      return `window.location.href = 'https://m.me/${handle}';`;
+      return `window.open('https://m.me/${handle}', '_blank');`;
     
     case 'instagram':
-      return `window.location.href = 'https://instagram.com/${handle?.replace('@', '')}';`;
+      return `window.open('https://instagram.com/${handle?.replace('@', '')}', '_blank');`;
     
     case 'twitter':
-      return `window.location.href = 'https://twitter.com/messages/compose?recipient_id=${handle?.replace('@', '')}';`;
+      return `window.open('https://twitter.com/messages/compose?recipient_id=${handle?.replace('@', '')}', '_blank');`;
     
     case 'telegram':
-      return `window.location.href = 'https://t.me/${handle?.replace('@', '')}';`;
+      return `window.open('https://t.me/${handle?.replace('@', '')}', '_blank');`;
     
     case 'linkedin':
-      return `window.location.href = 'https://www.linkedin.com/in/${handle}';`;
+      return `window.open('https://www.linkedin.com/in/${handle}', '_blank');`;
     
     case 'youtube':
-      return `window.location.href = 'https://www.youtube.com/${handle}';`;
+      return `window.open('https://www.youtube.com/${handle}', '_blank');`;
     
     case 'github':
-      return `window.location.href = 'https://github.com/${handle}';`;
+      return `window.open('https://github.com/${handle}', '_blank');`;
     
     case 'twitch':
-      return `window.location.href = 'https://twitch.tv/${handle}';`;
+      return `window.open('https://twitch.tv/${handle}', '_blank');`;
     
     case 'slack':
-      return `window.location.href = '${handle}';`;
+      return `window.open('${handle}', '_blank');`;
     
     case 'discord':
-      return `window.location.href = 'https://discord.gg/${handle}';`;
+      return `window.open('https://discord.gg/${handle}', '_blank');`;
     
     case 'dodo-payment':
       return `
@@ -348,9 +349,8 @@ function getClickHandlerCode(
             });
             
             if ('${successUrl}') {
-              // Redirect if success URL provided
               setTimeout(() => {
-                window.location.href = '${successUrl}';
+                window.open('${successUrl}', '_blank');
               }, 3000);
             }
           }, 2000);
@@ -362,6 +362,13 @@ function getClickHandlerCode(
       const text = encodeURIComponent(shareText || 'Check out this page!');
       
       let socialPopup = `
+        // Check if popup already exists and remove it
+        const existingPopup = document.querySelector('#${containerId} > div:not(.widgetify-button)');
+        if (existingPopup) {
+          existingPopup.remove();
+          return;
+        }
+        
         const socialPopup = document.createElement('div');
         socialPopup.style.position = 'absolute';
         socialPopup.style.bottom = '90px';
@@ -370,6 +377,7 @@ function getClickHandlerCode(
         socialPopup.style.flexDirection = 'column';
         socialPopup.style.gap = '10px';
         socialPopup.style.zIndex = '9999';
+        socialPopup.className = 'widgetify-social-popup';
         
         let socialButtons = '';
       `;
@@ -388,7 +396,7 @@ function getClickHandlerCode(
           fbButton.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
           fbButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>';
           fbButton.onclick = function() {
-            window.location.href = 'https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}';
+            window.open('https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}', '_blank');
           };
           socialPopup.appendChild(fbButton);
         `;
@@ -408,7 +416,7 @@ function getClickHandlerCode(
           twitterButton.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
           twitterButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>';
           twitterButton.onclick = function() {
-            window.location.href = 'https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}';
+            window.open('https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}', '_blank');
           };
           socialPopup.appendChild(twitterButton);
         `;
@@ -428,7 +436,7 @@ function getClickHandlerCode(
           linkedinButton.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
           linkedinButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>';
           linkedinButton.onclick = function() {
-            window.location.href = 'https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}';
+            window.open('https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}', '_blank');
           };
           socialPopup.appendChild(linkedinButton);
         `;
@@ -442,19 +450,20 @@ function getClickHandlerCode(
         branding.innerHTML = '<a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #666; text-decoration: none;">Powered by Widgetify</a>';
         socialPopup.appendChild(branding);
         
-        const existingPopup = document.querySelector('.widgetify-social-popup');
-        if (existingPopup) {
-          existingPopup.remove();
-        } else {
-          socialPopup.className = 'widgetify-social-popup';
-          document.getElementById('${containerId}').appendChild(socialPopup);
-        }
+        document.getElementById('${containerId}').appendChild(socialPopup);
       `;
       
       return socialPopup;
     
     case 'google-translate':
       return `
+        // Check if popup already exists and remove it
+        const existingPopup = document.querySelector('#${containerId} > div:not(.widgetify-button)');
+        if (existingPopup) {
+          existingPopup.remove();
+          return;
+        }
+
         if (!window.googleTranslateElementInit) {
           const translatePopup = document.createElement('div');
           translatePopup.style.position = 'absolute';
@@ -470,7 +479,7 @@ function getClickHandlerCode(
           translatePopup.innerHTML = \`
             <div style="background-color: #f3f4f6; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
               <div style="font-weight: 500;">Google Translate</div>
-              <button style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280;">×</button>
+              <button id="close-translate-popup" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280;">×</button>
             </div>
             <div style="padding: 12px;">
               <div id="google_translate_element"></div>
@@ -482,7 +491,7 @@ function getClickHandlerCode(
             </div>
           \`;
           
-          translatePopup.querySelector('button').onclick = function() {
+          translatePopup.querySelector('#close-translate-popup').onclick = function() {
             translatePopup.remove();
           };
           
@@ -499,12 +508,7 @@ function getClickHandlerCode(
           script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
           document.body.appendChild(script);
         } else {
-          const existingPopup = document.querySelector('#${containerId} > div:not(.widgetify-button)');
-          if (existingPopup) {
-            existingPopup.remove();
-          } else {
-            googleTranslateElementInit();
-          }
+          googleTranslateElementInit();
         }
       `;
     
@@ -512,19 +516,26 @@ function getClickHandlerCode(
       return `window.location.href = 'tel:${phoneNumber}';`;
     
     case 'review-now':
-      return `window.location.href = '${reviewUrl}';`;
+      return `window.open('${reviewUrl}', '_blank');`;
     
     case 'follow-us':
       if (followPlatform === 'instagram') {
-        return `window.location.href = 'https://instagram.com/${handle?.replace('@', '')}';`;
+        return `window.open('https://instagram.com/${handle?.replace('@', '')}', '_blank');`;
       } else if (followPlatform === 'youtube') {
-        return `window.location.href = 'https://www.youtube.com/${handle}';`;
+        return `window.open('https://www.youtube.com/${handle}', '_blank');`;
       } else {
-        return `window.location.href = 'https://www.linkedin.com/in/${handle}';`;
+        return `window.open('https://www.linkedin.com/in/${handle}', '_blank');`;
       }
     
     default:
       return `
+        // Check if popup already exists and remove it
+        const existingPopup = document.querySelector('#${containerId} > div:not(.widgetify-button)');
+        if (existingPopup) {
+          existingPopup.remove();
+          return;
+        }
+
         const chatPopup = document.createElement('div');
         chatPopup.style.position = 'absolute';
         chatPopup.style.bottom = '90px';
@@ -542,11 +553,11 @@ function getClickHandlerCode(
         chatPopup.innerHTML = \`
           <div style="background-color: #f3f4f6; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
             <div style="font-weight: 500;">Chat</div>
-            <button style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280;">×</button>
+            <button id="close-chat-popup" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280;">×</button>
           </div>
           <div style="flex-grow: 1; padding: 12px; overflow-y: auto; background-color: white;">
             <div style="background-color: #f3f4f6; padding: 8px; border-radius: 8px; margin-bottom: 8px; max-width: 80%;">
-              <p style="font-size: 12px; margin: 0;">How can I help you today?</p>
+              <p style="font-size: 12px; margin: 0;">${welcomeMessage || 'How can I help you today?'}</p>
             </div>
           </div>
           <div style="padding: 12px; border-top: 1px solid #e5e7eb; background-color: #f9fafb;">
@@ -566,16 +577,11 @@ function getClickHandlerCode(
           </div>
         \`;
         
-        chatPopup.querySelector('button').onclick = function() {
+        chatPopup.querySelector('#close-chat-popup').onclick = function() {
           chatPopup.remove();
         };
         
-        const existingPopup = document.querySelector('#${containerId} > div:not(.widgetify-button)');
-        if (existingPopup) {
-          existingPopup.remove();
-        } else {
-          document.getElementById('${containerId}').appendChild(chatPopup);
-        }
+        document.getElementById('${containerId}').appendChild(chatPopup);
       `;
   }
 }
