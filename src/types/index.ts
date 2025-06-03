@@ -16,6 +16,6 @@ export type WidgetType =
   'call-now' | 
   'review-now' | 
   'follow-us' | 
-  'donation-widget';
+  'dodo-payment';
 
 export type WidgetSize = 'small' | 'medium' | 'large';
