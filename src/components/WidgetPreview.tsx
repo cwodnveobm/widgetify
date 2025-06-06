@@ -76,19 +76,23 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     alignItems: 'center',
     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
     cursor: 'pointer',
+    transition: 'transform 0.2s ease',
   });
 
   const tooltipStyle = {
     position: 'absolute' as const,
     bottom: parseInt(sizeMap[size || 'medium']) + 10 + 'px',
     [position || 'right']: '10px',
-    backgroundColor: 'white',
-    padding: '5px 10px',
-    borderRadius: '5px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    color: 'white',
+    padding: '8px 12px',
+    borderRadius: '6px',
     fontSize: '12px',
     whiteSpace: 'nowrap' as const,
-    opacity: 0.8,
+    opacity: showPopup ? 1 : 0,
+    visibility: showPopup ? 'visible' : 'hidden',
+    transition: 'all 0.3s ease',
+    zIndex: 60,
   } as React.CSSProperties;
 
   // Custom Icon Components
@@ -128,6 +132,12 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     </svg>
   );
 
+  const DollarIcon = ({ size }: { size: number }) => (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="white">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
+    </svg>
+  );
+
   const getIcon = () => {
     const iconSize = parseInt(sizeMap[size || 'medium'], 10) * 0.5;
     
@@ -162,6 +172,8 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return <Phone size={iconSize} color="white" />;
       case 'review-now':
         return <Star size={iconSize} color="white" />;
+      case 'dodo-payment':
+        return <DollarIcon size={iconSize} />;
       case 'follow-us':
         const platform = config.followPlatform || 'linkedin';
         if (platform === 'instagram') return <Instagram size={iconSize} color="white" />;
@@ -176,23 +188,52 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     setShowPopup(!showPopup);
   };
 
+  const handleSocialButtonClick = (network: string) => {
+    const url = config.shareUrl || window.location.href;
+    const text = encodeURIComponent(config.shareText || 'Check out this page!');
+    
+    switch (network) {
+      case 'facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        break;
+      case 'twitter':
+        window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}`, '_blank');
+        break;
+      case 'linkedin':
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank');
+        break;
+    }
+  };
+
   const renderSocialButtons = () => {
     if (type !== 'social-share' || !networks) return null;
     
     return (
       <div style={socialButtonsContainerStyle} className="animate-fade-in">
         {networks.includes('facebook') && (
-          <div style={socialButtonStyle('#1877F2')}>
+          <div 
+            style={socialButtonStyle('#1877F2')}
+            onClick={() => handleSocialButtonClick('facebook')}
+            className="hover:scale-105 transition-transform"
+          >
             <Facebook size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
           </div>
         )}
         {networks.includes('twitter') && (
-          <div style={socialButtonStyle('#1DA1F2')}>
+          <div 
+            style={socialButtonStyle('#1DA1F2')}
+            onClick={() => handleSocialButtonClick('twitter')}
+            className="hover:scale-105 transition-transform"
+          >
             <Twitter size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
           </div>
         )}
         {networks.includes('linkedin') && (
-          <div style={socialButtonStyle('#0077B5')}>
+          <div 
+            style={socialButtonStyle('#0077B5')}
+            onClick={() => handleSocialButtonClick('linkedin')}
+            className="hover:scale-105 transition-transform"
+          >
             <Linkedin size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
           </div>
         )}
@@ -201,7 +242,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             href="https://widgetify-two.vercel.app/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-gray-500 no-underline"
+            className="text-gray-500 no-underline hover:text-gray-700 transition-colors"
           >
             Powered by Widgetify
           </a>
@@ -216,6 +257,8 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return 'Call Now';
       case 'review-now':
         return 'Leave a Review';
+      case 'dodo-payment':
+        return 'Make Payment';
       case 'follow-us':
         const platform = config.followPlatform || 'linkedin';
         return `Follow on ${platform.charAt(0).toUpperCase() + platform.slice(1)}`;
@@ -242,91 +285,191 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       case 'call-now': return 'Call Now';
       case 'review-now': return 'Leave a Review';
       case 'follow-us': return 'Follow Us';
+      case 'dodo-payment': return 'Dodo Payment';
       default: return 'Chat';
     }
   };
 
+  const renderPaymentPopup = () => {
+    return (
+      <div style={popupStyle} className="animate-fade-in">
+        <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
+          <div className="font-medium">Dodo Payment</div>
+          <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700 text-lg transition-colors">
+            ×
+          </button>
+        </div>
+        <div className="flex-grow p-3 overflow-y-auto bg-white">
+          <div className="mb-3">
+            <label className="block text-sm font-medium mb-2">Amount (USD)</label>
+            <div className="flex items-center border border-gray-300 rounded">
+              <span className="px-3 py-2 bg-gray-100 border-r text-sm">$</span>
+              <input
+                type="number"
+                defaultValue={config.amount || 10}
+                min="1"
+                className="flex-1 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+          </div>
+          <div className="mb-3">
+            <label className="block text-sm font-medium mb-2">Card Information</label>
+            <input
+              type="text"
+              placeholder="1234 1234 1234 1234"
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="MM/YY"
+                className="w-1/2 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+              <input
+                type="text"
+                placeholder="CVC"
+                className="w-1/2 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+          </div>
+          <button className="w-full bg-purple-600 text-white py-2 rounded font-medium hover:bg-purple-700 transition-colors">
+            Pay Now
+          </button>
+        </div>
+        <div className="text-xs text-gray-500 text-center p-2">
+          <a 
+            href="https://widgetify-two.vercel.app/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-gray-500 no-underline hover:text-gray-700 transition-colors"
+          >
+            Powered by Widgetify
+          </a>
+        </div>
+      </div>
+    );
+  };
+
+  const renderTranslatePopup = () => {
+    return (
+      <div style={popupStyle} className="animate-fade-in">
+        <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
+          <div className="font-medium">Google Translate</div>
+          <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700 text-lg transition-colors">
+            ×
+          </button>
+        </div>
+        <div className="flex-grow p-3 overflow-y-auto bg-white">
+          <div className="bg-gray-50 p-3 rounded-lg mb-3">
+            <p className="text-xs text-center text-gray-600 mb-2">Google Translate Widget</p>
+            <div className="border-2 border-dashed border-gray-300 p-4 text-center rounded">
+              <div className="text-xs text-gray-500">
+                &lt;div id="google_translate_element"&gt;&lt;/div&gt;
+              </div>
+            </div>
+          </div>
+          <p className="text-xs text-gray-500 text-center">
+            This widget integrates Google Translate for automatic page translation.
+          </p>
+        </div>
+        <div className="text-xs text-gray-500 text-center p-2">
+          <a 
+            href="https://widgetify-two.vercel.app/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-gray-500 no-underline hover:text-gray-700 transition-colors"
+          >
+            Powered by Widgetify
+          </a>
+        </div>
+      </div>
+    );
+  };
+
+  const renderChatPopup = () => {
+    return (
+      <div style={popupStyle} className="animate-fade-in">
+        <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
+          <div className="font-medium">{getWidgetTitle()}</div>
+          <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700 text-lg transition-colors">
+            ×
+          </button>
+        </div>
+        <div className="flex-grow p-3 overflow-y-auto bg-white">
+          <div className="bg-gray-100 p-2 rounded-lg mb-2 max-w-[80%]">
+            <p className="text-xs">{config.welcomeMessage || 'How can I help you today?'}</p>
+          </div>
+        </div>
+        <div className="p-3 border-t bg-gray-50 rounded-b-lg">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Type a message..."
+              className="flex-grow text-xs p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <button className="bg-purple-600 text-white p-2 rounded hover:bg-purple-700 transition-colors">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+              </svg>
+            </button>
+          </div>
+          <div className="text-xs text-gray-500 text-center mt-2">
+            <a 
+              href="https://widgetify-two.vercel.app/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-gray-500 no-underline hover:text-gray-700 transition-colors"
+            >
+              Powered by Widgetify
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const getWidgetContent = () => {
+    if (type === 'social-share') {
+      return renderSocialButtons();
+    }
+    
+    if (type === 'dodo-payment') {
+      return renderPaymentPopup();
+    }
+    
+    if (type === 'google-translate') {
+      return renderTranslatePopup();
+    }
+    
+    if (type === 'call-now' || type === 'review-now' || type === 'follow-us') {
+      const tooltipText = getTooltipText();
+      return tooltipText ? <div style={tooltipStyle}>{tooltipText}</div> : null;
+    }
+    
+    return renderChatPopup();
+  };
+
+  const handleMainButtonClick = () => {
     switch (type) {
-      case 'social-share':
-        return renderSocialButtons();
-      case 'google-translate':
-        return (
-          <div style={popupStyle} className="animate-fade-in">
-            <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
-              <div className="font-medium">{getWidgetTitle()}</div>
-              <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700">
-                ×
-              </button>
-            </div>
-            <div className="flex-grow p-3 overflow-y-auto bg-white">
-              <div className="bg-gray-100 p-2 rounded-lg mb-2">
-                <p className="text-xs text-center">Standard Google Translate Element</p>
-                <div className="border border-dashed p-2 mt-2 text-center">
-                  <code className="text-xs">&lt;div id="google_translate_element"&gt;&lt;/div&gt;</code>
-                </div>
-              </div>
-            </div>
-            <div className="text-xs text-gray-500 text-center mt-2 p-2">
-              <a 
-                href="https://widgetify-two.vercel.app/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="text-gray-500 no-underline"
-              >
-                Powered by Widgetify
-              </a>
-            </div>
-          </div>
-        );
       case 'call-now':
+        window.location.href = `tel:${config.phoneNumber || '+1234567890'}`;
+        break;
       case 'review-now':
+        window.open(config.reviewUrl || 'https://google.com/search?q=reviews', '_blank');
+        break;
       case 'follow-us':
-        // These types show tooltips instead of popups
-        const tooltipText = getTooltipText();
-        return tooltipText ? <div style={tooltipStyle}>{tooltipText}</div> : null;
+        const platform = config.followPlatform || 'linkedin';
+        const handle = config.handle?.replace('@', '') || 'example';
+        if (platform === 'instagram') {
+          window.open(`https://instagram.com/${handle}`, '_blank');
+        } else if (platform === 'youtube') {
+          window.open(`https://www.youtube.com/${handle}`, '_blank');
+        } else {
+          window.open(`https://www.linkedin.com/in/${handle}`, '_blank');
+        }
+        break;
       default:
-        return (
-          <div style={popupStyle} className="animate-fade-in">
-            <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
-              <div className="font-medium">{getWidgetTitle()}</div>
-              <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700 text-lg">
-                ×
-              </button>
-            </div>
-            <div className="flex-grow p-3 overflow-y-auto bg-white">
-              <div className="bg-gray-100 p-2 rounded-lg mb-2 max-w-[80%]">
-                <p className="text-xs">How can I help you today?</p>
-              </div>
-            </div>
-            <div className="p-3 border-t bg-gray-50 rounded-b-lg">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Type a message..."
-                  className="flex-grow text-xs p-2 border rounded"
-                />
-                <button
-                  className="bg-gray-200 p-2 rounded"
-                >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-                  </svg>
-                </button>
-              </div>
-              <div className="text-xs text-gray-500 text-center mt-2">
-                <a 
-                  href="https://widgetify-two.vercel.app/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-gray-500 no-underline"
-                >
-                  Powered by Widgetify
-                </a>
-              </div>
-            </div>
-          </div>
-        );
+        togglePopup();
     }
   };
 
@@ -337,8 +480,8 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       
       <div 
         style={buttonStyle} 
-        className="hover:scale-105 hover:shadow-lg" 
-        onClick={togglePopup}
+        className="hover:scale-105 hover:shadow-lg transition-all duration-300 cursor-pointer" 
+        onClick={handleMainButtonClick}
       >
         {getIcon()}
       </div>
