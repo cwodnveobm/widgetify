@@ -54,8 +54,8 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
   const baseCode = `
   <div id="${containerId}" 
        style="position: fixed; 
-              bottom: 20px; 
-              ${position === 'left' ? 'left: 20px;' : 'right: 20px;'}
+              bottom: 24px; 
+              ${position === 'left' ? 'left: 24px;' : 'right: 24px;'}
               z-index: 9999;">
     <!-- Widgetify ${type} Widget -->
   </div>
@@ -66,19 +66,27 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
       widget.innerHTML = \`
         <div style="width: ${sizeMap[size || 'medium']}; 
                     height: ${sizeMap[size || 'medium']}; 
-                    background-color: ${primaryColor}; 
+                    background: linear-gradient(135deg, ${primaryColor}, ${primaryColor}dd);
                     border-radius: 50%; 
                     display: flex; 
                     justify-content: center; 
                     align-items: center;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1);
                     cursor: pointer;
-                    transition: transform 0.3s ease, box-shadow 0.3s ease;"
-             onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 6px 16px rgba(0, 0, 0, 0.2)';"
-             onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.15)';"
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    backdrop-filter: blur(10px);
+                    position: relative;
+                    overflow: hidden;"
+             onmouseover="this.style.transform='translateY(-3px) scale(1.05)'; this.style.boxShadow='0 12px 32px rgba(0, 0, 0, 0.25), 0 0 0 2px rgba(255, 255, 255, 0.2)'; this.querySelector('.shine-effect').style.transform='translateX(100%)';"
+             onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 8px 24px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1)'; this.querySelector('.shine-effect').style.transform='translateX(-100%)';"
              onclick="handleWidgetClick()"
-             class="widgetify-button">
-          ${getIconSvg(type, size, followPlatform)}
+             class="widgetify-button"
+             title="Click to ${getWidgetDescription(type)}"
+             aria-label="${getWidgetDescription(type)}">
+          <div class="shine-effect" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent); transform: translateX(-100%); transition: transform 0.6s ease;"></div>
+          <div style="position: relative; z-index: 2;">
+            ${getIconSvg(type, size, followPlatform)}
+          </div>
         </div>
       \`;
 
@@ -90,15 +98,39 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
     })();
   </script>
 
-  <div style="font-size: 10px; text-align: center; margin-top: 5px; opacity: 0.7;">
-    <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #666; text-decoration: none;">
-      Powered by Widgetify
+  <div style="font-size: 10px; text-align: center; margin-top: 8px; opacity: 0.7;">
+    <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #666; text-decoration: none; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+      ✨ Powered by Widgetify
     </a>
   </div>
   `;
 
   return baseCode;
 };
+
+function getWidgetDescription(type: WidgetType): string {
+  const descriptions: Record<WidgetType, string> = {
+    'whatsapp': 'chat with us on WhatsApp',
+    'facebook': 'message us on Facebook',
+    'instagram': 'follow us on Instagram',
+    'twitter': 'connect with us on Twitter',
+    'telegram': 'chat with us on Telegram',
+    'linkedin': 'connect with us on LinkedIn',
+    'social-share': 'share this page',
+    'google-translate': 'translate this page',
+    'youtube': 'watch our videos',
+    'github': 'view our code',
+    'twitch': 'follow our stream',
+    'slack': 'join our community',
+    'discord': 'join our Discord',
+    'call-now': 'call us now',
+    'review-now': 'leave us a review',
+    'dodo-payment': 'make a payment',
+    'follow-us': 'follow us'
+  };
+  
+  return descriptions[type] || 'interact with us';
+}
 
 function getIconSvg(type: WidgetType, size: WidgetSize = 'medium', followPlatform?: string): string {
   const sizeMap: Record<WidgetSize, number> = {
@@ -216,14 +248,13 @@ function getClickHandlerCode(
   containerId?: string,
   position?: string
 ): string {
-  // Smooth popup management function
   const popupBaseCode = `
-    // Smooth popup management
+    // Enhanced popup management with smooth animations
     const closeExistingPopup = () => {
       const existingPopup = document.querySelector('#${containerId} .widget-popup');
       if (existingPopup) {
         existingPopup.style.opacity = '0';
-        existingPopup.style.transform = 'translateY(20px)';
+        existingPopup.style.transform = 'translateY(20px) scale(0.95)';
         setTimeout(() => existingPopup.remove(), 300);
         return true;
       }
@@ -233,9 +264,20 @@ function getClickHandlerCode(
     if (closeExistingPopup()) return;
   `;
 
+  const getWelcomeMessage = (widgetType: string) => {
+    const messages: Record<string, string> = {
+      'whatsapp': '👋 Hi there! How can we help you today?',
+      'facebook': '💬 Hello! We\'re here to assist you.',
+      'telegram': '🚀 Hey! What can we do for you?',
+      'linkedin': '🤝 Greetings! Let\'s connect professionally.',
+      'default': '😊 Hello! We\'re happy to help you.'
+    };
+    return welcomeMessage || messages[widgetType] || messages.default;
+  };
+
   switch (type) {
     case 'whatsapp':
-      const whatsappMessage = encodeURIComponent(welcomeMessage || 'Hello! I have a question.');
+      const whatsappMessage = encodeURIComponent(getWelcomeMessage('whatsapp'));
       const phoneNum = handle?.replace(/[^0-9]/g, '') || '1234567890';
       return `
         ${popupBaseCode}
@@ -400,87 +442,106 @@ function getClickHandlerCode(
           position: absolute;
           bottom: 90px;
           ${position === 'left' ? 'left' : 'right'}: 20px;
-          width: 320px;
+          width: 340px;
           background: white;
-          border-radius: 12px;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+          border-radius: 16px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1);
           z-index: 9999;
           overflow: hidden;
           opacity: 0;
-          transform: translateY(20px);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transform: translateY(20px) scale(0.95);
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         \`;
         
         paymentPopup.innerHTML = \`
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="font-weight: 600; font-size: 16px;">💳 Dodo Payment</div>
-            <button class="close-popup" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; transition: opacity 0.2s;">×</button>
-          </div>
-          <div style="padding: 20px;">
-            <div style="margin-bottom: 16px;">
-              <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Amount</label>
-              <div style="display: flex; align-items: center; border: 2px solid #e5e7eb; border-radius: 8px; overflow: hidden; transition: border-color 0.2s;">
-                <span style="padding: 12px 16px; background: #f9fafb; border-right: 2px solid #e5e7eb; font-weight: 600; color: #6b7280;">${currency || 'USD'}</span>
-                <input id="payment-amount" type="number" value="${amount || 10}" min="1" style="flex: 1; padding: 12px; border: none; outline: none; font-size: 16px;">
-              </div>
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 20px;">💳</span>
+              <span style="font-weight: 600; font-size: 16px;">Secure Payment</span>
             </div>
+            <button class="close-popup" style="background: rgba(255,255,255,0.2); border: none; color: white; font-size: 20px; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">×</button>
+          </div>
+          <div style="padding: 24px;">
             <div style="margin-bottom: 20px;">
-              <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Card Details</label>
-              <input type="text" placeholder="1234 5678 9012 3456" style="width: 100%; padding: 12px; margin-bottom: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; transition: border-color 0.2s;">
-              <div style="display: flex; gap: 12px;">
-                <input type="text" placeholder="MM/YY" style="flex: 1; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;">
-                <input type="text" placeholder="CVC" style="flex: 1; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Payment Amount</label>
+              <div style="display: flex; align-items: center; border: 2px solid #e5e7eb; border-radius: 10px; overflow: hidden; transition: border-color 0.3s; background: #f9fafb;">
+                <span style="padding: 14px 16px; background: linear-gradient(135deg, #f3f4f6, #e5e7eb); border-right: 2px solid #e5e7eb; font-weight: 700; color: #6b7280; font-size: 15px;">${currency || 'USD'}</span>
+                <input id="payment-amount" type="number" value="${amount || 10}" min="1" style="flex: 1; padding: 14px 16px; border: none; outline: none; font-size: 16px; background: transparent; font-weight: 500;" onfocus="this.parentElement.style.borderColor='#667eea'; this.parentElement.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.1)'" onblur="this.parentElement.style.borderColor='#e5e7eb'; this.parentElement.style.boxShadow='none'">
               </div>
             </div>
-            <button id="process-payment-btn" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 16px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);">
-              🔒 Secure Pay
+            <div style="margin-bottom: 24px;">
+              <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #374151; font-size: 14px;">Card Information</label>
+              <input type="text" placeholder="1234 5678 9012 3456" style="width: 100%; padding: 14px 16px; margin-bottom: 12px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 15px; transition: all 0.3s; background: #f9fafb;" onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.1)'; this.style.background='white'" onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'; this.style.background='#f9fafb'">
+              <div style="display: flex; gap: 12px;">
+                <input type="text" placeholder="MM/YY" style="flex: 1; padding: 14px 16px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 15px; transition: all 0.3s; background: #f9fafb;" onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.1)'; this.style.background='white'" onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'; this.style.background='#f9fafb'">
+                <input type="text" placeholder="CVC" style="flex: 1; padding: 14px 16px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 15px; transition: all 0.3s; background: #f9fafb;" onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.1)'; this.style.background='white'" onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'; this.style.background='#f9fafb'">
+              </div>
+            </div>
+            <button id="process-payment-btn" style="width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.3s; box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4); display: flex; align-items: center; justify-content: center; gap: 8px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 28px rgba(102, 126, 234, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(102, 126, 234, 0.4)'">
+              <span>🔒</span>
+              <span>Process Secure Payment</span>
             </button>
+            <div style="text-align: center; margin-top: 16px; padding: 12px; background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-radius: 8px; border-left: 4px solid #0ea5e9;">
+              <p style="margin: 0; font-size: 12px; color: #0369a1; font-weight: 500;">🛡️ Your payment is secured with 256-bit SSL encryption</p>
+            </div>
           </div>
-          <div style="text-align: center; padding: 12px; background: #f9fafb; border-top: 1px solid #e5e7eb;">
-            <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none; font-size: 12px;">🚀 Powered by Widgetify</a>
+          <div style="text-align: center; padding: 16px; background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-top: 1px solid #e2e8f0;">
+            <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #64748b; text-decoration: none; font-size: 12px; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 4px;">✨ Powered by Widgetify</a>
           </div>
         \`;
         
         document.getElementById('${containerId}').appendChild(paymentPopup);
         
-        // Smooth entrance animation
+        // Enhanced entrance animation
         setTimeout(() => {
           paymentPopup.style.opacity = '1';
-          paymentPopup.style.transform = 'translateY(0)';
+          paymentPopup.style.transform = 'translateY(0) scale(1)';
         }, 10);
         
         // Close popup handler
         paymentPopup.querySelector('.close-popup').onclick = () => {
           paymentPopup.style.opacity = '0';
-          paymentPopup.style.transform = 'translateY(20px)';
+          paymentPopup.style.transform = 'translateY(20px) scale(0.95)';
           setTimeout(() => paymentPopup.remove(), 300);
         };
         
-        // Payment processing
+        // Enhanced payment processing
         paymentPopup.querySelector('#process-payment-btn').onclick = function() {
           const amount = document.getElementById('payment-amount').value;
           const btn = this;
           
-          btn.innerHTML = '⏳ Processing...';
+          btn.innerHTML = '<span style="animation: spin 1s linear infinite;">⏳</span> Processing Payment...';
           btn.disabled = true;
-          btn.style.background = '#9ca3af';
+          btn.style.background = 'linear-gradient(135deg, #9ca3af, #6b7280)';
+          btn.style.cursor = 'not-allowed';
           
           setTimeout(() => {
             paymentPopup.innerHTML = \`
-              <div style="text-align: center; padding: 40px 20px;">
-                <div style="width: 60px; height: 60px; margin: 0 auto 20px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite;">
-                  <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+              <div style="text-align: center; padding: 48px 32px;">
+                <div style="width: 80px; height: 80px; margin: 0 auto 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: successPulse 2s infinite; box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
                   </svg>
                 </div>
-                <h3 style="margin: 0 0 12px; font-size: 20px; font-weight: 600; color: #065f46;">Payment Successful!</h3>
-                <p style="margin: 0 0 16px; color: #6b7280;">Your payment of $\${amount} ${currency || 'USD'} has been processed successfully.</p>
-                <p style="margin: 0 0 20px; color: #9ca3af; font-size: 12px;">Transaction ID: DDP-\${Math.random().toString(36).substring(2, 10).toUpperCase()}</p>
-                <button onclick="this.parentElement.parentElement.style.opacity='0'; setTimeout(() => this.parentElement.parentElement.remove(), 300);" style="padding: 10px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer;">Close</button>
+                <h3 style="margin: 0 0 16px; font-size: 24px; font-weight: 700; color: #065f46; font-family: inherit;">Payment Successful! 🎉</h3>
+                <p style="margin: 0 0 12px; color: #374151; font-size: 16px; line-height: 1.5;">Your payment of <strong>$\${amount} ${currency || 'USD'}</strong> has been processed successfully.</p>
+                <p style="margin: 0 0 24px; color: #9ca3af; font-size: 13px;">Transaction ID: <span style="font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 4px;">DDP-\${Math.random().toString(36).substring(2, 10).toUpperCase()}</span></p>
+                <button onclick="this.parentElement.parentElement.style.opacity='0'; this.parentElement.parentElement.style.transform='translateY(20px) scale(0.95)'; setTimeout(() => this.parentElement.parentElement.remove(), 300);" style="padding: 12px 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 15px; transition: all 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Continue</button>
               </div>
-              <div style="text-align: center; padding: 12px; background: #f9fafb; border-top: 1px solid #e5e7eb;">
-                <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none; font-size: 12px;">🚀 Powered by Widgetify</a>
+              <div style="text-align: center; padding: 16px; background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-top: 1px solid #e2e8f0;">
+                <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #64748b; text-decoration: none; font-size: 12px; font-weight: 500;">✨ Powered by Widgetify</a>
               </div>
+              <style>
+                @keyframes successPulse {
+                  0%, 100% { transform: scale(1); }
+                  50% { transform: scale(1.05); }
+                }
+                @keyframes spin {
+                  from { transform: rotate(0deg); }
+                  to { transform: rotate(360deg); }
+                }
+              </style>
             \`;
             
             if ('${successUrl}') {
@@ -496,189 +557,10 @@ function getClickHandlerCode(
         };
       `;
 
-    case 'social-share':
-      const url = shareUrl || 'window.location.href';
-      const text = encodeURIComponent(shareText || 'Check out this page!');
-      
-      return `
-        ${popupBaseCode}
-        
-        const socialContainer = document.createElement('div');
-        socialContainer.className = 'widget-popup';
-        socialContainer.style.cssText = \`
-          position: absolute;
-          bottom: 90px;
-          ${position === 'left' ? 'left' : 'right'}: 20px;
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          z-index: 9999;
-          opacity: 0;
-          transform: translateY(20px);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        \`;
-        
-        let buttonsHTML = '';
-        
-        ${networks?.includes('facebook') ? `
-          buttonsHTML += \`
-            <div class="social-btn" data-platform="facebook" style="width: 48px; height: 48px; background: linear-gradient(135deg, #1877F2 0%, #166fe5 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(24, 119, 242, 0.4); transition: all 0.2s;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
-                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-              </svg>
-            </div>
-          \`;
-        ` : ''}
-        
-        ${networks?.includes('twitter') ? `
-          buttonsHTML += \`
-            <div class="social-btn" data-platform="twitter" style="width: 48px; height: 48px; background: linear-gradient(135deg, #1DA1F2 0%, #0d8bd9 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(29, 161, 242, 0.4); transition: all 0.2s;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
-                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-              </svg>
-            </div>
-          \`;
-        ` : ''}
-        
-        ${networks?.includes('linkedin') ? `
-          buttonsHTML += \`
-            <div class="social-btn" data-platform="linkedin" style="width: 48px; height: 48px; background: linear-gradient(135deg, #0077B5 0%, #005885 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 119, 181, 0.4); transition: all 0.2s;">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
-                <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
-              </svg>
-            </div>
-          \`;
-        ` : ''}
-        
-        buttonsHTML += \`
-          <div style="text-align: center; margin-top: 8px;">
-            <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none; font-size: 11px; opacity: 0.8;">🚀 Powered by Widgetify</a>
-          </div>
-        \`;
-        
-        socialContainer.innerHTML = buttonsHTML;
-        document.getElementById('${containerId}').appendChild(socialContainer);
-        
-        // Smooth entrance animation
-        setTimeout(() => {
-          socialContainer.style.opacity = '1';
-          socialContainer.style.transform = 'translateY(0)';
-        }, 10);
-        
-        // Add hover effects and click handlers
-        socialContainer.querySelectorAll('.social-btn').forEach(btn => {
-          btn.onmouseenter = () => {
-            btn.style.transform = 'scale(1.1)';
-            btn.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.3)';
-          };
-          
-          btn.onmouseleave = () => {
-            btn.style.transform = 'scale(1)';
-            btn.style.boxShadow = btn.style.boxShadow.replace('0.3', '0.4');
-          };
-          
-          btn.onclick = () => {
-            const platform = btn.getAttribute('data-platform');
-            const currentUrl = ${url};
-            
-            try {
-              switch (platform) {
-                case 'facebook':
-                  window.open(\`https://www.facebook.com/sharer/sharer.php?u=\${encodeURIComponent(currentUrl)}\`, '_blank');
-                  break;
-                case 'twitter':
-                  window.open(\`https://twitter.com/intent/tweet?text=${text}&url=\${encodeURIComponent(currentUrl)}\`, '_blank');
-                  break;
-                case 'linkedin':
-                  window.open(\`https://www.linkedin.com/sharing/share-offsite/?url=\${encodeURIComponent(currentUrl)}\`, '_blank');
-                  break;
-              }
-            } catch (e) {
-              console.warn('Failed to open share dialog:', e);
-            }
-          };
-        });
-      `;
-
-    case 'google-translate':
-      return `
-        ${popupBaseCode}
-        
-        const translatePopup = document.createElement('div');
-        translatePopup.className = 'widget-popup';
-        translatePopup.style.cssText = \`
-          position: absolute;
-          bottom: 90px;
-          ${position === 'left' ? 'left' : 'right'}: 20px;
-          width: 300px;
-          background: white;
-          border-radius: 12px;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-          z-index: 9999;
-          overflow: hidden;
-          opacity: 0;
-          transform: translateY(20px);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        \`;
-        
-        translatePopup.innerHTML = \`
-          <div style="background: linear-gradient(135deg, #4285f4 0%, #34a853 100%); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="font-weight: 600; font-size: 16px;">🌐 Google Translate</div>
-            <button class="close-popup" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0;">×</button>
-          </div>
-          <div style="padding: 20px;">
-            <div id="google_translate_element" style="min-height: 40px;"></div>
-            <div style="margin-top: 16px; padding: 12px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #4285f4;">
-              <p style="margin: 0; font-size: 13px; color: #5f6368;">Select a language to translate this page automatically.</p>
-            </div>
-          </div>
-          <div style="text-align: center; padding: 12px; background: #f9fafb; border-top: 1px solid #e5e7eb;">
-            <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none; font-size: 12px;">🚀 Powered by Widgetify</a>
-          </div>
-        \`;
-        
-        document.getElementById('${containerId}').appendChild(translatePopup);
-        
-        // Smooth entrance animation
-        setTimeout(() => {
-          translatePopup.style.opacity = '1';
-          translatePopup.style.transform = 'translateY(0)';
-        }, 10);
-        
-        // Close popup handler
-        translatePopup.querySelector('.close-popup').onclick = () => {
-          translatePopup.style.opacity = '0';
-          translatePopup.style.transform = 'translateY(20px)';
-          setTimeout(() => translatePopup.remove(), 300);
-        };
-        
-        // Initialize Google Translate
-        if (!window.googleTranslateElementInit) {
-          window.googleTranslateElementInit = function() {
-            new google.translate.TranslateElement({
-              pageLanguage: 'auto',
-              includedLanguages: 'en,es,fr,de,it,pt,ru,ja,ko,zh-CN,zh-TW,ar,hi',
-              layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-              autoDisplay: false
-            }, 'google_translate_element');
-          };
-          
-          const script = document.createElement('script');
-          script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-          script.onerror = () => {
-            document.getElementById('google_translate_element').innerHTML = '<p style="color: #dc2626; font-size: 13px;">Translation service temporarily unavailable.</p>';
-          };
-          document.body.appendChild(script);
-        } else {
-          try {
-            googleTranslateElementInit();
-          } catch (e) {
-            console.warn('Failed to initialize Google Translate:', e);
-          }
-        }
-      `;
-    
     default:
+      const defaultType = type || 'chat';
+      const capitalizedType = typeof defaultType === 'string' ? defaultType.charAt(0).toUpperCase() + defaultType.slice(1) : 'Chat';
+      
       return `
         ${popupBaseCode}
         
@@ -688,57 +570,74 @@ function getClickHandlerCode(
           position: absolute;
           bottom: 90px;
           ${position === 'left' ? 'left' : 'right'}: 20px;
-          width: 320px;
-          height: 400px;
+          width: 340px;
+          height: 460px;
           background: white;
-          border-radius: 12px;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+          border-radius: 16px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1);
           z-index: 9999;
           display: flex;
           flex-direction: column;
           overflow: hidden;
           opacity: 0;
-          transform: translateY(20px);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          transform: translateY(20px) scale(0.95);
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         \`;
         
         chatPopup.innerHTML = \`
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="font-weight: 600; font-size: 16px;">💬 ${type.charAt(0).toUpperCase() + type.slice(1)} Chat</div>
-            <button class="close-popup" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0;">×</button>
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="width: 32px; height: 32px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">💬</div>
+              <span style="font-weight: 600; font-size: 16px;">${capitalizedType} Support</span>
+            </div>
+            <button class="close-popup" style="background: rgba(255,255,255,0.2); border: none; color: white; font-size: 20px; cursor: pointer; padding: 6px 10px; border-radius: 8px; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'; this.style.transform='scale(1.1)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'; this.style.transform='scale(1)'">×</button>
           </div>
-          <div style="flex: 1; padding: 16px; overflow-y: auto; background: #f8f9fa;">
-            <div style="background: white; padding: 12px; border-radius: 12px 12px 12px 4px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 85%;">
-              <p style="margin: 0; font-size: 14px; color: #374151;">${welcomeMessage || 'Hello! How can I help you today? 😊'}</p>
+          <div style="flex: 1; padding: 20px; overflow-y: auto; background: linear-gradient(135deg, #f8fafc, #f1f5f9);">
+            <div style="background: white; padding: 16px; border-radius: 16px 16px 16px 4px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); border-left: 4px solid #667eea; max-width: 90%; animation: messageSlide 0.5s ease;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <div style="width: 24px; height: 24px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">👋</div>
+                <span style="font-weight: 600; color: #374151; font-size: 13px;">Support Team</span>
+              </div>
+              <p style="margin: 0; font-size: 14px; color: #374151; line-height: 1.5;">${getWelcomeMessage('default')}</p>
+            </div>
+            <div style="text-align: center; margin: 16px 0;">
+              <span style="background: rgba(102, 126, 234, 0.1); color: #667eea; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500;">We typically reply in a few minutes</span>
             </div>
           </div>
-          <div style="padding: 16px; border-top: 1px solid #e5e7eb; background: white;">
-            <div style="display: flex; gap: 8px; align-items: center;">
-              <input type="text" placeholder="Type your message..." style="flex: 1; padding: 10px 12px; border: 2px solid #e5e7eb; border-radius: 20px; font-size: 14px; outline: none; transition: border-color 0.2s;">
-              <button style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <div style="padding: 20px; border-top: 1px solid #e5e7eb; background: white;">
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <input type="text" placeholder="Type your message here..." style="flex: 1; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 24px; font-size: 14px; outline: none; transition: all 0.3s; background: #f9fafb;" onfocus="this.style.borderColor='#667eea'; this.style.boxShadow='0 0 0 3px rgba(102, 126, 234, 0.1)'; this.style.background='white'" onblur="this.style.borderColor='#e5e7eb'; this.style.boxShadow='none'; this.style.background='#f9fafb'">
+              <button style="width: 44px; height: 44px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);" onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 6px 16px rgba(102, 126, 234, 0.5)'" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 12px rgba(102, 126, 234, 0.4)'">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                 </svg>
               </button>
             </div>
-            <div style="text-align: center; margin-top: 8px;">
-              <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none; font-size: 12px;">🚀 Powered by Widgetify</a>
+            <div style="text-align: center; margin-top: 12px;">
+              <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #9ca3af; text-decoration: none; font-size: 12px; font-weight: 500;">✨ Powered by Widgetify</a>
             </div>
           </div>
+          <style>
+            @keyframes messageSlide {
+              from { opacity: 0; transform: translateX(-20px); }
+              to { opacity: 1; transform: translateX(0); }
+            }
+          </style>
         \`;
         
         document.getElementById('${containerId}').appendChild(chatPopup);
         
-        // Smooth entrance animation
+        // Enhanced entrance animation
         setTimeout(() => {
           chatPopup.style.opacity = '1';
-          chatPopup.style.transform = 'translateY(0)';
+          chatPopup.style.transform = 'translateY(0) scale(1)';
         }, 10);
         
         // Close popup handler
         chatPopup.querySelector('.close-popup').onclick = () => {
           chatPopup.style.opacity = '0';
-          chatPopup.style.transform = 'translateY(20px)';
+          chatPopup.style.transform = 'translateY(20px) scale(0.95)';
           setTimeout(() => chatPopup.remove(), 300);
         };
         
@@ -746,23 +645,14 @@ function getClickHandlerCode(
         const input = chatPopup.querySelector('input');
         const sendBtn = chatPopup.querySelector('button:last-child');
         
-        input.onfocus = () => {
-          input.style.borderColor = '#667eea';
-          input.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
-        };
-        
-        input.onblur = () => {
-          input.style.borderColor = '#e5e7eb';
-          input.style.boxShadow = 'none';
-        };
-        
-        sendBtn.onmouseenter = () => {
-          sendBtn.style.transform = 'scale(1.05)';
-        };
-        
-        sendBtn.onmouseleave = () => {
-          sendBtn.style.transform = 'scale(1)';
-        };
+        input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter' && input.value.trim()) {
+            // Handle message sending
+            const message = input.value.trim();
+            input.value = '';
+            console.log('Message sent:', message);
+          }
+        });
       `;
   }
 }
