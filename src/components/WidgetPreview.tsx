@@ -121,8 +121,8 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
           letterSpacing: '0.3px',
           transition: 'color 0.2s ease'
         }}
-        onMouseEnter={(e) => e.target.style.color = 'rgba(255, 255, 255, 1)'}
-        onMouseLeave={(e) => e.target.style.color = 'rgba(255, 255, 255, 0.8)'}
+        onMouseEnter={(e) => (e.target as HTMLAnchorElement).style.color = 'rgba(255, 255, 255, 1)'}
+        onMouseLeave={(e) => (e.target as HTMLAnchorElement).style.color = 'rgba(255, 255, 255, 0.8)'}
       >
         ✨ Widgetify
       </a>
@@ -172,6 +172,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     </svg>
   );
 
+  // getIcon function and other helper functions
   const getIcon = () => {
     const iconSize = parseInt(sizeMap[size || 'medium'], 10) * 0.5;
     
@@ -314,6 +315,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     }
   };
 
+  // renderPaymentPopup, renderTranslatePopup, renderChatPopup functions
   const renderPaymentPopup = () => {
     return (
       <div style={popupStyle} className="animate-fade-in">
