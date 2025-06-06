@@ -1,4 +1,3 @@
-
 import { WidgetType, WidgetSize } from '@/types';
 
 export interface WidgetConfig {
@@ -217,371 +216,553 @@ function getClickHandlerCode(
   containerId?: string,
   position?: string
 ): string {
+  // Smooth popup management function
+  const popupBaseCode = `
+    // Smooth popup management
+    const closeExistingPopup = () => {
+      const existingPopup = document.querySelector('#${containerId} .widget-popup');
+      if (existingPopup) {
+        existingPopup.style.opacity = '0';
+        existingPopup.style.transform = 'translateY(20px)';
+        setTimeout(() => existingPopup.remove(), 300);
+        return true;
+      }
+      return false;
+    };
+
+    if (closeExistingPopup()) return;
+  `;
+
   switch (type) {
     case 'whatsapp':
       const whatsappMessage = encodeURIComponent(welcomeMessage || 'Hello! I have a question.');
-      return `window.open('https://wa.me/${handle?.replace(/[^0-9]/g, '')}?text=${whatsappMessage}', '_blank');`;
+      const phoneNum = handle?.replace(/[^0-9]/g, '') || '1234567890';
+      return `
+        ${popupBaseCode}
+        try {
+          window.open('https://wa.me/${phoneNum}?text=${whatsappMessage}', '_blank');
+        } catch (e) {
+          console.warn('Failed to open WhatsApp:', e);
+          window.location.href = 'https://wa.me/${phoneNum}?text=${whatsappMessage}';
+        }
+      `;
     
     case 'facebook':
-      return `window.open('https://m.me/${handle}', '_blank');`;
+      return `
+        ${popupBaseCode}
+        try {
+          window.open('https://m.me/${handle || 'example'}', '_blank');
+        } catch (e) {
+          console.warn('Failed to open Facebook Messenger:', e);
+        }
+      `;
     
     case 'instagram':
-      return `window.open('https://instagram.com/${handle?.replace('@', '')}', '_blank');`;
+      return `
+        ${popupBaseCode}
+        try {
+          window.open('https://instagram.com/${(handle || 'example').replace('@', '')}', '_blank');
+        } catch (e) {
+          console.warn('Failed to open Instagram:', e);
+        }
+      `;
     
     case 'twitter':
-      return `window.open('https://twitter.com/messages/compose?recipient_id=${handle?.replace('@', '')}', '_blank');`;
+      return `
+        ${popupBaseCode}
+        try {
+          window.open('https://twitter.com/messages/compose?recipient_id=${(handle || 'example').replace('@', '')}', '_blank');
+        } catch (e) {
+          console.warn('Failed to open Twitter:', e);
+        }
+      `;
     
     case 'telegram':
-      return `window.open('https://t.me/${handle?.replace('@', '')}', '_blank');`;
+      return `
+        ${popupBaseCode}
+        try {
+          window.open('https://t.me/${(handle || 'example').replace('@', '')}', '_blank');
+        } catch (e) {
+          console.warn('Failed to open Telegram:', e);
+        }
+      `;
     
     case 'linkedin':
-      return `window.open('https://www.linkedin.com/in/${handle}', '_blank');`;
+      return `
+        ${popupBaseCode}
+        try {
+          window.open('https://www.linkedin.com/in/${handle || 'example'}', '_blank');
+        } catch (e) {
+          console.warn('Failed to open LinkedIn:', e);
+        }
+      `;
     
     case 'youtube':
-      return `window.open('https://www.youtube.com/${handle}', '_blank');`;
+      return `
+        ${popupBaseCode}
+        try {
+          window.open('https://www.youtube.com/${handle || '@example'}', '_blank');
+        } catch (e) {
+          console.warn('Failed to open YouTube:', e);
+        }
+      `;
     
     case 'github':
-      return `window.open('https://github.com/${handle}', '_blank');`;
+      return `
+        ${popupBaseCode}
+        try {
+          window.open('https://github.com/${handle || 'example'}', '_blank');
+        } catch (e) {
+          console.warn('Failed to open GitHub:', e);
+        }
+      `;
     
     case 'twitch':
-      return `window.open('https://twitch.tv/${handle}', '_blank');`;
+      return `
+        ${popupBaseCode}
+        try {
+          window.open('https://twitch.tv/${handle || 'example'}', '_blank');
+        } catch (e) {
+          console.warn('Failed to open Twitch:', e);
+        }
+      `;
     
     case 'slack':
-      return `window.open('${handle}', '_blank');`;
+      return `
+        ${popupBaseCode}
+        try {
+          window.open('${handle || 'https://slack.com'}', '_blank');
+        } catch (e) {
+          console.warn('Failed to open Slack:', e);
+        }
+      `;
     
     case 'discord':
-      return `window.open('https://discord.gg/${handle}', '_blank');`;
+      return `
+        ${popupBaseCode}
+        try {
+          window.open('https://discord.gg/${handle || 'example'}', '_blank');
+        } catch (e) {
+          console.warn('Failed to open Discord:', e);
+        }
+      `;
     
+    case 'call-now':
+      return `
+        ${popupBaseCode}
+        try {
+          window.location.href = 'tel:${phoneNumber || '+1234567890'}';
+        } catch (e) {
+          console.warn('Failed to initiate call:', e);
+          alert('Please call: ${phoneNumber || '+1234567890'}');
+        }
+      `;
+    
+    case 'review-now':
+      return `
+        ${popupBaseCode}
+        try {
+          window.open('${reviewUrl || 'https://google.com/search?q=reviews'}', '_blank');
+        } catch (e) {
+          console.warn('Failed to open review page:', e);
+        }
+      `;
+    
+    case 'follow-us':
+      const platform = followPlatform || 'linkedin';
+      const platformHandle = (handle || 'example').replace('@', '');
+      let followUrl = '';
+      
+      if (platform === 'instagram') {
+        followUrl = `https://instagram.com/${platformHandle}`;
+      } else if (platform === 'youtube') {
+        followUrl = `https://www.youtube.com/${platformHandle}`;
+      } else {
+        followUrl = `https://www.linkedin.com/in/${platformHandle}`;
+      }
+      
+      return `
+        ${popupBaseCode}
+        try {
+          window.open('${followUrl}', '_blank');
+        } catch (e) {
+          console.warn('Failed to open ${platform}:', e);
+        }
+      `;
+
     case 'dodo-payment':
       return `
-        // Check if popup already exists and remove it
-        const existingPopup = document.querySelector('#${containerId} > div:not(.widgetify-button)');
-        if (existingPopup) {
-          existingPopup.remove();
-          return;
-        }
+        ${popupBaseCode}
         
         const paymentPopup = document.createElement('div');
-        paymentPopup.style.position = 'absolute';
-        paymentPopup.style.bottom = '90px';
-        paymentPopup.style.${position === 'left' ? 'left' : 'right'} = '20px';
-        paymentPopup.style.width = '300px';
-        paymentPopup.style.backgroundColor = 'white';
-        paymentPopup.style.borderRadius = '10px';
-        paymentPopup.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-        paymentPopup.style.zIndex = '9999';
-        paymentPopup.style.overflow = 'hidden';
+        paymentPopup.className = 'widget-popup';
+        paymentPopup.style.cssText = \`
+          position: absolute;
+          bottom: 90px;
+          ${position === 'left' ? 'left' : 'right'}: 20px;
+          width: 320px;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+          z-index: 9999;
+          overflow: hidden;
+          opacity: 0;
+          transform: translateY(20px);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        \`;
         
         paymentPopup.innerHTML = \`
-          <div style="background-color: #f3f4f6; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
-            <div style="font-weight: 500;">Dodo Payment</div>
-            <button id="close-payment-popup" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280;">×</button>
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 600; font-size: 16px;">💳 Dodo Payment</div>
+            <button class="close-popup" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0; transition: opacity 0.2s;">×</button>
           </div>
-          <div style="padding: 16px;">
-            <div style="margin-bottom: 12px; font-size: 14px;">
-              <label style="display: block; margin-bottom: 4px; font-weight: 500;">Amount (${currency || 'USD'})</label>
-              <div style="display: flex; align-items: center; border: 1px solid #d1d5db; border-radius: 4px; overflow: hidden;">
-                <span style="padding: 0 8px; background-color: #f3f4f6; border-right: 1px solid #d1d5db; font-weight: 500;">${currency || 'USD'}</span>
-                <input id="payment-amount" type="number" value="${amount || 10}" min="1" style="flex-grow: 1; padding: 8px; border: none; outline: none; font-size: 14px;">
+          <div style="padding: 20px;">
+            <div style="margin-bottom: 16px;">
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Amount</label>
+              <div style="display: flex; align-items: center; border: 2px solid #e5e7eb; border-radius: 8px; overflow: hidden; transition: border-color 0.2s;">
+                <span style="padding: 12px 16px; background: #f9fafb; border-right: 2px solid #e5e7eb; font-weight: 600; color: #6b7280;">${currency || 'USD'}</span>
+                <input id="payment-amount" type="number" value="${amount || 10}" min="1" style="flex: 1; padding: 12px; border: none; outline: none; font-size: 16px;">
               </div>
             </div>
-            <div style="margin-bottom: 16px; font-size: 14px;">
-              <label style="display: block; margin-bottom: 4px; font-weight: 500;">Card Information</label>
-              <input type="text" placeholder="Card Number" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;">
-              <div style="display: flex; gap: 8px;">
-                <input type="text" placeholder="MM/YY" style="width: 50%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;">
-                <input type="text" placeholder="CVC" style="width: 50%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px;">
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; margin-bottom: 6px; font-weight: 500; color: #374151;">Card Details</label>
+              <input type="text" placeholder="1234 5678 9012 3456" style="width: 100%; padding: 12px; margin-bottom: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px; transition: border-color 0.2s;">
+              <div style="display: flex; gap: 12px;">
+                <input type="text" placeholder="MM/YY" style="flex: 1; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;">
+                <input type="text" placeholder="CVC" style="flex: 1; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 14px;">
               </div>
             </div>
-            <button id="process-payment-btn" style="width: 100%; padding: 10px; background-color: #4f46e5; color: white; border: none; border-radius: 4px; font-weight: 500; cursor: pointer; transition: background-color 0.3s;">
-              Pay Now
+            <button id="process-payment-btn" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 16px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);">
+              🔒 Secure Pay
             </button>
           </div>
-          <div style="font-size: 10px; text-align: center; margin-top: 5px; padding-bottom: 10px; color: #6b7280;">
-            <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none;">
-              Powered by Widgetify
-            </a>
+          <div style="text-align: center; padding: 12px; background: #f9fafb; border-top: 1px solid #e5e7eb;">
+            <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none; font-size: 12px;">🚀 Powered by Widgetify</a>
           </div>
         \`;
         
         document.getElementById('${containerId}').appendChild(paymentPopup);
         
-        document.querySelector('#close-payment-popup').addEventListener('click', function() {
-          paymentPopup.remove();
-        });
+        // Smooth entrance animation
+        setTimeout(() => {
+          paymentPopup.style.opacity = '1';
+          paymentPopup.style.transform = 'translateY(0)';
+        }, 10);
         
-        document.querySelector('#process-payment-btn').addEventListener('click', function() {
-          const paymentAmount = document.getElementById('payment-amount').value;
-          const paymentBtn = this;
+        // Close popup handler
+        paymentPopup.querySelector('.close-popup').onclick = () => {
+          paymentPopup.style.opacity = '0';
+          paymentPopup.style.transform = 'translateY(20px)';
+          setTimeout(() => paymentPopup.remove(), 300);
+        };
+        
+        // Payment processing
+        paymentPopup.querySelector('#process-payment-btn').onclick = function() {
+          const amount = document.getElementById('payment-amount').value;
+          const btn = this;
           
-          paymentBtn.textContent = 'Processing...';
-          paymentBtn.disabled = true;
-          paymentBtn.style.backgroundColor = '#818cf8';
+          btn.innerHTML = '⏳ Processing...';
+          btn.disabled = true;
+          btn.style.background = '#9ca3af';
           
-          setTimeout(function() {
-            console.log('Processing payment with API key:', '${paymentApiKey}');
-            console.log('Amount:', paymentAmount, '${currency}');
-            
+          setTimeout(() => {
             paymentPopup.innerHTML = \`
-              <div style="background-color: #f3f4f6; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
-                <div style="font-weight: 500;">Payment Successful</div>
-                <button id="close-success-popup" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280;">×</button>
-              </div>
-              <div style="padding: 24px 16px; text-align: center;">
-                <div style="width: 48px; height: 48px; margin: 0 auto 16px; background-color: #10b981; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+              <div style="text-align: center; padding: 40px 20px;">
+                <div style="width: 60px; height: 60px; margin: 0 auto 20px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite;">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
                     <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
                   </svg>
                 </div>
-                <h3 style="margin: 0 0 8px; font-size: 18px; font-weight: 500;">Payment Complete</h3>
-                <p style="margin: 0 0 16px; color: #6b7280; font-size: 14px;">Your payment of \${paymentAmount} ${currency || 'USD'} has been processed successfully.</p>
-                <p style="margin: 0; color: #6b7280; font-size: 12px;">Transaction ID: DDP-\${Math.random().toString(36).substring(2, 10).toUpperCase()}</p>
+                <h3 style="margin: 0 0 12px; font-size: 20px; font-weight: 600; color: #065f46;">Payment Successful!</h3>
+                <p style="margin: 0 0 16px; color: #6b7280;">Your payment of $\${amount} ${currency || 'USD'} has been processed successfully.</p>
+                <p style="margin: 0 0 20px; color: #9ca3af; font-size: 12px;">Transaction ID: DDP-\${Math.random().toString(36).substring(2, 10).toUpperCase()}</p>
+                <button onclick="this.parentElement.parentElement.style.opacity='0'; setTimeout(() => this.parentElement.parentElement.remove(), 300);" style="padding: 10px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer;">Close</button>
               </div>
-              <div style="font-size: 10px; text-align: center; margin-top: 5px; padding-bottom: 10px; color: #6b7280;">
-                <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none;">
-                  Powered by Widgetify
-                </a>
+              <div style="text-align: center; padding: 12px; background: #f9fafb; border-top: 1px solid #e5e7eb;">
+                <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none; font-size: 12px;">🚀 Powered by Widgetify</a>
               </div>
             \`;
             
-            document.querySelector('#close-success-popup').addEventListener('click', function() {
-              paymentPopup.remove();
-            });
-            
             if ('${successUrl}') {
               setTimeout(() => {
-                window.open('${successUrl}', '_blank');
-              }, 3000);
+                try {
+                  window.open('${successUrl}', '_blank');
+                } catch (e) {
+                  console.warn('Failed to open success URL:', e);
+                }
+              }, 2000);
             }
-          }, 2000);
-        });
+          }, 2500);
+        };
       `;
-    
+
     case 'social-share':
-      const url = shareUrl || window.location.href;
+      const url = shareUrl || 'window.location.href';
       const text = encodeURIComponent(shareText || 'Check out this page!');
       
-      let socialPopup = `
-        // Check if popup already exists and remove it
-        const existingPopup = document.querySelector('#${containerId} > div:not(.widgetify-button)');
-        if (existingPopup) {
-          existingPopup.remove();
-          return;
-        }
-        
-        const socialPopup = document.createElement('div');
-        socialPopup.style.position = 'absolute';
-        socialPopup.style.bottom = '90px';
-        socialPopup.style.${position === 'left' ? 'left' : 'right'} = '20px';
-        socialPopup.style.display = 'flex';
-        socialPopup.style.flexDirection = 'column';
-        socialPopup.style.gap = '10px';
-        socialPopup.style.zIndex = '9999';
-        socialPopup.className = 'widgetify-social-popup';
-        
-        let socialButtons = '';
-      `;
-      
-      if (networks?.includes('facebook')) {
-        socialPopup += `
-          const fbButton = document.createElement('div');
-          fbButton.style.width = '40px';
-          fbButton.style.height = '40px';
-          fbButton.style.backgroundColor = '#1877F2';
-          fbButton.style.borderRadius = '50%';
-          fbButton.style.display = 'flex';
-          fbButton.style.justifyContent = 'center';
-          fbButton.style.alignItems = 'center';
-          fbButton.style.cursor = 'pointer';
-          fbButton.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
-          fbButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>';
-          fbButton.onclick = function() {
-            window.open('https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}', '_blank');
-          };
-          socialPopup.appendChild(fbButton);
-        `;
-      }
-      
-      if (networks?.includes('twitter')) {
-        socialPopup += `
-          const twitterButton = document.createElement('div');
-          twitterButton.style.width = '40px';
-          twitterButton.style.height = '40px';
-          twitterButton.style.backgroundColor = '#1DA1F2';
-          twitterButton.style.borderRadius = '50%';
-          twitterButton.style.display = 'flex';
-          twitterButton.style.justifyContent = 'center';
-          twitterButton.style.alignItems = 'center';
-          twitterButton.style.cursor = 'pointer';
-          twitterButton.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
-          twitterButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg>';
-          twitterButton.onclick = function() {
-            window.open('https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}', '_blank');
-          };
-          socialPopup.appendChild(twitterButton);
-        `;
-      }
-      
-      if (networks?.includes('linkedin')) {
-        socialPopup += `
-          const linkedinButton = document.createElement('div');
-          linkedinButton.style.width = '40px';
-          linkedinButton.style.height = '40px';
-          linkedinButton.style.backgroundColor = '#0077B5';
-          linkedinButton.style.borderRadius = '50%';
-          linkedinButton.style.display = 'flex';
-          linkedinButton.style.justifyContent = 'center';
-          linkedinButton.style.alignItems = 'center';
-          linkedinButton.style.cursor = 'pointer';
-          linkedinButton.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
-          linkedinButton.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>';
-          linkedinButton.onclick = function() {
-            window.open('https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}', '_blank');
-          };
-          socialPopup.appendChild(linkedinButton);
-        `;
-      }
-      
-      socialPopup += `
-        const branding = document.createElement('div');
-        branding.style.fontSize = '10px';
-        branding.style.textAlign = 'center';
-        branding.style.marginTop = '5px';
-        branding.innerHTML = '<a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #666; text-decoration: none;">Powered by Widgetify</a>';
-        socialPopup.appendChild(branding);
-        
-        document.getElementById('${containerId}').appendChild(socialPopup);
-      `;
-      
-      return socialPopup;
-    
-    case 'google-translate':
       return `
-        // Check if popup already exists and remove it
-        const existingPopup = document.querySelector('#${containerId} > div:not(.widgetify-button)');
-        if (existingPopup) {
-          existingPopup.remove();
-          return;
-        }
-
-        if (!window.googleTranslateElementInit) {
-          const translatePopup = document.createElement('div');
-          translatePopup.style.position = 'absolute';
-          translatePopup.style.bottom = '90px';
-          translatePopup.style.${position === 'left' ? 'left' : 'right'} = '20px';
-          translatePopup.style.width = '280px';
-          translatePopup.style.backgroundColor = 'white';
-          translatePopup.style.borderRadius = '10px';
-          translatePopup.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-          translatePopup.style.zIndex = '9999';
-          translatePopup.style.overflow = 'hidden';
-          
-          translatePopup.innerHTML = \`
-            <div style="background-color: #f3f4f6; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
-              <div style="font-weight: 500;">Google Translate</div>
-              <button id="close-translate-popup" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280;">×</button>
-            </div>
-            <div style="padding: 12px;">
-              <div id="google_translate_element"></div>
-            </div>
-            <div style="font-size: 10px; text-align: center; margin-top: 5px; padding: 8px;">
-              <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #666; text-decoration: none;">
-                Powered by Widgetify
-              </a>
+        ${popupBaseCode}
+        
+        const socialContainer = document.createElement('div');
+        socialContainer.className = 'widget-popup';
+        socialContainer.style.cssText = \`
+          position: absolute;
+          bottom: 90px;
+          ${position === 'left' ? 'left' : 'right'}: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          z-index: 9999;
+          opacity: 0;
+          transform: translateY(20px);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        \`;
+        
+        let buttonsHTML = '';
+        
+        ${networks?.includes('facebook') ? `
+          buttonsHTML += \`
+            <div class="social-btn" data-platform="facebook" style="width: 48px; height: 48px; background: linear-gradient(135deg, #1877F2 0%, #166fe5 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(24, 119, 242, 0.4); transition: all 0.2s;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+              </svg>
             </div>
           \`;
-          
-          translatePopup.querySelector('#close-translate-popup').onclick = function() {
-            translatePopup.remove();
+        ` : ''}
+        
+        ${networks?.includes('twitter') ? `
+          buttonsHTML += \`
+            <div class="social-btn" data-platform="twitter" style="width: 48px; height: 48px; background: linear-gradient(135deg, #1DA1F2 0%, #0d8bd9 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(29, 161, 242, 0.4); transition: all 0.2s;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+              </svg>
+            </div>
+          \`;
+        ` : ''}
+        
+        ${networks?.includes('linkedin') ? `
+          buttonsHTML += \`
+            <div class="social-btn" data-platform="linkedin" style="width: 48px; height: 48px; background: linear-gradient(135deg, #0077B5 0%, #005885 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 119, 181, 0.4); transition: all 0.2s;">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+                <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/>
+              </svg>
+            </div>
+          \`;
+        ` : ''}
+        
+        buttonsHTML += \`
+          <div style="text-align: center; margin-top: 8px;">
+            <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none; font-size: 11px; opacity: 0.8;">🚀 Powered by Widgetify</a>
+          </div>
+        \`;
+        
+        socialContainer.innerHTML = buttonsHTML;
+        document.getElementById('${containerId}').appendChild(socialContainer);
+        
+        // Smooth entrance animation
+        setTimeout(() => {
+          socialContainer.style.opacity = '1';
+          socialContainer.style.transform = 'translateY(0)';
+        }, 10);
+        
+        // Add hover effects and click handlers
+        socialContainer.querySelectorAll('.social-btn').forEach(btn => {
+          btn.onmouseenter = () => {
+            btn.style.transform = 'scale(1.1)';
+            btn.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.3)';
           };
           
-          document.getElementById('${containerId}').appendChild(translatePopup);
+          btn.onmouseleave = () => {
+            btn.style.transform = 'scale(1)';
+            btn.style.boxShadow = btn.style.boxShadow.replace('0.3', '0.4');
+          };
           
+          btn.onclick = () => {
+            const platform = btn.getAttribute('data-platform');
+            const currentUrl = ${url};
+            
+            try {
+              switch (platform) {
+                case 'facebook':
+                  window.open(\`https://www.facebook.com/sharer/sharer.php?u=\${encodeURIComponent(currentUrl)}\`, '_blank');
+                  break;
+                case 'twitter':
+                  window.open(\`https://twitter.com/intent/tweet?text=${text}&url=\${encodeURIComponent(currentUrl)}\`, '_blank');
+                  break;
+                case 'linkedin':
+                  window.open(\`https://www.linkedin.com/sharing/share-offsite/?url=\${encodeURIComponent(currentUrl)}\`, '_blank');
+                  break;
+              }
+            } catch (e) {
+              console.warn('Failed to open share dialog:', e);
+            }
+          };
+        });
+      `;
+
+    case 'google-translate':
+      return `
+        ${popupBaseCode}
+        
+        const translatePopup = document.createElement('div');
+        translatePopup.className = 'widget-popup';
+        translatePopup.style.cssText = \`
+          position: absolute;
+          bottom: 90px;
+          ${position === 'left' ? 'left' : 'right'}: 20px;
+          width: 300px;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+          z-index: 9999;
+          overflow: hidden;
+          opacity: 0;
+          transform: translateY(20px);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        \`;
+        
+        translatePopup.innerHTML = \`
+          <div style="background: linear-gradient(135deg, #4285f4 0%, #34a853 100%); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 600; font-size: 16px;">🌐 Google Translate</div>
+            <button class="close-popup" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0;">×</button>
+          </div>
+          <div style="padding: 20px;">
+            <div id="google_translate_element" style="min-height: 40px;"></div>
+            <div style="margin-top: 16px; padding: 12px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #4285f4;">
+              <p style="margin: 0; font-size: 13px; color: #5f6368;">Select a language to translate this page automatically.</p>
+            </div>
+          </div>
+          <div style="text-align: center; padding: 12px; background: #f9fafb; border-top: 1px solid #e5e7eb;">
+            <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none; font-size: 12px;">🚀 Powered by Widgetify</a>
+          </div>
+        \`;
+        
+        document.getElementById('${containerId}').appendChild(translatePopup);
+        
+        // Smooth entrance animation
+        setTimeout(() => {
+          translatePopup.style.opacity = '1';
+          translatePopup.style.transform = 'translateY(0)';
+        }, 10);
+        
+        // Close popup handler
+        translatePopup.querySelector('.close-popup').onclick = () => {
+          translatePopup.style.opacity = '0';
+          translatePopup.style.transform = 'translateY(20px)';
+          setTimeout(() => translatePopup.remove(), 300);
+        };
+        
+        // Initialize Google Translate
+        if (!window.googleTranslateElementInit) {
           window.googleTranslateElementInit = function() {
             new google.translate.TranslateElement({
               pageLanguage: 'auto',
-              layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+              includedLanguages: 'en,es,fr,de,it,pt,ru,ja,ko,zh-CN,zh-TW,ar,hi',
+              layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+              autoDisplay: false
             }, 'google_translate_element');
           };
           
           const script = document.createElement('script');
           script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+          script.onerror = () => {
+            document.getElementById('google_translate_element').innerHTML = '<p style="color: #dc2626; font-size: 13px;">Translation service temporarily unavailable.</p>';
+          };
           document.body.appendChild(script);
         } else {
-          googleTranslateElementInit();
+          try {
+            googleTranslateElementInit();
+          } catch (e) {
+            console.warn('Failed to initialize Google Translate:', e);
+          }
         }
       `;
     
-    case 'call-now':
-      return `window.location.href = 'tel:${phoneNumber}';`;
-    
-    case 'review-now':
-      return `window.open('${reviewUrl}', '_blank');`;
-    
-    case 'follow-us':
-      if (followPlatform === 'instagram') {
-        return `window.open('https://instagram.com/${handle?.replace('@', '')}', '_blank');`;
-      } else if (followPlatform === 'youtube') {
-        return `window.open('https://www.youtube.com/${handle}', '_blank');`;
-      } else {
-        return `window.open('https://www.linkedin.com/in/${handle}', '_blank');`;
-      }
-    
     default:
       return `
-        // Check if popup already exists and remove it
-        const existingPopup = document.querySelector('#${containerId} > div:not(.widgetify-button)');
-        if (existingPopup) {
-          existingPopup.remove();
-          return;
-        }
-
+        ${popupBaseCode}
+        
         const chatPopup = document.createElement('div');
-        chatPopup.style.position = 'absolute';
-        chatPopup.style.bottom = '90px';
-        chatPopup.style.${position === 'left' ? 'left' : 'right'} = '20px';
-        chatPopup.style.width = '280px';
-        chatPopup.style.height = '350px';
-        chatPopup.style.backgroundColor = 'white';
-        chatPopup.style.borderRadius = '10px';
-        chatPopup.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
-        chatPopup.style.zIndex = '9999';
-        chatPopup.style.display = 'flex';
-        chatPopup.style.flexDirection = 'column';
-        chatPopup.style.overflow = 'hidden';
+        chatPopup.className = 'widget-popup';
+        chatPopup.style.cssText = \`
+          position: absolute;
+          bottom: 90px;
+          ${position === 'left' ? 'left' : 'right'}: 20px;
+          width: 320px;
+          height: 400px;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+          z-index: 9999;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+          opacity: 0;
+          transform: translateY(20px);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        \`;
         
         chatPopup.innerHTML = \`
-          <div style="background-color: #f3f4f6; padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
-            <div style="font-weight: 500;">Chat</div>
-            <button id="close-chat-popup" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280;">×</button>
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 600; font-size: 16px;">💬 ${type.charAt(0).toUpperCase() + type.slice(1)} Chat</div>
+            <button class="close-popup" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 0;">×</button>
           </div>
-          <div style="flex-grow: 1; padding: 12px; overflow-y: auto; background-color: white;">
-            <div style="background-color: #f3f4f6; padding: 8px; border-radius: 8px; margin-bottom: 8px; max-width: 80%;">
-              <p style="font-size: 12px; margin: 0;">${welcomeMessage || 'How can I help you today?'}</p>
+          <div style="flex: 1; padding: 16px; overflow-y: auto; background: #f8f9fa;">
+            <div style="background: white; padding: 12px; border-radius: 12px 12px 12px 4px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); max-width: 85%;">
+              <p style="margin: 0; font-size: 14px; color: #374151;">${welcomeMessage || 'Hello! How can I help you today? 😊'}</p>
             </div>
           </div>
-          <div style="padding: 12px; border-top: 1px solid #e5e7eb; background-color: #f9fafb;">
-            <div style="display: flex; gap: 8px;">
-              <input type="text" placeholder="Type a message..." style="flex-grow: 1; font-size: 12px; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px;">
-              <button style="background-color: #e5e7eb; padding: 8px; border: none; border-radius: 4px; cursor: pointer;">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+          <div style="padding: 16px; border-top: 1px solid #e5e7eb; background: white;">
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="text" placeholder="Type your message..." style="flex: 1; padding: 10px 12px; border: 2px solid #e5e7eb; border-radius: 20px; font-size: 14px; outline: none; transition: border-color 0.2s;">
+              <button style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 50%; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                 </svg>
               </button>
             </div>
-            <div style="font-size: 10px; text-align: center; margin-top: 8px; color: #6b7280;">
-              <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none;">
-                Powered by Widgetify
-              </a>
+            <div style="text-align: center; margin-top: 8px;">
+              <a href="https://widgetify-two.vercel.app/" target="_blank" style="color: #6b7280; text-decoration: none; font-size: 12px;">🚀 Powered by Widgetify</a>
             </div>
           </div>
         \`;
         
-        chatPopup.querySelector('#close-chat-popup').onclick = function() {
-          chatPopup.remove();
+        document.getElementById('${containerId}').appendChild(chatPopup);
+        
+        // Smooth entrance animation
+        setTimeout(() => {
+          chatPopup.style.opacity = '1';
+          chatPopup.style.transform = 'translateY(0)';
+        }, 10);
+        
+        // Close popup handler
+        chatPopup.querySelector('.close-popup').onclick = () => {
+          chatPopup.style.opacity = '0';
+          chatPopup.style.transform = 'translateY(20px)';
+          setTimeout(() => chatPopup.remove(), 300);
         };
         
-        document.getElementById('${containerId}').appendChild(chatPopup);
+        // Enhanced input interaction
+        const input = chatPopup.querySelector('input');
+        const sendBtn = chatPopup.querySelector('button:last-child');
+        
+        input.onfocus = () => {
+          input.style.borderColor = '#667eea';
+          input.style.boxShadow = '0 0 0 3px rgba(102, 126, 234, 0.1)';
+        };
+        
+        input.onblur = () => {
+          input.style.borderColor = '#e5e7eb';
+          input.style.boxShadow = 'none';
+        };
+        
+        sendBtn.onmouseenter = () => {
+          sendBtn.style.transform = 'scale(1.05)';
+        };
+        
+        sendBtn.onmouseleave = () => {
+          sendBtn.style.transform = 'scale(1)';
+        };
       `;
   }
 }
