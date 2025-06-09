@@ -7,7 +7,6 @@ import FounderSection from '@/components/FounderSection';
 import Footer from '@/components/Footer';
 import { Menu, X, Sparkles } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import DonatingWidget from '@/components/DonatingWidget';
 import { Button } from '@/components/ui/button';
 
 const Index: React.FC = () => {
@@ -121,22 +120,6 @@ const Index: React.FC = () => {
       </main>
       
       <Footer />
-      
-      {/* New DonatingWidget with your specifications */}
-      <DonatingWidget 
-        upiId="adnanmuhammad4393@okicici"
-        name="Muhammed Adnan"
-        amount={599}
-        position="bottom-right"
-        primaryColor="#8B5CF6"
-        buttonText="Donate"
-        theme="modern"
-        icon="dollar"
-        showPulse={false}
-        showGradient={true}
-        title="Support Us"
-        description="Scan this QR code to make a donation"
-      />
     </div>
   );
 };

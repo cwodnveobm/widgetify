@@ -16,10 +16,12 @@ export interface WidgetConfig {
   amount?: number;
   currency?: string;
   paymentDescription?: string;
+  upiId?: string;
+  payeeName?: string;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
-  const { type, handle, welcomeMessage, position, primaryColor, size, networks, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, amount, currency, paymentDescription } = config;
+  const { type, handle, welcomeMessage, position, primaryColor, size, networks, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, amount, currency, paymentDescription, upiId, payeeName } = config;
   
   const sizeMap = {
     small: '50px',
@@ -93,15 +95,18 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         position: fixed;
         bottom: ${parseInt(widgetSize) + 30}px;
         ${positionStyle}
-        width: 280px;
-        height: 350px;
+        width: 400px;
+        max-width: 90vw;
         background-color: white;
-        border-radius: 10px;
+        border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         display: none;
         flex-direction: column;
         z-index: 999;
         overflow: hidden;
+        border: 1px solid #e5e7eb;
+        padding: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       }
 
       .widgetify-popup.show {
@@ -128,6 +133,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         align-items: center;
         border-bottom: 1px solid #e5e7eb;
         border-radius: 10px 10px 0 0;
+        margin: -20px -20px 0 -20px;
       }
 
       .widgetify-header h3 {
@@ -155,30 +161,80 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         color: #374151;
       }
 
-      .widgetify-content {
-        flex-grow: 1;
-        padding: 12px;
-        overflow-y: auto;
-        background-color: white;
-      }
-
-      .widgetify-footer {
-        padding: 12px;
-        border-top: 1px solid #e5e7eb;
-        background-color: #f9fafb;
-        border-radius: 0 0 10px 10px;
+      .upi-gateway-title {
+        margin: 16px 0 16px 0;
+        color: #1f2937;
+        font-size: 20px;
+        font-weight: 600;
         text-align: center;
-        font-size: 10px;
-        color: #6b7280;
       }
 
-      .widgetify-footer a {
-        color: #6b7280;
-        text-decoration: none;
+      .upi-gateway-qr {
+        width: 200px;
+        height: 200px;
+        border: 2px solid #f3f4f6;
+        border-radius: 8px;
+        display: block;
+        margin: 0 auto;
       }
 
-      .widgetify-footer a:hover {
+      .upi-gateway-details {
+        margin: 4px 0;
+        font-size: 14px;
         color: #374151;
+      }
+
+      .upi-gateway-button {
+        width: 100%;
+        padding: 16px 0;
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+      }
+
+      .upi-gateway-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+      }
+
+      .upi-gateway-note {
+        margin: 16px 0 0 0;
+        font-size: 11px;
+        color: #9ca3af;
+        text-align: center;
+        line-height: 1.4;
+      }
+
+      @media (max-width: 480px) {
+        .widgetify-popup {
+          max-width: 100% !important;
+          margin: 0 !important;
+          border-radius: 8px !important;
+          padding: 16px !important;
+        }
+        .upi-gateway-title {
+          font-size: 18px !important;
+        }
+        .upi-gateway-details {
+          font-size: 13px !important;
+        }
+        .upi-gateway-button {
+          padding: 14px 0 !important;
+          font-size: 15px !important;
+        }
+        .upi-gateway-qr {
+          width: 160px !important;
+          height: 160px !important;
+        }
+        .upi-gateway-note {
+          font-size: 11px !important;
+        }
       }
 
       ${watermarkStyles}
@@ -302,6 +358,59 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
 
           function shareOnLinkedin() {
             window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent('${shareUrl || window.location.href}'), '_blank');
+          }
+        </script>`;
+
+    case 'dodo-payment':
+      const paymentAmount = amount || 99;
+      const paymentUpiId = upiId || 'adnanmuhammad4393@okicici';
+      const paymentPayeeName = payeeName || 'Muhammed Adnan';
+      const qrCodeData = `upi://pay?pa=${paymentUpiId}&pn=${encodeURIComponent(paymentPayeeName)}&am=${paymentAmount}&cu=INR`;
+      const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&format=png&ecc=M&data=${encodeURIComponent(qrCodeData)}`;
+
+      return `${baseStyles}
+        <div id="widgetify-payment" class="widgetify-widget" onclick="toggleWidgetifyPayment()">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
+          </svg>
+          ${watermarkHTML}
+        </div>
+
+        <div id="widgetify-payment-popup" class="widgetify-popup">
+          <div class="widgetify-header">
+            <h3>Payment Gateway</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyPayment()">×</button>
+          </div>
+          
+          <h3 class="upi-gateway-title">Pay with UPI</h3>
+          
+          <div style="text-align: center; margin-bottom: 20px;">
+            <img src="${qrCodeUrl}" alt="UPI Payment QR Code" class="upi-gateway-qr">
+            <p style="margin: 12px 0 0 0; font-size: 12px; color: #6b7280; font-weight: 500;">Scan with any UPI app</p>
+          </div>
+
+          <div style="background: #f9fafb; border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+            <p class="upi-gateway-details"><strong>UPI ID:</strong> ${paymentUpiId}</p>
+            <p class="upi-gateway-details"><strong>Payee:</strong> ${paymentPayeeName}</p>
+            <p class="upi-gateway-details"><strong>Amount:</strong> ₹${paymentAmount}</p>
+          </div>
+
+          <div style="border-top: 1px solid #e5e7eb; padding-top: 16px; text-align: center;">
+            <p style="margin: 0 0 12px 0; font-size: 13px; color: #6b7280;">Or click to pay directly</p>
+            <a href="${qrCodeData}" style="text-decoration: none; display: block;">
+              <button class="upi-gateway-button">
+                💳 Pay ₹${paymentAmount} via UPI
+              </button>
+            </a>
+          </div>
+
+          <p class="upi-gateway-note">Supports PhonePe, Google Pay, Paytm, BHIM & all UPI apps<br>Secure payment powered by UPI</p>
+        </div>
+
+        <script>
+          function toggleWidgetifyPayment() {
+            const popup = document.getElementById('widgetify-payment-popup');
+            popup.classList.toggle('show');
           }
         </script>`;
 
