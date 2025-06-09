@@ -95,6 +95,9 @@ const Index: React.FC = () => {
                 <a href="#founder" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
                   Founder
                 </a>
+                <a href="/payment" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
+                  Pricing
+                </a>
                 <a href="/support" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
                   Support
                 </a>
@@ -106,6 +109,7 @@ const Index: React.FC = () => {
               <a href="#widget-generator" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Generate</a>
               <a href="#features" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Features</a>
               <a href="#founder" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Founder</a>
+              <a href="/payment" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Pricing</a>
               <a href="/support" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Support</a>
             </nav>
           )}
