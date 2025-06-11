@@ -16,6 +16,8 @@ import PaymentGate from './PaymentGate';
 import WidgetImplementation from './WidgetImplementation';
 
 const WidgetGenerator: React.FC = () => {
+  console.log('WidgetGenerator component loading...');
+  
   const [type, setType] = useState<WidgetType>('whatsapp');
   const [handle, setHandle] = useState('');
   const [welcomeMessage, setWelcomeMessage] = useState('');
@@ -36,6 +38,7 @@ const WidgetGenerator: React.FC = () => {
   const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
+    console.log('WidgetGenerator mounted, setting document title');
     document.title = 'Widgetify - Widget Generator';
   }, []);
 
@@ -60,10 +63,12 @@ const WidgetGenerator: React.FC = () => {
   };
 
   const handleColorChange = (color: { hex: string }) => {
+    console.log('Color changed to:', color.hex);
     setPrimaryColor(color.hex);
   };
 
   const handleNetworkChange = (network: string) => {
+    console.log('Network toggle:', network);
     if (networks.includes(network)) {
       setNetworks(networks.filter(n => n !== network));
     } else {
@@ -84,8 +89,11 @@ const WidgetGenerator: React.FC = () => {
   };
 
   const handlePaymentComplete = () => {
+    console.log('Payment completed, granting access');
     setHasAccess(true);
   };
+
+  console.log('Rendering WidgetGenerator with config:', config);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 py-8 px-4">
