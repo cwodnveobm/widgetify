@@ -11,130 +11,102 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   const [showPopup, setShowPopup] = useState(false);
 
   const sizeMap = {
-    small: { desktop: '50px', mobile: '46px' },
-    medium: { desktop: '60px', mobile: '54px' },
-    large: { desktop: '70px', mobile: '62px' },
+    small: '50px',
+    medium: '60px',
+    large: '70px',
   };
-
-  const getCurrentSize = () => {
-    const isMobile = window.innerWidth < 768;
-    const sizeConfig = sizeMap[size || 'medium'];
-    return isMobile ? sizeConfig.mobile : sizeConfig.desktop;
-  };
-
-  const currentSize = getCurrentSize();
 
   const buttonStyle = {
-    width: currentSize,
-    height: currentSize,
+    width: sizeMap[size || 'medium'],
+    height: sizeMap[size || 'medium'],
     backgroundColor: primaryColor || '#25D366',
     position: 'absolute' as const,
-    bottom: window.innerWidth < 768 ? '16px' : '20px',
-    [position || 'right']: window.innerWidth < 768 ? '16px' : '20px',
+    bottom: '20px',
+    [position || 'right']: '20px',
     borderRadius: '50%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    boxShadow: window.innerWidth < 768 
-      ? '0 4px 20px rgba(0, 0, 0, 0.2)' 
-      : '0 4px 12px rgba(0, 0, 0, 0.15)',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
     cursor: 'pointer',
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
     zIndex: 50,
-    border: window.innerWidth < 768 ? '2px solid rgba(255, 255, 255, 0.9)' : 'none',
   } as React.CSSProperties;
 
   const popupStyle = {
     position: 'absolute' as const,
-    bottom: window.innerWidth < 768 ? '70px' : '90px',
-    [position || 'right']: window.innerWidth < 768 ? '16px' : '20px',
-    width: window.innerWidth < 768 ? 'calc(100vw - 32px)' : '320px',
-    maxWidth: window.innerWidth < 768 ? '340px' : '320px',
-    height: window.innerWidth < 768 ? 'auto' : '350px',
-    maxHeight: window.innerWidth < 768 ? '70vh' : '350px',
+    bottom: '90px',
+    [position || 'right']: '20px',
+    width: '280px',
+    height: '350px',
     backgroundColor: 'white',
-    borderRadius: window.innerWidth < 768 ? '16px' : '12px',
-    boxShadow: window.innerWidth < 768 
-      ? '0 8px 32px rgba(0, 0, 0, 0.2)' 
-      : '0 4px 20px rgba(0, 0, 0, 0.15)',
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    borderRadius: '10px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+    transition: 'all 0.3s ease',
     opacity: showPopup ? 1 : 0,
-    transform: showPopup 
-      ? 'translateY(0) scale(1)' 
-      : 'translateY(20px) scale(0.95)',
+    transform: showPopup ? 'translateY(0)' : 'translateY(20px)',
     visibility: showPopup ? 'visible' : 'hidden',
     display: 'flex',
     flexDirection: 'column',
     zIndex: 40,
     overflow: 'hidden',
-    border: window.innerWidth < 768 ? '1px solid rgba(0, 0, 0, 0.1)' : 'none',
   } as React.CSSProperties;
 
   const socialButtonsContainerStyle = {
     position: 'absolute' as const,
-    bottom: window.innerWidth < 768 ? '70px' : '90px',
-    [position || 'right']: window.innerWidth < 768 ? '16px' : '20px',
+    bottom: '90px',
+    [position || 'right']: '20px',
     display: 'flex',
     flexDirection: 'column',
-    gap: window.innerWidth < 768 ? '12px' : '10px',
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    gap: '10px',
+    transition: 'all 0.3s ease',
     opacity: showPopup ? 1 : 0,
     transform: showPopup ? 'translateY(0)' : 'translateY(20px)',
     visibility: showPopup ? 'visible' : 'hidden',
   } as React.CSSProperties;
 
-  const socialButtonStyle = (color: string) => {
-    const buttonSize = parseInt(currentSize, 10) * 0.8;
-    return {
-      width: `${buttonSize}px`,
-      height: `${buttonSize}px`,
-      backgroundColor: color,
-      borderRadius: '50%',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      boxShadow: window.innerWidth < 768 
-        ? '0 4px 16px rgba(0, 0, 0, 0.2)' 
-        : '0 2px 12px rgba(0, 0, 0, 0.15)',
-      cursor: 'pointer',
-      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-      border: window.innerWidth < 768 ? '2px solid rgba(255, 255, 255, 0.9)' : 'none',
-    };
-  };
+  const socialButtonStyle = (color: string) => ({
+    width: parseInt(sizeMap[size || 'medium'], 10) * 0.8 + 'px',
+    height: parseInt(sizeMap[size || 'medium'], 10) * 0.8 + 'px',
+    backgroundColor: color,
+    borderRadius: '50%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+    cursor: 'pointer',
+    transition: 'transform 0.2s ease',
+  });
 
   const tooltipStyle = {
     position: 'absolute' as const,
-    bottom: parseInt(currentSize) + (window.innerWidth < 768 ? 12 : 10) + 'px',
-    [position || 'right']: window.innerWidth < 768 ? '16px' : '20px',
-    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    bottom: parseInt(sizeMap[size || 'medium']) + 10 + 'px',
+    [position || 'right']: '10px',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
     color: 'white',
-    padding: window.innerWidth < 768 ? '10px 14px' : '8px 12px',
-    borderRadius: window.innerWidth < 768 ? '8px' : '6px',
-    fontSize: window.innerWidth < 768 ? '14px' : '12px',
-    fontWeight: '500',
+    padding: '8px 12px',
+    borderRadius: '6px',
+    fontSize: '12px',
     whiteSpace: 'nowrap' as const,
     opacity: showPopup ? 1 : 0,
     visibility: showPopup ? 'visible' : 'hidden',
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    transition: 'all 0.3s ease',
     zIndex: 60,
-    backdropFilter: 'blur(10px)',
-    border: window.innerWidth < 768 ? '1px solid rgba(255, 255, 255, 0.2)' : 'none',
   } as React.CSSProperties;
 
-  // Enhanced Watermark component
+  // Watermark style component
   const WidgetifyWatermark = ({ style = {} }: { style?: React.CSSProperties }) => (
     <div style={{
       position: 'absolute',
       bottom: '2px',
       [position || 'right']: '2px',
-      fontSize: window.innerWidth < 768 ? '10px' : '9px',
-      color: 'rgba(255, 255, 255, 0.8)',
-      background: 'rgba(0, 0, 0, 0.4)',
-      padding: window.innerWidth < 768 ? '3px 8px' : '2px 6px',
-      borderRadius: window.innerWidth < 768 ? '10px' : '8px',
-      backdropFilter: 'blur(8px)',
+      fontSize: '9px',
+      color: 'rgba(255, 255, 255, 0.7)',
+      background: 'rgba(0, 0, 0, 0.3)',
+      padding: '2px 6px',
+      borderRadius: '8px',
+      backdropFilter: 'blur(5px)',
       zIndex: 100,
-      border: '1px solid rgba(255, 255, 255, 0.2)',
       ...style
     }}>
       <a 
@@ -142,15 +114,15 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         target="_blank" 
         rel="noopener noreferrer"
         style={{
-          color: 'rgba(255, 255, 255, 0.9)',
+          color: 'rgba(255, 255, 255, 0.8)',
           textDecoration: 'none',
-          fontSize: window.innerWidth < 768 ? '10px' : '9px',
-          fontWeight: '600',
+          fontSize: '9px',
+          fontWeight: '500',
           letterSpacing: '0.3px',
           transition: 'color 0.2s ease'
         }}
         onMouseEnter={(e) => (e.target as HTMLAnchorElement).style.color = 'rgba(255, 255, 255, 1)'}
-        onMouseLeave={(e) => (e.target as HTMLAnchorElement).style.color = 'rgba(255, 255, 255, 0.9)'}
+        onMouseLeave={(e) => (e.target as HTMLAnchorElement).style.color = 'rgba(255, 255, 255, 0.8)'}
       >
         ✨ Widgetify
       </a>
@@ -202,7 +174,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
 
   // getIcon function and other helper functions
   const getIcon = () => {
-    const iconSize = parseInt(currentSize, 10) * (window.innerWidth < 768 ? 0.45 : 0.5);
+    const iconSize = parseInt(sizeMap[size || 'medium'], 10) * 0.5;
     
     switch (type) {
       case 'whatsapp':
@@ -279,7 +251,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             onClick={() => handleSocialButtonClick('facebook')}
             className="hover:scale-105 transition-transform"
           >
-            <Facebook size={parseInt(currentSize, 10) * 0.4} color="white" />
+            <Facebook size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
           </div>
         )}
         {networks.includes('twitter') && (
@@ -288,7 +260,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             onClick={() => handleSocialButtonClick('twitter')}
             className="hover:scale-105 transition-transform"
           >
-            <Twitter size={parseInt(currentSize, 10) * 0.4} color="white" />
+            <Twitter size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
           </div>
         )}
         {networks.includes('linkedin') && (
@@ -297,7 +269,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             onClick={() => handleSocialButtonClick('linkedin')}
             className="hover:scale-105 transition-transform"
           >
-            <Linkedin size={parseInt(currentSize, 10) * 0.4} color="white" />
+            <Linkedin size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
           </div>
         )}
       </div>
@@ -343,156 +315,59 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     }
   };
 
-  // Enhanced popup renderers with better mobile optimization
+  // renderPaymentPopup, renderTranslatePopup, renderChatPopup functions
   const renderPaymentPopup = () => {
-    const currentPlan = { name: 'Widget Payment', price: 299 };
-    const totalAmount = Math.round(currentPlan.price * 1.18);
-    
     return (
       <div style={popupStyle} className="animate-fade-in">
-        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4 flex justify-between items-center border-b">
-          <div className="font-semibold text-base md:text-lg">UPI Payment Gateway</div>
-          <button 
-            onClick={togglePopup} 
-            className="text-white hover:text-gray-200 text-xl md:text-2xl transition-colors min-h-[32px] min-w-[32px] flex items-center justify-center rounded-full hover:bg-white/10"
-          >
+        <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
+          <div className="font-medium">Dodo Payment</div>
+          <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700 text-lg transition-colors">
             ×
           </button>
         </div>
-        <div className="flex-grow p-4 overflow-y-auto bg-white">
-          <div 
-            style={{
-              maxWidth: '400px', 
-              margin: '0 auto', 
-              border: '1px solid #e5e7eb', 
-              borderRadius: '12px', 
-              padding: '20px', 
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', 
-              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', 
-              background: '#ffffff'
-            }}
-            className="upi-gateway-container"
-          >
-            <style>
-              {`
-                @media (max-width: 480px) {
-                  .upi-gateway-container {
-                    max-width: 100% !important;
-                    margin: 0 !important;
-                    border-radius: 8px !important;
-                    padding: 16px !important;
-                  }
-                  .upi-gateway-title {
-                    font-size: 18px !important;
-                  }
-                  .upi-gateway-details {
-                    font-size: 13px !important;
-                  }
-                  .upi-gateway-button {
-                    padding: 14px 0 !important;
-                    font-size: 15px !important;
-                  }
-                  .upi-gateway-qr {
-                    width: 160px !important;
-                    height: 160px !important;
-                  }
-                  .upi-gateway-note {
-                    font-size: 11px !important;
-                  }
-                }
-              `}
-            </style>
-            
-            <h3 style={{margin: '0 0 16px 0', color: '#1f2937', fontSize: '20px', fontWeight: '600', textAlign: 'center'}} className="upi-gateway-title">
-              Pay with UPI
-            </h3>
-            
-            <div style={{textAlign: 'center', marginBottom: '20px'}}>
-              <img 
-                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?pa=adnanmuhammad4393@okicici&pn=Widgetify&am=${totalAmount}&cu=INR&tn=Payment for Widget`)}`}
-                alt="UPI Payment QR Code" 
-                style={{
-                  width: '200px', 
-                  height: '200px', 
-                  border: '2px solid #f3f4f6', 
-                  borderRadius: '8px', 
-                  display: 'block', 
-                  margin: '0 auto'
-                }} 
-                className="upi-gateway-qr"
+        <div className="flex-grow p-3 overflow-y-auto bg-white">
+          <div className="mb-3">
+            <label className="block text-sm font-medium mb-2">Amount (USD)</label>
+            <div className="flex items-center border border-gray-300 rounded">
+              <span className="px-3 py-2 bg-gray-100 border-r text-sm">$</span>
+              <input
+                type="number"
+                defaultValue={config.amount || 10}
+                min="1"
+                className="flex-1 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
-              <p style={{margin: '12px 0 0 0', fontSize: '12px', color: '#6b7280', fontWeight: '500'}}>
-                Scan with any UPI app
-              </p>
             </div>
-
-            <div style={{background: '#f9fafb', borderRadius: '8px', padding: '12px', marginBottom: '16px'}}>
-              <p style={{margin: '4px 0', fontSize: '14px', color: '#374151'}} className="upi-gateway-details">
-                <strong>UPI ID:</strong> adnanmuhammad4393@okicici
-              </p>
-              <p style={{margin: '4px 0', fontSize: '14px', color: '#374151'}} className="upi-gateway-details">
-                <strong>Payee:</strong> Widgetify
-              </p>
-              <p style={{margin: '4px 0', fontSize: '14px', color: '#374151'}} className="upi-gateway-details">
-                <strong>Amount:</strong> ₹{totalAmount}
-              </p>
-            </div>
-
-            <div style={{borderTop: '1px solid #e5e7eb', paddingTop: '16px', textAlign: 'center'}}>
-              <p style={{margin: '0 0 12px 0', fontSize: '13px', color: '#6b7280'}}>
-                Or click to pay directly
-              </p>
-              <a 
-                href={`upi://pay?pa=adnanmuhammad4393@okicici&pn=Widgetify&am=${totalAmount}&cu=INR&tn=Payment for Widget`}
-                style={{textDecoration: 'none', display: 'block'}}
-              >
-                <button 
-                  style={{
-                    width: '100%', 
-                    padding: '16px 0', 
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
-                    color: 'white', 
-                    fontSize: '16px', 
-                    fontWeight: '600', 
-                    border: 'none', 
-                    borderRadius: '8px', 
-                    cursor: 'pointer', 
-                    transition: 'all 0.3s ease', 
-                    boxShadow: '0 2px 4px rgba(16, 185, 129, 0.2)'
-                  }} 
-                  className="upi-gateway-button"
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.transform = 'translateY(-1px)';
-                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(16, 185, 129, 0.3)';
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(16, 185, 129, 0.2)';
-                  }}
-                >
-                  💳 Pay ₹{totalAmount} via UPI
-                </button>
-              </a>
-            </div>
-
-            <p style={{
-              margin: '16px 0 0 0', 
-              fontSize: '11px', 
-              color: '#9ca3af', 
-              textAlign: 'center', 
-              lineHeight: '1.4'
-            }} className="upi-gateway-note">
-              Supports PhonePe, Google Pay, Paytm, BHIM & all UPI apps<br/>
-              🔒 Secure payment powered by UPI
-            </p>
           </div>
+          <div className="mb-3">
+            <label className="block text-sm font-medium mb-2">Card Information</label>
+            <input
+              type="text"
+              placeholder="1234 1234 1234 1234"
+              className="w-full px-3 py-2 border border-gray-300 rounded text-sm mb-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="MM/YY"
+                className="w-1/2 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+              <input
+                type="text"
+                placeholder="CVC"
+                className="w-1/2 px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+            </div>
+          </div>
+          <button className="w-full bg-purple-600 text-white py-2 rounded font-medium hover:bg-purple-700 transition-colors">
+            Pay Now
+          </button>
         </div>
-        <div className="text-xs text-gray-500 text-center p-3 border-t bg-gray-50">
+        <div className="text-xs text-gray-500 text-center p-2">
           <a 
             href="https://widgetify-two.vercel.app/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-gray-500 no-underline hover:text-gray-700 transition-colors font-medium"
+            className="text-gray-500 no-underline hover:text-gray-700 transition-colors"
           >
             Powered by Widgetify
           </a>
@@ -504,34 +379,31 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   const renderTranslatePopup = () => {
     return (
       <div style={popupStyle} className="animate-fade-in">
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 flex justify-between items-center border-b">
-          <div className="font-semibold text-base md:text-lg">Google Translate</div>
-          <button 
-            onClick={togglePopup} 
-            className="text-white hover:text-gray-200 text-xl md:text-2xl transition-colors min-h-[32px] min-w-[32px] flex items-center justify-center rounded-full hover:bg-white/10"
-          >
+        <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
+          <div className="font-medium">Google Translate</div>
+          <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700 text-lg transition-colors">
             ×
           </button>
         </div>
-        <div className="flex-grow p-4 overflow-y-auto bg-white">
-          <div className="bg-gray-50 p-4 rounded-lg mb-4 border border-gray-200">
-            <p className="text-sm text-center text-gray-700 mb-3 font-medium">Google Translate Widget</p>
-            <div className="border-2 border-dashed border-gray-300 p-6 text-center rounded-lg bg-white">
-              <div className="text-sm text-gray-500 font-mono">
+        <div className="flex-grow p-3 overflow-y-auto bg-white">
+          <div className="bg-gray-50 p-3 rounded-lg mb-3">
+            <p className="text-xs text-center text-gray-600 mb-2">Google Translate Widget</p>
+            <div className="border-2 border-dashed border-gray-300 p-4 text-center rounded">
+              <div className="text-xs text-gray-500">
                 &lt;div id="google_translate_element"&gt;&lt;/div&gt;
               </div>
             </div>
           </div>
-          <p className="text-sm text-gray-600 text-center leading-relaxed">
-            This widget integrates Google Translate for automatic page translation into multiple languages.
+          <p className="text-xs text-gray-500 text-center">
+            This widget integrates Google Translate for automatic page translation.
           </p>
         </div>
-        <div className="text-xs text-gray-500 text-center p-3 border-t bg-gray-50">
+        <div className="text-xs text-gray-500 text-center p-2">
           <a 
             href="https://widgetify-two.vercel.app/" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-gray-500 no-underline hover:text-gray-700 transition-colors font-medium"
+            className="text-gray-500 no-underline hover:text-gray-700 transition-colors"
           >
             Powered by Widgetify
           </a>
@@ -543,39 +415,36 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   const renderChatPopup = () => {
     return (
       <div style={popupStyle} className="animate-fade-in">
-        <div className="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-4 flex justify-between items-center border-b">
-          <div className="font-semibold text-base md:text-lg">{getWidgetTitle()}</div>
-          <button 
-            onClick={togglePopup} 
-            className="text-white hover:text-gray-200 text-xl md:text-2xl transition-colors min-h-[32px] min-w-[32px] flex items-center justify-center rounded-full hover:bg-white/10"
-          >
+        <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
+          <div className="font-medium">{getWidgetTitle()}</div>
+          <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700 text-lg transition-colors">
             ×
           </button>
         </div>
-        <div className="flex-grow p-4 overflow-y-auto bg-white">
-          <div className="bg-gray-100 p-3 rounded-lg mb-3 max-w-[85%] border border-gray-200">
-            <p className="text-sm text-gray-800">{config.welcomeMessage || 'How can I help you today?'}</p>
+        <div className="flex-grow p-3 overflow-y-auto bg-white">
+          <div className="bg-gray-100 p-2 rounded-lg mb-2 max-w-[80%]">
+            <p className="text-xs">{config.welcomeMessage || 'How can I help you today?'}</p>
           </div>
         </div>
-        <div className="p-4 border-t bg-gray-50">
-          <div className="flex gap-3">
+        <div className="p-3 border-t bg-gray-50 rounded-b-lg">
+          <div className="flex gap-2">
             <input
               type="text"
               placeholder="Type a message..."
-              className="flex-grow text-sm p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="flex-grow text-xs p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
-            <button className="bg-gradient-to-r from-green-600 to-emerald-600 text-white p-3 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-300 shadow-lg">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <button className="bg-purple-600 text-white p-2 rounded hover:bg-purple-700 transition-colors">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
               </svg>
             </button>
           </div>
-          <div className="text-xs text-gray-500 text-center mt-3">
+          <div className="text-xs text-gray-500 text-center mt-2">
             <a 
               href="https://widgetify-two.vercel.app/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-gray-500 no-underline hover:text-gray-700 transition-colors font-medium"
+              className="text-gray-500 no-underline hover:text-gray-700 transition-colors"
             >
               Powered by Widgetify
             </a>
@@ -637,7 +506,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       
       <div 
         style={buttonStyle} 
-        className="hover:scale-110 hover:shadow-xl transition-all duration-300 cursor-pointer active:scale-95" 
+        className="hover:scale-105 hover:shadow-lg transition-all duration-300 cursor-pointer" 
         onClick={handleMainButtonClick}
       >
         {getIcon()}

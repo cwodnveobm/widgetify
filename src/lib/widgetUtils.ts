@@ -33,7 +33,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
   const buttonColor = primaryColor || '#25D366';
   const positionStyle = position === 'left' ? 'left: 20px;' : 'right: 20px;';
 
-  // Enhanced watermark styles with better mobile support
+  // Watermark styles
   const watermarkStyles = `
     .widgetify-watermark {
       position: absolute;
@@ -64,7 +64,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
 
   const watermarkHTML = `<div class="widgetify-watermark"><a href="https://widgetify-two.vercel.app/" target="_blank" rel="noopener noreferrer">✨ Widgetify</a></div>`;
 
-  // Enhanced base widget styles with better mobile responsiveness
+  // Base widget styles with watermark
   const baseStyles = `
     <style>
       .widgetify-widget {
@@ -84,8 +84,6 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         z-index: 1000;
         border: none;
         outline: none;
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
       }
 
       .widgetify-widget:hover {
@@ -97,7 +95,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         position: fixed;
         bottom: ${parseInt(widgetSize) + 30}px;
         ${positionStyle}
-        width: min(400px, calc(100vw - 40px));
+        width: 400px;
         max-width: 90vw;
         background-color: white;
         border-radius: 12px;
@@ -151,20 +149,16 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         font-size: 18px;
         color: #6b7280;
         cursor: pointer;
-        padding: 8px;
-        width: 32px;
-        height: 32px;
+        padding: 0;
+        width: 20px;
+        height: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 4px;
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
       }
 
       .widgetify-close:hover {
         color: #374151;
-        background-color: #f3f4f6;
       }
 
       .upi-gateway-title {
@@ -176,8 +170,8 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
       }
 
       .upi-gateway-qr {
-        width: min(200px, calc(100vw - 120px));
-        height: min(200px, calc(100vw - 120px));
+        width: 200px;
+        height: 200px;
         border: 2px solid #f3f4f6;
         border-radius: 8px;
         display: block;
@@ -188,12 +182,11 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         margin: 4px 0;
         font-size: 14px;
         color: #374151;
-        word-break: break-all;
       }
 
       .upi-gateway-button {
         width: 100%;
-        padding: 16px 12px;
+        padding: 16px 0;
         background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         color: white;
         font-size: 16px;
@@ -203,8 +196,6 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         cursor: pointer;
         transition: all 0.3s ease;
         box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
       }
 
       .upi-gateway-button:hover {
@@ -220,67 +211,29 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         line-height: 1.4;
       }
 
-      /* Enhanced mobile responsiveness */
       @media (max-width: 480px) {
-        .widgetify-widget {
-          width: max(44px, ${parseInt(widgetSize) * 0.9}px);
-          height: max(44px, ${parseInt(widgetSize) * 0.9}px);
-          bottom: 16px;
-          ${position === 'left' ? 'left: 16px;' : 'right: 16px;'}
-        }
-        
         .widgetify-popup {
-          width: calc(100vw - 32px);
-          max-width: none;
-          padding: 16px;
-          bottom: ${Math.max(44, parseInt(widgetSize) * 0.9) + 24}px;
-          ${position === 'left' ? 'left: 16px;' : 'right: 16px;'}
-          border-radius: 8px;
+          max-width: 100% !important;
+          margin: 0 !important;
+          border-radius: 8px !important;
+          padding: 16px !important;
         }
-        
-        .widgetify-header {
-          margin: -16px -16px 0 -16px;
-          padding: 12px 16px;
-        }
-        
         .upi-gateway-title {
-          font-size: 18px;
-          margin: 12px 0;
+          font-size: 18px !important;
         }
-        
         .upi-gateway-details {
-          font-size: 13px;
+          font-size: 13px !important;
         }
-        
         .upi-gateway-button {
-          padding: 14px 12px;
-          font-size: 15px;
+          padding: 14px 0 !important;
+          font-size: 15px !important;
         }
-        
         .upi-gateway-qr {
-          width: min(160px, calc(100vw - 80px));
-          height: min(160px, calc(100vw - 80px));
+          width: 160px !important;
+          height: 160px !important;
         }
-        
         .upi-gateway-note {
-          font-size: 10px;
-        }
-      }
-
-      /* Touch device optimizations */
-      @media (hover: none) and (pointer: coarse) {
-        .widgetify-widget {
-          min-width: 44px;
-          min-height: 44px;
-        }
-        
-        .widgetify-close {
-          min-width: 44px;
-          min-height: 44px;
-        }
-        
-        .upi-gateway-button {
-          min-height: 44px;
+          font-size: 11px !important;
         }
       }
 
@@ -288,7 +241,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
     </style>
   `;
 
-  // Generate widget based on type with enhanced mobile support
+  // Generate widget based on type
   switch (type) {
     case 'whatsapp':
       return `${baseStyles}
@@ -311,8 +264,8 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           </div>
           <div style="padding: 12px; border-top: 1px solid #e5e7eb; background-color: #f9fafb; border-radius: 0 0 10px 10px;">
             <div style="display: flex; gap: 8px;">
-              <input type="text" placeholder="Type a message..." style="flex-grow: 1; font-size: 12px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; outline: none; min-height: 32px;">
-              <button onclick="window.open('https://wa.me/${(handle || '').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(welcomeMessage || 'Hello')}')" style="background-color: ${buttonColor}; color: white; padding: 8px; border: none; border-radius: 6px; cursor: pointer; min-width: 40px; min-height: 32px; touch-action: manipulation;">
+              <input type="text" placeholder="Type a message..." style="flex-grow: 1; font-size: 12px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; outline: none;">
+              <button onclick="window.open('https://wa.me/${(handle || '').replace(/[^0-9]/g, '')}?text=${encodeURIComponent(welcomeMessage || 'Hello')}')" style="background-color: ${buttonColor}; color: white; padding: 8px; border: none; border-radius: 6px; cursor: pointer;">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                 </svg>
@@ -350,11 +303,11 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         };
         
         return `
-          <div style="width: max(44px, ${parseInt(widgetSize) * 0.8}px); height: max(44px, ${parseInt(widgetSize) * 0.8}px); background-color: ${colors[network as keyof typeof colors]}; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); cursor: pointer; transition: transform 0.2s ease; margin-bottom: 10px; touch-action: manipulation;" 
+          <div style="width: ${parseInt(widgetSize) * 0.8}px; height: ${parseInt(widgetSize) * 0.8}px; background-color: ${colors[network as keyof typeof colors]}; border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); cursor: pointer; transition: transform 0.2s ease; margin-bottom: 10px;" 
                onclick="shareOn${network.charAt(0).toUpperCase() + network.slice(1)}()" 
                onmouseover="this.style.transform='scale(1.05)'" 
                onmouseout="this.style.transform='scale(1)'">
-            <svg width="${Math.max(20, parseInt(widgetSize) * 0.4)}" height="${Math.max(20, parseInt(widgetSize) * 0.4)}" viewBox="0 0 24 24" fill="white">
+            <svg width="${parseInt(widgetSize) * 0.4}" height="${parseInt(widgetSize) * 0.4}" viewBox="0 0 24 24" fill="white">
               ${icons[network as keyof typeof icons]}
             </svg>
           </div>
@@ -375,12 +328,6 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           .widgetify-social-container.show {
             display: flex;
             animation: fadeInUp 0.3s ease;
-          }
-          @media (max-width: 480px) {
-            .widgetify-social-container {
-              bottom: ${Math.max(44, parseInt(widgetSize) * 0.9) + 24}px;
-              ${position === 'left' ? 'left: 16px;' : 'right: 16px;'}
-            }
           }
         </style>
 
