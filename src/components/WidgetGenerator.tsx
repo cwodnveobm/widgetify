@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { WidgetType, WidgetSize } from '@/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -106,7 +107,7 @@ const WidgetGenerator: React.FC = () => {
                 <CardDescription>Choose the type of widget you want to generate</CardDescription>
               </CardHeader>
               <CardContent>
-                <Select value={type} onValueChange={setType}>
+                <Select value={type} onValueChange={(value) => setType(value as WidgetType)}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a widget type" />
                   </SelectTrigger>
@@ -233,7 +234,7 @@ const WidgetGenerator: React.FC = () => {
                   <>
                     <div className="space-y-2">
                       <Label htmlFor="followPlatform">Platform to Follow</Label>
-                      <Select value={followPlatform} onValueChange={setFollowPlatform}>
+                      <Select value={followPlatform} onValueChange={(value) => setFollowPlatform(value as 'linkedin' | 'instagram' | 'youtube')}>
                         <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select a platform" />
                         </SelectTrigger>
@@ -326,7 +327,7 @@ const WidgetGenerator: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="size">Size</Label>
-                  <Select value={size} onValueChange={setSize}>
+                  <Select value={size} onValueChange={(value) => setSize(value as WidgetSize)}>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select a size" />
                     </SelectTrigger>
