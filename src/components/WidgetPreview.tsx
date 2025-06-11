@@ -279,7 +279,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             onClick={() => handleSocialButtonClick('facebook')}
             className="hover:scale-105 transition-transform"
           >
-            <Facebook size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
+            <Facebook size={parseInt(currentSize, 10) * 0.4} color="white" />
           </div>
         )}
         {networks.includes('twitter') && (
@@ -288,7 +288,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             onClick={() => handleSocialButtonClick('twitter')}
             className="hover:scale-105 transition-transform"
           >
-            <Twitter size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
+            <Twitter size={parseInt(currentSize, 10) * 0.4} color="white" />
           </div>
         )}
         {networks.includes('linkedin') && (
@@ -297,7 +297,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             onClick={() => handleSocialButtonClick('linkedin')}
             className="hover:scale-105 transition-transform"
           >
-            <Linkedin size={parseInt(sizeMap[size || 'medium'], 10) * 0.4} color="white" />
+            <Linkedin size={parseInt(currentSize, 10) * 0.4} color="white" />
           </div>
         )}
       </div>
@@ -345,10 +345,13 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
 
   // Enhanced popup renderers with better mobile optimization
   const renderPaymentPopup = () => {
+    const currentPlan = { name: 'Widget Payment', price: 299 };
+    const totalAmount = Math.round(currentPlan.price * 1.18);
+    
     return (
       <div style={popupStyle} className="animate-fade-in">
         <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4 flex justify-between items-center border-b">
-          <div className="font-semibold text-base md:text-lg">Dodo Payment</div>
+          <div className="font-semibold text-base md:text-lg">UPI Payment Gateway</div>
           <button 
             onClick={togglePopup} 
             className="text-white hover:text-gray-200 text-xl md:text-2xl transition-colors min-h-[32px] min-w-[32px] flex items-center justify-center rounded-full hover:bg-white/10"
@@ -357,41 +360,132 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
           </button>
         </div>
         <div className="flex-grow p-4 overflow-y-auto bg-white">
-          <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2 text-gray-700">Amount (USD)</label>
-            <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">
-              <span className="px-4 py-3 bg-gray-100 border-r text-sm font-medium">$</span>
-              <input
-                type="number"
-                defaultValue={config.amount || 10}
-                min="1"
-                className="flex-1 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+          <div 
+            style={{
+              maxWidth: '400px', 
+              margin: '0 auto', 
+              border: '1px solid #e5e7eb', 
+              borderRadius: '12px', 
+              padding: '20px', 
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', 
+              fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', 
+              background: '#ffffff'
+            }}
+            className="upi-gateway-container"
+          >
+            <style>
+              {`
+                @media (max-width: 480px) {
+                  .upi-gateway-container {
+                    max-width: 100% !important;
+                    margin: 0 !important;
+                    border-radius: 8px !important;
+                    padding: 16px !important;
+                  }
+                  .upi-gateway-title {
+                    font-size: 18px !important;
+                  }
+                  .upi-gateway-details {
+                    font-size: 13px !important;
+                  }
+                  .upi-gateway-button {
+                    padding: 14px 0 !important;
+                    font-size: 15px !important;
+                  }
+                  .upi-gateway-qr {
+                    width: 160px !important;
+                    height: 160px !important;
+                  }
+                  .upi-gateway-note {
+                    font-size: 11px !important;
+                  }
+                }
+              `}
+            </style>
+            
+            <h3 style={{margin: '0 0 16px 0', color: '#1f2937', fontSize: '20px', fontWeight: '600', textAlign: 'center'}} className="upi-gateway-title">
+              Pay with UPI
+            </h3>
+            
+            <div style={{textAlign: 'center', marginBottom: '20px'}}>
+              <img 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?pa=adnanmuhammad4393@okicici&pn=Widgetify&am=${totalAmount}&cu=INR&tn=Payment for Widget`)}`}
+                alt="UPI Payment QR Code" 
+                style={{
+                  width: '200px', 
+                  height: '200px', 
+                  border: '2px solid #f3f4f6', 
+                  borderRadius: '8px', 
+                  display: 'block', 
+                  margin: '0 auto'
+                }} 
+                className="upi-gateway-qr"
               />
+              <p style={{margin: '12px 0 0 0', fontSize: '12px', color: '#6b7280', fontWeight: '500'}}>
+                Scan with any UPI app
+              </p>
             </div>
-          </div>
-          <div className="mb-4">
-            <label className="block text-sm font-semibold mb-2 text-gray-700">Card Information</label>
-            <input
-              type="text"
-              placeholder="1234 1234 1234 1234"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
-            <div className="flex gap-3">
-              <input
-                type="text"
-                placeholder="MM/YY"
-                className="w-1/2 px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-              <input
-                type="text"
-                placeholder="CVC"
-                className="w-1/2 px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
+
+            <div style={{background: '#f9fafb', borderRadius: '8px', padding: '12px', marginBottom: '16px'}}>
+              <p style={{margin: '4px 0', fontSize: '14px', color: '#374151'}} className="upi-gateway-details">
+                <strong>UPI ID:</strong> adnanmuhammad4393@okicici
+              </p>
+              <p style={{margin: '4px 0', fontSize: '14px', color: '#374151'}} className="upi-gateway-details">
+                <strong>Payee:</strong> Widgetify
+              </p>
+              <p style={{margin: '4px 0', fontSize: '14px', color: '#374151'}} className="upi-gateway-details">
+                <strong>Amount:</strong> ₹{totalAmount}
+              </p>
             </div>
+
+            <div style={{borderTop: '1px solid #e5e7eb', paddingTop: '16px', textAlign: 'center'}}>
+              <p style={{margin: '0 0 12px 0', fontSize: '13px', color: '#6b7280'}}>
+                Or click to pay directly
+              </p>
+              <a 
+                href={`upi://pay?pa=adnanmuhammad4393@okicici&pn=Widgetify&am=${totalAmount}&cu=INR&tn=Payment for Widget`}
+                style={{textDecoration: 'none', display: 'block'}}
+              >
+                <button 
+                  style={{
+                    width: '100%', 
+                    padding: '16px 0', 
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+                    color: 'white', 
+                    fontSize: '16px', 
+                    fontWeight: '600', 
+                    border: 'none', 
+                    borderRadius: '8px', 
+                    cursor: 'pointer', 
+                    transition: 'all 0.3s ease', 
+                    boxShadow: '0 2px 4px rgba(16, 185, 129, 0.2)'
+                  }} 
+                  className="upi-gateway-button"
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(16, 185, 129, 0.3)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(16, 185, 129, 0.2)';
+                  }}
+                >
+                  💳 Pay ₹{totalAmount} via UPI
+                </button>
+              </a>
+            </div>
+
+            <p style={{
+              margin: '16px 0 0 0', 
+              fontSize: '11px', 
+              color: '#9ca3af', 
+              textAlign: 'center', 
+              lineHeight: '1.4'
+            }} className="upi-gateway-note">
+              Supports PhonePe, Google Pay, Paytm, BHIM & all UPI apps<br/>
+              🔒 Secure payment powered by UPI
+            </p>
           </div>
-          <button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 shadow-lg">
-            Pay Now
-          </button>
         </div>
         <div className="text-xs text-gray-500 text-center p-3 border-t bg-gray-50">
           <a 

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, Check, CreditCard, Smartphone } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -19,16 +18,14 @@ const Payment: React.FC = () => {
   };
 
   const currentPlan = plans[selectedPlan];
-  const upiId = 'adnanmuhammad4393@okicici';
-  const payeeName = 'Widgetify Platform';
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&format=png&ecc=M&data=${encodeURIComponent(`upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${currentPlan.price}&cu=INR&tn=${encodeURIComponent(`Payment for ${currentPlan.name}`)}`)}`;
+  const totalAmount = Math.round(currentPlan.price * 1.18);
 
   const handlePayment = () => {
     setShowPaymentGateway(true);
   };
 
   const handleUpiPayment = () => {
-    const upiLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${currentPlan.price}&cu=INR&tn=${encodeURIComponent(`Payment for ${currentPlan.name}`)}`;
+    const upiLink = `upi://pay?pa=adnanmuhammad4393@okicici&pn=Widgetify Platform&am=${totalAmount}&cu=INR&tn=${encodeURIComponent(`Payment for ${currentPlan.name}`)}`;
     window.location.href = upiLink;
   };
 
@@ -135,7 +132,7 @@ const Payment: React.FC = () => {
                     </div>
                     <div className="border-t pt-4 flex justify-between font-bold text-lg md:text-xl">
                       <span>Total</span>
-                      <span className="text-purple-600">₹{Math.round(currentPlan.price * 1.18)}</span>
+                      <span className="text-purple-600">₹{totalAmount}</span>
                     </div>
                     <Button 
                       onClick={handlePayment}
@@ -148,46 +145,137 @@ const Payment: React.FC = () => {
               </div>
             </div>
           ) : (
-            /* Enhanced Payment Gateway */
+            /* Enhanced Payment Gateway with Functional UPI */
             <div className="max-w-lg mx-auto">
               <Card className="overflow-hidden shadow-xl">
                 <CardHeader className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-4 md:p-6">
                   <CardTitle className="text-center text-xl md:text-2xl font-bold">Complete Payment</CardTitle>
                   <CardDescription className="text-purple-100 text-center text-base md:text-lg font-medium">
-                    {currentPlan.name} - ₹{Math.round(currentPlan.price * 1.18)}
+                    {currentPlan.name} - ₹{totalAmount}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="p-4 md:p-6">
                   {paymentMethod === 'upi' ? (
                     <div className="space-y-6">
-                      <div className="text-center">
-                        <img 
-                          src={qrCodeUrl} 
-                          alt="UPI Payment QR Code" 
-                          className="w-52 h-52 md:w-60 md:h-60 mx-auto border-4 border-gray-200 rounded-xl shadow-lg"
-                        />
-                        <p className="text-sm md:text-base text-gray-600 mt-4 font-medium">Scan with any UPI app</p>
-                      </div>
+                      {/* Functional UPI Payment Gateway */}
+                      <div 
+                        style={{
+                          maxWidth: '400px', 
+                          margin: '0 auto', 
+                          border: '1px solid #e5e7eb', 
+                          borderRadius: '12px', 
+                          padding: '20px', 
+                          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', 
+                          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif', 
+                          background: '#ffffff'
+                        }}
+                      >
+                        <style>
+                          {`
+                            @media (max-width: 480px) {
+                              .upi-gateway-container {
+                                max-width: 100% !important;
+                                margin: 0 !important;
+                                border-radius: 8px !important;
+                                padding: 16px !important;
+                              }
+                              .upi-gateway-title {
+                                font-size: 18px !important;
+                              }
+                              .upi-gateway-details {
+                                font-size: 13px !important;
+                              }
+                              .upi-gateway-button {
+                                padding: 14px 0 !important;
+                                font-size: 15px !important;
+                              }
+                              .upi-gateway-qr {
+                                width: 160px !important;
+                                height: 160px !important;
+                              }
+                              .upi-gateway-note {
+                                font-size: 11px !important;
+                              }
+                            }
+                          `}
+                        </style>
+                        
+                        <h3 style={{margin: '0 0 16px 0', color: '#1f2937', fontSize: '20px', fontWeight: '600', textAlign: 'center'}} className="upi-gateway-title">
+                          Pay with UPI
+                        </h3>
+                        
+                        <div style={{textAlign: 'center', marginBottom: '20px'}}>
+                          <img 
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`upi://pay?pa=adnanmuhammad4393@okicici&pn=Widgetify Platform&am=${totalAmount}&cu=INR&tn=Payment for ${currentPlan.name}`)}`}
+                            alt="UPI Payment QR Code" 
+                            style={{
+                              width: '200px', 
+                              height: '200px', 
+                              border: '2px solid #f3f4f6', 
+                              borderRadius: '8px', 
+                              display: 'block', 
+                              margin: '0 auto'
+                            }} 
+                            className="upi-gateway-qr"
+                          />
+                          <p style={{margin: '12px 0 0 0', fontSize: '12px', color: '#6b7280', fontWeight: '500'}}>
+                            Scan with any UPI app
+                          </p>
+                        </div>
 
-                      <div className="bg-gray-50 rounded-xl p-4 md:p-5 space-y-3 border border-gray-200">
-                        <div className="text-sm md:text-base"><strong>UPI ID:</strong> <span className="font-mono text-purple-600">{upiId}</span></div>
-                        <div className="text-sm md:text-base"><strong>Payee:</strong> {payeeName}</div>
-                        <div className="text-sm md:text-base"><strong>Amount:</strong> <span className="font-bold text-green-600">₹{Math.round(currentPlan.price * 1.18)}</span></div>
-                      </div>
+                        <div style={{background: '#f9fafb', borderRadius: '8px', padding: '12px', marginBottom: '16px'}}>
+                          <p style={{margin: '4px 0', fontSize: '14px', color: '#374151'}} className="upi-gateway-details">
+                            <strong>UPI ID:</strong> adnanmuhammad4393@okicici
+                          </p>
+                          <p style={{margin: '4px 0', fontSize: '14px', color: '#374151'}} className="upi-gateway-details">
+                            <strong>Payee:</strong> Widgetify Platform
+                          </p>
+                          <p style={{margin: '4px 0', fontSize: '14px', color: '#374151'}} className="upi-gateway-details">
+                            <strong>Amount:</strong> ₹{totalAmount}
+                          </p>
+                        </div>
 
-                      <div className="text-center space-y-4">
-                        <p className="text-sm md:text-base text-gray-600 font-medium">Or pay directly</p>
-                        <Button 
-                          onClick={handleUpiPayment}
-                          className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 min-h-[52px] text-base md:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                        >
-                          💳 Pay via UPI App
-                        </Button>
-                      </div>
+                        <div style={{borderTop: '1px solid #e5e7eb', paddingTop: '16px', textAlign: 'center'}}>
+                          <p style={{margin: '0 0 12px 0', fontSize: '13px', color: '#6b7280'}}>
+                            Or click to pay directly
+                          </p>
+                          <button 
+                            onClick={handleUpiPayment}
+                            style={{
+                              width: '100%', 
+                              padding: '16px 0', 
+                              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+                              color: 'white', 
+                              fontSize: '16px', 
+                              fontWeight: '600', 
+                              border: 'none', 
+                              borderRadius: '8px', 
+                              cursor: 'pointer', 
+                              transition: 'all 0.3s ease', 
+                              boxShadow: '0 2px 4px rgba(16, 185, 129, 0.2)'
+                            }} 
+                            className="upi-gateway-button"
+                            onMouseOver={(e) => {
+                              e.currentTarget.style.transform = 'translateY(-1px)';
+                              e.currentTarget.style.boxShadow = '0 4px 8px rgba(16, 185, 129, 0.3)';
+                            }}
+                            onMouseOut={(e) => {
+                              e.currentTarget.style.transform = 'translateY(0)';
+                              e.currentTarget.style.boxShadow = '0 2px 4px rgba(16, 185, 129, 0.2)';
+                            }}
+                          >
+                            💳 Pay ₹{totalAmount} via UPI
+                          </button>
+                        </div>
 
-                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4">
-                        <p className="text-xs md:text-sm text-blue-800 text-center leading-relaxed">
-                          <strong>Supports:</strong> PhonePe, Google Pay, Paytm, BHIM & all UPI apps<br/>
+                        <p style={{
+                          margin: '16px 0 0 0', 
+                          fontSize: '11px', 
+                          color: '#9ca3af', 
+                          textAlign: 'center', 
+                          lineHeight: '1.4'
+                        }} className="upi-gateway-note">
+                          Supports PhonePe, Google Pay, Paytm, BHIM & all UPI apps<br/>
                           🔒 Secure payment powered by UPI
                         </p>
                       </div>
@@ -232,7 +320,7 @@ const Payment: React.FC = () => {
                         />
                       </div>
                       <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 min-h-[52px] text-base md:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300">
-                        Pay ₹{Math.round(currentPlan.price * 1.18)}
+                        Pay ₹{totalAmount}
                       </Button>
                     </div>
                   )}
