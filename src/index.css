@@ -94,6 +94,34 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Enhanced mobile scrolling */
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Prevent horizontal scroll on mobile */
+  body, html {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  /* Better mobile input handling */
+  input, textarea, select {
+    font-size: 16px; /* Prevents zoom on iOS */
+    -webkit-appearance: none;
+    border-radius: 0;
+  }
+
+  /* Mobile-first button improvements */
+  button, [role="button"], a[role="button"] {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
   }
 }
 
@@ -113,5 +141,109 @@
   100% {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Enhanced mobile responsiveness utilities */
+@layer utilities {
+  .mobile-safe-area {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .mobile-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .mobile-tap-highlight-none {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Improved mobile responsiveness for widgets */
+@media (max-width: 640px) {
+  .widget-container {
+    padding: 0.75rem;
+  }
+  
+  .widget-preview-container {
+    min-height: 240px;
+  }
+
+  /* Enhanced mobile form controls */
+  input, textarea, select {
+    min-height: 48px;
+    padding: 12px 16px;
+    font-size: 16px;
+  }
+
+  /* Better mobile button sizing */
+  button {
+    min-height: 48px;
+    padding: 12px 20px;
+    font-size: 16px;
+  }
+
+  /* Mobile-optimized cards */
+  .card {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Improved touch interactions for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .hover\:scale-105:hover {
+    transform: scale(1);
+  }
+  
+  .hover\:shadow-lg:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Enhanced mobile button states */
+  button:active, 
+  [role="button"]:active,
+  a[role="button"]:active {
+    transform: scale(0.98);
+    transition: transform 0.1s ease;
+  }
+}
+
+/* Landscape orientation optimizations */
+@media (max-height: 500px) and (orientation: landscape) {
+  .widget-preview-container {
+    min-height: 180px;
+  }
+  
+  .mobile-landscape-compact {
+    padding: 0.5rem;
+  }
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .crisp-edges {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Focus improvements for accessibility */
+@layer base {
+  *:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+    border-color: hsl(var(--ring));
   }
 }
