@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { WidgetType, WidgetSize } from '@/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -34,7 +33,7 @@ const WidgetGenerator: React.FC = () => {
   const [paymentDescription, setPaymentDescription] = useState<string>('Payment for awesome service');
   const [upiId, setUpiId] = useState<string>('adnanmuhammad4393@okicici');
   const [payeeName, setPayeeName] = useState<string>('Muhammed Adnan');
-  const [hasAccess, setHasAccess] = useState(false); // New state for payment verification
+  const [hasAccess, setHasAccess] = useState(false);
 
   useEffect(() => {
     document.title = 'Widgetify - Widget Generator';
@@ -353,7 +352,7 @@ const WidgetGenerator: React.FC = () => {
               </CardContent>
             </Card>
 
-            {/* Implementation Section - Modified */}
+            {/* Implementation Section */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
