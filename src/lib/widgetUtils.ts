@@ -18,10 +18,11 @@ export interface WidgetConfig {
   paymentDescription?: string;
   upiId?: string;
   payeeName?: string;
+  isPremium?: boolean;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
-  const { type, handle, welcomeMessage, position, primaryColor, size, networks, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, amount, currency, paymentDescription, upiId, payeeName } = config;
+  const { type, handle, welcomeMessage, position, primaryColor, size, networks, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, amount, currency, paymentDescription, upiId, payeeName, isPremium = false } = config;
   
   const sizeMap = {
     small: '50px',
@@ -33,8 +34,8 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
   const buttonColor = primaryColor || '#25D366';
   const positionStyle = position === 'left' ? 'left: 20px;' : 'right: 20px;';
 
-  // Watermark styles
-  const watermarkStyles = `
+  // Watermark styles - only show if not premium
+  const watermarkStyles = !isPremium ? `
     .widgetify-watermark {
       position: absolute;
       bottom: 2px;
@@ -60,11 +61,17 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
     .widgetify-watermark a:hover {
       color: rgba(255, 255, 255, 1);
     }
-  `;
+  ` : '';
 
-  const watermarkHTML = `<div class="widgetify-watermark"><a href="https://widgetify-two.vercel.app/" target="_blank" rel="noopener noreferrer">✨ Widgetify</a></div>`;
+  const watermarkHTML = !isPremium ? `<div class="widgetify-watermark"><a href="https://widgetify-two.vercel.app/" target="_blank" rel="noopener noreferrer">✨ Widgetify</a></div>` : '';
 
-  // Base widget styles with watermark
+  const footerHTML = !isPremium ? `
+    <div class="widgetify-footer" style="text-align: center; padding: 8px; border-top: 1px solid #e5e7eb; background-color: #f9fafb;">
+      <a href="https://widgetify-two.vercel.app/" target="_blank" rel="noopener noreferrer" style="font-size: 10px; color: #6b7280; text-decoration: none;">Powered by Widgetify</a>
+    </div>
+  ` : '';
+
+  // Base widget styles with conditional watermark
   const baseStyles = `
     <style>
       .widgetify-widget {
@@ -237,6 +244,25 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         }
       }
 
+      .widgetify-footer {
+        text-align: center;
+        padding: 8px;
+        border-top: 1px solid #e5e7eb;
+        background-color: #f9fafb;
+        margin: 12px -20px -20px -20px;
+        border-radius: 0 0 10px 10px;
+      }
+
+      .widgetify-footer a {
+        font-size: 10px;
+        color: #6b7280;
+        text-decoration: none;
+      }
+
+      .widgetify-footer a:hover {
+        color: #374151;
+      }
+
       ${watermarkStyles}
     </style>
   `;
@@ -271,9 +297,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
                 </svg>
               </button>
             </div>
-            <div class="widgetify-footer">
-              <a href="https://widgetify-two.vercel.app/" target="_blank" rel="noopener noreferrer">Powered by Widgetify</a>
-            </div>
+            ${footerHTML}
           </div>
         </div>
 
@@ -431,9 +455,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           <div class="widgetify-content">
             <p>Start a conversation!</p>
           </div>
-          <div class="widgetify-footer">
-            <a href="https://widgetify-two.vercel.app/" target="_blank" rel="noopener noreferrer">Powered by Widgetify</a>
-          </div>
+          ${footerHTML}
         </div>
 
         <script>
