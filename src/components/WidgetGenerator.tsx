@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { WidgetConfig, generateWidgetCode } from '@/lib/widgetUtils';
 import { WidgetType, WidgetSize } from '@/types';
@@ -10,10 +9,11 @@ import WidgetPreview from '@/components/WidgetPreview';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Twitch, Slack, Phone, Star, CreditCard, Crown, Check } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, Youtube, Github, Twitch, Slack, Phone, Star, CreditCard, Crown, Check, X } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const WidgetGenerator: React.FC = () => {
   const [widgetConfig, setWidgetConfig] = useState<WidgetConfig>({
@@ -37,7 +37,7 @@ const WidgetGenerator: React.FC = () => {
   const [showCode, setShowCode] = useState<boolean>(false);
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
   const [hasPremiumAccess, setHasPremiumAccess] = useState<boolean>(false);
-  const [showPayment, setShowPayment] = useState<boolean>(false);
+  const [showPaymentDialog, setShowPaymentDialog] = useState<boolean>(false);
 
   const handleTypeChange = (value: WidgetType) => {
     const colorMap: Record<WidgetType, string> = {
@@ -119,15 +119,13 @@ const WidgetGenerator: React.FC = () => {
   const handleTierChange = (tier: 'free' | 'premium') => {
     setSelectedTier(tier);
     if (tier === 'premium' && !hasPremiumAccess) {
-      setShowPayment(true);
-    } else {
-      setShowPayment(false);
+      setShowPaymentDialog(true);
     }
   };
 
   const handlePaymentSuccess = () => {
     setHasPremiumAccess(true);
-    setShowPayment(false);
+    setShowPaymentDialog(false);
     toast.success('Premium access activated! You can now generate watermark-free widgets.');
   };
 
@@ -275,55 +273,55 @@ const WidgetGenerator: React.FC = () => {
   // Custom Telegram icon component
   const TelegramIcon = () => (
     <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5.46 7.12l-1.68 7.9c-.12.59-.5.84-1.01.52l-2.8-2.07-1.35 1.3c-.15.15-.27.27-.56.27-.36 0-.3-.14-.42-.47l-.95-3.12-2.77-1c-.6-.2-.6-.6.13-.9l10.8-4.15c.5-.18.96.12.61 1.32z" fill="#0088cc" />
+      <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24v-3H6.857V1.714h3.24v15.429Z" fill="#0088cc" />
     </svg>
   );
 
   const ShareIcon = () => (
     <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z" fill="#6B7280" />
+      <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.01 1.04.015 2.04c-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.274 1.295 1.226 1.9942a.076.076 0 00-.0416.1057c-.6528.2476-1.2743.5495-1.8722.8923a.077.077 0 01-.0076.1277c.1258.0943.2517.1923.3718.2914a.0743.0743 0 01.0776.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785-.0095c.1202-.099.246-.1981.3728-.2924a.077.077 0 01-.0066-.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0312-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.79-2.4189 2.157-2.4189 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" fill="#6B7280" />
     </svg>
   );
 
   // New Google Translate icon component
   const GoogleTranslateIcon = () => (
     <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" fill="#4285F4" />
+      <path d="M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24v-3H6.857V1.714h3.24v15.429Z" fill="#4285F4" />
     </svg>
   );
 
   // YouTube icon component
   const YoutubeIcon = () => (
     <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" fill="#FF0000" />
+      <path d="M23.498 6.186a3.016 3.016 0 00-2.52 2.523A3.016 3.016 0 0020.885 3.488" fill="#FF0000" />
     </svg>
   );
 
   // GitHub icon component
   const GithubIcon = () => (
     <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" fill="#333333" />
+      <path d="M12 .297c-6.63 0-12 5.373-12 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" fill="#333333" />
     </svg>
   );
 
   // Twitch icon component
   const TwitchIcon = () => (
     <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714v9.429Z" fill="#6441A4" />
+      <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" fill="#6441A4" />
     </svg>
   );
 
   // Slack icon component
   const SlackIcon = () => (
     <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zM17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zM15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zM15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" fill="#4A154B" />
+      <path d="M5.042 15.165a2.528 2.528 0 01-2.52 2.523A2.528 2.528 0 010 15.165a2.527 2.527 0 012.521-2.52 2.527 2.527 0 012.521 2.52v6.313A2.528 2.528 0 018.834 24a2.528 2.528 0 01-2.521 2.522v-6.313zM8.834 5.042a2.528 2.528 0 01-2.521-2.52A2.528 2.528 0 018.834 0a2.528 2.528 0 012.521 2.522v2.52H8.834zM8.834 6.313a2.528 2.528 0 012.521 2.521 2.526 2.526 0 01-2.521 2.521H2.522A2.527 2.527 0 010 8.834a2.528 2.528 0 012.522-2.521h6.312zM18.956 8.834a2.528 2.528 0 012.522-2.521A2.528 2.528 0 0124 8.834a2.527 2.527 0 01-2.52-2.522v-2.522h2.52v1.67c1.52.29 2.72 1.16 2.73 2.77.01 2.2-1.9 2.96-3.66 3.42z" fill="#4A154B" />
     </svg>
   );
 
   // Discord icon component
   const DiscordIcon = () => (
     <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.608 1.2495-1.8447-.2762-3.6677-.2762-5.4724 0-.1634-.3933-.4058-.8742-.6091-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189Z" fill="#7289DA" />
+      <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.608 1.2495-1.8447-.2762-3.6677-.2762-5.4724 0-.1634-.3933-.4058-.8742-.6091-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 6.0023 3.0294a.077.077 0 00.0313.0552c.5004 5.177 1.4999 9.6739 3.5485 13.6604a.061.061 0 00.0312.0286c.1202.099.246.1981.3728.2924a.077.077 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.79-2.4189 2.157-2.4189 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" fill="#7289DA" />
     </svg>
   );
 
@@ -355,22 +353,102 @@ const WidgetGenerator: React.FC = () => {
     'dodo-payment': <DodoPaymentIcon />
   };
 
+  // UPI Payment Gateway Component
+  const UPIPaymentGateway = () => (
+    <div className="max-w-md mx-auto border border-gray-200 rounded-xl p-5 shadow-lg bg-white font-sans">
+      <style jsx>{`
+        @media (max-width: 480px) {
+          .upi-gateway-container {
+            max-width: 100% !important;
+            margin: 0 !important;
+            border-radius: 8px !important;
+            padding: 16px !important;
+          }
+          .upi-gateway-title {
+            font-size: 18px !important;
+          }
+          .upi-gateway-details {
+            font-size: 13px !important;
+          }
+          .upi-gateway-button {
+            padding: 14px 0 !important;
+            font-size: 15px !important;
+          }
+          .upi-gateway-qr {
+            width: 160px !important;
+            height: 160px !important;
+          }
+          .upi-gateway-note {
+            font-size: 11px !important;
+          }
+        }
+      `}</style>
+      
+      <div className="upi-gateway-container">
+        <h3 className="upi-gateway-title text-center text-gray-800 text-xl font-semibold mb-4">
+          Pay with UPI
+        </h3>
+        
+        <div className="text-center mb-5">
+          <img 
+            src="data:image/png;base64,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" 
+            alt="UPI Payment QR Code" 
+            className="upi-gateway-qr w-48 h-48 border-2 border-gray-100 rounded-lg mx-auto block"
+          />
+          <p className="mt-3 text-xs text-gray-500 font-medium">Scan with any UPI app</p>
+        </div>
+
+        <div className="bg-gray-50 rounded-lg p-3 mb-4">
+          <p className="upi-gateway-details my-1 text-sm text-gray-700">
+            <strong>UPI ID:</strong> adnanmuhammad4393@okicici
+          </p>
+          <p className="upi-gateway-details my-1 text-sm text-gray-700">
+            <strong>Payee:</strong> Widgetify
+          </p>
+          <p className="upi-gateway-details my-1 text-sm text-gray-700">
+            <strong>Amount:</strong> ₹9.99
+          </p>
+        </div>
+
+        <div className="border-t border-gray-200 pt-4 text-center">
+          <p className="mb-3 text-xs text-gray-500">Or click to pay directly</p>
+          <a 
+            href="upi://pay?pa=adnanmuhammad4393@okicici&pn=Widgetify&am=9.99&cu=INR" 
+            className="block no-underline"
+          >
+            <button 
+              className="upi-gateway-button w-full py-4 bg-gradient-to-r from-green-500 to-green-600 text-white text-base font-semibold border-none rounded-lg cursor-pointer transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
+              onClick={handlePaymentSuccess}
+            >
+              💳 Pay ₹9.99 via UPI
+            </button>
+          </a>
+        </div>
+
+        <p className="upi-gateway-note mt-4 text-xs text-gray-400 text-center leading-relaxed">
+          Supports PhonePe, Google Pay, Paytm, BHIM & all UPI apps<br />
+          Secure payment powered by UPI
+        </p>
+      </div>
+    </div>
+  );
+
   return (
-    <section id="widget-generator" className="py-16 bg-white">
+    <section id="widget-generator" className="py-8 md:py-16 bg-white">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold mb-4">Create Your Widgetify Widget</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+        <div className="text-center mb-6 md:mb-10">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">Create Your Widgetify Widget</h2>
+          <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base">
             Customize your chat widget in a few simple steps. Choose between free or premium tiers.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-8 max-w-7xl mx-auto">
+          <div className="bg-gray-50 p-4 md:p-6 rounded-lg shadow-sm order-2 lg:order-1">
             {/* Tier Selection */}
             <div className="mb-6">
               <h3 className="text-lg font-medium mb-3">Select Tier</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Card className={`cursor-pointer transition-all ${selectedTier === 'free' ? 'ring-2 ring-blue-500' : ''}`} onClick={() => handleTierChange('free')}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2">
@@ -438,33 +516,6 @@ const WidgetGenerator: React.FC = () => {
                 </div>
               )}
             </div>
-
-            {/* Payment Modal */}
-            {showPayment && (
-              <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg">
-                <h4 className="font-medium text-purple-900 mb-2">Unlock Premium Features</h4>
-                <p className="text-sm text-purple-700 mb-4">
-                  Get watermark-free widgets for professional use. One-time payment for lifetime access.
-                </p>
-                <div className="flex gap-3">
-                  <Button 
-                    onClick={handlePaymentSuccess} 
-                    className="bg-purple-600 hover:bg-purple-700"
-                    size="sm"
-                  >
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    Pay $9.99
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowPayment(false)}
-                    size="sm"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            )}
 
             {/* Widget Configuration */}
             <div className="mb-6">
@@ -887,7 +938,7 @@ const WidgetGenerator: React.FC = () => {
             </Button>
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col order-1 lg:order-2">
             {/* RetailX sidebar ad */}
             <div className="bg-white p-4 rounded-lg shadow-sm mb-4 border border-purple-100">
               <a href="https://www.retailx.site/" target="_blank" rel="noopener noreferrer" className="block">
@@ -905,28 +956,28 @@ const WidgetGenerator: React.FC = () => {
             </div>
 
             {/* Widget Preview */}
-            <div className="bg-white p-6 rounded-lg shadow-sm mb-4">
+            <div className="bg-white p-4 md:p-6 rounded-lg shadow-sm mb-4">
               <h3 className="text-lg font-medium mb-4">Widget Preview</h3>
-              <div className="min-h-[300px] bg-gray-50 rounded-lg p-4 relative">
+              <div className="min-h-[200px] md:min-h-[300px] bg-gray-50 rounded-lg p-4 relative">
                 <WidgetPreview config={widgetConfig} />
               </div>
             </div>
 
             {/* Code Output */}
             {showCode && (
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <div className="flex justify-between items-center mb-4">
+              <div className="bg-white p-4 md:p-6 rounded-lg shadow-sm">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
                   <h3 className="text-lg font-medium">Generated Code</h3>
                   <Button onClick={copyToClipboard} variant="outline" size="sm">
                     Copy Code
                   </Button>
                 </div>
-                <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm">
+                <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-xs md:text-sm max-h-96 overflow-y-auto">
                   <code>{code}</code>
                 </pre>
                 <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                   <p className="text-sm text-blue-700">
-                    <strong>Installation:</strong> Copy the code above and paste it into your website's HTML, 
+                    <strong>Installation:</strong> Copy the code above and paste it into your website&apos;s HTML, 
                     preferably before the closing &lt;/body&gt; tag.
                   </p>
                 </div>
@@ -934,6 +985,29 @@ const WidgetGenerator: React.FC = () => {
             )}
           </div>
         </div>
+
+        {/* UPI Payment Dialog */}
+        <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Crown className="h-5 w-5 text-purple-500" />
+                Upgrade to Premium
+              </DialogTitle>
+            </DialogHeader>
+            <UPIPaymentGateway />
+            <div className="flex justify-end">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowPaymentDialog(false)}
+                className="flex items-center gap-2"
+              >
+                <X className="h-4 w-4" />
+                Cancel
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </section>
   );
