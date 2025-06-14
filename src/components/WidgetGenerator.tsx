@@ -117,19 +117,25 @@ const WidgetGenerator: React.FC = () => {
   };
 
   const handleTierChange = (tier: 'free' | 'premium') => {
+    console.log('Tier changed to:', tier);
     setSelectedTier(tier);
     if (tier === 'premium' && !hasPremiumAccess) {
+      console.log('Opening payment dialog for premium access');
       setShowPaymentDialog(true);
     }
   };
 
   const handlePaymentSuccess = () => {
+    console.log('Payment successful, activating premium access');
     setHasPremiumAccess(true);
+    setSelectedTier('premium');
     setShowPaymentDialog(false);
-    toast.success('Premium access activated! You can now generate watermark-free widgets.');
+    toast.success('🎉 Premium access activated! You can now generate watermark-free widgets.');
   };
 
   const generateWidget = () => {
+    console.log('Generating widget with config:', { selectedTier, hasPremiumAccess, widgetConfig });
+    
     // Enhanced validation with better error messages
     switch (widgetConfig.type) {
       case 'whatsapp':
@@ -187,14 +193,16 @@ const WidgetGenerator: React.FC = () => {
 
     try {
       const isPremium = selectedTier === 'premium' && hasPremiumAccess;
+      console.log('Generating code with isPremium:', isPremium);
+      
       const generatedCode = generateWidgetCode({ ...widgetConfig, isPremium });
       setCode(generatedCode);
       setShowCode(true);
       
       if (isPremium) {
-        toast.success('Premium widget code generated successfully! (No watermark)');
+        toast.success('✨ Premium widget code generated successfully! (No watermark)');
       } else {
-        toast.success('Free widget code generated successfully!');
+        toast.success('📝 Free widget code generated successfully! (Includes Widgetify watermark)');
       }
     } catch (error) {
       console.error('Error generating widget code:', error);
@@ -321,7 +329,7 @@ const WidgetGenerator: React.FC = () => {
   // Discord icon component
   const DiscordIcon = () => (
     <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.608 1.2495-1.8447-.2762-3.6677-.2762-5.4724 0-.1634-.3933-.4058-.8742-.6091-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 6.0023 3.0294a.077.077 0 00.0313.0552c.5004 5.177 1.4999 9.6739 3.5485 13.6604a.061.061 0 00.0312.0286c.1202.099.246.1981.3728.2924a.077.077 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.79-2.4189 2.157-2.4189 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" fill="#7289DA" />
+      <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.608 1.2495-1.8447-.2762-3.6677-.2762-5.4724 0-.1634-.3933-.4058-.4058-.8742-.6091-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 6.0023 3.0294a.077.077 0 00.0313.0552c.5004 5.177 1.4999 9.6739 3.5485 13.6604a.061.061 0 00.0312.0286c.1202.099.246.1981.3728.2924a.077.077 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.79-2.4189 2.157-2.4189 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z" fill="#7289DA" />
     </svg>
   );
 
@@ -391,7 +399,7 @@ const WidgetGenerator: React.FC = () => {
         
         <div className="text-center mb-5">
           <img 
-            src="data:image/png;base64,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" 
+            src="data:image/png;base64,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" 
             alt="UPI Payment QR Code" 
             className="upi-gateway-qr w-48 h-48 border-2 border-gray-100 rounded-lg mx-auto block"
           />
@@ -454,7 +462,7 @@ const WidgetGenerator: React.FC = () => {
             <div className="mb-6">
               <h3 className="text-lg font-medium mb-3">Select Tier</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Card className={`cursor-pointer transition-all ${selectedTier === 'free' ? 'ring-2 ring-blue-500' : ''}`} onClick={() => handleTierChange('free')}>
+                <Card className={`cursor-pointer transition-all ${selectedTier === 'free' ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`} onClick={() => handleTierChange('free')}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2">
                       <CardTitle className="text-lg">Free Tier</CardTitle>
@@ -480,12 +488,12 @@ const WidgetGenerator: React.FC = () => {
                   </CardContent>
                 </Card>
 
-                <Card className={`cursor-pointer transition-all ${selectedTier === 'premium' ? 'ring-2 ring-purple-500' : ''}`} onClick={() => handleTierChange('premium')}>
+                <Card className={`cursor-pointer transition-all ${selectedTier === 'premium' ? 'ring-2 ring-purple-500 bg-purple-50' : ''}`} onClick={() => handleTierChange('premium')}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2">
                       <Crown className="h-5 w-5 text-purple-500" />
                       <CardTitle className="text-lg">Premium Tier</CardTitle>
-                      <Badge variant="default" className="bg-purple-600">$9.99</Badge>
+                      <Badge variant="default" className="bg-purple-600">₹9.99</Badge>
                     </div>
                     <CardDescription>Professional & commercial use</CardDescription>
                   </CardHeader>
@@ -516,7 +524,7 @@ const WidgetGenerator: React.FC = () => {
                 <div className="mt-4 p-3 bg-purple-50 border border-purple-200 rounded-lg">
                   <div className="flex items-center gap-2 text-purple-700">
                     <Crown className="h-4 w-4" />
-                    <span className="text-sm font-medium">Premium Access Active</span>
+                    <span className="text-sm font-medium">✅ Premium Access Active - No Watermark!</span>
                   </div>
                 </div>
               )}
@@ -891,11 +899,11 @@ const WidgetGenerator: React.FC = () => {
             </div>
 
             <div className="flex justify-between items-center flex-col sm:flex-row gap-2 sm:gap-0">
-              <Button onClick={generateWidget} variant="default">
-                Generate Widget Code
+              <Button onClick={generateWidget} variant="default" className="w-full sm:w-auto">
+                {selectedTier === 'premium' && hasPremiumAccess ? '✨ Generate Premium Widget' : '📝 Generate Free Widget'}
               </Button>
               {showCode && (
-                <Button onClick={copyToClipboard} variant="outline">
+                <Button onClick={copyToClipboard} variant="outline" className="w-full sm:w-auto">
                   Copy Code
                 </Button>
               )}
@@ -903,7 +911,14 @@ const WidgetGenerator: React.FC = () => {
 
             {showCode && (
               <div className="mt-6">
-                <Label>Generated Code</Label>
+                <div className="flex items-center justify-between mb-2">
+                  <Label>Generated Code</Label>
+                  {selectedTier === 'premium' && hasPremiumAccess ? (
+                    <Badge variant="default" className="bg-purple-600">Premium - No Watermark</Badge>
+                  ) : (
+                    <Badge variant="secondary">Free - With Watermark</Badge>
+                  )}
+                </div>
                 <Textarea readOnly value={code} rows={10} />
               </div>
             )}
@@ -917,12 +932,15 @@ const WidgetGenerator: React.FC = () => {
       </div>
 
       <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-lg">
           <DialogHeader>
-            <DialogTitle>Upgrade to Premium</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <Crown className="h-5 w-5 text-purple-500" />
+              Upgrade to Premium
+            </DialogTitle>
           </DialogHeader>
-          <p className="mb-4">
-            To access premium features and generate watermark-free widgets, please complete the payment.
+          <p className="mb-4 text-gray-600">
+            To access premium features and generate watermark-free widgets, please complete the payment below.
           </p>
           <UPIPaymentGateway />
           <div className="mt-4 flex justify-end space-x-2">
