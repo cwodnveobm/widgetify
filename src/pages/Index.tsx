@@ -1,20 +1,36 @@
+
 import React, { useEffect, useState } from 'react';
 import HeroSection from '@/components/HeroSection';
 import WidgetGenerator from '@/components/WidgetGenerator';
 import FeaturesSection from '@/components/FeaturesSection';
 import FounderSection from '@/components/FounderSection';
 import Footer from '@/components/Footer';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X, Sparkles, Wifi, WifiOff } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 
 const Index: React.FC = () => {
   const [menuOpen, setMenuOpen] = React.useState(false);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const isMobile = useIsMobile();
   
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
+
+  // Handle online/offline status
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   // Close menu when clicking outside or when switching to desktop view
   useEffect(() => {
@@ -51,8 +67,24 @@ const Index: React.FC = () => {
     }
   };
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    handleMenuItemClick();
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      {/* Network Status Indicator */}
+      {!isOnline && (
+        <div className="bg-orange-500 text-white text-center py-2 px-4 text-sm flex items-center justify-center gap-2 sticky top-0 z-50">
+          <WifiOff className="w-4 h-4" />
+          <span>You're currently offline. Some features may not work.</span>
+        </div>
+      )}
+
       {/* Enhanced Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 py-3 md:py-4 px-2 md:px-6 sticky top-0 z-40 shadow-sm">
         <div className="max-w-full md:container mx-auto flex justify-between items-center px-1 md:px-0">
@@ -61,6 +93,11 @@ const Index: React.FC = () => {
               Widgetify
             </div>
             <Sparkles className="w-5 h-5 text-purple-500" />
+            {isOnline ? (
+              <Wifi className="w-4 h-4 text-green-500 md:hidden" />
+            ) : (
+              <WifiOff className="w-4 h-4 text-orange-500 md:hidden" />
+            )}
           </div>
           
           {isMobile ? (
@@ -82,18 +119,18 @@ const Index: React.FC = () => {
                            ${menuOpen ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0 pointer-events-none'}`} 
                 aria-hidden={!menuOpen}
               >
-                <a href="#" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
+                <button onClick={() => scrollToSection('hero')} className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200 text-left">
                   Home
-                </a>
-                <a href="#widget-generator" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
+                </button>
+                <button onClick={() => scrollToSection('widget-generator')} className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200 text-left">
                   Generate
-                </a>
-                <a href="#features" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
+                </button>
+                <button onClick={() => scrollToSection('features')} className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200 text-left">
                   Features
-                </a>
-                <a href="#founder" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
+                </button>
+                <button onClick={() => scrollToSection('founder')} className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200 text-left">
                   Founder
-                </a>
+                </button>
                 <a href="/support" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
                   Support
                 </a>
@@ -101,10 +138,10 @@ const Index: React.FC = () => {
             </>
           ) : (
             <nav className="hidden md:flex gap-8">
-              <a href="#" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Home</a>
-              <a href="#widget-generator" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Generate</a>
-              <a href="#features" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Features</a>
-              <a href="#founder" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Founder</a>
+              <button onClick={() => scrollToSection('hero')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Home</button>
+              <button onClick={() => scrollToSection('widget-generator')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Generate</button>
+              <button onClick={() => scrollToSection('features')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Features</button>
+              <button onClick={() => scrollToSection('founder')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Founder</button>
               <a href="/support" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Support</a>
             </nav>
           )}
@@ -113,10 +150,18 @@ const Index: React.FC = () => {
       
       <main className="flex-grow flex flex-col">
         <div className="flex-1 w-full sm:w-auto px-0 sm:px-4">
-          <HeroSection />
-          <WidgetGenerator />
-          <FeaturesSection />
-          <FounderSection />
+          <div id="hero">
+            <HeroSection />
+          </div>
+          <div id="widget-generator">
+            <WidgetGenerator />
+          </div>
+          <div id="features">
+            <FeaturesSection />
+          </div>
+          <div id="founder">
+            <FounderSection />
+          </div>
         </div>
       </main>
       
