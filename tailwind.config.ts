@@ -19,10 +19,6 @@ export default {
 			}
 		},
 		extend: {
-			fontFamily: {
-				'orbitron': ['Orbitron', 'monospace'],
-				'exo': ['Exo 2', 'sans-serif'],
-			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -66,11 +62,6 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				},
-				cyber: {
-					blue: '#00d4ff',
-					purple: '#bf00ff',
-					green: '#00ff41',
 				}
 			},
 			borderRadius: {
@@ -98,50 +89,18 @@ export default {
 				fadeIn: {
 					'0%': {
 						opacity: '0',
-						transform: 'translateY(30px)'
+						transform: 'translateY(10px)'
 					},
 					'100%': {
 						opacity: '1',
 						transform: 'translateY(0)'
 					}
-				},
-				'gradient-shift': {
-					'0%': { filter: 'hue-rotate(0deg)' },
-					'100%': { filter: 'hue-rotate(360deg)' }
-				},
-				'neon-pulse': {
-					'0%': { boxShadow: '0 0 5px rgba(59, 130, 246, 0.5)' },
-					'100%': { boxShadow: '0 0 20px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.6)' }
-				},
-				'matrix-flicker': {
-					'0%, 100%': { opacity: '1' },
-					'50%': { opacity: '0.8' }
-				},
-				'grid-move': {
-					'0%': { transform: 'translate3d(0, 0, 0)' },
-					'100%': { transform: 'translate3d(50px, 50px, 0)' }
-				},
-				'floating': {
-					'0%, 100%': { transform: 'translateY(0px)' },
-					'50%': { transform: 'translateY(-20px)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'fade-in': 'fadeIn 0.8s ease-out',
-				'gradient-shift': 'gradient-shift 3s ease-in-out infinite alternate',
-				'neon-pulse': 'neon-pulse 2s ease-in-out infinite alternate',
-				'matrix-flicker': 'matrix-flicker 1.5s infinite alternate',
-				'grid-move': 'grid-move 20s linear infinite',
-				'floating': 'floating 6s ease-in-out infinite'
-			},
-			backgroundImage: {
-				'cyber-gradient': 'linear-gradient(135deg, #0ea5e9 0%, #3b82f6 25%, #6366f1 50%, #8b5cf6 75%, #d946ef 100%)',
-			},
-			boxShadow: {
-				'neon': '0 0 20px rgba(59, 130, 246, 0.5), 0 0 40px rgba(59, 130, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.1)',
-				'cyber': '0 8px 32px rgba(59, 130, 246, 0.15)',
+				'fade-in': 'fadeIn 0.6s ease-out'
 			}
 		}
 	},
