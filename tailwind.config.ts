@@ -69,6 +69,9 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
+			backdropBlur: {
+				xs: '2px',
+			},
 			keyframes: {
 				'accordion-down': {
 					from: {
@@ -95,12 +98,59 @@ export default {
 						opacity: '1',
 						transform: 'translateY(0)'
 					}
+				},
+				'liquid-shimmer': {
+					'0%, 100%': {
+						'background-position': '0% 50%'
+					},
+					'50%': {
+						'background-position': '100% 50%'
+					}
+				},
+				'float': {
+					'0%, 100%': {
+						transform: 'translateY(0px)'
+					},
+					'50%': {
+						transform: 'translateY(-10px)'
+					}
+				},
+				'morph': {
+					'0%, 100%': {
+						'border-radius': '20px'
+					},
+					'25%': {
+						'border-radius': '30px 20px 25px'
+					},
+					'50%': {
+						'border-radius': '25px 30px 20px'
+					},
+					'75%': {
+						'border-radius': '20px 25px 30px'
+					}
+				},
+				'gradient-shift': {
+					'0%, 100%': {
+						'background-position': '0% 50%'
+					},
+					'50%': {
+						'background-position': '100% 50%'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'fade-in': 'fadeIn 0.6s ease-out'
+				'fade-in': 'fadeIn 0.6s ease-out',
+				'liquid-shimmer': 'liquid-shimmer 3s ease-in-out infinite',
+				'float': 'float 3s ease-in-out infinite',
+				'float-delayed': 'float 3s ease-in-out infinite 1.5s',
+				'morph': 'morph 4s ease-in-out infinite',
+				'gradient-shift': 'gradient-shift 3s ease-in-out infinite'
+			},
+			animationDelay: {
+				'2000': '2000ms',
+				'4000': '4000ms',
 			}
 		}
 	},

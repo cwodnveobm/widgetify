@@ -327,24 +327,24 @@ const WidgetGenerator: React.FC = () => {
     <section id="widget-generator" className="py-8 md:py-20 px-2 md:px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+          <h2 className="text-2xl md:text-4xl font-bold gradient-text mb-4 floating">
             Widget Generator
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base px-4">
+          <p className="text-white/80 max-w-2xl mx-auto text-sm md:text-base px-4">
             Create powerful, customizable widgets in seconds. Choose your type, customize the settings, and get ready-to-use code.
           </p>
         </div>
 
-        {/* Mobile-Optimized Tier Selection */}
+        {/* Glass Tier Selection */}
         <div className="flex justify-center mb-6 md:mb-8 px-4">
-          <div className="bg-white rounded-lg p-1 shadow-md w-full max-w-md">
+          <div className="glass-strong rounded-2xl p-1 shadow-2xl w-full max-w-md">
             <div className="grid grid-cols-2 gap-1">
               <button
                 onClick={() => setSelectedTier('free')}
-                className={`px-3 md:px-6 py-3 md:py-3 rounded-md flex items-center justify-center gap-2 transition-all text-sm md:text-base ${
+                className={`px-3 md:px-6 py-3 md:py-3 rounded-xl flex items-center justify-center gap-2 transition-all text-sm md:text-base ${
                   selectedTier === 'free'
-                    ? 'bg-purple-100 text-purple-700 shadow-sm'
-                    : 'text-gray-600 hover:text-purple-600'
+                    ? 'glass-button text-white shadow-lg'
+                    : 'text-white/70 hover:text-white hover:glass-subtle'
                 }`}
               >
                 <Sparkles size={16} />
@@ -353,12 +353,12 @@ const WidgetGenerator: React.FC = () => {
               <button
                 onClick={() => setSelectedTier('premium')}
                 disabled={!isPremiumUnlocked}
-                className={`px-3 md:px-6 py-3 md:py-3 rounded-md flex items-center justify-center gap-2 transition-all text-sm md:text-base ${
+                className={`px-3 md:px-6 py-3 md:py-3 rounded-xl flex items-center justify-center gap-2 transition-all text-sm md:text-base ${
                   selectedTier === 'premium' && isPremiumUnlocked
-                    ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-sm'
+                    ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-lg'
                     : selectedTier === 'premium'
-                    ? 'bg-gray-100 text-gray-400'
-                    : 'text-gray-600 hover:text-orange-600'
+                    ? 'glass-subtle text-white/40'
+                    : 'text-white/70 hover:text-orange-300 hover:glass-subtle'
                 }`}
               >
                 <Crown size={16} />
@@ -369,18 +369,18 @@ const WidgetGenerator: React.FC = () => {
           </div>
         </div>
 
-        {/* Premium Upgrade Banner */}
+        {/* Premium Upgrade Banner with glass effect */}
         {selectedTier === 'premium' && !isPremiumUnlocked && (
-          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4 md:p-6 mb-6 md:mb-8 mx-2 md:mx-0">
+          <div className="glass-strong liquid-border p-4 md:p-6 mb-6 md:mb-8 mx-2 md:mx-0 morphing">
             <div className="text-center">
-              <Crown className="mx-auto mb-3 text-yellow-600" size={24} />
-              <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-2">Upgrade to Premium</h3>
-              <p className="text-gray-600 mb-4 text-sm md:text-base">
+              <Crown className="mx-auto mb-3 text-yellow-400" size={24} />
+              <h3 className="text-lg md:text-xl font-semibold text-white mb-2">Upgrade to Premium</h3>
+              <p className="text-white/80 mb-4 text-sm md:text-base">
                 Get watermark-free widgets, priority support, and advanced customization options.
               </p>
               <Button
                 onClick={handlePremiumUpgrade}
-                className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 min-h-[48px] w-full md:w-auto"
+                className="glass-button text-white border-white/20 min-h-[48px] w-full md:w-auto hover:scale-105 transition-transform"
               >
                 Upgrade Now - $9.99
               </Button>
@@ -389,28 +389,28 @@ const WidgetGenerator: React.FC = () => {
         )}
 
         <div className={`grid gap-6 md:gap-8 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-2'}`}>
-          {/* Configuration Panel */}
-          <Card className="mx-2 md:mx-0">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+          {/* Configuration Panel with glass effect */}
+          <div className="glass-card mx-2 md:mx-0">
+            <div className="p-6 border-b border-white/10">
+              <h3 className="flex items-center gap-2 text-lg md:text-xl text-white font-semibold">
                 Configure Your Widget
                 {selectedTier === 'premium' && isPremiumUnlocked && (
-                  <Crown className="text-yellow-500" size={20} />
+                  <Crown className="text-yellow-400" size={20} />
                 )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 md:space-y-6">
-              {/* Widget Type Selection */}
+              </h3>
+            </div>
+            <div className="p-6 space-y-4 md:space-y-6">
+              {/* Widget Type Selection with glass styling */}
               <div className="space-y-2">
-                <Label htmlFor="widgetType" className="text-sm font-medium">Widget Type</Label>
+                <Label htmlFor="widgetType" className="text-sm font-medium text-white/90">Widget Type</Label>
                 <Select
                   value={config.type}
                   onValueChange={(value: WidgetType) => handleConfigChange('type', value)}
                 >
-                  <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectTrigger className="glass text-white border-white/20 min-h-[48px]">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="glass-strong border-white/20">
                     <SelectItem value="whatsapp">WhatsApp Chat</SelectItem>
                     <SelectItem value="call-now">Call Now</SelectItem>
                     <SelectItem value="social-share">Social Share</SelectItem>
@@ -421,22 +421,24 @@ const WidgetGenerator: React.FC = () => {
                 </Select>
               </div>
 
-              {/* Dynamic Form Fields */}
-              {renderFormFields()}
+              {/* Dynamic Form Fields with glass styling */}
+              <div className="space-y-4">
+                {renderFormFields()}
+              </div>
 
-              {/* Universal Settings */}
-              <div className="space-y-4 pt-4 border-t">
+              {/* Universal Settings with glass styling */}
+              <div className="space-y-4 pt-4 border-t border-white/10">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="position" className="text-sm font-medium">Position</Label>
+                    <Label htmlFor="position" className="text-sm font-medium text-white/90">Position</Label>
                     <Select
                       value={config.position}
                       onValueChange={(value: 'left' | 'right') => handleConfigChange('position', value)}
                     >
-                      <SelectTrigger className="text-base min-h-[48px]">
+                      <SelectTrigger className="glass text-white border-white/20 min-h-[48px]">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="glass-strong border-white/20">
                         <SelectItem value="right">Bottom Right</SelectItem>
                         <SelectItem value="left">Bottom Left</SelectItem>
                       </SelectContent>
@@ -444,15 +446,15 @@ const WidgetGenerator: React.FC = () => {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="size" className="text-sm font-medium">Size</Label>
+                    <Label htmlFor="size" className="text-sm font-medium text-white/90">Size</Label>
                     <Select
                       value={config.size}
                       onValueChange={(value: WidgetSize) => handleConfigChange('size', value)}
                     >
-                      <SelectTrigger className="text-base min-h-[48px]">
+                      <SelectTrigger className="glass text-white border-white/20 min-h-[48px]">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="glass-strong border-white/20">
                         <SelectItem value="small">Small</SelectItem>
                         <SelectItem value="medium">Medium</SelectItem>
                         <SelectItem value="large">Large</SelectItem>
@@ -462,58 +464,57 @@ const WidgetGenerator: React.FC = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="primaryColor" className="text-sm font-medium">Primary Color</Label>
+                  <Label htmlFor="primaryColor" className="text-sm font-medium text-white/90">Primary Color</Label>
                   <div className="flex gap-2">
                     <Input
                       id="primaryColor"
                       type="color"
                       value={config.primaryColor}
                       onChange={(e) => handleConfigChange('primaryColor', e.target.value)}
-                      className="w-16 h-12 p-1 rounded flex-shrink-0"
+                      className="w-16 h-12 p-1 rounded glass border-white/20 flex-shrink-0"
                     />
                     <Input
                       value={config.primaryColor}
                       onChange={(e) => handleConfigChange('primaryColor', e.target.value)}
                       placeholder="#25D366"
-                      className="flex-1 text-base"
+                      className="flex-1 glass text-white border-white/20 placeholder:text-white/50"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Mobile-Optimized Action Buttons */}
+              {/* Action Buttons with glass effects */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-4">
-                <Button onClick={copyToClipboard} className="min-h-[48px] order-1">
+                <Button onClick={copyToClipboard} className="glass-button text-white border-white/20 min-h-[48px] order-1">
                   <Copy size={16} className="mr-2" />
                   Copy Code
                 </Button>
-                <Button onClick={downloadCode} variant="outline" className="min-h-[48px] order-2">
+                <Button onClick={downloadCode} className="glass-button text-white border-white/20 min-h-[48px] order-2">
                   <Download size={16} className="mr-2" />
                   Download
                 </Button>
                 <Button
                   onClick={() => setShowPreview(!showPreview)}
-                  variant="outline"
-                  className="min-h-[48px] order-3 md:order-3"
+                  className="glass-button text-white border-white/20 min-h-[48px] order-3"
                 >
                   {showPreview ? <EyeOff size={16} className="mr-2" /> : <Eye size={16} className="mr-2" />}
                   {isMobile ? (showPreview ? 'Hide' : 'Show') : ''} Preview
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* Preview Panel - Conditional rendering for mobile */}
+          {/* Preview Panel with glass effect */}
           {showPreview && (
-            <Card className="mx-2 md:mx-0">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+            <div className="glass-card mx-2 md:mx-0">
+              <div className="p-6 border-b border-white/10">
+                <h3 className="flex items-center gap-2 text-lg md:text-xl text-white font-semibold">
                   <Smartphone size={20} className="md:hidden" />
                   Live Preview
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="bg-gray-50 rounded-lg p-4 min-h-[300px] md:min-h-[400px] relative">
+                </h3>
+              </div>
+              <div className="p-6">
+                <div className="glass-subtle rounded-lg p-4 min-h-[300px] md:min-h-[400px] relative">
                   <WidgetPreview 
                     config={{
                       ...config,
@@ -522,37 +523,37 @@ const WidgetGenerator: React.FC = () => {
                   />
                 </div>
                 
-                {/* Mobile-Optimized Tier Info */}
-                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                {/* Tier Info with glass styling */}
+                <div className="mt-4 p-3 glass-subtle rounded-lg">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">
+                    <span className="text-white/80">
                       Current Tier: 
                       <span className={`ml-1 font-medium ${
                         selectedTier === 'premium' && isPremiumUnlocked 
-                          ? 'text-yellow-600' 
-                          : 'text-purple-600'
+                          ? 'text-yellow-400' 
+                          : 'text-purple-400'
                       }`}>
                         {selectedTier === 'premium' && isPremiumUnlocked ? 'Premium' : 'Free'}
                       </span>
                     </span>
                     {selectedTier === 'free' && (
-                      <span className="text-xs text-gray-500">Includes watermark</span>
+                      <span className="text-xs text-white/60">Includes watermark</span>
                     )}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
         </div>
 
-        {/* Mobile-Optimized Generated Code Display */}
-        <Card className="mt-6 md:mt-8 mx-2 md:mx-0">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg md:text-xl">Generated Code</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-gray-900 text-gray-100 p-3 md:p-4 rounded-lg overflow-auto max-h-64 md:max-h-96">
-              <pre className="text-xs md:text-sm whitespace-pre-wrap break-all">
+        {/* Generated Code Display with glass effect */}
+        <div className="glass-card mt-6 md:mt-8 mx-2 md:mx-0">
+          <div className="p-6 border-b border-white/10">
+            <h3 className="text-lg md:text-xl text-white font-semibold">Generated Code</h3>
+          </div>
+          <div className="p-6">
+            <div className="glass-dark rounded-lg p-3 md:p-4 overflow-auto max-h-64 md:max-h-96">
+              <pre className="text-xs md:text-sm text-white/90 whitespace-pre-wrap break-all">
                 <code>{generateCode()}</code>
               </pre>
             </div>
@@ -560,15 +561,14 @@ const WidgetGenerator: React.FC = () => {
             {isMobile && (
               <Button 
                 onClick={copyToClipboard} 
-                className="w-full mt-3 min-h-[48px]"
-                variant="outline"
+                className="w-full mt-3 min-h-[48px] glass-button text-white border-white/20"
               >
                 <Copy size={16} className="mr-2" />
                 Copy Generated Code
               </Button>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </section>
   );
