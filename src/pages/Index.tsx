@@ -1,37 +1,126 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import HeroSection from '@/components/HeroSection';
-import FeaturesSection from '@/components/FeaturesSection';
 import WidgetGenerator from '@/components/WidgetGenerator';
+import FeaturesSection from '@/components/FeaturesSection';
 import FounderSection from '@/components/FounderSection';
 import Footer from '@/components/Footer';
+import { Menu, X, Sparkles } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
 
-const Index = () => {
+const Index: React.FC = () => {
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const isMobile = useIsMobile();
+  
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  // Close menu when clicking outside or when switching to desktop view
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const menu = document.getElementById('mobile-menu');
+      const menuButton = document.getElementById('menu-toggle-button');
+      if (menu && menuButton && !menu.contains(event.target as Node) && !menuButton.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+
+    // Close menu when switching to desktop
+    if (!isMobile) {
+      setMenuOpen(false);
+    }
+
+    // Prevent body scroll when menu is open
+    if (menuOpen && isMobile) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.body.style.overflow = 'auto';
+    };
+  }, [isMobile, menuOpen]);
+  
+  const handleMenuItemClick = () => {
+    // Close menu after clicking a menu item on mobile
+    if (isMobile) {
+      setMenuOpen(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Animated background with liquid glass effects */}
-      <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-pink-400 to-blue-600 opacity-20"></div>
-        <div className="absolute top-10 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
-        <div className="absolute top-20 right-20 w-96 h-96 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse animation-delay-2000"></div>
-        <div className="absolute -bottom-32 left-20 w-80 h-80 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse animation-delay-4000"></div>
-        
-        {/* Floating glass orbs */}
-        <div className="absolute top-1/4 left-1/4 w-24 h-24 glass rounded-full floating"></div>
-        <div className="absolute top-1/3 right-1/3 w-32 h-32 glass-subtle rounded-full floating-delayed"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-20 h-20 glass-dark rounded-full floating"></div>
-      </div>
-
-      {/* Main content with glass container */}
-      <div className="relative z-10">
-        <div className="glass-subtle min-h-screen">
-          <HeroSection />
-          <FeaturesSection />
-          <WidgetGenerator />
-          <FounderSection />
-          <Footer />
+    <div className="min-h-screen flex flex-col bg-white">
+      {/* Enhanced Header */}
+      <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 py-3 md:py-4 px-2 md:px-6 sticky top-0 z-40 shadow-sm">
+        <div className="max-w-full md:container mx-auto flex justify-between items-center px-1 md:px-0">
+          <div className="flex items-center gap-2">
+            <div className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+              Widgetify
+            </div>
+            <Sparkles className="w-5 h-5 text-purple-500" />
+          </div>
+          
+          {isMobile ? (
+            <>
+              <button 
+                id="menu-toggle-button" 
+                onClick={toggleMenu} 
+                className="md:hidden text-gray-600 focus:outline-none p-3 rounded-xl hover:bg-gray-100 min-h-[44px] min-w-[44px] transition-all duration-200" 
+                aria-label="Toggle menu" 
+                aria-expanded={menuOpen}
+              >
+                {menuOpen ? <X size={22} /> : <Menu size={22} />}
+              </button>
+              
+              <div 
+                id="mobile-menu" 
+                className={`fixed top-[73px] left-0 right-0 bg-white/95 backdrop-blur-md shadow-xl py-4 px-6 flex flex-col gap-2
+                           border-t border-gray-100 transition-all duration-300 max-h-[calc(100vh-73px)] overflow-y-auto
+                           ${menuOpen ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0 pointer-events-none'}`} 
+                aria-hidden={!menuOpen}
+              >
+                <a href="#" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
+                  Home
+                </a>
+                <a href="#widget-generator" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
+                  Generate
+                </a>
+                <a href="#features" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
+                  Features
+                </a>
+                <a href="#founder" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
+                  Founder
+                </a>
+                <a href="/support" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
+                  Support
+                </a>
+              </div>
+            </>
+          ) : (
+            <nav className="hidden md:flex gap-8">
+              <a href="#" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Home</a>
+              <a href="#widget-generator" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Generate</a>
+              <a href="#features" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Features</a>
+              <a href="#founder" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Founder</a>
+              <a href="/support" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Support</a>
+            </nav>
+          )}
         </div>
-      </div>
+      </header>
+      
+      <main className="flex-grow flex flex-col">
+        <div className="flex-1 w-full sm:w-auto px-0 sm:px-4">
+          <HeroSection />
+          <WidgetGenerator />
+          <FeaturesSection />
+          <FounderSection />
+        </div>
+      </main>
+      
+      <Footer />
     </div>
   );
 };
