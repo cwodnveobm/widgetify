@@ -1,4 +1,3 @@
-
 #root {
   max-width: 100%;
   margin: 0 auto;
@@ -58,12 +57,12 @@
 /* Responsive utilities */
 .responsive-container {
   width: 100%;
-  padding-right: 0.5rem;
-  padding-left: 0.5rem;
+  max-width: 480px;
   margin-right: auto;
   margin-left: auto;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
 }
-
 @media (min-width: 640px) {
   .responsive-container {
     max-width: 640px;
@@ -71,46 +70,68 @@
     padding-left: 1rem;
   }
 }
-
 @media (min-width: 768px) {
   .responsive-container {
     max-width: 768px;
   }
 }
-
 @media (min-width: 1024px) {
   .responsive-container {
     max-width: 1024px;
   }
 }
-
 @media (min-width: 1280px) {
   .responsive-container {
     max-width: 1280px;
   }
 }
 
-/* Improved mobile responsiveness for widgets */
+.widget-container {
+  padding: 0.5rem;
+  min-width: 0;
+}
+
+/* Widget preview minimum heights and breakpoints */
 @media (max-width: 640px) {
-  .widget-container {
-    padding: 0.5rem;
-  }
-  
   .widget-preview-container {
-    min-height: 200px;
+    min-height: 130px;
+  }
+}
+@media (min-width: 641px) and (max-width: 1023px) {
+  .widget-preview-container {
+    min-height: 220px;
+  }
+}
+@media (min-width: 1024px) {
+  .widget-preview-container {
+    min-height: 250px;
   }
 }
 
-/* Improved touch interactions for mobile */
-@media (hover: none) {
-  .hover\:scale-105:hover {
-    transform: scale(1); /* Prevent hover effects on touch devices */
-  }
-  
-  button, 
+/* Hit area and touch target improvement for all clickable in mobile */
+@media (max-width: 600px) {
+  button,
   [role="button"],
   a {
-    min-height: 44px; /* Minimum touch target size */
-    min-width: 44px;
+    min-height: 44px !important;
+    min-width: 44px !important;
+    font-size: 1rem !important;
+    line-height: 1.2 !important;
+    touch-action: manipulation !important;
   }
+  label {
+    font-size: 15px !important;
+  }
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    font-size: 15px !important;
+  }
+}
+
+/* Avoid horizontal scroll on xsmall containers (global fix) */
+body, html, #root {
+  overflow-x: hidden;
+  max-width: 100vw;
 }

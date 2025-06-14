@@ -500,7 +500,8 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   };
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full min-h-[130px] sm:min-h-[250px] max-w-[360px] mx-auto flex justify-center items-end
+     overflow-visible xs:p-0 sm:p-1" style={{ touchAction: 'manipulation' }}>
       {showPopup && getWidgetContent()}
       {!showPopup && (type === 'call-now' || type === 'review-now' || type === 'follow-us') && getWidgetContent()}
       

@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import HeroSection from '@/components/HeroSection';
 import WidgetGenerator from '@/components/WidgetGenerator';
@@ -53,10 +52,10 @@ const Index: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white">
       {/* Enhanced Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 py-3 md:py-4 px-4 md:px-6 sticky top-0 z-40 shadow-sm">
-        <div className="container mx-auto flex justify-between items-center">
+      <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 py-3 md:py-4 px-2 md:px-6 sticky top-0 z-40 shadow-sm">
+        <div className="max-w-full md:container mx-auto flex justify-between items-center px-1 md:px-0">
           <div className="flex items-center gap-2">
             <div className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
               Widgetify
@@ -112,11 +111,13 @@ const Index: React.FC = () => {
         </div>
       </header>
       
-      <main className="flex-grow">
-        <HeroSection />
-        <WidgetGenerator />
-        <FeaturesSection />
-        <FounderSection />
+      <main className="flex-grow flex flex-col">
+        <div className="flex-1 w-full sm:w-auto px-0 sm:px-4">
+          <HeroSection />
+          <WidgetGenerator />
+          <FeaturesSection />
+          <FounderSection />
+        </div>
       </main>
       
       <Footer />

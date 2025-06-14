@@ -434,10 +434,13 @@ const WidgetGenerator: React.FC = () => {
   );
 
   return (
-    <section id="widget-generator" className="py-8 md:py-16 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-6 md:mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+    <section
+      id="widget-generator"
+      className="py-7 md:py-12 bg-white w-full"
+    >
+      <div className="responsive-container px-2 sm:px-4">
+        <div className="text-center mb-5 md:mb-10">
+          <h2 className="text-xl xs:text-2xl sm:text-2xl md:text-3xl font-bold mb-4">
             Create Your Widgetify Widget
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base">
@@ -445,8 +448,8 @@ const WidgetGenerator: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6 md:gap-8 max-w-7xl mx-auto">
-          <div className="bg-gray-50 p-4 md:p-6 rounded-lg shadow-sm order-2 lg:order-1">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-8 max-w-7xl mx-auto">
+          <div className="bg-gray-50 p-3 xs:p-4 md:p-6 rounded-xl shadow-sm order-2 lg:order-1">
             {/* Tier Selection */}
             <div className="mb-6">
               <h3 className="text-lg font-medium mb-3">Select Tier</h3>
@@ -887,8 +890,8 @@ const WidgetGenerator: React.FC = () => {
               </RadioGroup>
             </div>
 
-            <div className="flex justify-between items-center">
-              <Button onClick={generateWidget} variant="primary">
+            <div className="flex justify-between items-center flex-col sm:flex-row gap-2 sm:gap-0">
+              <Button onClick={generateWidget} variant="default">
                 Generate Widget Code
               </Button>
               {showCode && (
@@ -905,9 +908,10 @@ const WidgetGenerator: React.FC = () => {
               </div>
             )}
           </div>
-
-          <div className="order-1 lg:order-2">
-            <WidgetPreview config={widgetConfig} />
+          <div className="order-1 lg:order-2 w-full min-w-0">
+            <div className="w-full md:max-w-[380px] mx-auto min-h-[135px] sm:min-h-[220px]">
+              <WidgetPreview config={widgetConfig} />
+            </div>
           </div>
         </div>
       </div>
