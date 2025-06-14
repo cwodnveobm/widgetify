@@ -10,13 +10,15 @@ import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { generateWidgetCode, WidgetConfig } from '@/lib/widgetUtils';
 import WidgetPreview from './WidgetPreview';
-import { Copy, Download, Eye, EyeOff, Sparkles, Crown } from 'lucide-react';
+import { Copy, Download, Eye, EyeOff, Sparkles, Crown, Smartphone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useIsMobile } from '@/hooks/use-mobile';
 import type { WidgetType, WidgetSize } from '@/types';
 
 const WidgetGenerator: React.FC = () => {
   const { toast } = useToast();
-  const [showPreview, setShowPreview] = useState(true);
+  const isMobile = useIsMobile();
+  const [showPreview, setShowPreview] = useState(!isMobile); // Hide preview by default on mobile
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(false);
 
@@ -118,7 +120,6 @@ const WidgetGenerator: React.FC = () => {
   };
 
   const handlePremiumUpgrade = () => {
-    // Simulate payment process
     toast({
       title: "Processing Payment...",
       description: "Please wait while we process your upgrade.",
@@ -126,6 +127,7 @@ const WidgetGenerator: React.FC = () => {
     
     setTimeout(() => {
       setIsPremiumUnlocked(true);
+      setSelectedTier('premium');
       toast({
         title: "Premium Unlocked! 🎉",
         description: "You now have access to watermark-free widgets.",
@@ -140,22 +142,24 @@ const WidgetGenerator: React.FC = () => {
         return (
           <>
             <div className="space-y-2">
-              <Label htmlFor="handle">Phone Number / Handle</Label>
+              <Label htmlFor="handle" className="text-sm font-medium">Phone Number / Handle</Label>
               <Input
                 id="handle"
                 value={config.handle}
                 onChange={(e) => handleConfigChange('handle', e.target.value)}
                 placeholder="+1234567890"
+                className="text-base" // Better for mobile
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="welcomeMessage">Welcome Message</Label>
+              <Label htmlFor="welcomeMessage" className="text-sm font-medium">Welcome Message</Label>
               <Textarea
                 id="welcomeMessage"
                 value={config.welcomeMessage}
                 onChange={(e) => handleConfigChange('welcomeMessage', e.target.value)}
                 placeholder="Hello! How can I help you today?"
                 rows={3}
+                className="text-base resize-none" // Better for mobile
               />
             </div>
           </>
@@ -164,37 +168,40 @@ const WidgetGenerator: React.FC = () => {
       case 'social-share':
         return (
           <>
-            <div className="space-y-2">
-              <Label>Social Networks</Label>
-              <div className="space-y-2">
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Social Networks</Label>
+              <div className="grid grid-cols-1 gap-3">
                 {['facebook', 'twitter', 'linkedin'].map((network) => (
-                  <div key={network} className="flex items-center space-x-2">
+                  <div key={network} className="flex items-center space-x-3 p-2 rounded-lg bg-gray-50">
                     <Checkbox
                       id={network}
                       checked={config.networks?.includes(network) || false}
                       onCheckedChange={(checked) => handleNetworkChange(network, checked as boolean)}
+                      className="min-w-[20px] min-h-[20px]" // Better touch target
                     />
-                    <Label htmlFor={network} className="capitalize">{network}</Label>
+                    <Label htmlFor={network} className="capitalize font-medium text-base cursor-pointer flex-1">{network}</Label>
                   </div>
                 ))}
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="shareText">Share Text</Label>
+              <Label htmlFor="shareText" className="text-sm font-medium">Share Text</Label>
               <Input
                 id="shareText"
                 value={config.shareText}
                 onChange={(e) => handleConfigChange('shareText', e.target.value)}
                 placeholder="Check this out!"
+                className="text-base"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="shareUrl">Share URL</Label>
+              <Label htmlFor="shareUrl" className="text-sm font-medium">Share URL</Label>
               <Input
                 id="shareUrl"
                 value={config.shareUrl}
                 onChange={(e) => handleConfigChange('shareUrl', e.target.value)}
                 placeholder="https://example.com"
+                className="text-base"
               />
             </div>
           </>
@@ -203,12 +210,13 @@ const WidgetGenerator: React.FC = () => {
       case 'call-now':
         return (
           <div className="space-y-2">
-            <Label htmlFor="phoneNumber">Phone Number</Label>
+            <Label htmlFor="phoneNumber" className="text-sm font-medium">Phone Number</Label>
             <Input
               id="phoneNumber"
               value={config.phoneNumber}
               onChange={(e) => handleConfigChange('phoneNumber', e.target.value)}
               placeholder="+1234567890"
+              className="text-base"
             />
           </div>
         );
@@ -216,12 +224,13 @@ const WidgetGenerator: React.FC = () => {
       case 'review-now':
         return (
           <div className="space-y-2">
-            <Label htmlFor="reviewUrl">Review URL</Label>
+            <Label htmlFor="reviewUrl" className="text-sm font-medium">Review URL</Label>
             <Input
               id="reviewUrl"
               value={config.reviewUrl}
               onChange={(e) => handleConfigChange('reviewUrl', e.target.value)}
               placeholder="https://google.com/reviews"
+              className="text-base"
             />
           </div>
         );
@@ -230,14 +239,14 @@ const WidgetGenerator: React.FC = () => {
         return (
           <>
             <div className="space-y-2">
-              <Label htmlFor="followPlatform">Platform</Label>
+              <Label htmlFor="followPlatform" className="text-sm font-medium">Platform</Label>
               <Select
                 value={config.followPlatform}
                 onValueChange={(value: 'linkedin' | 'instagram' | 'youtube') => 
                   handleConfigChange('followPlatform', value)
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="text-base min-h-[48px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -248,12 +257,13 @@ const WidgetGenerator: React.FC = () => {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="handle">Username/Handle</Label>
+              <Label htmlFor="handle" className="text-sm font-medium">Username/Handle</Label>
               <Input
                 id="handle"
                 value={config.handle}
                 onChange={(e) => handleConfigChange('handle', e.target.value)}
                 placeholder="username"
+                className="text-base"
               />
             </div>
           </>
@@ -263,31 +273,34 @@ const WidgetGenerator: React.FC = () => {
         return (
           <>
             <div className="space-y-2">
-              <Label htmlFor="amount">Amount</Label>
+              <Label htmlFor="amount" className="text-sm font-medium">Amount</Label>
               <Input
                 id="amount"
                 type="number"
                 value={config.amount}
                 onChange={(e) => handleConfigChange('amount', parseInt(e.target.value) || 0)}
                 placeholder="99"
+                className="text-base"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="upiId">UPI ID</Label>
+              <Label htmlFor="upiId" className="text-sm font-medium">UPI ID</Label>
               <Input
                 id="upiId"
                 value={config.upiId}
                 onChange={(e) => handleConfigChange('upiId', e.target.value)}
                 placeholder="user@upi"
+                className="text-base"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="payeeName">Payee Name</Label>
+              <Label htmlFor="payeeName" className="text-sm font-medium">Payee Name</Label>
               <Input
                 id="payeeName"
                 value={config.payeeName}
                 onChange={(e) => handleConfigChange('payeeName', e.target.value)}
                 placeholder="John Doe"
+                className="text-base"
               />
             </div>
           </>
@@ -296,13 +309,14 @@ const WidgetGenerator: React.FC = () => {
       default:
         return (
           <div className="space-y-2">
-            <Label htmlFor="welcomeMessage">Welcome Message</Label>
+            <Label htmlFor="welcomeMessage" className="text-sm font-medium">Welcome Message</Label>
             <Textarea
               id="welcomeMessage"
               value={config.welcomeMessage}
               onChange={(e) => handleConfigChange('welcomeMessage', e.target.value)}
               placeholder="Hello! How can I help you today?"
               rows={3}
+              className="text-base resize-none"
             />
           </div>
         );
@@ -310,24 +324,24 @@ const WidgetGenerator: React.FC = () => {
   };
 
   return (
-    <section id="widget-generator" className="py-20 px-4">
+    <section id="widget-generator" className="py-8 md:py-20 px-2 md:px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+        <div className="text-center mb-8 md:mb-12">
+          <h2 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
             Widget Generator
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base px-4">
             Create powerful, customizable widgets in seconds. Choose your type, customize the settings, and get ready-to-use code.
           </p>
         </div>
 
-        {/* Tier Selection */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white rounded-lg p-1 shadow-md">
-            <div className="flex">
+        {/* Mobile-Optimized Tier Selection */}
+        <div className="flex justify-center mb-6 md:mb-8 px-4">
+          <div className="bg-white rounded-lg p-1 shadow-md w-full max-w-md">
+            <div className="grid grid-cols-2 gap-1">
               <button
                 onClick={() => setSelectedTier('free')}
-                className={`px-6 py-3 rounded-md flex items-center gap-2 transition-all ${
+                className={`px-3 md:px-6 py-3 md:py-3 rounded-md flex items-center justify-center gap-2 transition-all text-sm md:text-base ${
                   selectedTier === 'free'
                     ? 'bg-purple-100 text-purple-700 shadow-sm'
                     : 'text-gray-600 hover:text-purple-600'
@@ -339,7 +353,7 @@ const WidgetGenerator: React.FC = () => {
               <button
                 onClick={() => setSelectedTier('premium')}
                 disabled={!isPremiumUnlocked}
-                className={`px-6 py-3 rounded-md flex items-center gap-2 transition-all ${
+                className={`px-3 md:px-6 py-3 md:py-3 rounded-md flex items-center justify-center gap-2 transition-all text-sm md:text-base ${
                   selectedTier === 'premium' && isPremiumUnlocked
                     ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-sm'
                     : selectedTier === 'premium'
@@ -348,8 +362,8 @@ const WidgetGenerator: React.FC = () => {
                 }`}
               >
                 <Crown size={16} />
-                Premium Tier
-                {!isPremiumUnlocked && <span className="text-xs">(Locked)</span>}
+                Premium
+                {!isPremiumUnlocked && <span className="text-xs hidden md:inline">(Locked)</span>}
               </button>
             </div>
           </div>
@@ -357,16 +371,16 @@ const WidgetGenerator: React.FC = () => {
 
         {/* Premium Upgrade Banner */}
         {selectedTier === 'premium' && !isPremiumUnlocked && (
-          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-6 mb-8">
+          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4 md:p-6 mb-6 md:mb-8 mx-2 md:mx-0">
             <div className="text-center">
-              <Crown className="mx-auto mb-3 text-yellow-600" size={32} />
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Upgrade to Premium</h3>
-              <p className="text-gray-600 mb-4">
+              <Crown className="mx-auto mb-3 text-yellow-600" size={24} />
+              <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-2">Upgrade to Premium</h3>
+              <p className="text-gray-600 mb-4 text-sm md:text-base">
                 Get watermark-free widgets, priority support, and advanced customization options.
               </p>
               <Button
                 onClick={handlePremiumUpgrade}
-                className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600"
+                className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 min-h-[48px] w-full md:w-auto"
               >
                 Upgrade Now - $9.99
               </Button>
@@ -374,26 +388,26 @@ const WidgetGenerator: React.FC = () => {
           </div>
         )}
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className={`grid gap-6 md:gap-8 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-2'}`}>
           {/* Configuration Panel */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+          <Card className="mx-2 md:mx-0">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                 Configure Your Widget
                 {selectedTier === 'premium' && isPremiumUnlocked && (
                   <Crown className="text-yellow-500" size={20} />
                 )}
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4 md:space-y-6">
               {/* Widget Type Selection */}
               <div className="space-y-2">
-                <Label htmlFor="widgetType">Widget Type</Label>
+                <Label htmlFor="widgetType" className="text-sm font-medium">Widget Type</Label>
                 <Select
                   value={config.type}
                   onValueChange={(value: WidgetType) => handleConfigChange('type', value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="text-base min-h-[48px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -412,88 +426,94 @@ const WidgetGenerator: React.FC = () => {
 
               {/* Universal Settings */}
               <div className="space-y-4 pt-4 border-t">
-                <div className="space-y-2">
-                  <Label htmlFor="position">Position</Label>
-                  <Select
-                    value={config.position}
-                    onValueChange={(value: 'left' | 'right') => handleConfigChange('position', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="right">Bottom Right</SelectItem>
-                      <SelectItem value="left">Bottom Left</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="position" className="text-sm font-medium">Position</Label>
+                    <Select
+                      value={config.position}
+                      onValueChange={(value: 'left' | 'right') => handleConfigChange('position', value)}
+                    >
+                      <SelectTrigger className="text-base min-h-[48px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="right">Bottom Right</SelectItem>
+                        <SelectItem value="left">Bottom Left</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="size" className="text-sm font-medium">Size</Label>
+                    <Select
+                      value={config.size}
+                      onValueChange={(value: WidgetSize) => handleConfigChange('size', value)}
+                    >
+                      <SelectTrigger className="text-base min-h-[48px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="small">Small</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="large">Large</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="size">Size</Label>
-                  <Select
-                    value={config.size}
-                    onValueChange={(value: WidgetSize) => handleConfigChange('size', value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="small">Small</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="large">Large</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="primaryColor">Primary Color</Label>
+                  <Label htmlFor="primaryColor" className="text-sm font-medium">Primary Color</Label>
                   <div className="flex gap-2">
                     <Input
                       id="primaryColor"
                       type="color"
                       value={config.primaryColor}
                       onChange={(e) => handleConfigChange('primaryColor', e.target.value)}
-                      className="w-16 h-10 p-1 rounded"
+                      className="w-16 h-12 p-1 rounded flex-shrink-0"
                     />
                     <Input
                       value={config.primaryColor}
                       onChange={(e) => handleConfigChange('primaryColor', e.target.value)}
                       placeholder="#25D366"
-                      className="flex-1"
+                      className="flex-1 text-base"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex gap-2 pt-4">
-                <Button onClick={copyToClipboard} className="flex-1">
+              {/* Mobile-Optimized Action Buttons */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-4">
+                <Button onClick={copyToClipboard} className="min-h-[48px] order-1">
                   <Copy size={16} className="mr-2" />
                   Copy Code
                 </Button>
-                <Button onClick={downloadCode} variant="outline" className="flex-1">
+                <Button onClick={downloadCode} variant="outline" className="min-h-[48px] order-2">
                   <Download size={16} className="mr-2" />
                   Download
                 </Button>
                 <Button
                   onClick={() => setShowPreview(!showPreview)}
                   variant="outline"
-                  size="icon"
+                  className="min-h-[48px] order-3 md:order-3"
                 >
-                  {showPreview ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {showPreview ? <EyeOff size={16} className="mr-2" /> : <Eye size={16} className="mr-2" />}
+                  {isMobile ? (showPreview ? 'Hide' : 'Show') : ''} Preview
                 </Button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Preview Panel */}
+          {/* Preview Panel - Conditional rendering for mobile */}
           {showPreview && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Live Preview</CardTitle>
+            <Card className="mx-2 md:mx-0">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
+                  <Smartphone size={20} className="md:hidden" />
+                  Live Preview
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="bg-gray-50 rounded-lg p-4 min-h-[400px] relative">
+                <div className="bg-gray-50 rounded-lg p-4 min-h-[300px] md:min-h-[400px] relative">
                   <WidgetPreview 
                     config={{
                       ...config,
@@ -502,7 +522,7 @@ const WidgetGenerator: React.FC = () => {
                   />
                 </div>
                 
-                {/* Tier Info */}
+                {/* Mobile-Optimized Tier Info */}
                 <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">
@@ -525,17 +545,28 @@ const WidgetGenerator: React.FC = () => {
           )}
         </div>
 
-        {/* Generated Code Display */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Generated Code</CardTitle>
+        {/* Mobile-Optimized Generated Code Display */}
+        <Card className="mt-6 md:mt-8 mx-2 md:mx-0">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg md:text-xl">Generated Code</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-auto max-h-96">
-              <pre className="text-sm">
+            <div className="bg-gray-900 text-gray-100 p-3 md:p-4 rounded-lg overflow-auto max-h-64 md:max-h-96">
+              <pre className="text-xs md:text-sm whitespace-pre-wrap break-all">
                 <code>{generateCode()}</code>
               </pre>
             </div>
+            {/* Mobile Copy Button */}
+            {isMobile && (
+              <Button 
+                onClick={copyToClipboard} 
+                className="w-full mt-3 min-h-[48px]"
+                variant="outline"
+              >
+                <Copy size={16} className="mr-2" />
+                Copy Generated Code
+              </Button>
+            )}
           </CardContent>
         </Card>
       </div>
