@@ -437,7 +437,9 @@ const WidgetGenerator: React.FC = () => {
     <section id="widget-generator" className="py-8 md:py-16 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-6 md:mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">Create Your Widgetify Widget</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
+            Create Your Widgetify Widget
+          </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base">
             Customize your chat widget in a few simple steps. Choose between free or premium tiers.
           </p>
@@ -689,4 +691,243 @@ const WidgetGenerator: React.FC = () => {
                         onCheckedChange={() => handleNetworkToggle('twitter')} 
                       />
                       <label htmlFor="twitter-network" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
-                        <Twitter className="h-5 w-5 text-[#1DA1F2
+                        <Twitter className="h-5 w-5 text-[#1DA1F2]" />
+                        Twitter
+                      </label>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Checkbox 
+                        id="linkedin-network" 
+                        checked={widgetConfig.networks?.includes('linkedin')} 
+                        onCheckedChange={() => handleNetworkToggle('linkedin')} 
+                      />
+                      <label htmlFor="linkedin-network" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2">
+                        <Linkedin className="h-5 w-5 text-[#0077b5]" />
+                        LinkedIn
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <Label htmlFor="shareUrl">{getInputLabel()}</Label>
+                  <Input
+                    id="shareUrl"
+                    name="handle"
+                    placeholder={getPlaceholderText()}
+                    value={widgetConfig.handle}
+                    onChange={handleInputChange}
+                  />
+                </div>
+
+                <div className="mb-4">
+                  <Label htmlFor="shareText">Share Text</Label>
+                  <Textarea
+                    id="shareText"
+                    name="shareText"
+                    placeholder="Text to share with the link"
+                    value={widgetConfig.shareText}
+                    onChange={handleInputChange}
+                    rows={3}
+                  />
+                </div>
+              </>
+            )}
+
+            {(widgetConfig.type === 'whatsapp' || widgetConfig.type === 'facebook' || widgetConfig.type === 'instagram' || widgetConfig.type === 'twitter' || widgetConfig.type === 'telegram' || widgetConfig.type === 'linkedin' || widgetConfig.type === 'youtube' || widgetConfig.type === 'github' || widgetConfig.type === 'twitch' || widgetConfig.type === 'slack' || widgetConfig.type === 'discord' || widgetConfig.type === 'follow-us') && (
+              <div className="mb-4">
+                <Label htmlFor="handle">{getInputLabel()}</Label>
+                <Input
+                  id="handle"
+                  name="handle"
+                  placeholder={getPlaceholderText()}
+                  value={widgetConfig.handle}
+                  onChange={handleInputChange}
+                />
+              </div>
+            )}
+
+            {widgetConfig.type === 'call-now' && (
+              <div className="mb-4">
+                <Label htmlFor="phoneNumber">{getInputLabel()}</Label>
+                <Input
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  placeholder={getPlaceholderText()}
+                  value={widgetConfig.phoneNumber}
+                  onChange={handleInputChange}
+                />
+              </div>
+            )}
+
+            {widgetConfig.type === 'review-now' && (
+              <div className="mb-4">
+                <Label htmlFor="reviewUrl">{getInputLabel()}</Label>
+                <Input
+                  id="reviewUrl"
+                  name="reviewUrl"
+                  placeholder={getPlaceholderText()}
+                  value={widgetConfig.reviewUrl}
+                  onChange={handleInputChange}
+                />
+              </div>
+            )}
+
+            {widgetConfig.type === 'follow-us' && (
+              <div className="mb-4">
+                <Label htmlFor="handle">{getInputLabel()}</Label>
+                <Input
+                  id="handle"
+                  name="handle"
+                  placeholder={getPlaceholderText()}
+                  value={widgetConfig.handle}
+                  onChange={handleInputChange}
+                />
+                <div className="mt-3">
+                  <Label>Platform</Label>
+                  <Select value={widgetConfig.followPlatform} onValueChange={handleFollowPlatformChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select platform" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="linkedin">LinkedIn</SelectItem>
+                        <SelectItem value="instagram">Instagram</SelectItem>
+                        <SelectItem value="youtube">YouTube</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
+
+            {widgetConfig.type === 'dodo-payment' && (
+              <>
+                <div className="mb-4">
+                  <Label htmlFor="amount">{getInputLabel()}</Label>
+                  <Input
+                    id="amount"
+                    name="amount"
+                    type="number"
+                    min={0}
+                    placeholder={getPlaceholderText()}
+                    value={widgetConfig.amount}
+                    onChange={e => setWidgetConfig({ ...widgetConfig, amount: Number(e.target.value) })}
+                  />
+                </div>
+                <div className="mb-4">
+                  <Label htmlFor="currency">Currency</Label>
+                  <Select value={widgetConfig.currency} onValueChange={handleCurrencyChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="USD">USD</SelectItem>
+                        <SelectItem value="INR">INR</SelectItem>
+                        <SelectItem value="EUR">EUR</SelectItem>
+                        <SelectItem value="GBP">GBP</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="mb-4">
+                  <Label htmlFor="paymentDescription">Payment Description</Label>
+                  <Input
+                    id="paymentDescription"
+                    name="paymentDescription"
+                    placeholder="Description for the payment"
+                    value={widgetConfig.paymentDescription}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </>
+            )}
+
+            <div className="mb-4">
+              <Label>Position</Label>
+              <RadioGroup value={widgetConfig.position} onValueChange={handlePositionChange} className="flex space-x-4">
+                <div>
+                  <RadioGroupItem value="left" id="position-left" className="peer sr-only" />
+                  <Label htmlFor="position-left" className="cursor-pointer rounded-md border border-muted px-3 py-1 text-sm peer-checked:bg-primary peer-checked:text-white">
+                    Left
+                  </Label>
+                </div>
+                <div>
+                  <RadioGroupItem value="right" id="position-right" className="peer sr-only" />
+                  <Label htmlFor="position-right" className="cursor-pointer rounded-md border border-muted px-3 py-1 text-sm peer-checked:bg-primary peer-checked:text-white">
+                    Right
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div className="mb-4">
+              <Label>Size</Label>
+              <RadioGroup value={widgetConfig.size} onValueChange={handleSizeChange} className="flex space-x-4">
+                <div>
+                  <RadioGroupItem value="small" id="size-small" className="peer sr-only" />
+                  <Label htmlFor="size-small" className="cursor-pointer rounded-md border border-muted px-3 py-1 text-sm peer-checked:bg-primary peer-checked:text-white">
+                    Small
+                  </Label>
+                </div>
+                <div>
+                  <RadioGroupItem value="medium" id="size-medium" className="peer sr-only" />
+                  <Label htmlFor="size-medium" className="cursor-pointer rounded-md border border-muted px-3 py-1 text-sm peer-checked:bg-primary peer-checked:text-white">
+                    Medium
+                  </Label>
+                </div>
+                <div>
+                  <RadioGroupItem value="large" id="size-large" className="peer sr-only" />
+                  <Label htmlFor="size-large" className="cursor-pointer rounded-md border border-muted px-3 py-1 text-sm peer-checked:bg-primary peer-checked:text-white">
+                    Large
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <Button onClick={generateWidget} variant="primary">
+                Generate Widget Code
+              </Button>
+              {showCode && (
+                <Button onClick={copyToClipboard} variant="outline">
+                  Copy Code
+                </Button>
+              )}
+            </div>
+
+            {showCode && (
+              <div className="mt-6">
+                <Label>Generated Code</Label>
+                <Textarea readOnly value={code} rows={10} />
+              </div>
+            )}
+          </div>
+
+          <div className="order-1 lg:order-2">
+            <WidgetPreview config={widgetConfig} />
+          </div>
+        </div>
+      </div>
+
+      <Dialog open={showPaymentDialog} onOpenChange={setShowPaymentDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Upgrade to Premium</DialogTitle>
+          </DialogHeader>
+          <p className="mb-4">
+            To access premium features and generate watermark-free widgets, please complete the payment.
+          </p>
+          <UPIPaymentGateway />
+          <div className="mt-4 flex justify-end space-x-2">
+            <Button variant="outline" onClick={() => setShowPaymentDialog(false)}>Cancel</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </section>
+  );
+};
+
+export default WidgetGenerator;
