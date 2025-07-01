@@ -1,3 +1,4 @@
+
 import { WidgetType, WidgetSize } from '@/types';
 
 export interface WidgetConfig {
@@ -21,24 +22,8 @@ export interface WidgetConfig {
   isPremium?: boolean;
 }
 
-/**
- * FREE TIER WIDGET CODE
- * - Includes Widgetify watermark and footer
- * - Fully functional with all widget types
- * - Perfect for personal projects and testing
- * - No payment required
- */
-
-/**
- * PREMIUM TIER WIDGET CODE  
- * - No watermark or branding
- * - Clean, professional appearance
- * - Optimized for commercial use
- * - Requires one-time payment validation
- */
-
 export const generateWidgetCode = (config: WidgetConfig): string => {
-  const { type, handle, welcomeMessage, position, primaryColor, size, networks, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, amount, currency, paymentDescription, upiId, payeeName, isPremium = false } = config;
+  const { type, handle, welcomeMessage, position, primaryColor, size, networks, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, amount, currency, paymentDescription, upiId, payeeName } = config;
   
   const sizeMap = {
     small: '50px',
@@ -50,44 +35,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
   const buttonColor = primaryColor || '#25D366';
   const positionStyle = position === 'left' ? 'left: 20px;' : 'right: 20px;';
 
-  // Watermark styles - only show if not premium
-  const watermarkStyles = !isPremium ? `
-    .widgetify-watermark {
-      position: absolute;
-      bottom: 2px;
-      ${position === 'left' ? 'left: 2px;' : 'right: 2px;'}
-      font-size: 9px;
-      color: rgba(255, 255, 255, 0.7);
-      background: rgba(0, 0, 0, 0.3);
-      padding: 2px 6px;
-      border-radius: 8px;
-      backdrop-filter: blur(5px);
-      z-index: 100;
-    }
-    
-    .widgetify-watermark a {
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      font-size: 9px;
-      font-weight: 500;
-      letter-spacing: 0.3px;
-      transition: color 0.2s ease;
-    }
-    
-    .widgetify-watermark a:hover {
-      color: rgba(255, 255, 255, 1);
-    }
-  ` : '';
-
-  const watermarkHTML = !isPremium ? `<div class="widgetify-watermark"><a href="https://widgetify-two.vercel.app/" target="_blank" rel="noopener noreferrer">✨ Widgetify</a></div>` : '';
-
-  const footerHTML = !isPremium ? `
-    <div class="widgetify-footer" style="text-align: center; padding: 8px; border-top: 1px solid #e5e7eb; background-color: #f9fafb;">
-      <a href="https://widgetify-two.vercel.app/" target="_blank" rel="noopener noreferrer" style="font-size: 10px; color: #6b7280; text-decoration: none;">Powered by Widgetify</a>
-    </div>
-  ` : '';
-
-  // Base responsive widget styles with conditional watermark
+  // Base responsive widget styles without watermark
   const baseStyles = `
     <style>
       /* Widgetify Core Styles - Responsive & Mobile-First */
@@ -274,27 +222,6 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           font-size: 11px !important;
         }
       }
-
-      .widgetify-footer {
-        text-align: center;
-        padding: 8px;
-        border-top: 1px solid #e5e7eb;
-        background-color: #f9fafb;
-        margin: 12px -20px -20px -20px;
-        border-radius: 0 0 10px 10px;
-      }
-
-      .widgetify-footer a {
-        font-size: 10px;
-        color: #6b7280;
-        text-decoration: none;
-      }
-
-      .widgetify-footer a:hover {
-        color: #374151;
-      }
-
-      ${watermarkStyles}
     </style>
   `;
 
@@ -306,7 +233,6 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M17.6 6.32A7.85 7.85 0 0 0 12 4.02a7.95 7.95 0 0 0-6.9 12.07L4 20.02l4.05-1.06A8.02 8.02 0 0 0 12 20.02a7.98 7.98 0 0 0 8-7.93c0-2.12-.83-4.12-2.4-5.62V6.32zm-5.6 12.2c-1.18 0-2.33-.32-3.33-.92l-.24-.14-2.47.65.66-2.41-.16-.25a6.63 6.63 0 0 1-1.02-3.52 6.57 6.57 0 0 1 11.29-4.57 6.45 6.45 0 0 1 2 4.55 6.57 6.57 0 0 1-6.57 6.57l-.16.04zm3.6-4.93c-.2-.1-1.17-.58-1.35-.64-.18-.06-.31-.1-.44.1-.13.2-.5.64-.61.77-.11.13-.23.15-.42.05-.2-.1-.84-.31-1.6-.99-.59-.52-.99-1.17-1.1-1.37-.12-.2-.01-.31.09-.41.09-.09.2-.23.3-.35.1-.12.13-.2.2-.33.07-.13.03-.24-.02-.34-.05-.1-.44-1.06-.6-1.45-.16-.38-.32-.33-.44-.33-.11 0-.24-.02-.37-.02-.13 0-.34.05-.52.25-.18.2-.68.67-.68 1.62 0 .96.7 1.88.8 2 .1.14 1.4 2.16 3.42 3.02.48.2.85.33 1.14.43.48.15.91.13 1.26.08.38-.06 1.17-.48 1.33-.94.17-.46.17-.86.12-.94-.05-.08-.18-.12-.37-.21z" fill="white"/>
           </svg>
-          ${watermarkHTML}
         </div>
 
         <div id="widgetify-popup" class="widgetify-popup" role="dialog" aria-labelledby="chat-title">
@@ -328,7 +254,6 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
                 </svg>
               </button>
             </div>
-            ${footerHTML}
           </div>
         </div>
 
@@ -345,7 +270,6 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
             <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
           </svg>
-          ${watermarkHTML}
         </div>`;
 
     case 'social-share':
@@ -390,7 +314,6 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
             <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/>
           </svg>
-          ${watermarkHTML}
         </div>
 
         <div id="widgetify-social-container" class="widgetify-social-container">
@@ -428,7 +351,6 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
           </svg>
-          ${watermarkHTML}
         </div>
 
         <div id="widgetify-payment-popup" class="widgetify-popup" role="dialog" aria-labelledby="payment-title">
@@ -460,7 +382,6 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           </div>
 
           <p class="upi-gateway-note">Supports PhonePe, Google Pay, Paytm, BHIM & all UPI apps<br>Secure payment powered by UPI</p>
-          ${footerHTML}
         </div>
 
         <script>
@@ -476,7 +397,6 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
             <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
           </svg>
-          ${watermarkHTML}
         </div>
 
         <div id="widgetify-popup" class="widgetify-popup" role="dialog" aria-labelledby="widget-title">
@@ -487,7 +407,6 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           <div class="widgetify-content">
             <p>Start a conversation!</p>
           </div>
-          ${footerHTML}
         </div>
 
         <script>

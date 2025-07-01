@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
 import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone } from 'lucide-react';
@@ -93,41 +94,6 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     transition: 'all 0.3s ease',
     zIndex: 60,
   } as React.CSSProperties;
-
-  // Watermark style component
-  const WidgetifyWatermark = ({ style = {} }: { style?: React.CSSProperties }) => (
-    <div style={{
-      position: 'absolute',
-      bottom: '2px',
-      [position || 'right']: '2px',
-      fontSize: '9px',
-      color: 'rgba(255, 255, 255, 0.7)',
-      background: 'rgba(0, 0, 0, 0.3)',
-      padding: '2px 6px',
-      borderRadius: '8px',
-      backdropFilter: 'blur(5px)',
-      zIndex: 100,
-      ...style
-    }}>
-      <a 
-        href="https://widgetify-two.vercel.app/" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        style={{
-          color: 'rgba(255, 255, 255, 0.8)',
-          textDecoration: 'none',
-          fontSize: '9px',
-          fontWeight: '500',
-          letterSpacing: '0.3px',
-          transition: 'color 0.2s ease'
-        }}
-        onMouseEnter={(e) => (e.target as HTMLAnchorElement).style.color = 'rgba(255, 255, 255, 1)'}
-        onMouseLeave={(e) => (e.target as HTMLAnchorElement).style.color = 'rgba(255, 255, 255, 0.8)'}
-      >
-        ✨ Widgetify
-      </a>
-    </div>
-  );
 
   // Custom Icon Components
   const WhatsAppIcon = ({ size }: { size: number }) => (
@@ -362,16 +328,6 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             Pay Now
           </button>
         </div>
-        <div className="text-xs text-gray-500 text-center p-2">
-          <a 
-            href="https://widgetify-two.vercel.app/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-gray-500 no-underline hover:text-gray-700 transition-colors"
-          >
-            Powered by Widgetify
-          </a>
-        </div>
       </div>
     );
   };
@@ -397,16 +353,6 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
           <p className="text-xs text-gray-500 text-center">
             This widget integrates Google Translate for automatic page translation.
           </p>
-        </div>
-        <div className="text-xs text-gray-500 text-center p-2">
-          <a 
-            href="https://widgetify-two.vercel.app/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-gray-500 no-underline hover:text-gray-700 transition-colors"
-          >
-            Powered by Widgetify
-          </a>
         </div>
       </div>
     );
@@ -438,16 +384,6 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
                 <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
               </svg>
             </button>
-          </div>
-          <div className="text-xs text-gray-500 text-center mt-2">
-            <a 
-              href="https://widgetify-two.vercel.app/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-gray-500 no-underline hover:text-gray-700 transition-colors"
-            >
-              Powered by Widgetify
-            </a>
           </div>
         </div>
       </div>
@@ -511,7 +447,6 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         onClick={handleMainButtonClick}
       >
         {getIcon()}
-        <WidgetifyWatermark />
       </div>
     </div>
   );
