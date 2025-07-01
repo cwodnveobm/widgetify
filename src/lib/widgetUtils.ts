@@ -35,7 +35,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
   const buttonColor = primaryColor || '#25D366';
   const positionStyle = position === 'left' ? 'left: 20px;' : 'right: 20px;';
 
-  // Base responsive widget styles without watermark
+  // Base responsive widget styles with watermark for chat widgets
   const baseStyles = `
     <style>
       /* Widgetify Core Styles - Responsive & Mobile-First */
@@ -130,6 +130,26 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
       }
 
       .widgetify-close:hover {
+        color: #374151;
+      }
+
+      .widgetify-watermark {
+        background-color: #f9fafb;
+        border-top: 1px solid #e5e7eb;
+        padding: 8px 12px;
+        text-align: center;
+        margin: 20px -20px -20px -20px;
+        border-radius: 0 0 10px 10px;
+      }
+
+      .widgetify-watermark a {
+        color: #6b7280;
+        text-decoration: none;
+        font-size: 10px;
+        font-weight: 500;
+      }
+
+      .widgetify-watermark a:hover {
         color: #374151;
       }
 
@@ -254,6 +274,9 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
                 </svg>
               </button>
             </div>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
           </div>
         </div>
 
@@ -382,6 +405,10 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           </div>
 
           <p class="upi-gateway-note">Supports PhonePe, Google Pay, Paytm, BHIM & all UPI apps<br>Secure payment powered by UPI</p>
+          
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
         </div>
 
         <script>
@@ -406,6 +433,9 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           </div>
           <div class="widgetify-content">
             <p>Start a conversation!</p>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
           </div>
         </div>
 

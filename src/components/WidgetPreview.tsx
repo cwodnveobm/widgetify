@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
 import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone } from 'lucide-react';
@@ -328,6 +327,11 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             Pay Now
           </button>
         </div>
+        <div className="bg-gray-50 border-t p-2 text-center">
+          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-gray-500 text-xs hover:text-gray-700 transition-colors">
+            Powered by Widgetify
+          </a>
+        </div>
       </div>
     );
   };
@@ -385,6 +389,11 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
               </svg>
             </button>
           </div>
+        </div>
+        <div className="bg-gray-50 border-t p-2 text-center">
+          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-gray-500 text-xs hover:text-gray-700 transition-colors">
+            Powered by Widgetify
+          </a>
         </div>
       </div>
     );
