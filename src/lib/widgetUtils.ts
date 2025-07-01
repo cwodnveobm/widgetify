@@ -1,3 +1,4 @@
+
 import { WidgetType, WidgetSize } from '@/types';
 
 export interface WidgetConfig {
@@ -655,7 +656,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         </div>
 
         <script>
-          let selectedRating = 0;
+          var selectedRating = 0;
           
           function toggleWidgetifyFeedback() {
             const popup = document.getElementById('widgetify-feedback-popup');
