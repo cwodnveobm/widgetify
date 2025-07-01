@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -306,6 +305,104 @@ const WidgetGenerator: React.FC = () => {
           </>
         );
 
+      case 'email-contact':
+        return (
+          <div className="space-y-2">
+            <Label htmlFor="emailAddress" className="text-sm font-medium">Email Address</Label>
+            <Input
+              id="emailAddress"
+              value={config.emailAddress}
+              onChange={(e) => handleConfigChange('emailAddress', e.target.value)}
+              placeholder="contact@example.com"
+              className="text-base"
+            />
+          </div>
+        );
+
+      case 'live-chat':
+        return (
+          <div className="space-y-2">
+            <Label htmlFor="welcomeMessage" className="text-sm font-medium">Welcome Message</Label>
+            <Textarea
+              id="welcomeMessage"
+              value={config.welcomeMessage}
+              onChange={(e) => handleConfigChange('welcomeMessage', e.target.value)}
+              placeholder="Hello! How can I help you today?"
+              rows={3}
+              className="text-base resize-none"
+            />
+          </div>
+        );
+
+      case 'booking-calendar':
+        return (
+          <div className="space-y-2">
+            <Label htmlFor="bookingUrl" className="text-sm font-medium">Booking URL</Label>
+            <Input
+              id="bookingUrl"
+              value={config.bookingUrl}
+              onChange={(e) => handleConfigChange('bookingUrl', e.target.value)}
+              placeholder="https://calendly.com/your-link"
+              className="text-base"
+            />
+          </div>
+        );
+
+      case 'newsletter-signup':
+        return (
+          <div className="space-y-2">
+            <Label htmlFor="welcomeMessage" className="text-sm font-medium">Newsletter Description</Label>
+            <Textarea
+              id="welcomeMessage"
+              value={config.welcomeMessage}
+              onChange={(e) => handleConfigChange('welcomeMessage', e.target.value)}
+              placeholder="Get the latest news and updates"
+              rows={2}
+              className="text-base resize-none"
+            />
+          </div>
+        );
+
+      case 'feedback-form':
+        return (
+          <div className="space-y-2">
+            <Label htmlFor="feedbackUrl" className="text-sm font-medium">Feedback URL (optional)</Label>
+            <Input
+              id="feedbackUrl"
+              value={config.feedbackUrl}
+              onChange={(e) => handleConfigChange('feedbackUrl', e.target.value)}
+              placeholder="mailto:feedback@example.com"
+              className="text-base"
+            />
+          </div>
+        );
+
+      case 'download-app':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="appStoreUrl" className="text-sm font-medium">App Store URL</Label>
+              <Input
+                id="appStoreUrl"
+                value={config.appStoreUrl}
+                onChange={(e) => handleConfigChange('appStoreUrl', e.target.value)}
+                placeholder="https://apps.apple.com/..."
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="playStoreUrl" className="text-sm font-medium">Play Store URL</Label>
+              <Input
+                id="playStoreUrl"
+                value={config.playStoreUrl}
+                onChange={(e) => handleConfigChange('playStoreUrl', e.target.value)}
+                placeholder="https://play.google.com/store/..."
+                className="text-base"
+              />
+            </div>
+          </>
+        );
+
       default:
         return (
           <div className="space-y-2">
@@ -417,6 +514,12 @@ const WidgetGenerator: React.FC = () => {
                     <SelectItem value="review-now">Review Now</SelectItem>
                     <SelectItem value="follow-us">Follow Us</SelectItem>
                     <SelectItem value="dodo-payment">Dodo Payment</SelectItem>
+                    <SelectItem value="email-contact">Email Contact</SelectItem>
+                    <SelectItem value="live-chat">Live Chat</SelectItem>
+                    <SelectItem value="booking-calendar">Booking Calendar</SelectItem>
+                    <SelectItem value="newsletter-signup">Newsletter Signup</SelectItem>
+                    <SelectItem value="feedback-form">Feedback Form</SelectItem>
+                    <SelectItem value="download-app">Download App</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

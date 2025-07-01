@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
-import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone, Mail, Calendar, FileText, Download, Users } from 'lucide-react';
 
 interface WidgetPreviewProps {
   config: WidgetConfig;
@@ -174,6 +174,18 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return <Star size={iconSize} color="white" />;
       case 'dodo-payment':
         return <DollarIcon size={iconSize} />;
+      case 'email-contact':
+        return <Mail size={iconSize} color="white" />;
+      case 'live-chat':
+        return <Users size={iconSize} color="white" />;
+      case 'booking-calendar':
+        return <Calendar size={iconSize} color="white" />;
+      case 'newsletter-signup':
+        return <Mail size={iconSize} color="white" />;
+      case 'feedback-form':
+        return <FileText size={iconSize} color="white" />;
+      case 'download-app':
+        return <Download size={iconSize} color="white" />;
       case 'follow-us':
         const platform = config.followPlatform || 'linkedin';
         if (platform === 'instagram') return <Instagram size={iconSize} color="white" />;
@@ -276,6 +288,12 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       case 'review-now': return 'Leave a Review';
       case 'follow-us': return 'Follow Us';
       case 'dodo-payment': return 'Dodo Payment';
+      case 'email-contact': return 'Send Email';
+      case 'live-chat': return 'Live Chat';
+      case 'booking-calendar': return 'Book Appointment';
+      case 'newsletter-signup': return 'Subscribe';
+      case 'feedback-form': return 'Send Feedback';
+      case 'download-app': return 'Download App';
       default: return 'Chat';
     }
   };
@@ -438,6 +456,16 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         } else {
           window.open(`https://www.linkedin.com/in/${handle}`, '_blank');
         }
+        break;
+      case 'email-contact':
+        window.location.href = `mailto:${config.emailAddress || 'contact@example.com'}`;
+        break;
+      case 'booking-calendar':
+        window.open(config.bookingUrl || 'https://calendly.com/example', '_blank');
+        break;
+      case 'download-app':
+        // Show popup for app download options
+        togglePopup();
         break;
       default:
         togglePopup();

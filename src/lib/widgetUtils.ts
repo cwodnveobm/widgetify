@@ -1,4 +1,3 @@
-
 import { WidgetType, WidgetSize } from '@/types';
 
 export interface WidgetConfig {
@@ -20,10 +19,15 @@ export interface WidgetConfig {
   upiId?: string;
   payeeName?: string;
   isPremium?: boolean;
+  emailAddress?: string;
+  bookingUrl?: string;
+  appStoreUrl?: string;
+  playStoreUrl?: string;
+  feedbackUrl?: string;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
-  const { type, handle, welcomeMessage, position, primaryColor, size, networks, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, amount, currency, paymentDescription, upiId, payeeName } = config;
+  const { type, handle, welcomeMessage, position, primaryColor, size, networks, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, amount, currency, paymentDescription, upiId, payeeName, emailAddress, bookingUrl, appStoreUrl, playStoreUrl, feedbackUrl } = config;
   
   const sizeMap = {
     small: '50px',
@@ -415,6 +419,321 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           function toggleWidgetifyPayment() {
             const popup = document.getElementById('widgetify-payment-popup');
             popup.classList.toggle('show');
+          }
+        </script>`;
+
+    case 'email-contact':
+      return `${baseStyles}
+        <div id="widgetify-email" class="widgetify-widget" onclick="toggleWidgetifyEmail()" aria-label="Send Email">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-email-popup" class="widgetify-popup" role="dialog" aria-labelledby="email-title">
+          <div class="widgetify-header">
+            <h3 id="email-title">Send Email</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyEmail()" aria-label="Close email">×</button>
+          </div>
+          <div class="widgetify-content" style="padding: 20px;">
+            <form onsubmit="sendEmail(event)">
+              <input type="text" placeholder="Your Name" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
+              <input type="email" placeholder="Your Email" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
+              <textarea placeholder="Your Message" required rows="4" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; resize: vertical;"></textarea>
+              <button type="submit" style="width: 100%; padding: 12px; background: ${buttonColor}; color: white; border: none; border-radius: 4px; cursor: pointer;">Send Email</button>
+            </form>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <script>
+          function toggleWidgetifyEmail() {
+            const popup = document.getElementById('widgetify-email-popup');
+            popup.classList.toggle('show');
+          }
+          
+          function sendEmail(e) {
+            e.preventDefault();
+            window.location.href = 'mailto:${emailAddress || 'contact@example.com'}?subject=Contact from Website&body=' + encodeURIComponent(e.target.elements[2].value);
+          }
+        </script>`;
+
+    case 'live-chat':
+      return `${baseStyles}
+        <div id="widgetify-livechat" class="widgetify-widget" onclick="toggleWidgetifyLiveChat()" aria-label="Live Chat">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <path d="M8 10h.01M12 10h.01M16 10h.01"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-livechat-popup" class="widgetify-popup" role="dialog" aria-labelledby="livechat-title">
+          <div class="widgetify-header">
+            <h3 id="livechat-title">Live Chat</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyLiveChat()" aria-label="Close chat">×</button>
+          </div>
+          <div class="widgetify-content" style="padding: 20px; height: 200px; overflow-y: auto;">
+            <div style="background: #f0f0f0; padding: 10px; border-radius: 10px; margin-bottom: 10px;">
+              <p style="margin: 0; font-size: 14px;">${welcomeMessage || 'Hello! How can I help you today?'}</p>
+            </div>
+            <div style="text-align: center; color: #666; font-size: 12px; margin-top: 20px;">
+              <div style="display: inline-block; width: 8px; height: 8px; background: #4CAF50; border-radius: 50%; margin-right: 5px;"></div>
+              Agent online - Average response time: 2 minutes
+            </div>
+          </div>
+          <div style="padding: 12px; border-top: 1px solid #e5e7eb; background-color: #f9fafb;">
+            <div style="display: flex; gap: 8px;">
+              <input type="text" placeholder="Type your message..." style="flex-grow: 1; font-size: 12px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; outline: none;">
+              <button onclick="startLiveChat()" style="background-color: ${buttonColor}; color: white; padding: 8px; border: none; border-radius: 6px; cursor: pointer;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <script>
+          function toggleWidgetifyLiveChat() {
+            const popup = document.getElementById('widgetify-livechat-popup');
+            popup.classList.toggle('show');
+          }
+          
+          function startLiveChat() {
+            alert('Live chat feature would connect to your preferred chat service (Intercom, Zendesk, etc.)');
+          }
+        </script>`;
+
+    case 'booking-calendar':
+      return `${baseStyles}
+        <div id="widgetify-booking" class="widgetify-widget" onclick="toggleWidgetifyBooking()" aria-label="Book Appointment">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-booking-popup" class="widgetify-popup" role="dialog" aria-labelledby="booking-title">
+          <div class="widgetify-header">
+            <h3 id="booking-title">Book Appointment</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyBooking()" aria-label="Close booking">×</button>
+          </div>
+          <div class="widgetify-content" style="padding: 20px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <h4 style="margin: 0 0 10px 0; color: #333;">Schedule a Meeting</h4>
+              <p style="margin: 0; color: #666; font-size: 14px;">Choose your preferred date and time</p>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+              <div>
+                <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #666;">Date</label>
+                <input type="date" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              </div>
+              <div>
+                <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #666;">Time</label>
+                <select style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                  <option>9:00 AM</option>
+                  <option>10:00 AM</option>
+                  <option>11:00 AM</option>
+                  <option>2:00 PM</option>
+                  <option>3:00 PM</option>
+                  <option>4:00 PM</option>
+                </select>
+              </div>
+            </div>
+            <input type="text" placeholder="Your Name" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            <input type="email" placeholder="Your Email" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px;">
+            <button onclick="bookAppointment()" style="width: 100%; padding: 12px; background: ${buttonColor}; color: white; border: none; border-radius: 4px; cursor: pointer;">Book Appointment</button>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <script>
+          function toggleWidgetifyBooking() {
+            const popup = document.getElementById('widgetify-booking-popup');
+            popup.classList.toggle('show');
+          }
+          
+          function bookAppointment() {
+            window.open('${bookingUrl || 'https://calendly.com/example'}', '_blank');
+          }
+        </script>`;
+
+    case 'newsletter-signup':
+      return `${baseStyles}
+        <div id="widgetify-newsletter" class="widgetify-widget" onclick="toggleWidgetifyNewsletter()" aria-label="Subscribe Newsletter">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+            <circle cx="18" cy="8" r="3" fill="red"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-newsletter-popup" class="widgetify-popup" role="dialog" aria-labelledby="newsletter-title">
+          <div class="widgetify-header">
+            <h3 id="newsletter-title">Subscribe to Newsletter</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyNewsletter()" aria-label="Close newsletter">×</button>
+          </div>
+          <div class="widgetify-content" style="padding: 20px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <h4 style="margin: 0 0 10px 0; color: #333;">Stay Updated!</h4>
+              <p style="margin: 0; color: #666; font-size: 14px;">Get the latest news and updates delivered to your inbox</p>
+            </div>
+            <form onsubmit="subscribeNewsletter(event)">
+              <input type="email" placeholder="Enter your email address" required style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px;">
+              <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                <input type="checkbox" id="agree" required style="margin-right: 8px;">
+                <label for="agree" style="font-size: 12px; color: #666;">I agree to receive marketing emails</label>
+              </div>
+              <button type="submit" style="width: 100%; padding: 12px; background: ${buttonColor}; color: white; border: none; border-radius: 4px; cursor: pointer;">Subscribe Now</button>
+            </form>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <script>
+          function toggleWidgetifyNewsletter() {
+            const popup = document.getElementById('widgetify-newsletter-popup');
+            popup.classList.toggle('show');
+          }
+          
+          function subscribeNewsletter(e) {
+            e.preventDefault();
+            alert('Thank you for subscribing! You will receive a confirmation email shortly.');
+            toggleWidgetifyNewsletter();
+          }
+        </script>`;
+
+    case 'feedback-form':
+      return `${baseStyles}
+        <div id="widgetify-feedback" class="widgetify-widget" onclick="toggleWidgetifyFeedback()" aria-label="Give Feedback">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <path d="M12 7v6M12 17h.01"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-feedback-popup" class="widgetify-popup" role="dialog" aria-labelledby="feedback-title">
+          <div class="widgetify-header">
+            <h3 id="feedback-title">Send Feedback</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyFeedback()" aria-label="Close feedback">×</button>
+          </div>
+          <div class="widgetify-content" style="padding: 20px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <h4 style="margin: 0 0 10px 0; color: #333;">We'd love your feedback!</h4>
+              <p style="margin: 0; color: #666; font-size: 14px;">Help us improve our service</p>
+            </div>
+            <form onsubmit="submitFeedback(event)">
+              <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-size: 12px; color: #666;">How would you rate us?</label>
+                <div style="display: flex; gap: 5px; justify-content: center;">
+                  <span onclick="setRating(1)" style="cursor: pointer; font-size: 20px; color: #ddd;">⭐</span>
+                  <span onclick="setRating(2)" style="cursor: pointer; font-size: 20px; color: #ddd;">⭐</span>
+                  <span onclick="setRating(3)" style="cursor: pointer; font-size: 20px; color: #ddd;">⭐</span>
+                  <span onclick="setRating(4)" style="cursor: pointer; font-size: 20px; color: #ddd;">⭐</span>
+                  <span onclick="setRating(5)" style="cursor: pointer; font-size: 20px; color: #ddd;">⭐</span>
+                </div>
+              </div>
+              <textarea placeholder="Your feedback..." required rows="4" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; resize: vertical;"></textarea>
+              <button type="submit" style="width: 100%; padding: 12px; background: ${buttonColor}; color: white; border: none; border-radius: 4px; cursor: pointer;">Send Feedback</button>
+            </form>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <script>
+          let selectedRating = 0;
+          
+          function toggleWidgetifyFeedback() {
+            const popup = document.getElementById('widgetify-feedback-popup');
+            popup.classList.toggle('show');
+          }
+          
+          function setRating(rating) {
+            selectedRating = rating;
+            const stars = document.querySelectorAll('#widgetify-feedback-popup span');
+            stars.forEach((star, index) => {
+              star.style.color = index < rating ? '#ffd700' : '#ddd';
+            });
+          }
+          
+          function submitFeedback(e) {
+            e.preventDefault();
+            if (selectedRating === 0) {
+              alert('Please select a rating');
+              return;
+            }
+            window.open('${feedbackUrl || 'mailto:feedback@example.com?subject=Feedback&body=Rating: ' + selectedRating + '/5'}', '_blank');
+            alert('Thank you for your feedback!');
+            toggleWidgetifyFeedback();
+          }
+        </script>`;
+
+    case 'download-app':
+      return `${baseStyles}
+        <div id="widgetify-app" class="widgetify-widget" onclick="toggleWidgetifyApp()" aria-label="Download App">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+            <line x1="12" y1="18" x2="12" y2="18"/>
+            <path d="M8 10l4 4 4-4"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-app-popup" class="widgetify-popup" role="dialog" aria-labelledby="app-title">
+          <div class="widgetify-header">
+            <h3 id="app-title">Download Our App</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyApp()" aria-label="Close app download">×</button>
+          </div>
+          <div class="widgetify-content" style="padding: 20px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <h4 style="margin: 0 0 10px 0; color: #333;">Get the Mobile App</h4>
+              <p style="margin: 0; color: #666; font-size: 14px;">Download our app for the best experience</p>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <button onclick="downloadIOS()" style="display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px; background: #000; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 10px;">
+                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                </svg>
+                Download for iOS
+              </button>
+              <button onclick="downloadAndroid()" style="display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px; background: #34A853; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 10px;">
+                  <path d="M17.523 15.3414c-.5665 0-1.0253-.4588-1.0253-1.0253s.4588-1.0253 1.0253-1.0253 1.0253.4588 1.0253 1.0253-.4588 1.0253-1.0253 1.0253zm-11.046 0c-.5665 0-1.0253-.4588-1.0253-1.0253s.4588-1.0253 1.0253-1.0253 1.0253.4588 1.0253 1.0253-.4588 1.0253-1.0253 1.0253zm13.618-15.3414l-1.431 2.3616c1.778 1.1519 2.976 3.2063 2.976 5.5545 0 3.5777-2.9029 6.4806-6.4806 6.4806s-6.4806-2.9029-6.4806-6.4806c0-2.348 1.1982-4.4024 2.976-5.5545l-1.431-2.3616c-2.4728 1.5104-4.1226 4.2468-4.1226 7.3362 0 4.8306 3.9158 8.7464 8.7464 8.7464s8.7464-3.9158 8.7464-8.7464c0-3.0894-1.6498-5.8258-4.1226-7.3362z"/>
+                </svg>
+                Download for Android
+              </button>
+            </div>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <script>
+          function toggleWidgetifyApp() {
+            const popup = document.getElementById('widgetify-app-popup');
+            popup.classList.toggle('show');
+          }
+          
+          function downloadIOS() {
+            window.open('${appStoreUrl || 'https://apps.apple.com/'}', '_blank');
+          }
+          
+          function downloadAndroid() {
+            window.open('${playStoreUrl || 'https://play.google.com/store'}', '_blank');
           }
         </script>`;
 

@@ -16,6 +16,12 @@ export type WidgetType =
   'call-now' | 
   'review-now' | 
   'follow-us' | 
-  'dodo-payment';
+  'dodo-payment' |
+  'email-contact' |
+  'live-chat' |
+  'booking-calendar' |
+  'newsletter-signup' |
+  'feedback-form' |
+  'download-app';
 
 export type WidgetSize = 'small' | 'medium' | 'large';
