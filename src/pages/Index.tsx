@@ -5,6 +5,7 @@ import WidgetGenerator from '@/components/WidgetGenerator';
 import FeaturesSection from '@/components/FeaturesSection';
 import FounderSection from '@/components/FounderSection';
 import Footer from '@/components/Footer';
+import PromoPopup from '@/components/PromoPopup';
 import { Menu, X, Sparkles, Wifi, WifiOff } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
@@ -166,6 +167,9 @@ const Index: React.FC = () => {
       </main>
       
       <Footer />
+      
+      {/* Promotional Popup */}
+      <PromoPopup />
     </div>
   );
 };
