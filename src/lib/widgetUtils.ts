@@ -677,7 +677,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
               alert('Please select a rating');
               return;
             }
-            window.open('${feedbackUrl || 'mailto:feedback@example.com?subject=Feedback&body=Rating: ' + selectedRating + '/5'}', '_blank');
+            window.open('${feedbackUrl || 'mailto:feedback@example.com?subject=Feedback&body=Rating: '}' + selectedRating + '${feedbackUrl ? '' : '/5'}', '_blank');
             alert('Thank you for your feedback!');
             toggleWidgetifyFeedback();
           }
