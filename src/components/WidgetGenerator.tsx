@@ -40,6 +40,11 @@ const WidgetGenerator: React.FC = () => {
     upiId: 'adnanmuhammad4393@okicici',
     payeeName: 'Muhammed Adnan',
     isPremium: false,
+    emailAddress: '',
+    bookingUrl: '',
+    appStoreUrl: '',
+    playStoreUrl: '',
+    feedbackUrl: '',
   });
 
   const handleConfigChange = (key: keyof WidgetConfig, value: any) => {
