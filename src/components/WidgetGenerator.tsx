@@ -274,6 +274,7 @@ const WidgetGenerator: React.FC = () => {
         );
 
       case 'dodo-payment':
+      case 'payment':
         return (
           <>
             <div className="space-y-2">
@@ -283,7 +284,7 @@ const WidgetGenerator: React.FC = () => {
                 type="number"
                 value={config.amount}
                 onChange={(e) => handleConfigChange('amount', parseInt(e.target.value) || 0)}
-                placeholder="99"
+                placeholder="199"
                 className="text-base"
               />
             </div>
@@ -293,7 +294,7 @@ const WidgetGenerator: React.FC = () => {
                 id="upiId"
                 value={config.upiId}
                 onChange={(e) => handleConfigChange('upiId', e.target.value)}
-                placeholder="user@upi"
+                placeholder="adnanmuhammad4393@okicici"
                 className="text-base"
               />
             </div>
@@ -303,7 +304,7 @@ const WidgetGenerator: React.FC = () => {
                 id="payeeName"
                 value={config.payeeName}
                 onChange={(e) => handleConfigChange('payeeName', e.target.value)}
-                placeholder="John Doe"
+                placeholder="Muhammed Adnan"
                 className="text-base"
               />
             </div>
@@ -519,6 +520,7 @@ const WidgetGenerator: React.FC = () => {
                     <SelectItem value="review-now">Review Now</SelectItem>
                     <SelectItem value="follow-us">Follow Us</SelectItem>
                     <SelectItem value="dodo-payment">Dodo Payment</SelectItem>
+                    <SelectItem value="payment">Payment Gateway</SelectItem>
                     <SelectItem value="email-contact">Email Contact</SelectItem>
                     <SelectItem value="live-chat">Live Chat</SelectItem>
                     <SelectItem value="booking-calendar">Booking Calendar</SelectItem>

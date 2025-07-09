@@ -17,6 +17,7 @@ export type WidgetType =
   'review-now' | 
   'follow-us' | 
   'dodo-payment' |
+  'payment' |
   'email-contact' |
   'live-chat' |
   'booking-calendar' |
