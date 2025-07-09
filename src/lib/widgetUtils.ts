@@ -738,6 +738,103 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           }
         </script>`;
 
+    case 'review-now':
+      return `${baseStyles}
+        <div id="widgetify-review" class="widgetify-widget" onclick="window.open('${reviewUrl || 'https://google.com/search?q=reviews'}', '_blank')" aria-label="Leave a Review">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+          </svg>
+        </div>`;
+
+    case 'follow-us':
+      const followUrl = (() => {
+        const handle = config.handle?.replace('@', '') || 'example';
+        const platform = followPlatform || 'linkedin';
+        if (platform === 'instagram') return `https://instagram.com/${handle}`;
+        if (platform === 'youtube') return `https://www.youtube.com/${handle}`;
+        return `https://www.linkedin.com/in/${handle}`;
+      })();
+
+      return `${baseStyles}
+        <div id="widgetify-follow" class="widgetify-widget" onclick="window.open('${followUrl}', '_blank')" aria-label="Follow Us">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            <path d="M16 3.13a4 4 0 010 7.75M21 21v-2a4 4 0 00-3-3.85"/>
+          </svg>
+        </div>`;
+
+    case 'telegram':
+      return `${baseStyles}
+        <div id="widgetify-telegram" class="widgetify-widget" onclick="toggleWidgetifyTelegram()" aria-label="Open Telegram Chat">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5.46 7.12l-1.68 7.9c-.12.59-.5.84-1.01.52l-2.8-2.07-1.35 1.3c-.15.15-.27.27-.56.27-.36 0-.3-.14-.42-.47l-.95-3.12-2.77-1c-.6-.2-.6-.6.13-.9l10.8-4.15c.5-.18.96.12.61 1.32z"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-telegram-popup" class="widgetify-popup" role="dialog" aria-labelledby="telegram-title">
+          <div class="widgetify-header">
+            <h3 id="telegram-title">Telegram Chat</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyTelegram()" aria-label="Close chat">×</button>
+          </div>
+          <div class="widgetify-content">
+            <div style="background-color: #f3f4f6; padding: 8px; border-radius: 8px; margin-bottom: 8px; max-width: 80%;">
+              <p style="margin: 0; font-size: 12px; color: #374151;">${welcomeMessage || 'Hello! How can I help you today?'}</p>
+            </div>
+          </div>
+          <div style="padding: 12px; border-top: 1px solid #e5e7eb; background-color: #f9fafb;">
+            <div style="display: flex; gap: 8px;">
+              <input type="text" placeholder="Type a message..." style="flex-grow: 1; font-size: 12px; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; outline: none;">
+              <button onclick="window.open('https://t.me/${(handle || '').replace(/[^a-zA-Z0-9_]/g, '')}', '_blank')" style="background-color: ${buttonColor}; color: white; padding: 8px; border: none; border-radius: 6px; cursor: pointer;" aria-label="Send message on Telegram">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <script>
+          function toggleWidgetifyTelegram() {
+            const popup = document.getElementById('widgetify-telegram-popup');
+            popup.classList.toggle('show');
+          }
+        </script>`;
+
+    case 'google-translate':
+      return `${baseStyles}
+        <div id="widgetify-translate" class="widgetify-widget" onclick="toggleWidgetifyTranslate()" aria-label="Google Translate">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-translate-popup" class="widgetify-popup" role="dialog" aria-labelledby="translate-title">
+          <div class="widgetify-header">
+            <h3 id="translate-title">Google Translate</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyTranslate()" aria-label="Close translate">×</button>
+          </div>
+          <div class="widgetify-content" style="padding: 20px;">
+            <div style="background-color: #f9fafb; padding: 15px; border-radius: 8px; border: 2px dashed #d1d5db; text-align: center;">
+              <p style="margin: 0 0 10px 0; font-size: 12px; color: #6b7280;">Google Translate Widget</p>
+              <div id="google_translate_element" style="margin: 10px 0;"></div>
+              <p style="margin: 10px 0 0 0; font-size: 10px; color: #9ca3af;">This widget integrates Google Translate for automatic page translation.</p>
+            </div>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <script>
+          function toggleWidgetifyTranslate() {
+            const popup = document.getElementById('widgetify-translate-popup');
+            popup.classList.toggle('show');
+          }
+        </script>`;
+
     default:
       return `${baseStyles}
         <div id="widgetify-widget" class="widgetify-widget" onclick="toggleWidgetifyPopup()" aria-label="Open chat">
