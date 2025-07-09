@@ -29,7 +29,7 @@ const PromoPopup: React.FC = () => {
 
   const handleWhatsAppClick = () => {
     const message = encodeURIComponent("Hi! I'm interested in building an AI SaaS product. Let's discuss!");
-    window.open(`https://wa.me/916567785508?text=${message}`, '_blank');
+    window.open(`https://wa.me/919656778508?text=${message}`, '_blank');
   };
 
   const handleProductsClick = () => {
@@ -67,7 +67,7 @@ const PromoPopup: React.FC = () => {
             {/* Contact Info */}
             <div className="bg-purple-50 rounded-lg p-3 border border-purple-100">
               <p className="text-purple-800 font-semibold text-sm">
-                📞 +91 65677 8508
+                📞 +91 9656778508
               </p>
             </div>
 
