@@ -8,7 +8,7 @@ const FounderSection: React.FC = () => {
         
         <div className="flex flex-col md:flex-row items-center md:items-start gap-8 max-w-4xl mx-auto">
           <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden flex-shrink-0">
-            <img src="/lovable-uploads/9fee3aea-3751-4d69-a60a-e5b6eb9b4ada.png" alt="Muhammed Adnan - Founder & CEO" className="w-full h-full object-cover" />
+            <img src="/lovable-uploads/82cc7537-74e6-4d4f-8c9b-18fc07568b45.png" alt="Muhammed Adnan - Founder & CEO" className="w-full h-full object-cover" />
           </div>
           
           <div className="flex-1 text-center md:text-left">
