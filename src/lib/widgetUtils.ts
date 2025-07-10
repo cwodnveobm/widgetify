@@ -25,10 +25,12 @@ export interface WidgetConfig {
   appStoreUrl?: string;
   playStoreUrl?: string;
   feedbackUrl?: string;
+  whatsappNumber?: string;
+  businessName?: string;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
-  const { type, handle, welcomeMessage, position, primaryColor, size, networks, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, amount, currency, paymentDescription, upiId, payeeName, emailAddress, bookingUrl, appStoreUrl, playStoreUrl, feedbackUrl } = config;
+  const { type, handle, welcomeMessage, position, primaryColor, size, networks, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, amount, currency, paymentDescription, upiId, payeeName, emailAddress, bookingUrl, appStoreUrl, playStoreUrl, feedbackUrl, whatsappNumber, businessName } = config;
   
   const sizeMap = {
     small: '50px',
@@ -685,6 +687,144 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
     popup.classList.toggle('show');
   }
 </script>`;
+
+    case 'contact-form':
+      const contactWhatsappNumber = whatsappNumber || '+1234567890';
+      const contactBusinessName = businessName || 'Business';
+      
+      return `${baseStyles}
+      <style>
+        /* Contact Form Specific Styles */
+        .contact-form-field {
+          width: 100%;
+          padding: 12px;
+          margin-bottom: 12px;
+          border: 1px solid #e5e7eb;
+          border-radius: 8px;
+          font-size: 14px;
+          outline: none;
+          transition: border-color 0.2s ease;
+        }
+        
+        .contact-form-field:focus {
+          border-color: ${buttonColor};
+          box-shadow: 0 0 0 2px ${buttonColor}20;
+        }
+        
+        .contact-form-button {
+          width: 100%;
+          padding: 14px 0;
+          background: ${buttonColor};
+          color: white;
+          font-size: 16px;
+          font-weight: 600;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        
+        .contact-form-button:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px ${buttonColor}40;
+        }
+        
+        .contact-form-subtitle {
+          margin: 16px 0 20px 0;
+          color: #6b7280;
+          font-size: 14px;
+          text-align: center;
+          line-height: 1.5;
+        }
+      </style>
+      
+        <div id="widgetify-contact" class="widgetify-widget" onclick="toggleWidgetifyContact()" aria-label="Contact us">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <path d="M12 7v6M12 17h.01"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-contact-popup" class="widgetify-popup" role="dialog" aria-labelledby="contact-title">
+          <div class="widgetify-header">
+            <h3 id="contact-title">Contact Us</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyContact()" aria-label="Close contact form">×</button>
+          </div>
+          
+          <p class="contact-form-subtitle">Send us a message and we'll get back to you soon!</p>
+          
+          <form id="contact-form" onsubmit="submitContactForm(event)">
+            <input 
+              type="text" 
+              name="name" 
+              placeholder="Your Name" 
+              required 
+              class="contact-form-field"
+            >
+            
+            <input 
+              type="email" 
+              name="email" 
+              placeholder="Your Email" 
+              required 
+              class="contact-form-field"
+            >
+            
+            <textarea 
+              name="message" 
+              placeholder="Your Message" 
+              required 
+              rows="4" 
+              class="contact-form-field"
+              style="resize: vertical; min-height: 80px;"
+            ></textarea>
+            
+            <button type="submit" class="contact-form-button">
+              📱 Send via WhatsApp
+            </button>
+          </form>
+
+          <p class="upi-gateway-note">Your message will be sent directly to our WhatsApp<br>We typically respond within a few minutes</p>
+          
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <script>
+          function toggleWidgetifyContact() {
+            const popup = document.getElementById('widgetify-contact-popup');
+            popup.classList.toggle('show');
+          }
+          
+          function submitContactForm(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const message = formData.get('message');
+            
+            const whatsappMessage = \`Hello ${contactBusinessName}!
+
+👤 Name: \${name}
+📧 Email: \${email}
+
+💬 Message:
+\${message}
+
+---
+Sent via ${contactBusinessName} Contact Form\`;
+            
+            const whatsappUrl = \`https://wa.me/${contactWhatsappNumber.replace(/[^0-9]/g, '')}?text=\${encodeURIComponent(whatsappMessage)}\`;
+            window.open(whatsappUrl, '_blank');
+            
+            // Reset form and close popup
+            e.target.reset();
+            toggleWidgetifyContact();
+          }
+        </script>`;
+
 
     case 'email-contact':
       return `${baseStyles}

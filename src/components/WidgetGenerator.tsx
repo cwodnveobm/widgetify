@@ -45,6 +45,8 @@ const WidgetGenerator: React.FC = () => {
     appStoreUrl: '',
     playStoreUrl: '',
     feedbackUrl: '',
+    whatsappNumber: '',
+    businessName: '',
   });
 
   const handleConfigChange = (key: keyof WidgetConfig, value: any) => {
@@ -409,6 +411,32 @@ const WidgetGenerator: React.FC = () => {
           </>
         );
 
+      case 'contact-form':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="whatsappNumber" className="text-sm font-medium">WhatsApp Number</Label>
+              <Input
+                id="whatsappNumber"
+                value={config.whatsappNumber}
+                onChange={(e) => handleConfigChange('whatsappNumber', e.target.value)}
+                placeholder="+1234567890"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="businessName" className="text-sm font-medium">Business Name</Label>
+              <Input
+                id="businessName"
+                value={config.businessName}
+                onChange={(e) => handleConfigChange('businessName', e.target.value)}
+                placeholder="Your Business Name"
+                className="text-base"
+              />
+            </div>
+          </>
+        );
+
       default:
         return (
           <div className="space-y-2">
@@ -516,6 +544,7 @@ const WidgetGenerator: React.FC = () => {
                   <SelectContent>
                     <SelectItem value="whatsapp">WhatsApp Chat</SelectItem>
                     <SelectItem value="call-now">Call Now</SelectItem>
+                    <SelectItem value="contact-form">Contact Form</SelectItem>
                     <SelectItem value="social-share">Social Share</SelectItem>
                     <SelectItem value="review-now">Review Now</SelectItem>
                     <SelectItem value="follow-us">Follow Us</SelectItem>
