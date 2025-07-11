@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import HeroSection from '@/components/HeroSection';
 import WidgetGenerator from '@/components/WidgetGenerator';
 import FeaturesSection from '@/components/FeaturesSection';
@@ -132,9 +133,9 @@ const Index: React.FC = () => {
                 <button onClick={() => scrollToSection('founder')} className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200 text-left">
                   Founder
                 </button>
-                <a href="/support" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
+                <Link to="/support" className="text-gray-600 hover:text-purple-600 py-4 flex items-center justify-between border-b border-gray-50 pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
                   Support
-                </a>
+                </Link>
               </div>
             </>
           ) : (
@@ -143,7 +144,7 @@ const Index: React.FC = () => {
               <button onClick={() => scrollToSection('widget-generator')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Generate</button>
               <button onClick={() => scrollToSection('features')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Features</button>
               <button onClick={() => scrollToSection('founder')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Founder</button>
-              <a href="/support" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Support</a>
+              <Link to="/support" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Support</Link>
             </nav>
           )}
         </div>
