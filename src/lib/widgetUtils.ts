@@ -27,10 +27,14 @@ export interface WidgetConfig {
   feedbackUrl?: string;
   whatsappNumber?: string;
   businessName?: string;
+  targetDate?: string;
+  title?: string;
+  countdownStyle?: 'circular' | 'digital' | 'minimal' | 'bold';
+  showLabels?: boolean;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
-  const { type, handle, welcomeMessage, position, primaryColor, size, networks, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, amount, currency, paymentDescription, upiId, payeeName, emailAddress, bookingUrl, appStoreUrl, playStoreUrl, feedbackUrl, whatsappNumber, businessName } = config;
+  const { type, handle, welcomeMessage, position, primaryColor, size, networks, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, amount, currency, paymentDescription, upiId, payeeName, emailAddress, bookingUrl, appStoreUrl, playStoreUrl, feedbackUrl, whatsappNumber, businessName, targetDate, title, countdownStyle, showLabels } = config;
   
   const sizeMap = {
     small: '50px',
@@ -1237,6 +1241,195 @@ Sent via ${contactBusinessName} Contact Form\`;
             popup.classList.toggle('show');
           }
         </script>`;
+
+    case 'countdown-timer':
+        const targetDateTime = targetDate || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
+        const timerTitle = title || 'Countdown Timer';
+        const style = countdownStyle || 'digital';
+        const showTimeLabels = showLabels !== false;
+
+        const getStyleClasses = () => {
+          switch (style) {
+            case 'circular':
+              return {
+                container: 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; padding: 30px;',
+                title: 'color: white; font-size: 24px; font-weight: 700; text-align: center; margin-bottom: 30px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);',
+                timeUnit: 'position: relative; margin: 0 10px;',
+                circle: 'width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid rgba(255,255,255,0.3);',
+                number: 'font-size: 20px; font-weight: 700; color: white; line-height: 1;',
+                label: 'font-size: 10px; color: rgba(255,255,255,0.8); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px;'
+              };
+            case 'minimal':
+              return {
+                container: 'background: #fafafa; border: 1px solid #e0e0e0; border-radius: 12px; padding: 25px;',
+                title: 'color: #333; font-size: 20px; font-weight: 500; text-align: center; margin-bottom: 25px; letter-spacing: -0.5px;',
+                timeUnit: 'margin: 0 8px;',
+                circle: 'background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 8px; text-align: center; min-width: 60px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);',
+                number: 'font-size: 18px; font-weight: 600; color: #333; line-height: 1;',
+                label: 'font-size: 10px; color: #666; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.3px;'
+              };
+            case 'bold':
+              return {
+                container: 'background: linear-gradient(45deg, #ff6b6b, #ee5a24, #feca57); border-radius: 15px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.2);',
+                title: 'color: white; font-size: 26px; font-weight: 800; text-align: center; margin-bottom: 25px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); text-transform: uppercase;',
+                timeUnit: 'margin: 0 8px;',
+                circle: 'background: rgba(255,255,255,0.95); border-radius: 12px; padding: 15px 10px; text-align: center; min-width: 70px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);',
+                number: 'font-size: 22px; font-weight: 900; background: linear-gradient(45deg, #ff6b6b, #ee5a24); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1;',
+                label: 'font-size: 10px; color: #666; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;'
+              };
+            default: // digital
+              return {
+                container: 'background: #000; border-radius: 10px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);',
+                title: 'color: #00ff00; font-size: 22px; font-weight: 600; text-align: center; margin-bottom: 25px; font-family: "Courier New", monospace; text-shadow: 0 0 10px #00ff00;',
+                timeUnit: 'margin: 0 10px;',
+                circle: 'background: #111; border: 2px solid #00ff00; border-radius: 8px; padding: 12px 8px; text-align: center; min-width: 65px; box-shadow: inset 0 0 10px rgba(0,255,0,0.2);',
+                number: 'font-size: 20px; font-weight: 700; color: #00ff00; font-family: "Courier New", monospace; line-height: 1; text-shadow: 0 0 5px #00ff00;',
+                label: 'font-size: 9px; color: #00aa00; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; font-family: "Courier New", monospace;'
+              };
+          }
+        };
+
+        const styles = getStyleClasses();
+
+        return `
+          <style>
+            .widgetify-countdown {
+              position: fixed;
+              bottom: 20px;
+              ${positionStyle}
+              ${styles.container}
+              z-index: 1000;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              max-width: 400px;
+              box-sizing: border-box;
+            }
+
+            .widgetify-countdown-title {
+              ${styles.title}
+            }
+
+            .widgetify-countdown-timer {
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              flex-wrap: wrap;
+              gap: 5px;
+            }
+
+            .widgetify-time-unit {
+              ${styles.timeUnit}
+            }
+
+            .widgetify-time-circle {
+              ${styles.circle}
+            }
+
+            .widgetify-time-number {
+              ${styles.number}
+            }
+
+            .widgetify-time-label {
+              ${styles.label}
+              ${!showTimeLabels ? 'display: none;' : ''}
+            }
+
+            .widgetify-countdown.expired .widgetify-countdown-title {
+              ${style === 'digital' ? 'color: #ff0000; text-shadow: 0 0 10px #ff0000;' : 'color: #ff4757;'}
+            }
+
+            @media (max-width: 480px) {
+              .widgetify-countdown {
+                bottom: 15px;
+                ${position === 'left' ? 'left: 15px;' : 'right: 15px;'}
+                max-width: calc(100vw - 30px);
+                padding: 20px;
+              }
+              
+              .widgetify-countdown-title {
+                font-size: 18px !important;
+                margin-bottom: 20px !important;
+              }
+              
+              .widgetify-time-circle {
+                ${style === 'circular' ? 'width: 60px !important; height: 60px !important;' : ''}
+                min-width: 50px !important;
+                padding: 10px 6px !important;
+              }
+              
+              .widgetify-time-number {
+                font-size: 16px !important;
+              }
+              
+              .widgetify-time-unit {
+                margin: 0 4px !important;
+              }
+            }
+          </style>
+
+          <div id="widgetify-countdown" class="widgetify-countdown">
+            <div class="widgetify-countdown-title">${timerTitle}</div>
+            <div class="widgetify-countdown-timer">
+              <div class="widgetify-time-unit">
+                <div class="widgetify-time-circle">
+                  <div class="widgetify-time-number" id="days">00</div>
+                  <div class="widgetify-time-label">Days</div>
+                </div>
+              </div>
+              <div class="widgetify-time-unit">
+                <div class="widgetify-time-circle">
+                  <div class="widgetify-time-number" id="hours">00</div>
+                  <div class="widgetify-time-label">Hours</div>
+                </div>
+              </div>
+              <div class="widgetify-time-unit">
+                <div class="widgetify-time-circle">
+                  <div class="widgetify-time-number" id="minutes">00</div>
+                  <div class="widgetify-time-label">Minutes</div>
+                </div>
+              </div>
+              <div class="widgetify-time-unit">
+                <div class="widgetify-time-circle">
+                  <div class="widgetify-time-number" id="seconds">00</div>
+                  <div class="widgetify-time-label">Seconds</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <script>
+            (function() {
+              const targetDate = new Date('${targetDateTime}').getTime();
+              
+              function updateCountdown() {
+                const now = new Date().getTime();
+                const timeLeft = targetDate - now;
+                
+                if (timeLeft < 0) {
+                  document.getElementById('days').textContent = '00';
+                  document.getElementById('hours').textContent = '00';
+                  document.getElementById('minutes').textContent = '00';
+                  document.getElementById('seconds').textContent = '00';
+                  document.getElementById('widgetify-countdown').classList.add('expired');
+                  document.querySelector('.widgetify-countdown-title').textContent = '${timerTitle.replace('Timer', 'Expired').replace('In', 'Now').replace('Ends', 'Ended')}';
+                  return;
+                }
+                
+                const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+                
+                document.getElementById('days').textContent = days.toString().padStart(2, '0');
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+              }
+              
+              updateCountdown();
+              setInterval(updateCountdown, 1000);
+            })();
+          </script>
+        `;
 
     default:
       return `${baseStyles}

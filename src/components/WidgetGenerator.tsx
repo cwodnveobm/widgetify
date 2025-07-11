@@ -47,6 +47,10 @@ const WidgetGenerator: React.FC = () => {
     feedbackUrl: '',
     whatsappNumber: '',
     businessName: '',
+    targetDate: '',
+    title: '',
+    countdownStyle: 'digital',
+    showLabels: true,
   });
 
   const handleConfigChange = (key: keyof WidgetConfig, value: any) => {
@@ -437,6 +441,60 @@ const WidgetGenerator: React.FC = () => {
           </>
         );
 
+      case 'countdown-timer':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="targetDate" className="text-sm font-medium">Target Date & Time</Label>
+              <Input
+                id="targetDate"
+                type="datetime-local"
+                value={config.targetDate}
+                onChange={(e) => handleConfigChange('targetDate', e.target.value)}
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="title" className="text-sm font-medium">Timer Title</Label>
+              <Input
+                id="title"
+                value={config.title}
+                onChange={(e) => handleConfigChange('title', e.target.value)}
+                placeholder="e.g., Sale Ends In"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="countdownStyle" className="text-sm font-medium">Visual Style</Label>
+              <Select
+                value={config.countdownStyle}
+                onValueChange={(value: 'circular' | 'digital' | 'minimal' | 'bold') => 
+                  handleConfigChange('countdownStyle', value)
+                }
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="digital">Digital Display</SelectItem>
+                  <SelectItem value="circular">Circular Progress</SelectItem>
+                  <SelectItem value="minimal">Minimal Clean</SelectItem>
+                  <SelectItem value="bold">Bold & Vibrant</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center space-x-2 p-2 rounded-lg bg-gray-50">
+              <Checkbox
+                id="showLabels"
+                checked={config.showLabels || false}
+                onCheckedChange={(checked) => handleConfigChange('showLabels', checked as boolean)}
+                className="min-w-[20px] min-h-[20px]"
+              />
+              <Label htmlFor="showLabels" className="text-sm font-medium cursor-pointer flex-1">Show time unit labels</Label>
+            </div>
+          </>
+        );
+
       default:
         return (
           <div className="space-y-2">
@@ -556,6 +614,7 @@ const WidgetGenerator: React.FC = () => {
                     <SelectItem value="newsletter-signup">Newsletter Signup</SelectItem>
                     <SelectItem value="feedback-form">Feedback Form</SelectItem>
                     <SelectItem value="download-app">Download App</SelectItem>
+                    <SelectItem value="countdown-timer">Countdown Timer</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

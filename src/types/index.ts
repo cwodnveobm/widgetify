@@ -24,6 +24,7 @@ export type WidgetType =
   'booking-calendar' |
   'newsletter-signup' |
   'feedback-form' |
-  'download-app';
+  'download-app' |
+  'countdown-timer';
 
 export type WidgetSize = 'small' | 'medium' | 'large';
