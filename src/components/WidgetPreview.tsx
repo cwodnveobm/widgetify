@@ -191,6 +191,10 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         if (platform === 'instagram') return <Instagram size={iconSize} color="white" />;
         if (platform === 'youtube') return <Youtube size={iconSize} color="white" />;
         return <Linkedin size={iconSize} color="white" />;
+      case 'contact-form':
+        return <Mail size={iconSize} color="white" />;
+      case 'countdown-timer':
+        return <span style={{ color: 'white', fontSize: `${iconSize * 0.6}px`, fontWeight: 'bold' }}>⏰</span>;
       default:
         return <MessageCircle size={iconSize} color="white" />;
     }
@@ -264,6 +268,10 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       case 'follow-us':
         const platform = config.followPlatform || 'linkedin';
         return `Follow on ${platform.charAt(0).toUpperCase() + platform.slice(1)}`;
+      case 'contact-form':
+        return 'Contact Us';
+      case 'countdown-timer':
+        return config.title || 'Countdown Timer';
       default:
         return null;
     }
@@ -380,6 +388,122 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     );
   };
 
+  const renderContactFormPopup = () => {
+    return (
+      <div style={popupStyle} className="animate-fade-in">
+        <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
+          <div className="font-medium">Contact Form</div>
+          <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700 text-lg transition-colors">
+            ×
+          </button>
+        </div>
+        <div className="flex-grow p-3 overflow-y-auto bg-white">
+          <div className="space-y-3">
+            <div>
+              <label className="block text-xs font-medium mb-1">Name</label>
+              <input type="text" placeholder="Your name" className="w-full px-3 py-2 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-purple-500" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium mb-1">Email</label>
+              <input type="email" placeholder="your@email.com" className="w-full px-3 py-2 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-purple-500" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium mb-1">Message</label>
+              <textarea placeholder="Your message..." rows={4} className="w-full px-3 py-2 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+            </div>
+            <button 
+              className="w-full bg-purple-600 text-white py-2 rounded font-medium hover:bg-purple-700 transition-colors text-xs"
+              onClick={() => {
+                const name = 'John Doe';
+                const email = 'john@example.com';
+                const message = 'Hello, I would like to get in touch!';
+                const text = `Name: ${name}%0AEmail: ${email}%0AMessage: ${message}`;
+                const whatsappUrl = `https://wa.me/${config.whatsappNumber?.replace(/\D/g, '') || '1234567890'}?text=${text}`;
+                window.open(whatsappUrl, '_blank');
+              }}
+            >
+              Send via WhatsApp
+            </button>
+          </div>
+        </div>
+        <div className="bg-gray-50 border-t p-2 text-center">
+          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-gray-500 text-xs hover:text-gray-700 transition-colors">
+            Powered by Widgetify
+          </a>
+        </div>
+      </div>
+    );
+  };
+
+  const renderCountdownPopup = () => {
+    const targetDate = new Date(config.targetDate || '2024-12-31T23:59:59');
+    const now = new Date();
+    const timeDiff = targetDate.getTime() - now.getTime();
+    
+    const days = Math.max(0, Math.floor(timeDiff / (1000 * 60 * 60 * 24)));
+    const hours = Math.max(0, Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+    const minutes = Math.max(0, Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60)));
+    const seconds = Math.max(0, Math.floor((timeDiff % (1000 * 60)) / 1000));
+
+    const style = config.countdownStyle || 'digital';
+    
+    return (
+      <div style={popupStyle} className="animate-fade-in">
+        <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
+          <div className="font-medium">{config.title || 'Countdown Timer'}</div>
+          <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700 text-lg transition-colors">
+            ×
+          </button>
+        </div>
+        <div className="flex-grow p-3 bg-white flex flex-col justify-center">
+          {style === 'circular' && (
+            <div className="flex justify-center gap-2">
+              {[{ label: 'Days', value: days }, { label: 'Hours', value: hours }, { label: 'Minutes', value: minutes }, { label: 'Seconds', value: seconds }].map((item, index) => (
+                <div key={index} className="text-center">
+                  <div className="w-12 h-12 border-4 border-purple-600 rounded-full flex items-center justify-center">
+                    <span className="text-xs font-bold">{item.value}</span>
+                  </div>
+                  {config.showLabels && <div className="text-xs text-gray-600 mt-1">{item.label}</div>}
+                </div>
+              ))}
+            </div>
+          )}
+          {style === 'digital' && (
+            <div className="text-center">
+              <div className="text-2xl font-mono font-bold text-purple-600">
+                {String(days).padStart(2, '0')}:{String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+              </div>
+              {config.showLabels && <div className="text-xs text-gray-600 mt-2">Days : Hours : Minutes : Seconds</div>}
+            </div>
+          )}
+          {style === 'minimal' && (
+            <div className="text-center space-y-1">
+              <div className="text-lg font-semibold text-gray-800">{days}d {hours}h {minutes}m {seconds}s</div>
+              {config.showLabels && <div className="text-xs text-gray-500">Time remaining</div>}
+            </div>
+          )}
+          {style === 'bold' && (
+            <div className="text-center">
+              <div className="grid grid-cols-4 gap-2">
+                {[{ label: 'DAYS', value: days }, { label: 'HRS', value: hours }, { label: 'MIN', value: minutes }, { label: 'SEC', value: seconds }].map((item, index) => (
+                  <div key={index} className="bg-purple-600 text-white p-2 rounded">
+                    <div className="text-lg font-bold">{item.value}</div>
+                    {config.showLabels && <div className="text-xs">{item.label}</div>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+        <div className="bg-gray-50 border-t p-2 text-center">
+          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-gray-500 text-xs hover:text-gray-700 transition-colors">
+            Powered by Widgetify
+          </a>
+        </div>
+      </div>
+    );
+  };
+
   const renderChatPopup = () => {
     return (
       <div style={popupStyle} className="animate-fade-in">
@@ -430,6 +554,14 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       return renderTranslatePopup();
     }
     
+    if (type === 'contact-form') {
+      return renderContactFormPopup();
+    }
+    
+    if (type === 'countdown-timer') {
+      return renderCountdownPopup();
+    }
+    
     if (type === 'call-now' || type === 'review-now' || type === 'follow-us') {
       const tooltipText = getTooltipText();
       return tooltipText ? <div style={tooltipStyle}>{tooltipText}</div> : null;
@@ -465,6 +597,12 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         break;
       case 'download-app':
         // Show popup for app download options
+        togglePopup();
+        break;
+      case 'contact-form':
+        togglePopup();
+        break;
+      case 'countdown-timer':
         togglePopup();
         break;
       default:
