@@ -180,16 +180,16 @@ const WidgetGenerator: React.FC = () => {
           <>
             <div className="space-y-3">
               <Label className="text-sm font-medium">Social Networks</Label>
-              <div className="grid grid-cols-1 gap-3">
+                  <div className="grid grid-cols-1 gap-3">
                 {['facebook', 'twitter', 'linkedin'].map((network) => (
-                  <div key={network} className="flex items-center space-x-3 p-2 rounded-lg bg-gray-50">
+                  <div key={network} className="flex items-center space-x-3 p-3 rounded-lg bg-muted/50 border border-border hover:bg-muted/70 transition-colors">
                     <Checkbox
                       id={network}
                       checked={config.networks?.includes(network) || false}
                       onCheckedChange={(checked) => handleNetworkChange(network, checked as boolean)}
-                      className="min-w-[20px] min-h-[20px]" // Better touch target
+                      className="min-w-[20px] min-h-[20px]"
                     />
-                    <Label htmlFor={network} className="capitalize font-medium text-base cursor-pointer flex-1">{network}</Label>
+                    <Label htmlFor={network} className="capitalize font-medium text-base cursor-pointer flex-1 text-foreground">{network}</Label>
                   </div>
                 ))}
               </div>

@@ -39,9 +39,10 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     [position || 'right']: '20px',
     width: '280px',
     height: '350px',
-    backgroundColor: 'white',
+    backgroundColor: 'hsl(var(--background))',
     borderRadius: '10px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+    border: '1px solid hsl(var(--border))',
     transition: 'all 0.3s ease',
     opacity: showPopup ? 1 : 0,
     transform: showPopup ? 'translateY(0)' : 'translateY(20px)',
@@ -449,44 +450,44 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     
     return (
       <div style={popupStyle} className="animate-fade-in">
-        <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
-          <div className="font-medium">{config.title || 'Countdown Timer'}</div>
-          <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700 text-lg transition-colors">
+        <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-lg border-b border-border">
+          <div className="font-medium text-foreground">{config.title || 'Countdown Timer'}</div>
+          <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg transition-colors">
             ×
           </button>
         </div>
-        <div className="flex-grow p-3 bg-white flex flex-col justify-center">
+        <div className="flex-grow p-3 bg-background flex flex-col justify-center">
           {style === 'circular' && (
             <div className="flex justify-center gap-2">
               {[{ label: 'Days', value: days }, { label: 'Hours', value: hours }, { label: 'Minutes', value: minutes }, { label: 'Seconds', value: seconds }].map((item, index) => (
                 <div key={index} className="text-center">
-                  <div className="w-12 h-12 border-4 border-purple-600 rounded-full flex items-center justify-center">
-                    <span className="text-xs font-bold">{item.value}</span>
+                  <div className="w-12 h-12 border-4 border-primary rounded-full flex items-center justify-center">
+                    <span className="text-xs font-bold text-foreground">{item.value}</span>
                   </div>
-                  {config.showLabels && <div className="text-xs text-gray-600 mt-1">{item.label}</div>}
+                  {config.showLabels && <div className="text-xs text-muted-foreground mt-1">{item.label}</div>}
                 </div>
               ))}
             </div>
           )}
           {style === 'digital' && (
             <div className="text-center">
-              <div className="text-2xl font-mono font-bold text-purple-600">
+              <div className="text-2xl font-mono font-bold text-primary">
                 {String(days).padStart(2, '0')}:{String(hours).padStart(2, '0')}:{String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
               </div>
-              {config.showLabels && <div className="text-xs text-gray-600 mt-2">Days : Hours : Minutes : Seconds</div>}
+              {config.showLabels && <div className="text-xs text-muted-foreground mt-2">Days : Hours : Minutes : Seconds</div>}
             </div>
           )}
           {style === 'minimal' && (
             <div className="text-center space-y-1">
-              <div className="text-lg font-semibold text-gray-800">{days}d {hours}h {minutes}m {seconds}s</div>
-              {config.showLabels && <div className="text-xs text-gray-500">Time remaining</div>}
+              <div className="text-lg font-semibold text-foreground">{days}d {hours}h {minutes}m {seconds}s</div>
+              {config.showLabels && <div className="text-xs text-muted-foreground">Time remaining</div>}
             </div>
           )}
           {style === 'bold' && (
             <div className="text-center">
               <div className="grid grid-cols-4 gap-2">
                 {[{ label: 'DAYS', value: days }, { label: 'HRS', value: hours }, { label: 'MIN', value: minutes }, { label: 'SEC', value: seconds }].map((item, index) => (
-                  <div key={index} className="bg-purple-600 text-white p-2 rounded">
+                  <div key={index} className="bg-primary text-primary-foreground p-2 rounded">
                     <div className="text-lg font-bold">{item.value}</div>
                     {config.showLabels && <div className="text-xs">{item.label}</div>}
                   </div>
@@ -495,8 +496,8 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             </div>
           )}
         </div>
-        <div className="bg-gray-50 border-t p-2 text-center">
-          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-gray-500 text-xs hover:text-gray-700 transition-colors">
+        <div className="bg-muted/50 border-t border-border p-2 text-center">
+          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
             Powered by Widgetify
           </a>
         </div>
@@ -507,33 +508,33 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   const renderChatPopup = () => {
     return (
       <div style={popupStyle} className="animate-fade-in">
-        <div className="bg-gray-100 p-3 flex justify-between items-center rounded-t-lg border-b">
-          <div className="font-medium">{getWidgetTitle()}</div>
-          <button onClick={togglePopup} className="text-gray-500 hover:text-gray-700 text-lg transition-colors">
+        <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-lg border-b border-border">
+          <div className="font-medium text-foreground">{getWidgetTitle()}</div>
+          <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg transition-colors">
             ×
           </button>
         </div>
-        <div className="flex-grow p-3 overflow-y-auto bg-white">
-          <div className="bg-gray-100 p-2 rounded-lg mb-2 max-w-[80%]">
-            <p className="text-xs">{config.welcomeMessage || 'How can I help you today?'}</p>
+        <div className="flex-grow p-3 overflow-y-auto bg-background">
+          <div className="bg-muted/50 p-2 rounded-lg mb-2 max-w-[80%] border border-border/50">
+            <p className="text-xs text-foreground">{config.welcomeMessage || 'How can I help you today?'}</p>
           </div>
         </div>
-        <div className="p-3 border-t bg-gray-50 rounded-b-lg">
+        <div className="p-3 border-t border-border bg-muted/50 rounded-b-lg">
           <div className="flex gap-2">
             <input
               type="text"
               placeholder="Type a message..."
-              className="flex-grow text-xs p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="flex-grow text-xs p-2 border border-border rounded focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
             />
-            <button className="bg-purple-600 text-white p-2 rounded hover:bg-purple-700 transition-colors">
+            <button className="bg-primary text-primary-foreground p-2 rounded hover:bg-primary/90 transition-colors">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
               </svg>
             </button>
           </div>
         </div>
-        <div className="bg-gray-50 border-t p-2 text-center">
-          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-gray-500 text-xs hover:text-gray-700 transition-colors">
+        <div className="bg-muted/50 border-t border-border p-2 text-center">
+          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
             Powered by Widgetify
           </a>
         </div>

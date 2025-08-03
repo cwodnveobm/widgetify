@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FileText } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 const Documentation: React.FC = () => {
@@ -7,14 +8,14 @@ const Documentation: React.FC = () => {
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-2xl font-bold gradient-text">Widgetify</div>
           <nav className="hidden md:flex gap-6">
-            <a href="/" className="text-gray-600 hover:text-purple-600">Home</a>
+            <Link to="/" className="text-gray-600 hover:text-purple-600">Home</Link>
             
-            <a href="/support" className="text-gray-600 hover:text-purple-600">Support</a>
+            <Link to="/support" className="text-gray-600 hover:text-purple-600">Support</Link>
           </nav>
           <div className="md:hidden">
-            <a href="/" className="text-gray-600 hover:text-purple-600">
+            <Link to="/" className="text-gray-600 hover:text-purple-600">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
-            </a>
+            </Link>
           </div>
         </div>
       </header>
