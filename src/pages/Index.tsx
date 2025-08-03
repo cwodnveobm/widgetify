@@ -7,6 +7,7 @@ import FeaturesSection from '@/components/FeaturesSection';
 import FounderSection from '@/components/FounderSection';
 import Footer from '@/components/Footer';
 import PromoPopup from '@/components/PromoPopup';
+import DonationPopup from '@/components/DonationPopup';
 import { Menu, X, Sparkles, Wifi, WifiOff } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
@@ -171,6 +172,9 @@ const Index: React.FC = () => {
       
       {/* Promotional Popup */}
       <PromoPopup />
+      
+      {/* Donation Popup */}
+      <DonationPopup />
     </div>
   );
 };
