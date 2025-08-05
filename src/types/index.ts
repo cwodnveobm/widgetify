@@ -25,6 +25,25 @@ export type WidgetType =
   'newsletter-signup' |
   'feedback-form' |
   'download-app' |
-  'countdown-timer';
+  'countdown-timer' |
+  'back-to-top' |
+  'scroll-progress' |
+  'print-page' |
+  'qr-generator' |
+  'weather-widget' |
+  'calculator' |
+  'crypto-prices' |
+  'stock-ticker' |
+  'rss-feed' |
+  'cookie-consent' |
+  'age-verification' |
+  'popup-announcement' |
+  'floating-video' |
+  'music-player' |
+  'image-gallery' |
+  'pdf-viewer' |
+  'click-to-copy' |
+  'share-page' |
+  'dark-mode-toggle';
 
 export type WidgetSize = 'small' | 'medium' | 'large';

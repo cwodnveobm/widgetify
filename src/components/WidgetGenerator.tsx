@@ -495,6 +495,185 @@ const WidgetGenerator: React.FC = () => {
           </>
         );
 
+        case 'back-to-top':
+          return (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="scroll-offset" className="text-sm font-medium">Show After Scroll (px)</Label>
+                <Input
+                  id="scroll-offset"
+                  type="number"
+                  value={config.scrollOffset || '300'}
+                  onChange={(e) => handleConfigChange('scrollOffset', e.target.value)}
+                  placeholder="300"
+                  className="text-base min-h-[48px]"
+                />
+              </div>
+              <div className="flex items-center space-x-2 p-2 rounded-lg bg-gray-50">
+                <Checkbox
+                  id="smooth-scroll"
+                  checked={config.smoothScroll !== false}
+                  onCheckedChange={(checked) => handleConfigChange('smoothScroll', checked as boolean)}
+                  className="min-w-[20px] min-h-[20px]"
+                />
+                <Label htmlFor="smooth-scroll" className="text-sm font-medium cursor-pointer flex-1">Enable smooth scrolling</Label>
+              </div>
+            </>
+          );
+
+        case 'qr-generator':
+          return (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="qr-text" className="text-sm font-medium">Text/URL to Encode</Label>
+                <Input
+                  id="qr-text"
+                  value={config.qrText || window.location.href}
+                  onChange={(e) => handleConfigChange('qrText', e.target.value)}
+                  placeholder="Enter text or URL"
+                  className="text-base min-h-[48px]"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="qr-size" className="text-sm font-medium">QR Code Size</Label>
+                <Select
+                  value={config.qrSize || '200'}
+                  onValueChange={(value) => handleConfigChange('qrSize', value)}
+                >
+                  <SelectTrigger className="text-base min-h-[48px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="150">Small (150px)</SelectItem>
+                    <SelectItem value="200">Medium (200px)</SelectItem>
+                    <SelectItem value="300">Large (300px)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
+          );
+
+        case 'dark-mode-toggle':
+          return (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="toggle-style" className="text-sm font-medium">Toggle Style</Label>
+                <Select
+                  value={config.toggleStyle || 'switch'}
+                  onValueChange={(value) => handleConfigChange('toggleStyle', value)}
+                >
+                  <SelectTrigger className="text-base min-h-[48px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="switch">Switch</SelectItem>
+                    <SelectItem value="button">Button</SelectItem>
+                    <SelectItem value="icon">Icon Only</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center space-x-2 p-2 rounded-lg bg-gray-50">
+                <Checkbox
+                  id="save-preference"
+                  checked={config.savePreference !== false}
+                  onCheckedChange={(checked) => handleConfigChange('savePreference', checked as boolean)}
+                  className="min-w-[20px] min-h-[20px]"
+                />
+                <Label htmlFor="save-preference" className="text-sm font-medium cursor-pointer flex-1">Save user preference</Label>
+              </div>
+            </>
+          );
+
+        case 'weather-widget':
+          return (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="weather-city" className="text-sm font-medium">City</Label>
+                <Input
+                  id="weather-city"
+                  value={config.weatherCity || 'London'}
+                  onChange={(e) => handleConfigChange('weatherCity', e.target.value)}
+                  placeholder="Enter city name"
+                  className="text-base min-h-[48px]"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="weather-units" className="text-sm font-medium">Temperature Units</Label>
+                <Select
+                  value={config.weatherUnits || 'metric'}
+                  onValueChange={(value) => handleConfigChange('weatherUnits', value)}
+                >
+                  <SelectTrigger className="text-base min-h-[48px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="metric">Celsius (°C)</SelectItem>
+                    <SelectItem value="imperial">Fahrenheit (°F)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
+          );
+
+        case 'crypto-prices':
+          return (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="crypto-coins" className="text-sm font-medium">Cryptocurrencies</Label>
+                <Input
+                  id="crypto-coins"
+                  value={config.cryptoCoins || 'bitcoin,ethereum,cardano'}
+                  onChange={(e) => handleConfigChange('cryptoCoins', e.target.value)}
+                  placeholder="bitcoin,ethereum,cardano"
+                  className="text-base min-h-[48px]"
+                />
+                <p className="text-xs text-gray-500">Enter coin IDs separated by commas</p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="crypto-currency" className="text-sm font-medium">Display Currency</Label>
+                <Select
+                  value={config.cryptoCurrency || 'usd'}
+                  onValueChange={(value) => handleConfigChange('cryptoCurrency', value)}
+                >
+                  <SelectTrigger className="text-base min-h-[48px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="usd">USD ($)</SelectItem>
+                    <SelectItem value="eur">EUR (€)</SelectItem>
+                    <SelectItem value="inr">INR (₹)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
+          );
+
+        case 'click-to-copy':
+          return (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="copy-text" className="text-sm font-medium">Text to Copy</Label>
+                <Input
+                  id="copy-text"
+                  value={config.copyText || window.location.href}
+                  onChange={(e) => handleConfigChange('copyText', e.target.value)}
+                  placeholder="Enter text to copy"
+                  className="text-base min-h-[48px]"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="copy-button-text" className="text-sm font-medium">Button Text</Label>
+                <Input
+                  id="copy-button-text"
+                  value={config.copyButtonText || 'Copy Link'}
+                  onChange={(e) => handleConfigChange('copyButtonText', e.target.value)}
+                  placeholder="Copy Link"
+                  className="text-base min-h-[48px]"
+                />
+              </div>
+            </>
+          );
+
       default:
         return (
           <div className="space-y-2">

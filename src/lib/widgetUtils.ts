@@ -31,6 +31,19 @@ export interface WidgetConfig {
   title?: string;
   countdownStyle?: 'circular' | 'digital' | 'minimal' | 'bold';
   showLabels?: boolean;
+  // New widget properties
+  scrollOffset?: string;
+  smoothScroll?: boolean;
+  qrText?: string;
+  qrSize?: string;
+  toggleStyle?: string;
+  savePreference?: boolean;
+  weatherCity?: string;
+  weatherUnits?: string;
+  cryptoCoins?: string;
+  cryptoCurrency?: string;
+  copyText?: string;
+  copyButtonText?: string;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {

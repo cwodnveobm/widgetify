@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
-import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone, Mail, Calendar, FileText, Download, Users } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone, Mail, Calendar, FileText, Download, Users, ArrowUp, QrCode, Moon, Cloud, TrendingUp, Copy, Clock } from 'lucide-react';
 
 interface WidgetPreviewProps {
   config: WidgetConfig;
@@ -9,6 +9,7 @@ interface WidgetPreviewProps {
 const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   const { type, position, primaryColor, size, networks } = config;
   const [showPopup, setShowPopup] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const sizeMap = {
     small: '50px',
@@ -196,6 +197,18 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return <Mail size={iconSize} color="white" />;
       case 'countdown-timer':
         return <span style={{ color: 'white', fontSize: `${iconSize * 0.6}px`, fontWeight: 'bold' }}>⏰</span>;
+      case 'back-to-top':
+        return <ArrowUp size={iconSize} color="white" />;
+      case 'qr-generator':
+        return <QrCode size={iconSize} color="white" />;
+      case 'dark-mode-toggle':
+        return <Moon size={iconSize} color="white" />;
+      case 'weather-widget':
+        return <Cloud size={iconSize} color="white" />;
+      case 'crypto-prices':
+        return <TrendingUp size={iconSize} color="white" />;
+      case 'click-to-copy':
+        return <Copy size={iconSize} color="white" />;
       default:
         return <MessageCircle size={iconSize} color="white" />;
     }
@@ -273,6 +286,18 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return 'Contact Us';
       case 'countdown-timer':
         return config.title || 'Countdown Timer';
+      case 'back-to-top':
+        return 'Back to Top';
+      case 'qr-generator':
+        return 'Generate QR Code';
+      case 'dark-mode-toggle':
+        return 'Toggle Dark Mode';
+      case 'weather-widget':
+        return 'Weather Information';
+      case 'crypto-prices':
+        return 'Cryptocurrency Prices';
+      case 'click-to-copy':
+        return config.copyButtonText || 'Click to Copy';
       default:
         return null;
     }
@@ -505,6 +530,48 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     );
   };
 
+  const renderQRPopup = () => (
+    <div style={popupStyle} className="animate-fade-in">
+      <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-lg border-b border-border">
+        <div className="font-medium text-foreground">QR Code</div>
+        <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+      </div>
+      <div className="flex-grow p-3 bg-background text-center">
+        <div className="w-32 h-32 mx-auto bg-gray-200 mb-4 flex items-center justify-center">QR</div>
+        <p className="text-xs">{config.qrText || window.location.href}</p>
+      </div>
+    </div>
+  );
+
+  const renderWeatherPopup = () => (
+    <div style={popupStyle} className="animate-fade-in">
+      <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-lg border-b border-border">
+        <div className="font-medium text-foreground">Weather</div>
+        <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+      </div>
+      <div className="flex-grow p-3 bg-background text-center">
+        <div className="text-2xl mb-2">☀️</div>
+        <div className="text-lg font-bold">22°C</div>
+        <div className="text-sm text-muted-foreground">{config.weatherCity || 'London'}</div>
+      </div>
+    </div>
+  );
+
+  const renderCryptoPopup = () => (
+    <div style={popupStyle} className="animate-fade-in">
+      <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-lg border-b border-border">
+        <div className="font-medium text-foreground">Crypto Prices</div>
+        <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+      </div>
+      <div className="flex-grow p-3 bg-background">
+        <div className="space-y-2">
+          <div className="flex justify-between"><span>Bitcoin</span><span className="text-green-500">$45,000</span></div>
+          <div className="flex justify-between"><span>Ethereum</span><span className="text-red-500">$3,200</span></div>
+        </div>
+      </div>
+    </div>
+  );
+
   const renderChatPopup = () => {
     return (
       <div style={popupStyle} className="animate-fade-in">
@@ -563,7 +630,19 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       return renderCountdownPopup();
     }
     
-    if (type === 'call-now' || type === 'review-now' || type === 'follow-us') {
+    if (type === 'qr-generator') {
+      return renderQRPopup();
+    }
+    
+    if (type === 'weather-widget') {
+      return renderWeatherPopup();
+    }
+    
+    if (type === 'crypto-prices') {
+      return renderCryptoPopup();
+    }
+    
+    if (type === 'call-now' || type === 'review-now' || type === 'follow-us' || type === 'back-to-top' || type === 'dark-mode-toggle' || type === 'click-to-copy') {
       const tooltipText = getTooltipText();
       return tooltipText ? <div style={tooltipStyle}>{tooltipText}</div> : null;
     }
@@ -606,6 +685,42 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       case 'countdown-timer':
         togglePopup();
         break;
+      case 'back-to-top':
+        window.scrollTo({ top: 0, behavior: config.smoothScroll !== false ? 'smooth' : 'auto' });
+        break;
+      case 'qr-generator':
+        togglePopup();
+        break;
+      case 'dark-mode-toggle':
+        document.documentElement.classList.toggle('dark');
+        if (config.savePreference !== false) {
+          localStorage.setItem('darkMode', document.documentElement.classList.contains('dark') ? 'true' : 'false');
+        }
+        break;
+      case 'weather-widget':
+        togglePopup();
+        break;
+      case 'crypto-prices':
+        togglePopup();
+        break;
+      case 'click-to-copy':
+        navigator.clipboard.writeText(config.copyText || window.location.href);
+        // Show temporary feedback
+        const originalIcon = buttonRef.current?.querySelector('svg');
+        if (originalIcon) {
+          originalIcon.style.display = 'none';
+          const checkIcon = document.createElement('div');
+          checkIcon.innerHTML = '✓';
+          checkIcon.style.color = 'green';
+          checkIcon.style.fontSize = '20px';
+          checkIcon.style.fontWeight = 'bold';
+          originalIcon.parentNode?.appendChild(checkIcon);
+          setTimeout(() => {
+            originalIcon.style.display = 'block';
+            checkIcon.remove();
+          }, 1000);
+        }
+        break;
       default:
         togglePopup();
     }
@@ -617,13 +732,14 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       {showPopup && getWidgetContent()}
       {!showPopup && (type === 'call-now' || type === 'review-now' || type === 'follow-us') && getWidgetContent()}
       
-      <div 
+      <button 
+        ref={buttonRef}
         style={buttonStyle} 
-        className="hover:scale-105 hover:shadow-lg transition-all duration-300 cursor-pointer" 
+        className="hover:scale-105 hover:shadow-lg transition-all duration-300 cursor-pointer border-none" 
         onClick={handleMainButtonClick}
       >
         {getIcon()}
-      </div>
+      </button>
     </div>
   );
 };
