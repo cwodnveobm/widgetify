@@ -44,6 +44,9 @@ export interface WidgetConfig {
   cryptoCurrency?: string;
   copyText?: string;
   copyButtonText?: string;
+  spotifyUrl?: string;
+  height?: string;
+  compact?: boolean;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
@@ -1471,5 +1474,114 @@ Sent via ${contactBusinessName} Contact Form\`;
             popup.classList.toggle('show');
           }
         </script>`;
+
+    case 'spotify-embed':
+      const getSpotifyEmbedUrl = (url: string) => {
+        if (!url) return '';
+        const spotifyMatch = url.match(/spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)/);
+        if (spotifyMatch) {
+          const [, type, id] = spotifyMatch;
+          return `https://open.spotify.com/embed/${type}/${id}`;
+        }
+        return '';
+      };
+
+      const embedUrl = getSpotifyEmbedUrl(config.spotifyUrl || '');
+      
+      return `${baseStyles}
+        <div id="widgetify-spotify" class="widgetify-widget" onclick="toggleWidgetifySpotify()" aria-label="Open Spotify Player">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.563.387-.857.207-2.348-1.435-5.304-1.76-8.785-.964-.335.077-.67-.133-.746-.469-.077-.336.132-.67.469-.746 3.809-.871 7.077-.496 9.713 1.115.293.18.386.563.206.857zm1.223-2.723c-.226.367-.706.482-1.073.257-2.687-1.652-6.785-2.131-9.965-1.166-.413.125-.849-.106-.973-.518-.125-.413.106-.849.518-.973 3.632-1.102 8.147-.568 11.238 1.327.366.226.481.706.255 1.073zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71c-.493.15-1.016-.128-1.166-.62-.149-.493.129-1.016.621-1.166 3.532-1.073 9.404-.865 13.115 1.338.445.264.590.837.326 1.282-.264.444-.838.590-1.282.325z"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-spotify-popup" class="widgetify-popup" role="dialog" aria-labelledby="spotify-title" style="width: 400px; height: auto;">
+          <div class="widgetify-header">
+            <h3 id="spotify-title">Spotify Music Player</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifySpotify()" aria-label="Close player">×</button>
+          </div>
+          <div class="widgetify-content" style="padding: 0;">
+            ${embedUrl ? `
+              <iframe
+                src="${embedUrl}"
+                width="100%"
+                height="${config.height || '352'}"
+                frameborder="0"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"
+                style="border-radius: 0 0 10px 10px;"
+              ></iframe>
+            ` : `
+              <div style="padding: 40px; text-align: center; background: #191414; color: white; border-radius: 0 0 10px 10px;">
+                <div style="width: 60px; height: 60px; background: #1db954; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+                    <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.563.387-.857.207-2.348-1.435-5.304-1.76-8.785-.964-.335.077-.67-.133-.746-.469-.077-.336.132-.67.469-.746 3.809-.871 7.077-.496 9.713 1.115.293.18.386.563.206.857zm1.223-2.723c-.226.367-.706.482-1.073.257-2.687-1.652-6.785-2.131-9.965-1.166-.413.125-.849-.106-.973-.518-.125-.413.106-.849.518-.973 3.632-1.102 8.147-.568 11.238 1.327.366.226.481.706.255 1.073zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71c-.493.15-1.016-.128-1.166-.62-.149-.493.129-1.016.621-1.166 3.532-1.073 9.404-.865 13.115 1.338.445.264.590.837.326 1.282-.264.444-.838.590-1.282.325z"/>
+                  </svg>
+                </div>
+                <h3 style="margin: 0 0 10px 0; color: white;">No Music Selected</h3>
+                <p style="margin: 0; color: #b3b3b3; font-size: 14px;">Add a Spotify URL to display music here</p>
+              </div>
+            `}
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <script>
+          function toggleWidgetifySpotify() {
+            const popup = document.getElementById('widgetify-spotify-popup');
+            popup.classList.toggle('show');
+          }
+        </script>`;
   }
+};
+
+export const WIDGET_NAMES: Record<WidgetType, string> = {
+  'whatsapp': 'WhatsApp Chat',
+  'facebook': 'Facebook Messenger',
+  'instagram': 'Instagram',
+  'twitter': 'Twitter',
+  'telegram': 'Telegram',
+  'linkedin': 'LinkedIn',
+  'social-share': 'Social Share',
+  'google-translate': 'Google Translate',
+  'youtube': 'YouTube',
+  'github': 'GitHub',
+  'twitch': 'Twitch',
+  'slack': 'Slack',
+  'discord': 'Discord',
+  'call-now': 'Call Now',
+  'review-now': 'Review Now',
+  'follow-us': 'Follow Us',
+  'dodo-payment': 'Dodo Payment',
+  'payment': 'Payment Gateway',
+  'contact-form': 'Contact Form',
+  'email-contact': 'Email Contact',
+  'live-chat': 'Live Chat',
+  'booking-calendar': 'Booking Calendar',
+  'newsletter-signup': 'Newsletter Signup',
+  'feedback-form': 'Feedback Form',
+  'download-app': 'Download App',
+  'countdown-timer': 'Countdown Timer',
+  'back-to-top': 'Back to Top',
+  'scroll-progress': 'Scroll Progress',
+  'print-page': 'Print Page',
+  'qr-generator': 'QR Generator',
+  'weather-widget': 'Weather Widget',
+  'calculator': 'Calculator',
+  'crypto-prices': 'Crypto Prices',
+  'stock-ticker': 'Stock Ticker',
+  'rss-feed': 'RSS Feed',
+  'cookie-consent': 'Cookie Consent',
+  'age-verification': 'Age Verification',
+  'popup-announcement': 'Popup Announcement',
+  'floating-video': 'Floating Video',
+  'music-player': 'Music Player',
+  'image-gallery': 'Image Gallery',
+  'pdf-viewer': 'PDF Viewer',
+  'click-to-copy': 'Click to Copy',
+  'share-page': 'Share Page',
+  'dark-mode-toggle': 'Dark Mode Toggle',
+  'spotify-embed': 'Spotify Music Player',
 };

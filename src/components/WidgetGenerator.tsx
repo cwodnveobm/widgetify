@@ -674,6 +674,47 @@ const WidgetGenerator: React.FC = () => {
             </>
           );
 
+        case 'spotify-embed':
+          return (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Spotify URL</label>
+                <input
+                  type="url"
+                  placeholder="https://open.spotify.com/track/..."
+                  className="w-full p-2 border rounded-md bg-background"
+                  value={config.spotifyUrl || ''}
+                  onChange={(e) => setConfig({ ...config, spotifyUrl: e.target.value })}
+                />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Paste any Spotify track, album, playlist, or artist URL
+                </p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Player Height</label>
+                <select
+                  className="w-full p-2 border rounded-md bg-background"
+                  value={config.height || '352'}
+                  onChange={(e) => setConfig({ ...config, height: e.target.value })}
+                >
+                  <option value="152">Compact (152px)</option>
+                  <option value="352">Standard (352px)</option>
+                  <option value="452">Large (452px)</option>
+                </select>
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="compact-mode"
+                  className="rounded"
+                  checked={config.compact || false}
+                  onChange={(e) => setConfig({ ...config, compact: e.target.checked })}
+                />
+                <label htmlFor="compact-mode" className="text-sm">Compact Mode</label>
+              </div>
+            </div>
+          );
+
       default:
         return (
           <div className="space-y-2">

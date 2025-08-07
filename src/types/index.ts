@@ -44,6 +44,7 @@ export type WidgetType =
   'pdf-viewer' |
   'click-to-copy' |
   'share-page' |
-  'dark-mode-toggle';
+  'dark-mode-toggle' |
+  'spotify-embed';
 
 export type WidgetSize = 'small' | 'medium' | 'large';
