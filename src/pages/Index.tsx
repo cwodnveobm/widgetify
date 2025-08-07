@@ -8,6 +8,7 @@ import FounderSection from '@/components/FounderSection';
 import Footer from '@/components/Footer';
 import PromoPopup from '@/components/PromoPopup';
 import DonationPopup from '@/components/DonationPopup';
+import MobileNavigation from '@/components/MobileNavigation';
 import { Menu, X, Sparkles, Wifi, WifiOff } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
