@@ -29,8 +29,8 @@ const WidgetGenerator: React.FC = () => {
     primaryColor: '#25D366',
     size: 'medium' as WidgetSize,
     networks: ['facebook', 'twitter', 'linkedin'],
-    shareText: 'Check out Widgetify - build chat widgets in seconds: https://widgetify-two.vercel.app/',
-    shareUrl: 'https://widgetify-two.vercel.app/',
+    shareText: 'Check this out!',
+    shareUrl: '',
     phoneNumber: '',
     reviewUrl: '',
     followPlatform: 'linkedin',
@@ -715,32 +715,6 @@ const WidgetGenerator: React.FC = () => {
             </div>
           );
 
-      case 'refer-a-friend':
-        return (
-          <>
-            <div className="space-y-2">
-              <Label htmlFor="referralMessage" className="text-sm font-medium">Referral Message</Label>
-              <Textarea
-                id="referralMessage"
-                value={config.shareText || 'Check out Widgetify - build chat widgets in seconds: https://widgetify-two.vercel.app/'}
-                onChange={(e) => handleConfigChange('shareText', e.target.value)}
-                rows={3}
-                className="text-base resize-none"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="referralLink" className="text-sm font-medium">Referral Link</Label>
-              <Input
-                id="referralLink"
-                value={config.shareUrl || 'https://widgetify-two.vercel.app/'}
-                onChange={(e) => handleConfigChange('shareUrl', e.target.value)}
-                placeholder="https://widgetify-two.vercel.app/"
-                className="text-base"
-              />
-            </div>
-          </>
-        );
-
       default:
         return (
           <div className="space-y-2">
@@ -850,7 +824,6 @@ const WidgetGenerator: React.FC = () => {
                     <SelectItem value="call-now">Call Now</SelectItem>
                     <SelectItem value="contact-form">Contact Form</SelectItem>
                     <SelectItem value="social-share">Social Share</SelectItem>
-                    <SelectItem value="refer-a-friend">Refer a Friend</SelectItem>
                     <SelectItem value="review-now">Review Now</SelectItem>
                     <SelectItem value="follow-us">Follow Us</SelectItem>
                     <SelectItem value="dodo-payment">Dodo Payment</SelectItem>
