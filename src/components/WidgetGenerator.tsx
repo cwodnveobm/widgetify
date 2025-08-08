@@ -835,6 +835,7 @@ const WidgetGenerator: React.FC = () => {
                     <SelectItem value="feedback-form">Feedback Form</SelectItem>
                     <SelectItem value="download-app">Download App</SelectItem>
                     <SelectItem value="countdown-timer">Countdown Timer</SelectItem>
+                    <SelectItem value="spotify-embed">Spotify Music Player</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

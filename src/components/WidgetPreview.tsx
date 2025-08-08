@@ -578,6 +578,47 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     </div>
   );
 
+  const renderSpotifyPopup = () => {
+    const url = config.spotifyUrl || '';
+    const match = url.match(/spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)/);
+    const embedUrl = match ? `https://open.spotify.com/embed/${match[1]}/${match[2]}` : '';
+    const height = config.height || (config.compact ? '152' : '352');
+
+    return (
+      <div style={popupStyle} className="animate-fade-in">
+        <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-lg border-b border-border">
+          <div className="font-medium text-foreground">Spotify Player</div>
+          <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+        </div>
+        <div className="flex-grow bg-background p-0">
+          {embedUrl ? (
+            <iframe
+              src={embedUrl}
+              width="100%"
+              height={height}
+              frameBorder="0"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              loading="lazy"
+              style={{ borderRadius: '0 0 10px 10px' }}
+              title="Spotify Embed"
+            />
+          ) : (
+            <div className="p-6 text-center bg-[#191414] text-white">
+              <div className="w-14 h-14 bg-[#1db954] rounded-full mx-auto mb-4 flex items-center justify-center">
+                {/* Spotify glyph */}
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                  <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.563.387-.857.207-2.348-1.435-5.304-1.76-8.785-.964-.335.077-.67-.133-.746-.469-.077-.336.132-.67.469-.746 3.809-.871 7.077-.496 9.713 1.115.293.18.386.563.206.857zm1.223-2.723c-.226.367-.706.482-1.073.257-2.687-1.652-6.785-2.131-9.965-1.166-.413.125-.849-.106-.973-.518-.125-.413.106-.849.518-.973 3.632-1.102 8.147-.568 11.238 1.327.366.226.481.706.255 1.073zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71c-.493.15-1.016-.128-1.166-.62-.149-.493.129-1.016.621-1.166 3.532-1.073 9.404-.865 13.115 1.338.445.264.590.837.326 1.282-.264.444-.838.590-1.282.325z"/>
+                </svg>
+              </div>
+              <h3 className="m-0 text-white">No music selected</h3>
+              <p className="m-0 text-[#b3b3b3] text-sm">Add a Spotify URL to display music here</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   const renderChatPopup = () => {
     return (
       <div style={popupStyle} className="animate-fade-in">
@@ -648,6 +689,10 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
       return renderCryptoPopup();
     }
     
+    if (type === 'spotify-embed') {
+      return renderSpotifyPopup();
+    }
+    
     if (type === 'call-now' || type === 'review-now' || type === 'follow-us' || type === 'back-to-top' || type === 'dark-mode-toggle' || type === 'click-to-copy') {
       const tooltipText = getTooltipText();
       return tooltipText ? <div style={tooltipStyle}>{tooltipText}</div> : null;
@@ -707,6 +752,9 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         togglePopup();
         break;
       case 'crypto-prices':
+        togglePopup();
+        break;
+      case 'spotify-embed':
         togglePopup();
         break;
       case 'click-to-copy':
