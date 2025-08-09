@@ -1,5 +1,6 @@
 
 import React from 'react';
+import ReferAFriend from '@/components/ReferAFriend';
 
 const Footer: React.FC = () => {
   return <footer className="bg-gray-900 text-gray-300">
@@ -42,7 +43,7 @@ const Footer: React.FC = () => {
         <div className="border-t border-gray-800 mt-8 md:mt-12 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs md:text-sm text-center md:text-left">© 2025 Widgetify. All rights reserved | Powered by Muhammed Adnan</p>
           <div className="flex gap-4">
-            
+            <ReferAFriend />
           </div>
         </div>
       </div>
