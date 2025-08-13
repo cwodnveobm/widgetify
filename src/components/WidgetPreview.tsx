@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
-import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone, Mail, Calendar, FileText, Download, Users, ArrowUp, QrCode, Moon, Cloud, TrendingUp, Copy, Clock } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone, Mail, Calendar, FileText, Download, Users, ArrowUp, QrCode, Moon, Cloud, TrendingUp, Copy, Clock, Printer, Cookie, Shield, Video } from 'lucide-react';
 
 interface WidgetPreviewProps {
   config: WidgetConfig;
@@ -215,6 +215,18 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424c-.18.295-.563.387-.857.207-2.348-1.435-5.304-1.76-8.785-.964-.335.077-.67-.133-.746-.469-.077-.336.132-.67.469-.746 3.809-.871 7.077-.496 9.713 1.115.293.18.386.563.206.857zm1.223-2.723c-.226.367-.706.482-1.073.257-2.687-1.652-6.785-2.131-9.965-1.166-.413.125-.849-.106-.973-.518-.125-.413.106-.849.518-.973 3.632-1.102 8.147-.568 11.238 1.327.366.226.481.706.255 1.073zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71c-.493.15-1.016-.128-1.166-.62-.149-.493.129-1.016.621-1.166 3.532-1.073 9.404-.865 13.115 1.338.445.264.590.837.326 1.282-.264.444-.838.590-1.282.325z"/>
           </svg>
         );
+      case 'print-page':
+        return <Printer size={iconSize} color="white" />;
+      case 'scroll-progress':
+        return <Clock size={iconSize} color="white" />;
+      case 'cookie-consent':
+        return <Cookie size={iconSize} color="white" />;
+      case 'age-verification':
+        return <Shield size={iconSize} color="white" />;
+      case 'pdf-viewer':
+        return <FileText size={iconSize} color="white" />;
+      case 'floating-video':
+        return <Video size={iconSize} color="white" />;
       default:
         return <MessageCircle size={iconSize} color="white" />;
     }
@@ -304,6 +316,18 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return 'Cryptocurrency Prices';
       case 'click-to-copy':
         return config.copyButtonText || 'Click to Copy';
+      case 'print-page':
+        return 'Print Page';
+      case 'scroll-progress':
+        return 'Scroll Progress';
+      case 'cookie-consent':
+        return 'Cookie Consent';
+      case 'age-verification':
+        return 'Age Verification';
+      case 'pdf-viewer':
+        return 'PDF Viewer';
+      case 'floating-video':
+        return 'Floating Video';
       default:
         return null;
     }
@@ -774,6 +798,9 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             checkIcon.remove();
           }, 1000);
         }
+        break;
+      case 'print-page':
+        window.print();
         break;
       default:
         togglePopup();

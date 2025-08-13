@@ -836,6 +836,12 @@ const WidgetGenerator: React.FC = () => {
                     <SelectItem value="download-app">Download App</SelectItem>
                     <SelectItem value="countdown-timer">Countdown Timer</SelectItem>
                     <SelectItem value="spotify-embed">Spotify Music Player</SelectItem>
+                    <SelectItem value="print-page">Print Page</SelectItem>
+                    <SelectItem value="scroll-progress">Scroll Progress</SelectItem>
+                    <SelectItem value="cookie-consent">Cookie Consent</SelectItem>
+                    <SelectItem value="age-verification">Age Verification</SelectItem>
+                    <SelectItem value="pdf-viewer">PDF Viewer</SelectItem>
+                    <SelectItem value="floating-video">Floating Video</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

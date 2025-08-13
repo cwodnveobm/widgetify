@@ -47,6 +47,11 @@ export interface WidgetConfig {
   spotifyUrl?: string;
   height?: string;
   compact?: boolean;
+  // Added for new widgets
+  pdfUrl?: string;
+  videoUrl?: string;
+  consentMessage?: string;
+  ageMinimum?: number;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
@@ -1474,6 +1479,135 @@ Sent via ${contactBusinessName} Contact Form\`;
             popup.classList.toggle('show');
           }
         </script>`;
+
+    case 'print-page':
+      return `${baseStyles}
+        <div id="widgetify-print" class="widgetify-widget" onclick="window.print()" aria-label="Print this page">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 3h10v4H7V3zm13 5h-3V7H7v1H4a2 2 0 00-2 2v6h4v4h12v-4h4v-6a2 2 0 00-2-2zm-5 10H9v-4h6v4z"/>
+          </svg>
+        </div>`;
+
+    case 'scroll-progress':
+      return `${baseStyles}
+        <style>
+          #widgetify-scroll-progress{position:fixed;top:0;left:0;height:4px;background:${buttonColor};width:0%;z-index:99999}
+        </style>
+        <div id="widgetify-scroll-progress" role="progressbar" aria-label="Scroll progress"></div>
+        <div id="widgetify-progress-btn" class="widgetify-widget" aria-label="Scroll progress">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 20a8 8 0 108-8 8.009 8.009 0 00-8 8zm1-13h-2v7h6v-2h-4z"/>
+          </svg>
+        </div>
+        <script>
+          function widgetifyUpdateProgress(){
+            const doc=document.documentElement; const body=document.body;
+            const winScroll=doc.scrollTop||body.scrollTop; const height=doc.scrollHeight-doc.clientHeight;
+            const scrolled=height? (winScroll/height)*100 : 0; const bar=document.getElementById('widgetify-scroll-progress');
+            if(bar) bar.style.width=scrolled+'%';
+          }
+          window.addEventListener('scroll', widgetifyUpdateProgress, { passive: true });
+          window.addEventListener('load', widgetifyUpdateProgress);
+        </script>`;
+
+    case 'cookie-consent':
+      return `${baseStyles}
+        <div id="widgetify-consent" style="position:fixed;left:20px;right:20px;bottom:20px;max-width:760px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none;z-index:10000">
+          <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
+            <div style="font-size:14px;color:#374151;line-height:1.5;flex:1 1 auto;min-width:200px;">${config.consentMessage || 'We use cookies to personalize content and analyze traffic.'}</div>
+            <div style="display:flex;gap:8px;flex-shrink:0">
+              <button onclick="widgetifyAcceptCookies()" style="background:${buttonColor};color:#fff;padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-weight:600">Accept</button>
+              <button onclick="document.getElementById('widgetify-consent').style.display='none'" style="background:#f3f4f6;color:#374151;padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-weight:500">Later</button>
+            </div>
+          </div>
+        </div>
+        <div id="widgetify-consent-btn" class="widgetify-widget" onclick="document.getElementById('widgetify-consent').style.display='block'" aria-label="Cookie settings">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 109.95 8.89 3 3 0 01-3.4-3.4A10 10 0 0012 2zm-3 9a1 1 0 11-1-1 1 1 0 011 1zm3 4a1 1 0 11-1-1 1 1 0 011 1zm4-3a1 1 0 11-1-1 1 1 0 011 1z"/></svg>
+        </div>
+        <script>
+          function widgetifyAcceptCookies(){
+            try{localStorage.setItem('widgetify_cookie_consent','true');}catch(e){}
+            const el=document.getElementById('widgetify-consent'); if(el) el.style.display='none';
+          }
+          (function(){
+            let accepted=false; try{accepted=localStorage.getItem('widgetify_cookie_consent')==='true';}catch(e){}
+            if(!accepted){ const el=document.getElementById('widgetify-consent'); if(el) el.style.display='block'; }
+          })();
+        </script>`;
+
+    case 'age-verification':
+      return `${baseStyles}
+        <div id="widgetify-age-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10000">
+          <div style="background:#fff;border-radius:12px;padding:20px;width:90%;max-width:420px;text-align:center;border:1px solid #e5e7eb">
+            <h3 style="margin:0 0 8px 0;font-size:18px;color:#111827;font-weight:700">Age Verification</h3>
+            <p style="margin:0 0 12px 0;font-size:14px;color:#374151">You must be ${config.ageMinimum || 18}+ to enter this site.</p>
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:8px;flex-wrap:wrap">
+              <button onclick="widgetifyConfirmAge(true)" style="background:${buttonColor};color:#fff;padding:10px 14px;border:none;border-radius:8px;cursor:pointer;font-weight:600">I am ${config.ageMinimum || 18}+</button>
+              <button onclick="widgetifyConfirmAge(false)" style="background:#ef4444;color:#fff;padding:10px 14px;border:none;border-radius:8px;cursor:pointer;font-weight:600">Exit</button>
+            </div>
+          </div>
+        </div>
+        <div id="widgetify-age-btn" class="widgetify-widget" onclick="document.getElementById('widgetify-age-overlay').style.display='flex'" aria-label="Age verification">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l7 4v6c0 5-3 9-7 10-4-1-7-5-7-10V6l7-4zm0 6a2 2 0 102 2 2 2 0 00-2-2zm0 10a7 7 0 004-6H8a7 7 0 004 6z"/></svg>
+        </div>
+        <script>
+          function widgetifyConfirmAge(ok){
+            if(ok){ try{localStorage.setItem('widgetify_age_verified','true');}catch(e){}; const el=document.getElementById('widgetify-age-overlay'); if(el) el.style.display='none'; }
+            else { try{history.back();}catch(e){} }
+          }
+          (function(){
+            let verified=false; try{verified=localStorage.getItem('widgetify_age_verified')==='true';}catch(e){}
+            if(!verified){ const el=document.getElementById('widgetify-age-overlay'); if(el) el.style.display='flex'; }
+          })();
+        </script>`;
+
+    case 'pdf-viewer':
+      return `${baseStyles}
+        <div id="widgetify-pdf" class="widgetify-widget" onclick="toggleWidgetifyPdf()" aria-label="Open PDF viewer">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm1 7V3.5L19.5 9H15z"/></svg>
+        </div>
+        <div id="widgetify-pdf-popup" class="widgetify-popup" role="dialog" aria-labelledby="pdf-title" style="width: 480px; max-width: 95vw; height: auto;">
+          <div class="widgetify-header">
+            <h3 id="pdf-title">PDF Viewer</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyPdf()" aria-label="Close PDF">×</button>
+          </div>
+          <div class="widgetify-content" style="padding:0;">
+            <iframe src="${config.pdfUrl || 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'}" title="PDF Document" style="width:100%;height:480px;border:0;"></iframe>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+        <script>
+          function toggleWidgetifyPdf(){ const p=document.getElementById('widgetify-pdf-popup'); if(p) p.classList.toggle('show'); }
+        </script>`;
+
+    case 'floating-video': {
+      const url = config.videoUrl || '';
+      const ytMatch = url.match(/(?:youtu.be\/|youtube.com\/(?:watch\?v=|embed\/))([\w-]{11})/);
+      const embedUrl = ytMatch ? `https://www.youtube.com/embed/${'${ytMatch[1]}'}` : '';
+      const isMp4 = /\.mp4($|\?)/.test(url);
+      const inner = embedUrl
+        ? `<iframe width="100%" height="240" src="${'${embedUrl}'}" title="Video" frameborder="0" allowfullscreen style="border:0"></iframe>`
+        : (isMp4 ? `<video src="${'${url}'}" controls style="width:100%;height:auto;border-radius:8px"></video>` : `<div style="padding:20px;text-align:center;color:#6b7280">Provide a YouTube or MP4 URL.</div>`);
+      return `${baseStyles}
+        <div id="widgetify-video" class="widgetify-widget" onclick="toggleWidgetifyVideo()" aria-label="Open video">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M17 10.5V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-3.5L22 18V6l-5 4.5z"/></svg>
+        </div>
+        <div id="widgetify-video-popup" class="widgetify-popup" role="dialog" aria-labelledby="video-title" style="width: 420px; max-width: 95vw; height: auto;">
+          <div class="widgetify-header">
+            <h3 id="video-title">Floating Video</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyVideo()" aria-label="Close video">×</button>
+          </div>
+          <div class="widgetify-content" style="padding:0;">${'${inner}'}</div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+        <script>
+          function toggleWidgetifyVideo(){ const p=document.getElementById('widgetify-video-popup'); if(p) p.classList.toggle('show'); }
+        </script>`;
+    }
 
     case 'spotify-embed': {
       const getSpotifyEmbedUrl = (url: string) => {
