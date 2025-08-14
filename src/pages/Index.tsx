@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import HeroSection from '@/components/HeroSection';
-import ResponsiveWidgetGenerator from '@/components/ResponsiveWidgetGenerator';
+import WidgetGenerator from '@/components/WidgetGenerator';
 import FeaturesSection from '@/components/FeaturesSection';
 import FounderSection from '@/components/FounderSection';
 import Footer from '@/components/Footer';
@@ -157,9 +157,9 @@ const Index: React.FC = () => {
           <div id="hero">
             <HeroSection />
           </div>
-            <div id="widget-generator">
-              <ResponsiveWidgetGenerator />
-            </div>
+          <div id="widget-generator">
+            <WidgetGenerator />
+          </div>
           <div id="features">
             <FeaturesSection />
           </div>

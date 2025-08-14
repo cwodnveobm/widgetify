@@ -1585,11 +1585,11 @@ Sent via ${contactBusinessName} Contact Form\`;
     case 'floating-video': {
       const url = config.videoUrl || '';
       const ytMatch = url.match(/(?:youtu.be\/|youtube.com\/(?:watch\?v=|embed\/))([\w-]{11})/);
-      const embedUrl = ytMatch ? `https://www.youtube.com/embed/${ytMatch[1]}` : '';
+      const embedUrl = ytMatch ? `https://www.youtube.com/embed/${'${ytMatch[1]}'}` : '';
       const isMp4 = /\.mp4($|\?)/.test(url);
       const inner = embedUrl
-        ? `<iframe width="100%" height="240" src="${embedUrl}" title="Video" frameborder="0" allowfullscreen style="border:0"></iframe>`
-        : (isMp4 ? `<video src="${url}" controls style="width:100%;height:auto;border-radius:8px"></video>` : `<div style="padding:20px;text-align:center;color:#6b7280">Provide a YouTube or MP4 URL.</div>`);
+        ? `<iframe width="100%" height="240" src="${'${embedUrl}'}" title="Video" frameborder="0" allowfullscreen style="border:0"></iframe>`
+        : (isMp4 ? `<video src="${'${url}'}" controls style="width:100%;height:auto;border-radius:8px"></video>` : `<div style="padding:20px;text-align:center;color:#6b7280">Provide a YouTube or MP4 URL.</div>`);
       return `${baseStyles}
         <div id="widgetify-video" class="widgetify-widget" onclick="toggleWidgetifyVideo()" aria-label="Open video">
           <svg width="30" height="30" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M17 10.5V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-3.5L22 18V6l-5 4.5z"/></svg>
@@ -1599,7 +1599,7 @@ Sent via ${contactBusinessName} Contact Form\`;
             <h3 id="video-title">Floating Video</h3>
             <button class="widgetify-close" onclick="toggleWidgetifyVideo()" aria-label="Close video">×</button>
           </div>
-          <div class="widgetify-content" style="padding:0;">${inner}</div>
+          <div class="widgetify-content" style="padding:0;">${'${inner}'}</div>
           <div class="widgetify-watermark">
             <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
           </div>
