@@ -39,14 +39,14 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
 
       {/* Mobile menu */}
       <div
-        className={`fixed top-0 left-0 h-full w-64 bg-white dark:bg-gray-900 shadow-xl transform transition-transform duration-300 ease-in-out z-50 md:hidden ${
+        className={`fixed top-0 left-0 h-full w-72 max-w-[85vw] bg-background shadow-xl transform transition-transform duration-300 ease-in-out z-50 md:hidden ${
           menuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Menu</h2>
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <h2 className="text-lg font-semibold text-foreground">Menu</h2>
             <Button
               variant="ghost"
               size="icon"
@@ -60,11 +60,11 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
 
           {/* Navigation links */}
           <nav className="flex-1 p-4">
-            <ul className="space-y-4">
+            <ul className="space-y-2">
               <li>
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-left button-touch"
+                  className="w-full justify-start text-left button-touch h-12 text-base"
                   onClick={() => {
                     scrollToSection('home');
                     handleMenuItemClick();
@@ -76,7 +76,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
               <li>
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-left button-touch"
+                  className="w-full justify-start text-left button-touch h-12 text-base"
                   onClick={() => {
                     scrollToSection('widget-generator');
                     handleMenuItemClick();
@@ -88,7 +88,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
               <li>
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-left button-touch"
+                  className="w-full justify-start text-left button-touch h-12 text-base"
                   onClick={() => {
                     scrollToSection('features');
                     handleMenuItemClick();
@@ -100,7 +100,7 @@ const MobileNavigation: React.FC<MobileNavigationProps> = ({
               <li>
                 <Button
                   variant="ghost"
-                  className="w-full justify-start text-left button-touch"
+                  className="w-full justify-start text-left button-touch h-12 text-base"
                   onClick={() => {
                     scrollToSection('founder');
                     handleMenuItemClick();
