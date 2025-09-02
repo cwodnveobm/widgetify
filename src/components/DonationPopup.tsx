@@ -38,7 +38,7 @@ const DonationPopup: React.FC = () => {
   };
 
   const handleDonate = () => {
-    const upiUrl = 'upi://pay?pa=adnanmuhammad4393@okicici&pn=Muhammed%20Adnan&am=50&cu=INR&tn=Donation%20for%20Widgetify';
+    const upiUrl = 'upi://pay?pa=adnanmuhammad4393@okicici&pn=Muhammed%20Adnan&am=20&cu=INR&tn=Donation%20for%20Widgetify';
     window.open(upiUrl, '_blank');
   };
 
@@ -97,7 +97,7 @@ const DonationPopup: React.FC = () => {
               className="w-full bg-primary hover:bg-primary/90 flex items-center gap-2"
             >
               <Heart className="w-4 h-4" />
-              Donate ₹50 via UPI
+              Donate ₹20 via UPI
             </Button>
             
             <div className="flex gap-2">

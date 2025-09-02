@@ -52,11 +52,6 @@ export interface WidgetConfig {
   videoUrl?: string;
   consentMessage?: string;
   ageMinimum?: number;
-  // Popup ad creator properties
-  adTitle?: string;
-  adDescription?: string;
-  adButtonText?: string;
-  adImageUrl?: string;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
@@ -1614,16 +1609,12 @@ Sent via ${contactBusinessName} Contact Form\`;
         </script>`;
     }
 
-    case 'spotify-embed':
-      const getSpotifyEmbedUrl = (url: string): string => {
+    case 'spotify-embed': {
+      const getSpotifyEmbedUrl = (url: string) => {
         if (!url) return '';
         const spotifyMatch = url.match(/spotify\.com\/(track|album|playlist|artist)\/([a-zA-Z0-9]+)/);
         if (spotifyMatch) {
           const [, type, id] = spotifyMatch;
-          return `https://open.spotify.com/embed/${type}/${id}`;
-        }
-        return '';
-      };
           return `https://open.spotify.com/embed/${type}/${id}`;
         }
         return '';
@@ -1660,50 +1651,7 @@ Sent via ${contactBusinessName} Contact Form\`;
             popup.classList.toggle('show');
           }
         </script>`;
-
-    case 'popup-ad-creator':
-      const adMessage = config.welcomeMessage || 'Special Offer Just for You!';
-      const adLink = config.shareUrl || '#';
-      const adImage = config.videoUrl || '';
-      
-      return `${baseStyles}
-        <div id="widgetify-popup-ad" class="widgetify-widget" onclick="toggleWidgetifyPopupAd()" aria-label="View special offer">
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.5 6L12 10.5 8.5 8 12 5.5 15.5 8zM8.5 16L12 13.5 15.5 16 12 18.5 8.5 16z"/>
-          </svg>
-        </div>
-
-        <div id="widgetify-popup-ad-popup" class="widgetify-popup" role="dialog" aria-labelledby="popup-ad-title">
-          <div class="widgetify-header">
-            <h3 id="popup-ad-title">Special Offer</h3>
-            <button class="widgetify-close" onclick="toggleWidgetifyPopupAd()" aria-label="Close offer">×</button>
-          </div>
-          <div class="widgetify-content">
-            ${adImage ? `<div style="text-align: center; margin-bottom: 16px;"><img src="${adImage}" alt="Offer Image" style="width: 100%; max-width: 300px; height: auto; border-radius: 8px;" /></div>` : ''}
-            <div style="text-align: center; margin-bottom: 20px;">
-              <h3 style="margin: 0 0 10px 0; color: #1f2937; font-size: 20px; font-weight: 600;">${adMessage}</h3>
-              <p style="margin: 0; color: #6b7280; font-size: 14px;">Don't miss out on this amazing opportunity!</p>
-            </div>
-            <div style="text-align: center;">
-              <a href="${adLink}" target="_blank" style="display: inline-block; background: linear-gradient(135deg, ${buttonColor} 0%, ${buttonColor}dd 100%); color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; transition: transform 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
-                Learn More
-              </a>
-            </div>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
-        </div>
-
-        <script>
-          function toggleWidgetifyPopupAd() {
-            const popup = document.getElementById('widgetify-popup-ad-popup');
-            popup.classList.toggle('show');
-          }
-        </script>`;
-
-    default:
-      return '';
+    }
   }
 };
 
@@ -1754,5 +1702,4 @@ export const WIDGET_NAMES: Record<WidgetType, string> = {
   'share-page': 'Share Page',
   'dark-mode-toggle': 'Dark Mode Toggle',
   'spotify-embed': 'Spotify Music Player',
-  'popup-ad-creator': 'Popup Ad Creator',
 };
