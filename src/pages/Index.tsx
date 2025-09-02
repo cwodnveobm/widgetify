@@ -1,6 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import HeroSection from '@/components/HeroSection';
 import WidgetGenerator from '@/components/WidgetGenerator';
 import FeaturesSection from '@/components/FeaturesSection';
@@ -105,8 +106,9 @@ const Index: React.FC = () => {
           </div>
           
           {isMobile ? (
-            <>
-              <button 
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <button
                 id="menu-toggle-button" 
                 onClick={toggleMenu} 
                 className="md:hidden text-gray-600 focus:outline-none p-3 rounded-xl hover:bg-gray-100 min-h-[44px] min-w-[44px] transition-all duration-200" 
@@ -139,15 +141,18 @@ const Index: React.FC = () => {
                   Support
                 </Link>
               </div>
-            </>
+            </div>
           ) : (
-            <nav className="hidden md:flex gap-8">
-              <button onClick={() => scrollToSection('hero')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Home</button>
-              <button onClick={() => scrollToSection('widget-generator')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Generate</button>
-              <button onClick={() => scrollToSection('features')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Features</button>
-              <button onClick={() => scrollToSection('founder')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Founder</button>
-              <Link to="/support" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Support</Link>
-            </nav>
+            <div className="hidden md:flex items-center gap-6">
+              <nav className="flex gap-8">
+                <button onClick={() => scrollToSection('hero')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Home</button>
+                <button onClick={() => scrollToSection('widget-generator')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Generate</button>
+                <button onClick={() => scrollToSection('features')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Features</button>
+                <button onClick={() => scrollToSection('founder')} className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Founder</button>
+                <Link to="/support" className="text-gray-600 hover:text-purple-600 font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-purple-600 after:transition-all after:duration-300 hover:after:w-full">Support</Link>
+              </nav>
+              <ThemeToggle />
+            </div>
           )}
         </div>
       </header>

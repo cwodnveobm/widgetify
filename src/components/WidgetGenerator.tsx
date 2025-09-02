@@ -12,12 +12,13 @@ import WidgetPreview from './WidgetPreview';
 import { Copy, Download, Eye, EyeOff, Sparkles, Crown, Smartphone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import type { WidgetType, WidgetSize } from '@/types';
 
 const WidgetGenerator: React.FC = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const [showPreview, setShowPreview] = useState(!isMobile); // Hide preview by default on mobile
+  const [showPreview, setShowPreview] = useState(!isMobile);
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(false);
 
@@ -158,7 +159,7 @@ const WidgetGenerator: React.FC = () => {
                 value={config.handle}
                 onChange={(e) => handleConfigChange('handle', e.target.value)}
                 placeholder="+1234567890"
-                className="text-base" // Better for mobile
+                className="text-base"
               />
             </div>
             <div className="space-y-2">
@@ -169,7 +170,7 @@ const WidgetGenerator: React.FC = () => {
                 onChange={(e) => handleConfigChange('welcomeMessage', e.target.value)}
                 placeholder="Hello! How can I help you today?"
                 rows={3}
-                className="text-base resize-none" // Better for mobile
+                className="text-base resize-none"
               />
             </div>
           </>
@@ -180,7 +181,7 @@ const WidgetGenerator: React.FC = () => {
           <>
             <div className="space-y-3">
               <Label className="text-sm font-medium">Social Networks</Label>
-                  <div className="grid grid-cols-1 gap-3">
+              <div className="grid grid-cols-1 gap-3">
                 {['facebook', 'twitter', 'linkedin'].map((network) => (
                   <div key={network} className="flex items-center space-x-3 p-3 rounded-lg bg-muted/50 border border-border hover:bg-muted/70 transition-colors">
                     <Checkbox
@@ -495,225 +496,262 @@ const WidgetGenerator: React.FC = () => {
           </>
         );
 
-        case 'back-to-top':
-          return (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="scroll-offset" className="text-sm font-medium">Show After Scroll (px)</Label>
-                <Input
-                  id="scroll-offset"
-                  type="number"
-                  value={config.scrollOffset || '300'}
-                  onChange={(e) => handleConfigChange('scrollOffset', e.target.value)}
-                  placeholder="300"
-                  className="text-base min-h-[48px]"
-                />
-              </div>
-              <div className="flex items-center space-x-2 p-2 rounded-lg bg-gray-50">
-                <Checkbox
-                  id="smooth-scroll"
-                  checked={config.smoothScroll !== false}
-                  onCheckedChange={(checked) => handleConfigChange('smoothScroll', checked as boolean)}
-                  className="min-w-[20px] min-h-[20px]"
-                />
-                <Label htmlFor="smooth-scroll" className="text-sm font-medium cursor-pointer flex-1">Enable smooth scrolling</Label>
-              </div>
-            </>
-          );
-
-        case 'qr-generator':
-          return (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="qr-text" className="text-sm font-medium">Text/URL to Encode</Label>
-                <Input
-                  id="qr-text"
-                  value={config.qrText || window.location.href}
-                  onChange={(e) => handleConfigChange('qrText', e.target.value)}
-                  placeholder="Enter text or URL"
-                  className="text-base min-h-[48px]"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="qr-size" className="text-sm font-medium">QR Code Size</Label>
-                <Select
-                  value={config.qrSize || '200'}
-                  onValueChange={(value) => handleConfigChange('qrSize', value)}
-                >
-                  <SelectTrigger className="text-base min-h-[48px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="150">Small (150px)</SelectItem>
-                    <SelectItem value="200">Medium (200px)</SelectItem>
-                    <SelectItem value="300">Large (300px)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </>
-          );
-
-        case 'dark-mode-toggle':
-          return (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="toggle-style" className="text-sm font-medium">Toggle Style</Label>
-                <Select
-                  value={config.toggleStyle || 'switch'}
-                  onValueChange={(value) => handleConfigChange('toggleStyle', value)}
-                >
-                  <SelectTrigger className="text-base min-h-[48px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="switch">Switch</SelectItem>
-                    <SelectItem value="button">Button</SelectItem>
-                    <SelectItem value="icon">Icon Only</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center space-x-2 p-2 rounded-lg bg-gray-50">
-                <Checkbox
-                  id="save-preference"
-                  checked={config.savePreference !== false}
-                  onCheckedChange={(checked) => handleConfigChange('savePreference', checked as boolean)}
-                  className="min-w-[20px] min-h-[20px]"
-                />
-                <Label htmlFor="save-preference" className="text-sm font-medium cursor-pointer flex-1">Save user preference</Label>
-              </div>
-            </>
-          );
-
-        case 'weather-widget':
-          return (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="weather-city" className="text-sm font-medium">City</Label>
-                <Input
-                  id="weather-city"
-                  value={config.weatherCity || 'London'}
-                  onChange={(e) => handleConfigChange('weatherCity', e.target.value)}
-                  placeholder="Enter city name"
-                  className="text-base min-h-[48px]"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="weather-units" className="text-sm font-medium">Temperature Units</Label>
-                <Select
-                  value={config.weatherUnits || 'metric'}
-                  onValueChange={(value) => handleConfigChange('weatherUnits', value)}
-                >
-                  <SelectTrigger className="text-base min-h-[48px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="metric">Celsius (°C)</SelectItem>
-                    <SelectItem value="imperial">Fahrenheit (°F)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </>
-          );
-
-        case 'crypto-prices':
-          return (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="crypto-coins" className="text-sm font-medium">Cryptocurrencies</Label>
-                <Input
-                  id="crypto-coins"
-                  value={config.cryptoCoins || 'bitcoin,ethereum,cardano'}
-                  onChange={(e) => handleConfigChange('cryptoCoins', e.target.value)}
-                  placeholder="bitcoin,ethereum,cardano"
-                  className="text-base min-h-[48px]"
-                />
-                <p className="text-xs text-gray-500">Enter coin IDs separated by commas</p>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="crypto-currency" className="text-sm font-medium">Display Currency</Label>
-                <Select
-                  value={config.cryptoCurrency || 'usd'}
-                  onValueChange={(value) => handleConfigChange('cryptoCurrency', value)}
-                >
-                  <SelectTrigger className="text-base min-h-[48px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="usd">USD ($)</SelectItem>
-                    <SelectItem value="eur">EUR (€)</SelectItem>
-                    <SelectItem value="inr">INR (₹)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </>
-          );
-
-        case 'click-to-copy':
-          return (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="copy-text" className="text-sm font-medium">Text to Copy</Label>
-                <Input
-                  id="copy-text"
-                  value={config.copyText || window.location.href}
-                  onChange={(e) => handleConfigChange('copyText', e.target.value)}
-                  placeholder="Enter text to copy"
-                  className="text-base min-h-[48px]"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="copy-button-text" className="text-sm font-medium">Button Text</Label>
-                <Input
-                  id="copy-button-text"
-                  value={config.copyButtonText || 'Copy Link'}
-                  onChange={(e) => handleConfigChange('copyButtonText', e.target.value)}
-                  placeholder="Copy Link"
-                  className="text-base min-h-[48px]"
-                />
-              </div>
-            </>
-          );
-
-        case 'spotify-embed':
-          return (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-1">Spotify URL</label>
-                <input
-                  type="url"
-                  placeholder="https://open.spotify.com/track/..."
-                  className="w-full p-2 border rounded-md bg-background"
-                  value={config.spotifyUrl || ''}
-                  onChange={(e) => setConfig({ ...config, spotifyUrl: e.target.value })}
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Paste any Spotify track, album, playlist, or artist URL
-                </p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-1">Player Height</label>
-                <select
-                  className="w-full p-2 border rounded-md bg-background"
-                  value={config.height || '352'}
-                  onChange={(e) => setConfig({ ...config, height: e.target.value })}
-                >
-                  <option value="152">Compact (152px)</option>
-                  <option value="352">Standard (352px)</option>
-                  <option value="452">Large (452px)</option>
-                </select>
-              </div>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="compact-mode"
-                  className="rounded"
-                  checked={config.compact || false}
-                  onChange={(e) => setConfig({ ...config, compact: e.target.checked })}
-                />
-                <label htmlFor="compact-mode" className="text-sm">Compact Mode</label>
-              </div>
+      case 'back-to-top':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="scroll-offset" className="text-sm font-medium">Show After Scroll (px)</Label>
+              <Input
+                id="scroll-offset"
+                type="number"
+                value={config.scrollOffset || '300'}
+                onChange={(e) => handleConfigChange('scrollOffset', e.target.value)}
+                placeholder="300"
+                className="text-base min-h-[48px]"
+              />
             </div>
-          );
+            <div className="flex items-center space-x-2 p-2 rounded-lg bg-gray-50">
+              <Checkbox
+                id="smooth-scroll"
+                checked={config.smoothScroll !== false}
+                onCheckedChange={(checked) => handleConfigChange('smoothScroll', checked as boolean)}
+                className="min-w-[20px] min-h-[20px]"
+              />
+              <Label htmlFor="smooth-scroll" className="text-sm font-medium cursor-pointer flex-1">Enable smooth scrolling</Label>
+            </div>
+          </>
+        );
+
+      case 'qr-generator':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="qr-text" className="text-sm font-medium">Text/URL to Encode</Label>
+              <Input
+                id="qr-text"
+                value={config.qrText || window.location.href}
+                onChange={(e) => handleConfigChange('qrText', e.target.value)}
+                placeholder="Enter text or URL"
+                className="text-base min-h-[48px]"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="qr-size" className="text-sm font-medium">QR Code Size</Label>
+              <Select
+                value={config.qrSize || '200'}
+                onValueChange={(value) => handleConfigChange('qrSize', value)}
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="150">Small (150px)</SelectItem>
+                  <SelectItem value="200">Medium (200px)</SelectItem>
+                  <SelectItem value="300">Large (300px)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </>
+        );
+
+      case 'dark-mode-toggle':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="toggle-style" className="text-sm font-medium">Toggle Style</Label>
+              <Select
+                value={config.toggleStyle || 'switch'}
+                onValueChange={(value) => handleConfigChange('toggleStyle', value)}
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="switch">Switch</SelectItem>
+                  <SelectItem value="button">Button</SelectItem>
+                  <SelectItem value="icon">Icon Only</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center space-x-2 p-2 rounded-lg bg-gray-50">
+              <Checkbox
+                id="save-preference"
+                checked={config.savePreference !== false}
+                onCheckedChange={(checked) => handleConfigChange('savePreference', checked as boolean)}
+                className="min-w-[20px] min-h-[20px]"
+              />
+              <Label htmlFor="save-preference" className="text-sm font-medium cursor-pointer flex-1">Save user preference</Label>
+            </div>
+          </>
+        );
+
+      case 'weather-widget':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="weather-city" className="text-sm font-medium">City</Label>
+              <Input
+                id="weather-city"
+                value={config.weatherCity || 'London'}
+                onChange={(e) => handleConfigChange('weatherCity', e.target.value)}
+                placeholder="Enter city name"
+                className="text-base min-h-[48px]"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="weather-units" className="text-sm font-medium">Temperature Units</Label>
+              <Select
+                value={config.weatherUnits || 'metric'}
+                onValueChange={(value) => handleConfigChange('weatherUnits', value)}
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="metric">Celsius (°C)</SelectItem>
+                  <SelectItem value="imperial">Fahrenheit (°F)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </>
+        );
+
+      case 'crypto-prices':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="crypto-coins" className="text-sm font-medium">Cryptocurrencies</Label>
+              <Input
+                id="crypto-coins"
+                value={config.cryptoCoins || 'bitcoin,ethereum,cardano'}
+                onChange={(e) => handleConfigChange('cryptoCoins', e.target.value)}
+                placeholder="bitcoin,ethereum,cardano"
+                className="text-base min-h-[48px]"
+              />
+              <p className="text-xs text-gray-500">Enter coin IDs separated by commas</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="crypto-currency" className="text-sm font-medium">Display Currency</Label>
+              <Select
+                value={config.cryptoCurrency || 'usd'}
+                onValueChange={(value) => handleConfigChange('cryptoCurrency', value)}
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="usd">USD ($)</SelectItem>
+                  <SelectItem value="eur">EUR (€)</SelectItem>
+                  <SelectItem value="inr">INR (₹)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </>
+        );
+
+      case 'click-to-copy':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="copy-text" className="text-sm font-medium">Text to Copy</Label>
+              <Input
+                id="copy-text"
+                value={config.copyText || window.location.href}
+                onChange={(e) => handleConfigChange('copyText', e.target.value)}
+                placeholder="Enter text to copy"
+                className="text-base min-h-[48px]"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="copy-button-text" className="text-sm font-medium">Button Text</Label>
+              <Input
+                id="copy-button-text"
+                value={config.copyButtonText || 'Copy Link'}
+                onChange={(e) => handleConfigChange('copyButtonText', e.target.value)}
+                placeholder="Copy Link"
+                className="text-base min-h-[48px]"
+              />
+            </div>
+          </>
+        );
+
+      case 'spotify-embed':
+        return (
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Spotify URL</label>
+              <input
+                type="url"
+                placeholder="https://open.spotify.com/track/..."
+                className="w-full p-2 border rounded-md bg-background"
+                value={config.spotifyUrl || ''}
+                onChange={(e) => setConfig({ ...config, spotifyUrl: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Paste any Spotify track, album, playlist, or artist URL
+              </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Player Height</label>
+              <select
+                className="w-full p-2 border rounded-md bg-background"
+                value={config.height || '352'}
+                onChange={(e) => setConfig({ ...config, height: e.target.value })}
+              >
+                <option value="152">Compact (152px)</option>
+                <option value="352">Standard (352px)</option>
+                <option value="452">Large (452px)</option>
+              </select>
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                id="compact-mode"
+                className="rounded"
+                checked={config.compact || false}
+                onChange={(e) => setConfig({ ...config, compact: e.target.checked })}
+              />
+              <label htmlFor="compact-mode" className="text-sm">Compact Mode</label>
+            </div>
+          </div>
+        );
+
+      case 'popup-ad-creator':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="adMessage" className="text-sm font-medium">Ad Message</Label>
+              <Textarea
+                id="adMessage"
+                value={config.welcomeMessage}
+                onChange={(e) => handleConfigChange('welcomeMessage', e.target.value)}
+                placeholder="Special Offer Just for You!"
+                rows={2}
+                className="text-base resize-none"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="adLink" className="text-sm font-medium">Landing Page URL</Label>
+              <Input
+                id="adLink"
+                value={config.shareUrl}
+                onChange={(e) => handleConfigChange('shareUrl', e.target.value)}
+                placeholder="https://yoursite.com/offer"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="adImage" className="text-sm font-medium">Ad Image URL (optional)</Label>
+              <Input
+                id="adImage"
+                value={config.videoUrl}
+                onChange={(e) => handleConfigChange('videoUrl', e.target.value)}
+                placeholder="https://yoursite.com/image.jpg"
+                className="text-base"
+              />
+            </div>
+          </>
+        );
 
       default:
         return (
@@ -842,6 +880,7 @@ const WidgetGenerator: React.FC = () => {
                     <SelectItem value="age-verification">Age Verification</SelectItem>
                     <SelectItem value="pdf-viewer">PDF Viewer</SelectItem>
                     <SelectItem value="floating-video">Floating Video</SelectItem>
+                    <SelectItem value="popup-ad-creator">Popup Ad Creator</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

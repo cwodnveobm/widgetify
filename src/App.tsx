@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Preloader from "@/components/Preloader";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import Index from "./pages/Index";
 import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
@@ -51,24 +52,26 @@ const App = () => {
 
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/support" element={<Support />} />
-              <Route path="/home" element={<Index />} />
-              <Route path="/generate" element={<Index />} />
-              <Route path="/features" element={<Index />} />
-              <Route path="/founder" element={<Index />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
+      <ThemeProvider defaultTheme="system" storageKey="widgetify-theme">
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/support" element={<Support />} />
+                <Route path="/home" element={<Index />} />
+                <Route path="/generate" element={<Index />} />
+                <Route path="/features" element={<Index />} />
+                <Route path="/founder" element={<Index />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 };

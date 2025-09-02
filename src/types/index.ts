@@ -45,6 +45,7 @@ export type WidgetType =
   'click-to-copy' |
   'share-page' |
   'dark-mode-toggle' |
-  'spotify-embed';
+  'spotify-embed' |
+  'popup-ad-creator';
 
 export type WidgetSize = 'small' | 'medium' | 'large';
