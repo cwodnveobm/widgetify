@@ -1701,5 +1701,5 @@ export const WIDGET_NAMES: Record<WidgetType, string> = {
   'click-to-copy': 'Click to Copy',
   'share-page': 'Share Page',
   'dark-mode-toggle': 'Dark Mode Toggle',
-  'spotify-embed': 'Spotify Music Player',
+  'spotify-embed': 'Spotify Music Player'
 };
