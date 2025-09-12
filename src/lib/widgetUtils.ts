@@ -52,6 +52,12 @@ export interface WidgetConfig {
   videoUrl?: string;
   consentMessage?: string;
   ageMinimum?: number;
+  // AI-SEO widget properties
+  seoKeywords?: string;
+  seoDescription?: string;
+  businessType?: 'local' | 'online' | 'ecommerce';
+  targetLocation?: string;
+  businessUrl?: string;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
@@ -1652,6 +1658,143 @@ Sent via ${contactBusinessName} Contact Form\`;
           }
         </script>`;
     }
+
+    case 'ai-seo-listing': {
+      const { seoKeywords = '', seoDescription = '', businessType = 'local', targetLocation = '', businessUrl = '' } = config;
+      
+      return `
+        <div class="widgetify-widget" id="widgetify-seo-widget" onclick="toggleWidgetifySeo()">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="white">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
+
+        <div class="widgetify-popup" id="widgetify-seo-popup">
+          <div class="widgetify-popup-header">
+            <h3>🚀 AI SEO Listing Generator</h3>
+            <span class="widgetify-close" onclick="toggleWidgetifySeo()">&times;</span>
+          </div>
+          <div class="widgetify-popup-content">
+            <div class="seo-section">
+              <h4>🎯 SEO Analysis</h4>
+              <div class="seo-item">
+                <strong>Target Keywords:</strong> ${seoKeywords || 'Not specified'}
+              </div>
+              <div class="seo-item">
+                <strong>Business Type:</strong> ${businessType.charAt(0).toUpperCase() + businessType.slice(1)}
+              </div>
+              <div class="seo-item">
+                <strong>Location:</strong> ${targetLocation || 'Global'}
+              </div>
+            </div>
+            
+            <div class="seo-section">
+              <h4>📝 Generated SEO Content</h4>
+              <div class="seo-content">
+                <div class="seo-title">
+                  <strong>Title:</strong> ${seoKeywords ? `${seoKeywords} - Best ${businessType} Services` : 'Professional Services'} ${targetLocation ? `in ${targetLocation}` : ''}
+                </div>
+                <div class="seo-description">
+                  <strong>Description:</strong> ${seoDescription || `Expert ${businessType} services ${targetLocation ? `in ${targetLocation}` : 'worldwide'}. ${seoKeywords ? `Specializing in ${seoKeywords.toLowerCase()}.` : ''} Contact us for professional solutions and exceptional results.`}
+                </div>
+              </div>
+            </div>
+
+            <div class="seo-section">
+              <h4>🔗 Quick Actions</h4>
+              <div class="seo-actions">
+                <button onclick="copySeoContent()" class="seo-button">📋 Copy SEO Content</button>
+                ${businessUrl ? `<a href="${businessUrl}" target="_blank" class="seo-button">🌐 Visit Website</a>` : ''}
+                <button onclick="generateNewSeo()" class="seo-button">🔄 Regenerate</button>
+              </div>
+            </div>
+          </div>
+          
+          ${!config.isPremium ? `
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>` : ''}
+        </div>
+
+        <style>
+          .seo-section {
+            margin-bottom: 15px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+          }
+          
+          .seo-section h4 {
+            margin: 0 0 10px 0;
+            color: #4CAF50;
+            font-size: 14px;
+          }
+          
+          .seo-item, .seo-title, .seo-description {
+            margin: 8px 0;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.4;
+          }
+          
+          .seo-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+          }
+          
+          .seo-button {
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s;
+          }
+          
+          .seo-button:hover {
+            transform: translateY(-1px);
+            background: linear-gradient(135deg, #45a049, #4CAF50);
+          }
+        </style>
+
+        <script>
+          function toggleWidgetifySeo() {
+            const popup = document.getElementById('widgetify-seo-popup');
+            popup.classList.toggle('show');
+          }
+          
+          function copySeoContent() {
+            const title = document.querySelector('.seo-title').textContent;
+            const description = document.querySelector('.seo-description').textContent;
+            const content = title + '\\n\\n' + description;
+            
+            navigator.clipboard.writeText(content).then(() => {
+              alert('✅ SEO content copied to clipboard!');
+            }).catch(() => {
+              alert('❌ Failed to copy content');
+            });
+          }
+          
+          function generateNewSeo() {
+            // Simple regeneration simulation
+            const keywords = ['${seoKeywords}', 'professional', 'expert', 'quality', 'reliable'];
+            const randomKeyword = keywords[Math.floor(Math.random() * keywords.length)];
+            const titleEl = document.querySelector('.seo-title');
+            if (titleEl) {
+              titleEl.innerHTML = '<strong>Title:</strong> ' + randomKeyword.charAt(0).toUpperCase() + randomKeyword.slice(1) + ' ${businessType} Services ${targetLocation ? `in ${targetLocation}` : ''}';
+            }
+            alert('🔄 New SEO content generated!');
+          }
+        </script>`;
+    }
   }
 };
 
@@ -1701,5 +1844,6 @@ export const WIDGET_NAMES: Record<WidgetType, string> = {
   'click-to-copy': 'Click to Copy',
   'share-page': 'Share Page',
   'dark-mode-toggle': 'Dark Mode Toggle',
-  'spotify-embed': 'Spotify Music Player'
+  'spotify-embed': 'Spotify Music Player',
+  'ai-seo-listing': 'AI SEO Listing Generator'
 };

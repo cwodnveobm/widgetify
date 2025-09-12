@@ -20,6 +20,7 @@ const WidgetGenerator: React.FC = () => {
   const [showPreview, setShowPreview] = useState(!isMobile); // Hide preview by default on mobile
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(false);
+  const [exportFormat, setExportFormat] = useState<'html' | 'react' | 'wordpress'>('html');
 
   const [config, setConfig] = useState<WidgetConfig>({
     type: 'whatsapp' as WidgetType,
@@ -51,6 +52,12 @@ const WidgetGenerator: React.FC = () => {
     title: '',
     countdownStyle: 'digital',
     showLabels: true,
+    // AI-SEO widget properties
+    seoKeywords: '',
+    seoDescription: '',
+    businessType: 'local',
+    targetLocation: '',
+    businessUrl: '',
   });
 
   const handleConfigChange = (key: keyof WidgetConfig, value: any) => {
@@ -91,6 +98,61 @@ const WidgetGenerator: React.FC = () => {
     }
   };
 
+  const generateCodeByFormat = (format: 'html' | 'react' | 'wordpress') => {
+    const finalConfig = {
+      ...config,
+      isPremium: selectedTier === 'premium' && isPremiumUnlocked
+    };
+
+    switch (format) {
+      case 'react':
+        return generateReactCode(finalConfig);
+      case 'wordpress':
+        return generateWordPressCode(finalConfig);
+      default:
+        return generateWidgetCode(finalConfig);
+    }
+  };
+
+  const generateReactCode = (config: WidgetConfig) => {
+    const widgetCode = generateWidgetCode(config);
+    return `import React, { useEffect } from 'react';
+
+const ${config.type.charAt(0).toUpperCase() + config.type.slice(1)}Widget = () => {
+  useEffect(() => {
+    // Widget initialization code
+    ${widgetCode.includes('<script>') ? widgetCode.split('<script>')[1].split('</script>')[0] : ''}
+  }, []);
+
+  return (
+    <div dangerouslySetInnerHTML={{
+      __html: \`${widgetCode.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`
+    }} />
+  );
+};
+
+export default ${config.type.charAt(0).toUpperCase() + config.type.slice(1)}Widget;`;
+  };
+
+  const generateWordPressCode = (config: WidgetConfig) => {
+    const widgetCode = generateWidgetCode(config);
+    return `<?php
+/**
+ * Plugin Name: ${config.type.charAt(0).toUpperCase() + config.type.slice(1)} Widget
+ * Description: A customizable ${config.type} widget for WordPress
+ * Version: 1.0
+ */
+
+function add_${config.type.replace('-', '_')}_widget() {
+    ?>
+    ${widgetCode}
+    <?php
+}
+
+add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
+?>`;
+  };
+
   const copyToClipboard = () => {
     const code = generateCode();
     if (code) {
@@ -110,13 +172,16 @@ const WidgetGenerator: React.FC = () => {
   };
 
   const downloadCode = () => {
-    const code = generateCode();
+    const code = generateCodeByFormat(exportFormat);
     if (code) {
-      const blob = new Blob([code], { type: 'text/html' });
+      const extensions = { html: 'html', react: 'jsx', wordpress: 'php' };
+      const mimeTypes = { html: 'text/html', react: 'text/javascript', wordpress: 'text/plain' };
+      
+      const blob = new Blob([code], { type: mimeTypes[exportFormat] });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${config.type}-widget.html`;
+      a.download = `${config.type}-widget.${extensions[exportFormat]}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -124,7 +189,25 @@ const WidgetGenerator: React.FC = () => {
       
       toast({
         title: "Download Started",
-        description: "Your widget code is being downloaded.",
+        description: `Your ${exportFormat.toUpperCase()} widget code is being downloaded.`,
+      });
+    }
+  };
+
+  const copyToClipboardByFormat = () => {
+    const code = generateCodeByFormat(exportFormat);
+    if (code) {
+      navigator.clipboard.writeText(code).then(() => {
+        toast({
+          title: "Code Copied!",
+          description: `${exportFormat.toUpperCase()} widget code has been copied to your clipboard.`,
+        });
+      }).catch(() => {
+        toast({
+          title: "Copy Failed",
+          description: "Please manually copy the code from the text area.",
+          variant: "destructive",
+        });
       });
     }
   };
@@ -715,6 +798,67 @@ const WidgetGenerator: React.FC = () => {
             </div>
           );
 
+        case 'ai-seo-listing':
+          return (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="seoKeywords" className="text-sm font-medium">Target Keywords</Label>
+                <Input
+                  id="seoKeywords"
+                  value={config.seoKeywords}
+                  onChange={(e) => handleConfigChange('seoKeywords', e.target.value)}
+                  placeholder="SEO, marketing, digital agency"
+                  className="text-base"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="seoDescription" className="text-sm font-medium">Business Description</Label>
+                <Textarea
+                  id="seoDescription"
+                  value={config.seoDescription}
+                  onChange={(e) => handleConfigChange('seoDescription', e.target.value)}
+                  placeholder="Expert SEO services helping businesses grow online with proven strategies..."
+                  rows={3}
+                  className="text-base resize-none"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="businessType" className="text-sm font-medium">Business Type</Label>
+                <Select value={config.businessType} onValueChange={(value) => handleConfigChange('businessType', value)}>
+                  <SelectTrigger className="min-h-[48px]">
+                    <SelectValue placeholder="Select business type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="local">Local Business</SelectItem>
+                    <SelectItem value="online">Online Service</SelectItem>
+                    <SelectItem value="ecommerce">E-commerce</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="targetLocation" className="text-sm font-medium">Target Location</Label>
+                <Input
+                  id="targetLocation"
+                  value={config.targetLocation}
+                  onChange={(e) => handleConfigChange('targetLocation', e.target.value)}
+                  placeholder="New York, USA"
+                  className="text-base"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="businessUrl" className="text-sm font-medium">Business Website</Label>
+                <Input
+                  id="businessUrl"
+                  type="url"
+                  value={config.businessUrl}
+                  onChange={(e) => handleConfigChange('businessUrl', e.target.value)}
+                  placeholder="https://yourbusiness.com"
+                  className="text-base"
+                />
+              </div>
+            </>
+          );
+
       default:
         return (
           <div className="space-y-2">
@@ -906,11 +1050,26 @@ const WidgetGenerator: React.FC = () => {
                 </div>
               </div>
 
+              {/* Export Format Selector */}
+              <div className="space-y-2">
+                <Label htmlFor="exportFormat" className="text-sm font-medium">Export Format</Label>
+                <Select value={exportFormat} onValueChange={(value) => setExportFormat(value as 'html' | 'react' | 'wordpress')}>
+                  <SelectTrigger className="min-h-[48px]">
+                    <SelectValue placeholder="Select export format" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="html">HTML (Default)</SelectItem>
+                    <SelectItem value="react">React Component</SelectItem>
+                    <SelectItem value="wordpress">WordPress Plugin</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* Mobile-Optimized Action Buttons */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-4">
-                <Button onClick={copyToClipboard} className="min-h-[48px] order-1">
+                <Button onClick={copyToClipboardByFormat} className="min-h-[48px] order-1">
                   <Copy size={16} className="mr-2" />
-                  Copy Code
+                  Copy {exportFormat.toUpperCase()}
                 </Button>
                 <Button onClick={downloadCode} variant="outline" className="min-h-[48px] order-2">
                   <Download size={16} className="mr-2" />
@@ -978,18 +1137,18 @@ const WidgetGenerator: React.FC = () => {
           <CardContent>
             <div className="bg-gray-900 text-gray-100 p-3 md:p-4 rounded-lg overflow-auto max-h-64 md:max-h-96">
               <pre className="text-xs md:text-sm whitespace-pre-wrap break-all">
-                <code>{generateCode()}</code>
+                <code>{generateCodeByFormat(exportFormat)}</code>
               </pre>
             </div>
             {/* Mobile Copy Button */}
             {isMobile && (
               <Button 
-                onClick={copyToClipboard} 
+                onClick={copyToClipboardByFormat} 
                 className="w-full mt-3 min-h-[48px]"
                 variant="outline"
               >
                 <Copy size={16} className="mr-2" />
-                Copy Generated Code
+                Copy {exportFormat.toUpperCase()} Code
               </Button>
             )}
           </CardContent>

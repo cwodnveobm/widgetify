@@ -227,6 +227,12 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return <FileText size={iconSize} color="white" />;
       case 'floating-video':
         return <Video size={iconSize} color="white" />;
+      case 'ai-seo-listing':
+        return (
+          <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="white">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        );
       default:
         return <MessageCircle size={iconSize} color="white" />;
     }
@@ -328,6 +334,8 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return 'PDF Viewer';
       case 'floating-video':
         return 'Floating Video';
+      case 'ai-seo-listing':
+        return 'AI SEO Listing Generator';
       default:
         return null;
     }
@@ -801,6 +809,9 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         break;
       case 'print-page':
         window.print();
+        break;
+      case 'ai-seo-listing':
+        togglePopup();
         break;
       default:
         togglePopup();
