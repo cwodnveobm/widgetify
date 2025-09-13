@@ -20,6 +20,7 @@ export type WidgetType =
   'payment' |
   'contact-form' |
   'whatsapp-form' |
+  'lead-capture-popup' |
   'email-contact' |
   'live-chat' |
   'booking-calendar' |

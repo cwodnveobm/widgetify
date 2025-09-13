@@ -62,6 +62,11 @@ const WidgetGenerator: React.FC = () => {
     formTitle: 'Contact Us',
     formFields: ['name', 'email', 'message'],
     formMessage: 'Hello! I would like to get in touch about...',
+    // Lead Capture Popup properties
+    popupDelay: 5,
+    leadCaptureTitle: 'Get In Touch With Us!',
+    leadCaptureSubtitle: 'Leave your details and we\'ll contact you soon',
+    adminWhatsApp: '',
   });
 
   const handleConfigChange = (key: keyof WidgetConfig, value: any) => {
@@ -462,6 +467,56 @@ add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
                   </div>
                 ))}
               </div>
+            </div>
+          </>
+        );
+
+      case 'lead-capture-popup':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="adminWhatsApp" className="text-sm font-medium">Admin WhatsApp Number</Label>
+              <Input
+                id="adminWhatsApp"
+                value={config.adminWhatsApp}
+                onChange={(e) => handleConfigChange('adminWhatsApp', e.target.value)}
+                placeholder="+1234567890"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="leadCaptureTitle" className="text-sm font-medium">Popup Title</Label>
+              <Input
+                id="leadCaptureTitle"
+                value={config.leadCaptureTitle}
+                onChange={(e) => handleConfigChange('leadCaptureTitle', e.target.value)}
+                placeholder="Get In Touch With Us!"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="leadCaptureSubtitle" className="text-sm font-medium">Popup Subtitle</Label>
+              <Textarea
+                id="leadCaptureSubtitle"
+                value={config.leadCaptureSubtitle}
+                onChange={(e) => handleConfigChange('leadCaptureSubtitle', e.target.value)}
+                placeholder="Leave your details and we'll contact you soon"
+                rows={2}
+                className="text-base resize-none"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="popupDelay" className="text-sm font-medium">Auto-Popup Delay (seconds)</Label>
+              <Input
+                id="popupDelay"
+                type="number"
+                min="1"
+                max="60"
+                value={config.popupDelay}
+                onChange={(e) => handleConfigChange('popupDelay', parseInt(e.target.value) || 5)}
+                placeholder="5"
+                className="text-base"
+              />
             </div>
           </>
         );
@@ -1032,6 +1087,7 @@ add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
                   <SelectContent>
     <SelectItem value="whatsapp">WhatsApp Chat</SelectItem>
                     <SelectItem value="whatsapp-form">WhatsApp Form</SelectItem>
+                    <SelectItem value="lead-capture-popup">Lead Capture Popup</SelectItem>
                     <SelectItem value="call-now">Call Now</SelectItem>
                     <SelectItem value="contact-form">Contact Form</SelectItem>
                     <SelectItem value="social-share">Social Share</SelectItem>

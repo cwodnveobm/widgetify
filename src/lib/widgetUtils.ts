@@ -62,6 +62,11 @@ export interface WidgetConfig {
   formTitle?: string;
   formFields?: string[];
   formMessage?: string;
+  // Lead Capture Popup properties
+  popupDelay?: number;
+  leadCaptureTitle?: string;
+  leadCaptureSubtitle?: string;
+  adminWhatsApp?: string;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
@@ -488,6 +493,306 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
             // Reset form and close popup
             event.target.reset();
             toggleWidgetifyWhatsAppForm();
+          }
+        </script>`;
+
+    case 'lead-capture-popup':
+      const leadTitle = config.leadCaptureTitle || 'Get In Touch With Us!';
+      const leadSubtitle = config.leadCaptureSubtitle || 'Leave your details and we\'ll contact you soon';
+      const adminWhatsApp = (config.adminWhatsApp || '').replace(/[^0-9]/g, '');
+      const popupDelay = (config.popupDelay || 5) * 1000; // Convert to milliseconds
+      
+      return `${baseStyles}
+        <style>
+          /* Lead Capture Popup Styles */
+          .lead-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+          }
+          
+          .lead-popup-overlay.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+          }
+          
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          
+          .lead-popup-container {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 420px;
+            width: 90%;
+            margin: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            animation: slideUp 0.3s ease;
+          }
+          
+          @keyframes slideUp {
+            from {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
+          .lead-popup-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #9ca3af;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+          }
+          
+          .lead-popup-close:hover {
+            background: #f3f4f6;
+            color: #374151;
+          }
+          
+          .lead-popup-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 8px;
+            line-height: 1.2;
+          }
+          
+          .lead-popup-subtitle {
+            font-size: 16px;
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.4;
+          }
+          
+          .lead-form-field {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.2s ease;
+            font-family: inherit;
+          }
+          
+          .lead-form-field:focus {
+            border-color: ${buttonColor};
+            box-shadow: 0 0 0 3px ${buttonColor}20;
+          }
+          
+          .lead-form-button {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, ${buttonColor} 0%, ${buttonColor}dd 100%);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+          }
+          
+          .lead-form-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px ${buttonColor}40;
+          }
+          
+          .lead-form-button:active {
+            transform: translateY(0);
+          }
+          
+          .lead-popup-footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+          }
+          
+          .lead-popup-footer a {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+          }
+          
+          .lead-popup-footer a:hover {
+            color: #374151;
+          }
+          
+          /* Mobile Responsive */
+          @media (max-width: 480px) {
+            .lead-popup-container {
+              padding: 24px;
+              margin: 10px;
+              border-radius: 12px;
+            }
+            
+            .lead-popup-title {
+              font-size: 20px;
+            }
+            
+            .lead-popup-subtitle {
+              font-size: 14px;
+            }
+            
+            .lead-form-field {
+              padding: 14px;
+              font-size: 16px;
+            }
+            
+            .lead-form-button {
+              padding: 14px 20px;
+            }
+          }
+        </style>
+
+        <div id="lead-capture-overlay" class="lead-popup-overlay" onclick="closeLeadPopup(event)">
+          <div class="lead-popup-container" onclick="event.stopPropagation()">
+            <button class="lead-popup-close" onclick="closeLeadPopup()" aria-label="Close popup">×</button>
+            
+            <h2 class="lead-popup-title">${leadTitle}</h2>
+            <p class="lead-popup-subtitle">${leadSubtitle}</p>
+            
+            <form id="lead-capture-form" onsubmit="submitLeadForm(event)">
+              <input
+                type="text"
+                name="name"
+                placeholder="Your Full Name *"
+                required
+                class="lead-form-field"
+              />
+              
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Your Phone Number *"
+                required
+                class="lead-form-field"
+              />
+              
+              <input
+                type="text"
+                name="address"
+                placeholder="Your Address"
+                class="lead-form-field"
+              />
+              
+              <textarea
+                name="message"
+                placeholder="Your Message"
+                rows="3"
+                class="lead-form-field"
+                style="resize: vertical; min-height: 80px;"
+              ></textarea>
+              
+              <button type="submit" class="lead-form-button">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.6 6.32A7.85 7.85 0 0 0 12 4.02a7.95 7.95 0 0 0-6.9 12.07L4 20.02l4.05-1.06A8.02 8.02 0 0 0 12 20.02a7.98 7.98 0 0 0 8-7.93c0-2.12-.83-4.12-2.4-5.62V6.32z"/>
+                </svg>
+                Send My Details
+              </button>
+            </form>
+            
+            <div class="lead-popup-footer">
+              <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          // Auto-show popup after delay
+          setTimeout(function() {
+            const popup = document.getElementById('lead-capture-overlay');
+            if (popup && !localStorage.getItem('leadPopupShown')) {
+              popup.classList.add('show');
+            }
+          }, ${popupDelay});
+
+          function closeLeadPopup(event) {
+            if (event && event.target !== event.currentTarget) return;
+            const popup = document.getElementById('lead-capture-overlay');
+            popup.classList.remove('show');
+            localStorage.setItem('leadPopupShown', 'true');
+          }
+
+          function submitLeadForm(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const name = formData.get('name');
+            const phone = formData.get('phone');
+            const address = formData.get('address');
+            const message = formData.get('message');
+            
+            let leadMessage = '🎯 *New Lead Captured!*\\n\\n';
+            leadMessage += '👤 *Name:* ' + name + '\\n';
+            leadMessage += '📱 *Phone:* ' + phone + '\\n';
+            
+            if (address) {
+              leadMessage += '🏠 *Address:* ' + address + '\\n';
+            }
+            
+            if (message) {
+              leadMessage += '💬 *Message:* ' + message + '\\n';
+            }
+            
+            leadMessage += '\\n⏰ *Time:* ' + new Date().toLocaleString();
+            leadMessage += '\\n\\n_Generated via Widgetify Lead Capture_';
+            
+            const whatsappUrl = 'https://wa.me/${adminWhatsApp}?text=' + encodeURIComponent(leadMessage);
+            window.open(whatsappUrl, '_blank');
+            
+            // Show success message and close popup
+            alert('✅ Thank you! Your details have been sent successfully. We will contact you soon!');
+            closeLeadPopup();
+            
+            // Reset form
+            event.target.reset();
+          }
+          
+          // Prevent showing popup if already shown in this session
+          if (localStorage.getItem('leadPopupShown')) {
+            // Optional: Clear after 24 hours
+            const lastShown = localStorage.getItem('leadPopupShownTime');
+            const now = new Date().getTime();
+            if (!lastShown || (now - parseInt(lastShown)) > 24 * 60 * 60 * 1000) {
+              localStorage.removeItem('leadPopupShown');
+            }
           }
         </script>`;
 
@@ -1985,6 +2290,7 @@ export const WIDGET_NAMES: Record<WidgetType, string> = {
   'payment': 'Payment Gateway',
   'contact-form': 'Contact Form',
   'whatsapp-form': 'WhatsApp Form',
+  'lead-capture-popup': 'Lead Capture Popup',
   'email-contact': 'Email Contact',
   'live-chat': 'Live Chat',
   'booking-calendar': 'Booking Calendar',

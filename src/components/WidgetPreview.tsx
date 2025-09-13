@@ -156,6 +156,17 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             </svg>
           </div>
         );
+      case 'lead-capture-popup':
+        return (
+          <div style={{ position: 'relative' }}>
+            <Users size={iconSize} color="white" />
+            <svg width={iconSize * 0.7} height={iconSize * 0.7} viewBox="0 0 24 24" fill="none" style={{ position: 'absolute', top: -2, right: -2 }}>
+              <rect x="2" y="3" width="20" height="14" rx="2" stroke="white" strokeWidth="1.5" fill="rgba(255,255,255,0.2)"/>
+              <path d="M6 8h12M6 11h8" stroke="white" strokeWidth="1" strokeLinecap="round"/>
+              <circle cx="18" cy="6" r="3" fill="#ff4444" stroke="white" strokeWidth="1"/>
+            </svg>
+          </div>
+        );
       case 'facebook':
         return <Facebook size={iconSize} color="white" />;
       case 'instagram':
