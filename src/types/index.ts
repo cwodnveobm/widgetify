@@ -19,6 +19,7 @@ export type WidgetType =
   'dodo-payment' |
   'payment' |
   'contact-form' |
+  'whatsapp-form' |
   'email-contact' |
   'live-chat' |
   'booking-calendar' |

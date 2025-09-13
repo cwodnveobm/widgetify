@@ -146,6 +146,16 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     switch (type) {
       case 'whatsapp':
         return <WhatsAppIcon size={iconSize} />;
+      case 'whatsapp-form':
+        return (
+          <div style={{ position: 'relative' }}>
+            <WhatsAppIcon size={iconSize} />
+            <svg width={iconSize * 0.6} height={iconSize * 0.6} viewBox="0 0 24 24" fill="none" style={{ position: 'absolute', bottom: 0, right: 0 }}>
+              <rect x="6" y="11" width="12" height="8" rx="1" stroke="white" strokeWidth="1.5" fill="none"/>
+              <path d="M9 14h6M9 16h4" stroke="white" strokeWidth="1" strokeLinecap="round"/>
+            </svg>
+          </div>
+        );
       case 'facebook':
         return <Facebook size={iconSize} color="white" />;
       case 'instagram':

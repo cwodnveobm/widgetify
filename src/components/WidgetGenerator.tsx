@@ -58,6 +58,10 @@ const WidgetGenerator: React.FC = () => {
     businessType: 'local',
     targetLocation: '',
     businessUrl: '',
+    // WhatsApp Form properties
+    formTitle: 'Contact Us',
+    formFields: ['name', 'email', 'message'],
+    formMessage: 'Hello! I would like to get in touch about...',
   });
 
   const handleConfigChange = (key: keyof WidgetConfig, value: any) => {
@@ -396,6 +400,68 @@ add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
                 placeholder="Muhammed Adnan"
                 className="text-base"
               />
+            </div>
+          </>
+        );
+
+      case 'whatsapp-form':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="handle" className="text-sm font-medium">WhatsApp Number</Label>
+              <Input
+                id="handle"
+                value={config.handle}
+                onChange={(e) => handleConfigChange('handle', e.target.value)}
+                placeholder="+1234567890"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="formTitle" className="text-sm font-medium">Form Title</Label>
+              <Input
+                id="formTitle"
+                value={config.formTitle}
+                onChange={(e) => handleConfigChange('formTitle', e.target.value)}
+                placeholder="Contact Us"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="formMessage" className="text-sm font-medium">Message Template</Label>
+              <Textarea
+                id="formMessage"
+                value={config.formMessage}
+                onChange={(e) => handleConfigChange('formMessage', e.target.value)}
+                placeholder="Hello! I'd like to get in touch about..."
+                rows={3}
+                className="text-base resize-none"
+              />
+            </div>
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Form Fields</Label>
+              <div className="grid grid-cols-1 gap-3">
+                {['name', 'email', 'phone', 'message'].map((field) => (
+                  <div key={field} className="flex items-center space-x-3 p-3 rounded-lg bg-muted/50 border border-border hover:bg-muted/70 transition-colors">
+                    <Checkbox
+                      id={field}
+                      checked={config.formFields?.includes(field) || false}
+                      onCheckedChange={(checked) => {
+                        const currentFields = config.formFields || [];
+                        if (checked) {
+                          handleConfigChange('formFields', [...currentFields, field]);
+                        } else {
+                          handleConfigChange('formFields', currentFields.filter(f => f !== field));
+                        }
+                      }}
+                      className="min-w-[20px] min-h-[20px]"
+                    />
+                    <Label htmlFor={field} className="capitalize font-medium text-base cursor-pointer flex-1 text-foreground">
+                      {field === 'message' ? 'Custom Message' : field}
+                    </Label>
+                  </div>
+                ))}
+              </div>
             </div>
           </>
         );
@@ -964,7 +1030,8 @@ add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="whatsapp">WhatsApp Chat</SelectItem>
+    <SelectItem value="whatsapp">WhatsApp Chat</SelectItem>
+                    <SelectItem value="whatsapp-form">WhatsApp Form</SelectItem>
                     <SelectItem value="call-now">Call Now</SelectItem>
                     <SelectItem value="contact-form">Contact Form</SelectItem>
                     <SelectItem value="social-share">Social Share</SelectItem>
