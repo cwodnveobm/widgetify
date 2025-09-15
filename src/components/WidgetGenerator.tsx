@@ -67,6 +67,25 @@ const WidgetGenerator: React.FC = () => {
     leadCaptureTitle: 'Get In Touch With Us!',
     leadCaptureSubtitle: 'Leave your details and we\'ll contact you soon',
     adminWhatsApp: '',
+    // Exit Intent Popup properties
+    exitTitle: 'Wait! Don\'t Leave Yet!',
+    exitSubtitle: 'Get an exclusive offer before you go',
+    exitOffer: '🎉 20% OFF Your First Order!',
+    exitButtonText: 'Claim Offer Now',
+    exitActionUrl: '#',
+    // Sticky Banner properties
+    bannerText: '🎉 Special Offer: Get 20% OFF on all products!',
+    bannerPosition: 'top',
+    bannerStyle: 'promo',
+    bannerActionText: 'Shop Now',
+    bannerActionUrl: '#',
+    bannerDismissible: true,
+    // AI Chatbot properties
+    chatbotName: 'AI Assistant',
+    chatbotWelcome: 'Hello! I\'m your AI assistant. How can I help you today?',
+    chatbotPlaceholder: 'Type your message...',
+    perplexityApiKey: '',
+    chatbotModel: 'llama-3.1-sonar-small-128k-online',
   });
 
   const handleConfigChange = (key: keyof WidgetConfig, value: any) => {
@@ -980,6 +999,213 @@ add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
             </>
           );
 
+      case 'exit-intent-popup':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="exitTitle" className="text-sm font-medium">Popup Title</Label>
+              <Input
+                id="exitTitle"
+                value={config.exitTitle}
+                onChange={(e) => handleConfigChange('exitTitle', e.target.value)}
+                placeholder="Wait! Don't Leave Yet!"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="exitSubtitle" className="text-sm font-medium">Popup Subtitle</Label>
+              <Input
+                id="exitSubtitle"
+                value={config.exitSubtitle}
+                onChange={(e) => handleConfigChange('exitSubtitle', e.target.value)}
+                placeholder="Get an exclusive offer before you go"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="exitOffer" className="text-sm font-medium">Special Offer Text</Label>
+              <Input
+                id="exitOffer"
+                value={config.exitOffer}
+                onChange={(e) => handleConfigChange('exitOffer', e.target.value)}
+                placeholder="🎉 20% OFF Your First Order!"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="exitButtonText" className="text-sm font-medium">Button Text</Label>
+              <Input
+                id="exitButtonText"
+                value={config.exitButtonText}
+                onChange={(e) => handleConfigChange('exitButtonText', e.target.value)}
+                placeholder="Claim Offer Now"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="exitActionUrl" className="text-sm font-medium">Action URL</Label>
+              <Input
+                id="exitActionUrl"
+                value={config.exitActionUrl}
+                onChange={(e) => handleConfigChange('exitActionUrl', e.target.value)}
+                placeholder="https://yourstore.com/special-offer"
+                className="text-base"
+              />
+            </div>
+          </>
+        );
+
+      case 'sticky-banner':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="bannerText" className="text-sm font-medium">Banner Text</Label>
+              <Textarea
+                id="bannerText"
+                value={config.bannerText}
+                onChange={(e) => handleConfigChange('bannerText', e.target.value)}
+                placeholder="🎉 Special Offer: Get 20% OFF on all products!"
+                rows={2}
+                className="text-base resize-none"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="bannerPosition" className="text-sm font-medium">Banner Position</Label>
+              <Select
+                value={config.bannerPosition || 'top'}
+                onValueChange={(value: 'top' | 'bottom') => 
+                  handleConfigChange('bannerPosition', value)
+                }
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="top">Top of Page</SelectItem>
+                  <SelectItem value="bottom">Bottom of Page</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="bannerStyle" className="text-sm font-medium">Banner Style</Label>
+              <Select
+                value={config.bannerStyle || 'promo'}
+                onValueChange={(value: 'info' | 'warning' | 'success' | 'promo') => 
+                  handleConfigChange('bannerStyle', value)
+                }
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="promo">Promotional</SelectItem>
+                  <SelectItem value="info">Information</SelectItem>
+                  <SelectItem value="warning">Warning</SelectItem>
+                  <SelectItem value="success">Success</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="bannerActionText" className="text-sm font-medium">Action Button Text</Label>
+              <Input
+                id="bannerActionText"
+                value={config.bannerActionText}
+                onChange={(e) => handleConfigChange('bannerActionText', e.target.value)}
+                placeholder="Shop Now"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="bannerActionUrl" className="text-sm font-medium">Action Button URL</Label>
+              <Input
+                id="bannerActionUrl"
+                value={config.bannerActionUrl}
+                onChange={(e) => handleConfigChange('bannerActionUrl', e.target.value)}
+                placeholder="https://yourstore.com"
+                className="text-base"
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="bannerDismissible"
+                checked={config.bannerDismissible !== false}
+                onCheckedChange={(checked) => handleConfigChange('bannerDismissible', checked)}
+                className="min-w-[20px] min-h-[20px]"
+              />
+              <Label htmlFor="bannerDismissible" className="text-sm font-medium">Allow users to dismiss banner</Label>
+            </div>
+          </>
+        );
+
+      case 'ai-chatbot':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="chatbotName" className="text-sm font-medium">Chatbot Name</Label>
+              <Input
+                id="chatbotName"
+                value={config.chatbotName}
+                onChange={(e) => handleConfigChange('chatbotName', e.target.value)}
+                placeholder="AI Assistant"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="chatbotWelcome" className="text-sm font-medium">Welcome Message</Label>
+              <Textarea
+                id="chatbotWelcome"
+                value={config.chatbotWelcome}
+                onChange={(e) => handleConfigChange('chatbotWelcome', e.target.value)}
+                placeholder="Hello! I'm your AI assistant. How can I help you today?"
+                rows={3}
+                className="text-base resize-none"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="chatbotPlaceholder" className="text-sm font-medium">Input Placeholder</Label>
+              <Input
+                id="chatbotPlaceholder"
+                value={config.chatbotPlaceholder}
+                onChange={(e) => handleConfigChange('chatbotPlaceholder', e.target.value)}
+                placeholder="Type your message..."
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="perplexityApiKey" className="text-sm font-medium">Perplexity API Key</Label>
+              <Input
+                id="perplexityApiKey"
+                type="password"
+                value={config.perplexityApiKey}
+                onChange={(e) => handleConfigChange('perplexityApiKey', e.target.value)}
+                placeholder="Enter your Perplexity API key"
+                className="text-base"
+              />
+              <p className="text-xs text-gray-600">
+                Get your API key from <a href="https://www.perplexity.ai/" target="_blank" className="text-blue-600 hover:underline">Perplexity AI</a>
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="chatbotModel" className="text-sm font-medium">AI Model</Label>
+              <Select
+                value={config.chatbotModel || 'llama-3.1-sonar-small-128k-online'}
+                onValueChange={(value: 'llama-3.1-sonar-small-128k-online' | 'llama-3.1-sonar-large-128k-online' | 'llama-3.1-sonar-huge-128k-online') => 
+                  handleConfigChange('chatbotModel', value)
+                }
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="llama-3.1-sonar-small-128k-online">Sonar Small (Fastest)</SelectItem>
+                  <SelectItem value="llama-3.1-sonar-large-128k-online">Sonar Large (Balanced)</SelectItem>
+                  <SelectItem value="llama-3.1-sonar-huge-128k-online">Sonar Huge (Most Capable)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </>
+        );
+
       default:
         return (
           <div className="space-y-2">
@@ -1084,32 +1310,36 @@ add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
                   <SelectTrigger className="text-base min-h-[48px]">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent>
-    <SelectItem value="whatsapp">WhatsApp Chat</SelectItem>
-                    <SelectItem value="whatsapp-form">WhatsApp Form</SelectItem>
-                    <SelectItem value="lead-capture-popup">Lead Capture Popup</SelectItem>
-                    <SelectItem value="call-now">Call Now</SelectItem>
-                    <SelectItem value="contact-form">Contact Form</SelectItem>
-                    <SelectItem value="social-share">Social Share</SelectItem>
-                    <SelectItem value="review-now">Review Now</SelectItem>
-                    <SelectItem value="follow-us">Follow Us</SelectItem>
-                    <SelectItem value="dodo-payment">Dodo Payment</SelectItem>
-                    <SelectItem value="payment">Payment Gateway</SelectItem>
-                    <SelectItem value="email-contact">Email Contact</SelectItem>
-                    <SelectItem value="live-chat">Live Chat</SelectItem>
-                    <SelectItem value="booking-calendar">Booking Calendar</SelectItem>
-                    <SelectItem value="newsletter-signup">Newsletter Signup</SelectItem>
-                    <SelectItem value="feedback-form">Feedback Form</SelectItem>
-                    <SelectItem value="download-app">Download App</SelectItem>
-                    <SelectItem value="countdown-timer">Countdown Timer</SelectItem>
-                    <SelectItem value="spotify-embed">Spotify Music Player</SelectItem>
-                    <SelectItem value="print-page">Print Page</SelectItem>
-                    <SelectItem value="scroll-progress">Scroll Progress</SelectItem>
-                    <SelectItem value="cookie-consent">Cookie Consent</SelectItem>
-                    <SelectItem value="age-verification">Age Verification</SelectItem>
-                    <SelectItem value="pdf-viewer">PDF Viewer</SelectItem>
-                    <SelectItem value="floating-video">Floating Video</SelectItem>
-                  </SelectContent>
+                   <SelectContent>
+     <SelectItem value="whatsapp">WhatsApp Chat</SelectItem>
+                     <SelectItem value="whatsapp-form">WhatsApp Form</SelectItem>
+                     <SelectItem value="lead-capture-popup">Lead Capture Popup</SelectItem>
+                     <SelectItem value="exit-intent-popup">Exit Intent Popup</SelectItem>
+                     <SelectItem value="sticky-banner">Sticky Promotional Banner</SelectItem>
+                     <SelectItem value="ai-chatbot">AI Chatbot</SelectItem>
+                     <SelectItem value="call-now">Call Now</SelectItem>
+                     <SelectItem value="contact-form">Contact Form</SelectItem>
+                     <SelectItem value="social-share">Social Share</SelectItem>
+                     <SelectItem value="review-now">Review Now</SelectItem>
+                     <SelectItem value="follow-us">Follow Us</SelectItem>
+                     <SelectItem value="dodo-payment">Dodo Payment</SelectItem>
+                     <SelectItem value="payment">Payment Gateway</SelectItem>
+                     <SelectItem value="email-contact">Email Contact</SelectItem>
+                     <SelectItem value="live-chat">Live Chat</SelectItem>
+                     <SelectItem value="booking-calendar">Booking Calendar</SelectItem>
+                     <SelectItem value="newsletter-signup">Newsletter Signup</SelectItem>
+                     <SelectItem value="feedback-form">Feedback Form</SelectItem>
+                     <SelectItem value="download-app">Download App</SelectItem>
+                     <SelectItem value="countdown-timer">Countdown Timer</SelectItem>
+                     <SelectItem value="spotify-embed">Spotify Music Player</SelectItem>
+                     <SelectItem value="print-page">Print Page</SelectItem>
+                     <SelectItem value="scroll-progress">Scroll Progress</SelectItem>
+                     <SelectItem value="cookie-consent">Cookie Consent</SelectItem>
+                     <SelectItem value="age-verification">Age Verification</SelectItem>
+                     <SelectItem value="pdf-viewer">PDF Viewer</SelectItem>
+                     <SelectItem value="floating-video">Floating Video</SelectItem>
+                     <SelectItem value="ai-seo-listing">AI SEO Listing</SelectItem>
+                   </SelectContent>
                 </Select>
               </div>
 

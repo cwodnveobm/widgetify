@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { WidgetConfig } from '@/lib/widgetUtils';
-import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone, Mail, Calendar, FileText, Download, Users, ArrowUp, QrCode, Moon, Cloud, TrendingUp, Copy, Clock, Printer, Cookie, Shield, Video } from 'lucide-react';
+import { Facebook, Instagram, Twitter, Linkedin, X, Github, Youtube, Twitch, Slack, MessageCircle, Star, Phone, Mail, Calendar, FileText, Download, Users, ArrowUp, QrCode, Moon, Cloud, TrendingUp, Copy, Clock, Printer, Cookie, Shield, Video, Sparkles, AlertTriangle, MessageSquare, Bot } from 'lucide-react';
 
 interface WidgetPreviewProps {
   config: WidgetConfig;

@@ -48,6 +48,9 @@ export type WidgetType =
   'share-page' |
   'dark-mode-toggle' |
   'spotify-embed' |
-  'ai-seo-listing';
+  'ai-seo-listing' |
+  'exit-intent-popup' |
+  'sticky-banner' |
+  'ai-chatbot';
 
 export type WidgetSize = 'small' | 'medium' | 'large';

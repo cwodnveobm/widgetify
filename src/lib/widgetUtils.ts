@@ -67,6 +67,25 @@ export interface WidgetConfig {
   leadCaptureTitle?: string;
   leadCaptureSubtitle?: string;
   adminWhatsApp?: string;
+  // Exit Intent Popup properties
+  exitTitle?: string;
+  exitSubtitle?: string;
+  exitOffer?: string;
+  exitButtonText?: string;
+  exitActionUrl?: string;
+  // Sticky Banner properties
+  bannerText?: string;
+  bannerPosition?: 'top' | 'bottom';
+  bannerStyle?: 'info' | 'warning' | 'success' | 'promo';
+  bannerActionText?: string;
+  bannerActionUrl?: string;
+  bannerDismissible?: boolean;
+  // AI Chatbot properties
+  chatbotName?: string;
+  chatbotWelcome?: string;
+  chatbotPlaceholder?: string;
+  perplexityApiKey?: string;
+  chatbotModel?: 'llama-3.1-sonar-small-128k-online' | 'llama-3.1-sonar-large-128k-online' | 'llama-3.1-sonar-huge-128k-online';
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
@@ -1929,6 +1948,659 @@ Sent via ${contactBusinessName} Contact Form\`;
           </script>
         `;
 
+    case 'exit-intent-popup':
+      return `
+        <style>
+          .exit-intent-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+          }
+
+          .exit-intent-overlay.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+          }
+
+          .exit-intent-popup {
+            background: white;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+            position: relative;
+          }
+
+          .exit-intent-overlay.show .exit-intent-popup {
+            transform: scale(1);
+          }
+
+          .exit-intent-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .exit-intent-close:hover {
+            color: #333;
+          }
+
+          .exit-intent-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+          }
+
+          .exit-intent-subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+          }
+
+          .exit-intent-offer {
+            background: ${buttonColor};
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            margin: 20px 0;
+            display: inline-block;
+          }
+
+          .exit-intent-button {
+            background: ${buttonColor};
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s;
+          }
+
+          .exit-intent-button:hover {
+            transform: translateY(-2px);
+          }
+
+          @media (max-width: 640px) {
+            .exit-intent-popup {
+              padding: 25px;
+              margin: 20px;
+            }
+            
+            .exit-intent-title {
+              font-size: 24px;
+            }
+          }
+        </style>
+
+        <div id="exit-intent-overlay" class="exit-intent-overlay" onclick="closeExitIntent(event)">
+          <div class="exit-intent-popup">
+            <button class="exit-intent-close" onclick="closeExitIntent()" aria-label="Close popup">×</button>
+            <h2 class="exit-intent-title">${config.exitTitle || 'Wait! Don\'t Leave Yet!'}</h2>
+            <p class="exit-intent-subtitle">${config.exitSubtitle || 'Get an exclusive offer before you go'}</p>
+            <div class="exit-intent-offer">${config.exitOffer || '🎉 20% OFF Your First Order!'}</div>
+            <a href="${config.exitActionUrl || '#'}" class="exit-intent-button" onclick="closeExitIntent()">${config.exitButtonText || 'Claim Offer Now'}</a>
+          </div>
+        </div>
+
+        ${!config.isPremium ? `
+        <div class="widgetify-watermark" style="position: fixed; bottom: 10px; left: 10px; z-index: 10001; font-size: 10px; opacity: 0.7;">
+          <a href="https://widgetify-two.vercel.app" target="_blank" style="color: #666; text-decoration: none;">Powered by Widgetify</a>
+        </div>` : ''}
+
+        <script>
+          (function() {
+            let exitIntentTriggered = false;
+            let mouseLeaveTimer;
+
+            // Track mouse movement
+            document.addEventListener('mouseleave', function(e) {
+              // Only trigger if mouse leaves from the top of the page
+              if (e.clientY <= 0 && !exitIntentTriggered) {
+                exitIntentTriggered = true;
+                showExitIntent();
+              }
+            });
+
+            // Mobile: trigger on rapid scroll up
+            let lastScrollY = window.scrollY;
+            window.addEventListener('scroll', function() {
+              const currentScrollY = window.scrollY;
+              if (currentScrollY < lastScrollY - 100 && currentScrollY < 300 && !exitIntentTriggered) {
+                exitIntentTriggered = true;
+                showExitIntent();
+              }
+              lastScrollY = currentScrollY;
+            });
+
+            function showExitIntent() {
+              const overlay = document.getElementById('exit-intent-overlay');
+              overlay.classList.add('show');
+              document.body.style.overflow = 'hidden';
+            }
+
+            window.closeExitIntent = function(event) {
+              if (event && event.target === event.currentTarget) return;
+              const overlay = document.getElementById('exit-intent-overlay');
+              overlay.classList.remove('show');
+              document.body.style.overflow = '';
+            };
+
+            // Close with Escape key
+            document.addEventListener('keydown', function(e) {
+              if (e.key === 'Escape') {
+                closeExitIntent();
+              }
+            });
+          })();
+        </script>
+      `;
+
+    case 'sticky-banner':
+      const bannerPosition = config.bannerPosition === 'bottom' ? 'bottom: 0;' : 'top: 0;';
+      const bannerColors = {
+        info: { bg: '#3b82f6', text: 'white' },
+        warning: { bg: '#f59e0b', text: 'white' },
+        success: { bg: '#10b981', text: 'white' },
+        promo: { bg: buttonColor, text: 'white' }
+      };
+      const bannerStyle = bannerColors[config.bannerStyle || 'promo'];
+
+      return `
+        <style>
+          .sticky-banner {
+            position: fixed;
+            ${bannerPosition}
+            left: 0;
+            right: 0;
+            background: ${bannerStyle.bg};
+            color: ${bannerStyle.text};
+            padding: 12px 20px;
+            z-index: 9999;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+          }
+
+          .sticky-banner.hidden {
+            transform: translateY(${config.bannerPosition === 'bottom' ? '100%' : '-100%'});
+          }
+
+          .banner-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+          }
+
+          .banner-text {
+            font-size: 14px;
+            font-weight: 500;
+          }
+
+          .banner-action {
+            background: rgba(255, 255, 255, 0.2);
+            color: ${bannerStyle.text};
+            padding: 6px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.2s;
+          }
+
+          .banner-action:hover {
+            background: rgba(255, 255, 255, 0.3);
+          }
+
+          .banner-close {
+            background: none;
+            border: none;
+            color: ${bannerStyle.text};
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.8;
+          }
+
+          .banner-close:hover {
+            opacity: 1;
+          }
+
+          @media (max-width: 640px) {
+            .sticky-banner {
+              padding: 10px 15px;
+            }
+            
+            .banner-content {
+              gap: 10px;
+            }
+            
+            .banner-text {
+              font-size: 13px;
+            }
+            
+            .banner-action {
+              font-size: 13px;
+              padding: 5px 10px;
+            }
+          }
+
+          /* Adjust body padding to prevent content overlap */
+          body {
+            ${config.bannerPosition === 'bottom' ? 'padding-bottom' : 'padding-top'}: 50px;
+          }
+        </style>
+
+        <div id="sticky-banner" class="sticky-banner">
+          <div class="banner-content">
+            <span class="banner-text">${config.bannerText || '🎉 Special Offer: Get 20% OFF on all products!'}</span>
+            ${config.bannerActionUrl && config.bannerActionText ? `
+              <a href="${config.bannerActionUrl}" class="banner-action">${config.bannerActionText}</a>
+            ` : ''}
+            ${config.bannerDismissible !== false ? `
+              <button class="banner-close" onclick="closeBanner()" aria-label="Close banner">×</button>
+            ` : ''}
+          </div>
+        </div>
+
+        ${!config.isPremium ? `
+        <div class="widgetify-watermark" style="position: fixed; ${config.bannerPosition === 'bottom' ? 'bottom: 60px;' : 'top: 60px;'} right: 10px; z-index: 10000; font-size: 10px; opacity: 0.7;">
+          <a href="https://widgetify-two.vercel.app" target="_blank" style="color: #666; text-decoration: none;">Powered by Widgetify</a>
+        </div>` : ''}
+
+        <script>
+          window.closeBanner = function() {
+            const banner = document.getElementById('sticky-banner');
+            banner.classList.add('hidden');
+            
+            // Adjust body padding
+            setTimeout(() => {
+              document.body.style.${config.bannerPosition === 'bottom' ? 'paddingBottom' : 'paddingTop'} = '0';
+            }, 300);
+            
+            // Store dismissed state
+            localStorage.setItem('widgetify-banner-dismissed', 'true');
+          };
+
+          // Check if banner was previously dismissed
+          if (localStorage.getItem('widgetify-banner-dismissed') === 'true') {
+            document.getElementById('sticky-banner').classList.add('hidden');
+            document.body.style.${config.bannerPosition === 'bottom' ? 'paddingBottom' : 'paddingTop'} = '0';
+          }
+        </script>
+      `;
+
+    case 'ai-chatbot':
+      return `
+        <style>
+          .ai-chatbot-widget {
+            position: fixed;
+            bottom: 20px;
+            ${positionStyle}
+            width: ${widgetSize};
+            height: ${widgetSize};
+            background: ${buttonColor};
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            z-index: 1000;
+            border: none;
+          }
+
+          .ai-chatbot-widget:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+          }
+
+          .ai-chatbot-popup {
+            position: fixed;
+            bottom: ${parseInt(widgetSize) + 30}px;
+            ${positionStyle}
+            width: 350px;
+            max-width: 90vw;
+            height: 500px;
+            max-height: 70vh;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            z-index: 999;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          }
+
+          .ai-chatbot-popup.show {
+            display: flex;
+          }
+
+          .ai-chatbot-header {
+            background: ${buttonColor};
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+          }
+
+          .ai-chatbot-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+          }
+
+          .ai-chatbot-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .ai-chatbot-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+          }
+
+          .ai-message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+            word-wrap: break-word;
+          }
+
+          .ai-message.bot {
+            background: #f3f4f6;
+            color: #374151;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+          }
+
+          .ai-message.user {
+            background: ${buttonColor};
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+          }
+
+          .ai-message.typing {
+            background: #f3f4f6;
+            color: #6b7280;
+            align-self: flex-start;
+          }
+
+          .ai-chatbot-input-area {
+            padding: 15px 20px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+          }
+
+          .ai-chatbot-input {
+            flex: 1;
+            border: 1px solid #d1d5db;
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-size: 14px;
+            resize: none;
+            max-height: 100px;
+            min-height: 40px;
+            outline: none;
+          }
+
+          .ai-chatbot-input:focus {
+            border-color: ${buttonColor};
+          }
+
+          .ai-chatbot-send {
+            background: ${buttonColor};
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+          }
+
+          .ai-chatbot-send:hover {
+            transform: scale(1.05);
+          }
+
+          .ai-chatbot-send:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+          }
+
+          @media (max-width: 640px) {
+            .ai-chatbot-popup {
+              width: 95vw;
+              height: 80vh;
+              bottom: 20px;
+              left: 50% !important;
+              right: auto !important;
+              transform: translateX(-50%);
+            }
+          }
+        </style>
+
+        <div class="ai-chatbot-widget" onclick="toggleAiChatbot()" aria-label="Open AI Chat">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-1.12.23-2.18.65-3.15L12 15l7.35-6.15c.42.97.65 2.03.65 3.15 0 4.41-3.59 8-8 8z"/>
+          </svg>
+        </div>
+
+        <div id="ai-chatbot-popup" class="ai-chatbot-popup">
+          <div class="ai-chatbot-header">
+            <h3>${config.chatbotName || 'AI Assistant'}</h3>
+            <button class="ai-chatbot-close" onclick="toggleAiChatbot()" aria-label="Close chat">×</button>
+          </div>
+          
+          <div id="ai-chatbot-messages" class="ai-chatbot-messages">
+            <div class="ai-message bot">
+              ${config.chatbotWelcome || 'Hello! I\'m your AI assistant. How can I help you today?'}
+            </div>
+          </div>
+          
+          <div class="ai-chatbot-input-area">
+            <textarea 
+              id="ai-chatbot-input" 
+              class="ai-chatbot-input" 
+              placeholder="${config.chatbotPlaceholder || 'Type your message...'}"
+              rows="1"
+            ></textarea>
+            <button id="ai-chatbot-send" class="ai-chatbot-send" onclick="sendAiMessage()" aria-label="Send message">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        ${!config.isPremium ? `
+        <div class="widgetify-watermark" style="position: fixed; bottom: 10px; ${position === 'left' ? 'right' : 'left'}: 10px; z-index: 998; font-size: 10px; opacity: 0.7;">
+          <a href="https://widgetify-two.vercel.app" target="_blank" style="color: #666; text-decoration: none;">Powered by Widgetify</a>
+        </div>` : ''}
+
+        <script>
+          const PERPLEXITY_API_KEY = '${config.perplexityApiKey || ''}';
+          const CHATBOT_MODEL = '${config.chatbotModel || 'llama-3.1-sonar-small-128k-online'}';
+          
+          window.toggleAiChatbot = function() {
+            const popup = document.getElementById('ai-chatbot-popup');
+            popup.classList.toggle('show');
+            if (popup.classList.contains('show')) {
+              document.getElementById('ai-chatbot-input').focus();
+            }
+          };
+
+          window.sendAiMessage = async function() {
+            const input = document.getElementById('ai-chatbot-input');
+            const sendBtn = document.getElementById('ai-chatbot-send');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            if (!PERPLEXITY_API_KEY) {
+              addAiMessage('bot', 'Sorry, the AI chatbot requires an API key to function. Please configure your Perplexity API key.');
+              return;
+            }
+
+            // Add user message
+            addAiMessage('user', message);
+            input.value = '';
+            sendBtn.disabled = true;
+            
+            // Add typing indicator
+            const typingId = addAiMessage('bot', 'AI is thinking...', 'typing');
+            
+            try {
+              const response = await fetch('https://api.perplexity.ai/chat/completions', {
+                method: 'POST',
+                headers: {
+                  'Authorization': \`Bearer \${PERPLEXITY_API_KEY}\`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  model: CHATBOT_MODEL,
+                  messages: [
+                    {
+                      role: 'system',
+                      content: 'You are a helpful AI assistant. Be concise and helpful in your responses.'
+                    },
+                    {
+                      role: 'user',
+                      content: message
+                    }
+                  ],
+                  temperature: 0.2,
+                  top_p: 0.9,
+                  max_tokens: 1000,
+                  return_images: false,
+                  return_related_questions: false,
+                  frequency_penalty: 1,
+                  presence_penalty: 0
+                }),
+              });
+              
+              if (!response.ok) {
+                throw new Error('Failed to get AI response');
+              }
+              
+              const data = await response.json();
+              const aiResponse = data.choices?.[0]?.message?.content || 'Sorry, I couldn\'t generate a response.';
+              
+              // Remove typing indicator and add response
+              removeAiMessage(typingId);
+              addAiMessage('bot', aiResponse);
+              
+            } catch (error) {
+              console.error('AI Chat Error:', error);
+              removeAiMessage(typingId);
+              addAiMessage('bot', 'Sorry, I encountered an error. Please try again later.');
+            } finally {
+              sendBtn.disabled = false;
+            }
+          };
+
+          function addAiMessage(sender, text, className = '') {
+            const messages = document.getElementById('ai-chatbot-messages');
+            const messageDiv = document.createElement('div');
+            const messageId = 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            messageDiv.id = messageId;
+            messageDiv.className = \`ai-message \${sender} \${className}\`;
+            messageDiv.textContent = text;
+            messages.appendChild(messageDiv);
+            messages.scrollTop = messages.scrollHeight;
+            return messageId;
+          }
+
+          function removeAiMessage(messageId) {
+            const message = document.getElementById(messageId);
+            if (message) {
+              message.remove();
+            }
+          }
+
+          // Handle Enter key
+          document.getElementById('ai-chatbot-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              sendAiMessage();
+            }
+          });
+
+          // Auto-resize textarea
+          document.getElementById('ai-chatbot-input').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+          });
+        </script>
+      `;
+
     default:
       return `${baseStyles}
         <div id="widgetify-widget" class="widgetify-widget" onclick="toggleWidgetifyPopup()" aria-label="Open chat">
@@ -2318,5 +2990,8 @@ export const WIDGET_NAMES: Record<WidgetType, string> = {
   'share-page': 'Share Page',
   'dark-mode-toggle': 'Dark Mode Toggle',
   'spotify-embed': 'Spotify Music Player',
-  'ai-seo-listing': 'AI SEO Listing Generator'
+  'ai-seo-listing': 'AI SEO Listing Generator',
+  'exit-intent-popup': 'Exit Intent Popup',
+  'sticky-banner': 'Sticky Promotional Banner',
+  'ai-chatbot': 'AI Chatbot'
 };
