@@ -1,6 +1,7 @@
 
 import React from 'react';
 import ReferAFriend from '@/components/ReferAFriend';
+import { Button } from '@/components/ui/button';
 
 const Footer: React.FC = () => {
   return <footer className="bg-gray-900 text-gray-300">
@@ -12,7 +13,7 @@ const Footer: React.FC = () => {
               The easiest way to add chat widgets to your website and connect with your visitors via their preferred social media platform.
             </p>
             
-            <div className="mt-4 flex justify-center md:justify-start">
+            <div className="mt-4 flex flex-col gap-3 items-center md:items-start">
               <a href="https://widgetify-two.vercel.app/" target="_blank" rel="noopener noreferrer" className="inline-block">
                 <img 
                   src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=961430&theme=light&t=1746523667957" 
@@ -27,6 +28,22 @@ const Footer: React.FC = () => {
                   loading="lazy"
                 />
               </a>
+              
+              <Button 
+                asChild 
+                variant="outline" 
+                size="sm"
+                className="bg-background text-foreground hover:bg-accent hover:text-accent-foreground border-border"
+              >
+                <a 
+                  href="https://www.producthunt.com/products/widgetify-2/reviews/new" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2"
+                >
+                  ⭐ Leave a Review
+                </a>
+              </Button>
             </div>
           </div>
           
