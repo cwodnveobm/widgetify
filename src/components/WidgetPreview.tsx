@@ -254,6 +254,26 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
           </svg>
         );
+      case 'trust-badge':
+        return <Shield size={iconSize} color="white" />;
+      case 'email-signature-generator':
+        return <Mail size={iconSize} color="white" />;
+      case 'holiday-countdown':
+        return <Star size={iconSize} color="white" />;
+      case 'flash-sale-banner':
+        return (
+          <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="white">
+            <path d="M13 1L8.5 8.5L1 9l5.5 5.5L5 22l7-3.5L19 22l-1.5-7.5L23 9l-7.5-.5L13 1z"/>
+          </svg>
+        );
+      case 'seasonal-greeting':
+        return <Star size={iconSize} color="white" />;
+      case 'black-friday-timer':
+        return (
+          <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="white">
+            <path d="M7 18V7.2C7 6.07 7.93 5.14 9.06 5.14H14.94C16.07 5.14 17 6.07 17 7.2V18L12 15.18L7 18Z"/>
+          </svg>
+        );
       default:
         return <MessageCircle size={iconSize} color="white" />;
     }
@@ -357,6 +377,18 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return 'Floating Video';
       case 'ai-seo-listing':
         return 'AI SEO Listing Generator';
+      case 'trust-badge':
+        return 'Trust & Security Badges';
+      case 'email-signature-generator':
+        return 'Generate Email Signature';
+      case 'holiday-countdown':
+        return `${config.holidayName || 'Holiday'} Countdown`;
+      case 'flash-sale-banner':
+        return 'Flash Sale Banner';
+      case 'seasonal-greeting':
+        return 'Seasonal Greeting';
+      case 'black-friday-timer':
+        return 'Black Friday Timer';
       default:
         return null;
     }

@@ -86,6 +86,33 @@ const WidgetGenerator: React.FC = () => {
     chatbotPlaceholder: 'Type your message...',
     perplexityApiKey: '',
     chatbotModel: 'llama-3.1-sonar-small-128k-online',
+    // Trust Badge properties
+    trustBadges: ['ssl', 'payment', 'privacy'],
+    badgeStyle: 'minimal',
+    // Email Signature properties
+    fullName: 'John Doe',
+    jobTitle: 'Software Engineer',
+    companyName: 'Tech Solutions Inc.',
+    companyWebsite: 'https://example.com',
+    socialLinks: [{ platform: 'LinkedIn', url: 'https://linkedin.com/in/johndoe' }],
+    signatureStyle: 'professional',
+    // Holiday Countdown properties
+    holidayName: 'Christmas',
+    holidayDate: '2024-12-25',
+    holidayMessage: 'Time until Christmas!',
+    // Flash Sale Banner properties
+    saleTitle: 'FLASH SALE',
+    saleDiscount: '50% OFF',
+    saleEndTime: new Date(Date.now() + 24*60*60*1000).toISOString(),
+    saleCtaText: 'Shop Now',
+    saleCtaUrl: '#',
+    // Seasonal Greeting properties
+    greetingType: 'christmas',
+    customGreeting: 'Wishing you joy and happiness!',
+    // Black Friday properties
+    blackFridayTitle: 'BLACK FRIDAY DEALS',
+    blackFridayEndDate: '2024-11-29',
+    blackFridayOffer: 'UP TO 70% OFF!',
   });
 
   const handleConfigChange = (key: keyof WidgetConfig, value: any) => {
@@ -1206,6 +1233,276 @@ add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
           </>
         );
 
+      case 'trust-badge':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Trust Badges</Label>
+              <div className="grid grid-cols-2 gap-3">
+                {['ssl', 'payment', 'privacy', 'security', 'guarantee'].map((badge) => (
+                  <div key={badge} className="flex items-center space-x-3 p-3 rounded-lg bg-muted/50 border border-border">
+                    <Checkbox
+                      id={badge}
+                      checked={config.trustBadges?.includes(badge) || false}
+                      onCheckedChange={(checked) => {
+                        const current = config.trustBadges || [];
+                        if (checked) {
+                          handleConfigChange('trustBadges', [...current, badge]);
+                        } else {
+                          handleConfigChange('trustBadges', current.filter(b => b !== badge));
+                        }
+                      }}
+                    />
+                    <Label htmlFor={badge} className="capitalize font-medium text-sm cursor-pointer">{badge}</Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="badgeStyle" className="text-sm font-medium">Badge Style</Label>
+              <Select
+                value={config.badgeStyle || 'minimal'}
+                onValueChange={(value: 'minimal' | 'detailed' | 'colorful') => handleConfigChange('badgeStyle', value)}
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="minimal">Minimal</SelectItem>
+                  <SelectItem value="detailed">Detailed</SelectItem>
+                  <SelectItem value="colorful">Colorful</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </>
+        );
+
+      case 'email-signature-generator':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="fullName" className="text-sm font-medium">Full Name</Label>
+              <Input
+                id="fullName"
+                value={config.fullName}
+                onChange={(e) => handleConfigChange('fullName', e.target.value)}
+                placeholder="John Doe"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="jobTitle" className="text-sm font-medium">Job Title</Label>
+              <Input
+                id="jobTitle"
+                value={config.jobTitle}
+                onChange={(e) => handleConfigChange('jobTitle', e.target.value)}
+                placeholder="Software Engineer"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="companyName" className="text-sm font-medium">Company Name</Label>
+              <Input
+                id="companyName"
+                value={config.companyName}
+                onChange={(e) => handleConfigChange('companyName', e.target.value)}
+                placeholder="Tech Solutions Inc."
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="companyWebsite" className="text-sm font-medium">Company Website</Label>
+              <Input
+                id="companyWebsite"
+                value={config.companyWebsite}
+                onChange={(e) => handleConfigChange('companyWebsite', e.target.value)}
+                placeholder="https://example.com"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="signatureStyle" className="text-sm font-medium">Signature Style</Label>
+              <Select
+                value={config.signatureStyle || 'professional'}
+                onValueChange={(value: 'professional' | 'modern' | 'creative') => handleConfigChange('signatureStyle', value)}
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="professional">Professional</SelectItem>
+                  <SelectItem value="modern">Modern</SelectItem>
+                  <SelectItem value="creative">Creative</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </>
+        );
+
+      case 'holiday-countdown':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="holidayName" className="text-sm font-medium">Holiday Name</Label>
+              <Input
+                id="holidayName"
+                value={config.holidayName}
+                onChange={(e) => handleConfigChange('holidayName', e.target.value)}
+                placeholder="Christmas"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="holidayDate" className="text-sm font-medium">Holiday Date</Label>
+              <Input
+                id="holidayDate"
+                type="date"
+                value={config.holidayDate}
+                onChange={(e) => handleConfigChange('holidayDate', e.target.value)}
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="holidayMessage" className="text-sm font-medium">Holiday Message</Label>
+              <Input
+                id="holidayMessage"
+                value={config.holidayMessage}
+                onChange={(e) => handleConfigChange('holidayMessage', e.target.value)}
+                placeholder="Time until Christmas!"
+                className="text-base"
+              />
+            </div>
+          </>
+        );
+
+      case 'flash-sale-banner':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="saleTitle" className="text-sm font-medium">Sale Title</Label>
+              <Input
+                id="saleTitle"
+                value={config.saleTitle}
+                onChange={(e) => handleConfigChange('saleTitle', e.target.value)}
+                placeholder="FLASH SALE"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="saleDiscount" className="text-sm font-medium">Discount Amount</Label>
+              <Input
+                id="saleDiscount"
+                value={config.saleDiscount}
+                onChange={(e) => handleConfigChange('saleDiscount', e.target.value)}
+                placeholder="50% OFF"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="saleEndTime" className="text-sm font-medium">Sale End Time</Label>
+              <Input
+                id="saleEndTime"
+                type="datetime-local"
+                value={config.saleEndTime}
+                onChange={(e) => handleConfigChange('saleEndTime', e.target.value)}
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="saleCtaText" className="text-sm font-medium">Call-to-Action Text</Label>
+              <Input
+                id="saleCtaText"
+                value={config.saleCtaText}
+                onChange={(e) => handleConfigChange('saleCtaText', e.target.value)}
+                placeholder="Shop Now"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="saleCtaUrl" className="text-sm font-medium">Call-to-Action URL</Label>
+              <Input
+                id="saleCtaUrl"
+                value={config.saleCtaUrl}
+                onChange={(e) => handleConfigChange('saleCtaUrl', e.target.value)}
+                placeholder="https://yourstore.com"
+                className="text-base"
+              />
+            </div>
+          </>
+        );
+
+      case 'seasonal-greeting':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="greetingType" className="text-sm font-medium">Greeting Type</Label>
+              <Select
+                value={config.greetingType || 'christmas'}
+                onValueChange={(value: 'christmas' | 'new-year' | 'halloween' | 'easter' | 'thanksgiving' | 'valentine') => handleConfigChange('greetingType', value)}
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="christmas">Christmas</SelectItem>
+                  <SelectItem value="new-year">New Year</SelectItem>
+                  <SelectItem value="halloween">Halloween</SelectItem>
+                  <SelectItem value="easter">Easter</SelectItem>
+                  <SelectItem value="thanksgiving">Thanksgiving</SelectItem>
+                  <SelectItem value="valentine">Valentine's Day</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="customGreeting" className="text-sm font-medium">Custom Greeting Message</Label>
+              <Textarea
+                id="customGreeting"
+                value={config.customGreeting}
+                onChange={(e) => handleConfigChange('customGreeting', e.target.value)}
+                placeholder="Wishing you joy and happiness!"
+                rows={3}
+                className="text-base resize-none"
+              />
+            </div>
+          </>
+        );
+
+      case 'black-friday-timer':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="blackFridayTitle" className="text-sm font-medium">Black Friday Title</Label>
+              <Input
+                id="blackFridayTitle"
+                value={config.blackFridayTitle}
+                onChange={(e) => handleConfigChange('blackFridayTitle', e.target.value)}
+                placeholder="BLACK FRIDAY DEALS"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="blackFridayEndDate" className="text-sm font-medium">End Date</Label>
+              <Input
+                id="blackFridayEndDate"
+                type="date"
+                value={config.blackFridayEndDate}
+                onChange={(e) => handleConfigChange('blackFridayEndDate', e.target.value)}
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="blackFridayOffer" className="text-sm font-medium">Offer Text</Label>
+              <Input
+                id="blackFridayOffer"
+                value={config.blackFridayOffer}
+                onChange={(e) => handleConfigChange('blackFridayOffer', e.target.value)}
+                placeholder="UP TO 70% OFF!"
+                className="text-base"
+              />
+            </div>
+          </>
+        );
+
       default:
         return (
           <div className="space-y-2">
@@ -1336,9 +1633,15 @@ add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
                      <SelectItem value="scroll-progress">Scroll Progress</SelectItem>
                      <SelectItem value="cookie-consent">Cookie Consent</SelectItem>
                      <SelectItem value="age-verification">Age Verification</SelectItem>
-                     <SelectItem value="pdf-viewer">PDF Viewer</SelectItem>
-                     <SelectItem value="floating-video">Floating Video</SelectItem>
-                     <SelectItem value="ai-seo-listing">AI SEO Listing</SelectItem>
+                      <SelectItem value="pdf-viewer">PDF Viewer</SelectItem>
+                      <SelectItem value="floating-video">Floating Video</SelectItem>
+                      <SelectItem value="ai-seo-listing">AI SEO Listing</SelectItem>
+                      <SelectItem value="trust-badge">Trust Badge Widget</SelectItem>
+                      <SelectItem value="email-signature-generator">Email Signature Generator</SelectItem>
+                      <SelectItem value="holiday-countdown">Holiday Countdown</SelectItem>
+                      <SelectItem value="flash-sale-banner">Flash Sale Banner</SelectItem>
+                      <SelectItem value="seasonal-greeting">Seasonal Greeting Widget</SelectItem>
+                      <SelectItem value="black-friday-timer">Black Friday Timer</SelectItem>
                    </SelectContent>
                 </Select>
               </div>

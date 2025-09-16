@@ -51,6 +51,12 @@ export type WidgetType =
   'ai-seo-listing' |
   'exit-intent-popup' |
   'sticky-banner' |
-  'ai-chatbot';
+  'ai-chatbot' |
+  'trust-badge' |
+  'email-signature-generator' |
+  'holiday-countdown' |
+  'flash-sale-banner' |
+  'seasonal-greeting' |
+  'black-friday-timer';
 
 export type WidgetSize = 'small' | 'medium' | 'large';

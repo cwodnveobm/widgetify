@@ -86,6 +86,33 @@ export interface WidgetConfig {
   chatbotPlaceholder?: string;
   perplexityApiKey?: string;
   chatbotModel?: 'llama-3.1-sonar-small-128k-online' | 'llama-3.1-sonar-large-128k-online' | 'llama-3.1-sonar-huge-128k-online';
+  // Trust Badge properties
+  trustBadges?: string[];
+  badgeStyle?: 'minimal' | 'detailed' | 'colorful';
+  // Email Signature properties
+  fullName?: string;
+  jobTitle?: string;
+  companyName?: string;
+  companyWebsite?: string;
+  socialLinks?: { platform: string; url: string; }[];
+  signatureStyle?: 'professional' | 'modern' | 'creative';
+  // Holiday Countdown properties
+  holidayName?: string;
+  holidayDate?: string;
+  holidayMessage?: string;
+  // Flash Sale Banner properties
+  saleTitle?: string;
+  saleDiscount?: string;
+  saleEndTime?: string;
+  saleCtaText?: string;
+  saleCtaUrl?: string;
+  // Seasonal Greeting properties
+  greetingType?: 'christmas' | 'new-year' | 'halloween' | 'easter' | 'thanksgiving' | 'valentine';
+  customGreeting?: string;
+  // Black Friday properties
+  blackFridayTitle?: string;
+  blackFridayEndDate?: string;
+  blackFridayOffer?: string;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
@@ -2936,8 +2963,352 @@ Sent via ${contactBusinessName} Contact Form\`;
             }
             alert('🔄 New SEO content generated!');
           }
+          }
         </script>`;
     }
+
+    case 'trust-badge':
+      const badges = config.trustBadges || ['ssl', 'payment', 'privacy'];
+      const badgeStyle = config.badgeStyle || 'minimal';
+      const badgeIcons = {
+        ssl: '<path d="M12 2l7 4v6c0 5-3 9-7 10-4-1-7-5-7-10V6l7-4z"/>',
+        payment: '<path d="M2 3h20v4H2V3zm0 6v10a1 1 0 001 1h18a1 1 0 001-1V9H2zm3 5h3v2H5v-2z"/>',
+        privacy: '<path d="M12 1l9 4v7c0 5.5-3.8 10.7-9 12-5.2-1.3-9-6.5-9-12V5l9-4z"/>',
+        security: '<path d="M12 2a10 10 0 110 20 10 10 0 010-20zm-1 7v4h2V9h-2zm0-3v1h2V6h-2z"/>',
+        guarantee: '<path d="M12 2l3.09 6.26L22 9l-5 4.87L18.18 22 12 18.77 5.82 22 7 13.87 2 9l6.91-.74L12 2z"/>'
+      };
+
+      return `${baseStyles}
+        <div id="widgetify-trust" class="widgetify-widget" onclick="toggleWidgetifyTrust()" aria-label="Trust badges">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+            ${badgeIcons.ssl}
+          </svg>
+        </div>
+
+        <div id="widgetify-trust-popup" class="widgetify-popup" role="dialog" aria-labelledby="trust-title" style="width: 350px; max-width: 95vw;">
+          <div class="widgetify-header">
+            <h3 id="trust-title">🔐 Trust & Security</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyTrust()" aria-label="Close trust badges">×</button>
+          </div>
+          <div class="widgetify-content">
+            <div class="trust-badges">
+              ${badges.map(badge => `
+                <div class="trust-badge ${badgeStyle}">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="${primaryColor}">
+                    ${badgeIcons[badge as keyof typeof badgeIcons] || badgeIcons.ssl}
+                  </svg>
+                  <div class="trust-text">
+                    <strong>${badge.charAt(0).toUpperCase() + badge.slice(1)} Protected</strong>
+                    ${badgeStyle === 'detailed' ? '<small>Your data is secure with us</small>' : ''}
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <style>
+          .trust-badges { display: grid; gap: 12px; }
+          .trust-badge { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(0,0,0,0.05); border-radius: 8px; border: 1px solid #e5e7eb; }
+          .trust-badge.minimal { padding: 8px; }
+          .trust-badge.colorful { background: linear-gradient(135deg, ${primaryColor}20, transparent); }
+          .trust-text { flex: 1; }
+          .trust-text strong { display: block; font-weight: 600; color: #1f2937; }
+          .trust-text small { font-size: 12px; color: #6b7280; }
+        </style>
+
+        <script>
+          function toggleWidgetifyTrust() {
+            const popup = document.getElementById('widgetify-trust-popup');
+            popup.classList.toggle('show');
+          }
+        </script>`;
+
+    case 'email-signature-generator':
+      return `${baseStyles}
+        <div id="widgetify-signature" class="widgetify-widget" onclick="toggleWidgetifySignature()" aria-label="Generate email signature">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4.7l-8 5.334L4 8.7V6.297l8 5.333 8-5.333V8.7z"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-signature-popup" class="widgetify-popup" role="dialog" aria-labelledby="signature-title" style="width: 450px; max-width: 95vw;">
+          <div class="widgetify-header">
+            <h3 id="signature-title">✉️ Email Signature Generator</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifySignature()" aria-label="Close signature generator">×</button>
+          </div>
+          <div class="widgetify-content">
+            <div class="signature-preview ${config.signatureStyle || 'professional'}">
+              <div class="signature-name">${config.fullName || 'Your Name'}</div>
+              <div class="signature-title">${config.jobTitle || 'Your Job Title'}</div>
+              <div class="signature-company">${config.companyName || 'Company Name'}</div>
+              ${config.companyWebsite ? `<div class="signature-website"><a href="${config.companyWebsite}" style="color: ${primaryColor}">${config.companyWebsite}</a></div>` : ''}
+              ${config.socialLinks?.length ? `
+                <div class="signature-social">
+                  ${config.socialLinks.map(link => `<a href="${link.url}" style="color: ${primaryColor}; margin-right: 10px;">${link.platform}</a>`).join('')}
+                </div>
+              ` : ''}
+            </div>
+            <button onclick="copySignature()" style="width: 100%; padding: 12px; background: ${primaryColor}; color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 15px;">📋 Copy Signature</button>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <style>
+          .signature-preview { padding: 15px; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; font-family: Arial, sans-serif; }
+          .signature-preview.professional .signature-name { font-size: 18px; font-weight: 600; color: #1f2937; }
+          .signature-preview.modern { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); }
+          .signature-preview.creative { background: linear-gradient(135deg, ${primaryColor}10, transparent); }
+          .signature-title { font-size: 14px; color: #6b7280; margin-top: 2px; }
+          .signature-company { font-size: 14px; font-weight: 500; color: #374151; margin-top: 4px; }
+          .signature-website { font-size: 13px; margin-top: 6px; }
+          .signature-social { margin-top: 8px; font-size: 12px; }
+        </style>
+
+        <script>
+          function toggleWidgetifySignature() {
+            const popup = document.getElementById('widgetify-signature-popup');
+            popup.classList.toggle('show');
+          }
+
+          function copySignature() {
+            const preview = document.querySelector('.signature-preview');
+            const range = document.createRange();
+            range.selectNode(preview);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            try {
+              document.execCommand('copy');
+              alert('📧 Email signature copied to clipboard!');
+            } catch (err) {
+              alert('❌ Failed to copy signature');
+            }
+            window.getSelection().removeAllRanges();
+          }
+        </script>`;
+
+    case 'holiday-countdown':
+      const holidayName = config.holidayName || 'Christmas';
+      const holidayDate = config.holidayDate || '2024-12-25';
+      return `${baseStyles}
+        <div id="widgetify-holiday" class="widgetify-widget" onclick="toggleWidgetifyHoliday()" aria-label="Holiday countdown">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2l3.09 6.26L22 9l-5 4.87L18.18 22 12 18.77 5.82 22 7 13.87 2 9l6.91-.74L12 2z"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-holiday-popup" class="widgetify-popup" role="dialog" aria-labelledby="holiday-title" style="width: 380px; max-width: 95vw;">
+          <div class="widgetify-header">
+            <h3 id="holiday-title">🎄 ${holidayName} Countdown</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyHoliday()" aria-label="Close countdown">×</button>
+          </div>
+          <div class="widgetify-content">
+            <div id="holiday-timer" class="holiday-timer">
+              <div class="time-unit"><span id="days">00</span><label>Days</label></div>
+              <div class="time-unit"><span id="hours">00</span><label>Hours</label></div>
+              <div class="time-unit"><span id="minutes">00</span><label>Minutes</label></div>
+              <div class="time-unit"><span id="seconds">00</span><label>Seconds</label></div>
+            </div>
+            <p style="text-align: center; margin-top: 15px; color: #6b7280;">${config.holidayMessage || `Time until ${holidayName}!`}</p>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <style>
+          .holiday-timer { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center; }
+          .time-unit span { display: block; font-size: 24px; font-weight: 700; color: ${primaryColor}; background: rgba(0,0,0,0.05); padding: 15px 10px; border-radius: 8px; }
+          .time-unit label { font-size: 12px; color: #6b7280; margin-top: 5px; }
+        </style>
+
+        <script>
+          function toggleWidgetifyHoliday() {
+            const popup = document.getElementById('widgetify-holiday-popup');
+            popup.classList.toggle('show');
+          }
+
+          function updateHolidayCountdown() {
+            const target = new Date('${holidayDate}').getTime();
+            const now = new Date().getTime();
+            const diff = target - now;
+
+            if (diff > 0) {
+              const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+              const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+              const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+              const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+              document.getElementById('days').textContent = days.toString().padStart(2, '0');
+              document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+              document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+              document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+            }
+          }
+
+          setInterval(updateHolidayCountdown, 1000);
+          updateHolidayCountdown();
+        </script>`;
+
+    case 'flash-sale-banner':
+      return `${baseStyles}
+        <div id="widgetify-flash-banner" style="position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(135deg, #ff4757, #ff3742); color: white; padding: 12px; text-align: center; z-index: 10000; box-shadow: 0 2px 10px rgba(255,71,87,0.3);">
+          <div style="display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto;">
+            <div style="flex: 1;">
+              <span style="font-weight: 700; font-size: 16px;">⚡ ${config.saleTitle || 'FLASH SALE'}</span>
+              <span style="margin-left: 15px; font-size: 14px;">${config.saleDiscount || '50% OFF'} - Limited Time!</span>
+            </div>
+            <div id="flash-countdown" style="display: flex; gap: 10px; align-items: center; margin: 0 20px;">
+              <span style="font-size: 14px; opacity: 0.9;">Ends in:</span>
+              <span id="flash-timer" style="font-weight: 700; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 4px;">00:00:00</span>
+            </div>
+            <div>
+              <a href="${config.saleCtaUrl || '#'}" style="background: white; color: #ff4757; padding: 8px 16px; border-radius: 20px; text-decoration: none; font-weight: 600; font-size: 14px;">${config.saleCtaText || 'Shop Now'}</a>
+              <button onclick="document.getElementById('widgetify-flash-banner').style.display='none'" style="background: none; border: none; color: white; margin-left: 10px; cursor: pointer; font-size: 18px;">×</button>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          function updateFlashTimer() {
+            const end = new Date('${config.saleEndTime || new Date(Date.now() + 24*60*60*1000).toISOString()}').getTime();
+            const now = new Date().getTime();
+            const diff = end - now;
+
+            if (diff > 0) {
+              const hours = Math.floor(diff / (1000 * 60 * 60));
+              const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+              const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+              document.getElementById('flash-timer').textContent = hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+            } else {
+              document.getElementById('widgetify-flash-banner').style.display = 'none';
+            }
+          }
+          setInterval(updateFlashTimer, 1000);
+          updateFlashTimer();
+        </script>`;
+
+    case 'seasonal-greeting':
+      const greetingType = config.greetingType || 'christmas';
+      const greetings = {
+        christmas: { emoji: '🎄', text: 'Merry Christmas!', bg: 'linear-gradient(135deg, #d73527, #e74c3c)' },
+        'new-year': { emoji: '🎆', text: 'Happy New Year!', bg: 'linear-gradient(135deg, #f39c12, #e67e22)' },
+        halloween: { emoji: '🎃', text: 'Happy Halloween!', bg: 'linear-gradient(135deg, #e67e22, #d35400)' },
+        easter: { emoji: '🐰', text: 'Happy Easter!', bg: 'linear-gradient(135deg, #9b59b6, #8e44ad)' },
+        thanksgiving: { emoji: '🦃', text: 'Happy Thanksgiving!', bg: 'linear-gradient(135deg, #e67e22, #d35400)' },
+        valentine: { emoji: '💝', text: 'Happy Valentine\'s Day!', bg: 'linear-gradient(135deg, #e91e63, #ad1457)' }
+      };
+      const greeting = greetings[greetingType as keyof typeof greetings] || greetings.christmas;
+
+      return `${baseStyles}
+        <div id="widgetify-greeting" class="widgetify-widget" onclick="toggleWidgetifyGreeting()" aria-label="Seasonal greeting">
+          <span style="font-size: 24px;">${greeting.emoji}</span>
+        </div>
+
+        <div id="widgetify-greeting-popup" class="widgetify-popup" role="dialog" aria-labelledby="greeting-title" style="width: 320px; max-width: 95vw; background: ${greeting.bg}; color: white; border: none;">
+          <div class="widgetify-header" style="border-bottom: 1px solid rgba(255,255,255,0.2); color: white;">
+            <h3 id="greeting-title">${greeting.text}</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyGreeting()" aria-label="Close greeting" style="color: white;">×</button>
+          </div>
+          <div class="widgetify-content">
+            <div style="text-align: center; padding: 20px 0;">
+              <div style="font-size: 60px; margin-bottom: 15px;">${greeting.emoji}</div>
+              <h2 style="margin: 0 0 10px 0; color: white;">${greeting.text}</h2>
+              <p style="margin: 0; opacity: 0.9; font-size: 14px;">${config.customGreeting || 'Wishing you joy and happiness!'}</p>
+            </div>
+          </div>
+          <div class="widgetify-watermark" style="border-top: 1px solid rgba(255,255,255,0.2);">
+            <a href="https://widgetify-two.vercel.app" target="_blank" style="color: rgba(255,255,255,0.8);">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <script>
+          function toggleWidgetifyGreeting() {
+            const popup = document.getElementById('widgetify-greeting-popup');
+            popup.classList.toggle('show');
+          }
+        </script>`;
+
+    case 'black-friday-timer':
+      return `${baseStyles}
+        <div id="widgetify-blackfriday" class="widgetify-widget" onclick="toggleWidgetifyBlackFriday()" aria-label="Black Friday timer" style="background: linear-gradient(135deg, #000, #333);">
+          <span style="font-size: 16px; font-weight: bold; color: #ff6b6b;">BF</span>
+        </div>
+
+        <div id="widgetify-blackfriday-popup" class="widgetify-popup" role="dialog" aria-labelledby="bf-title" style="width: 400px; max-width: 95vw; background: linear-gradient(135deg, #000, #1a1a1a); color: white; border: 2px solid #ff6b6b;">
+          <div class="widgetify-header" style="background: #ff6b6b; color: white;">
+            <h3 id="bf-title">🖤 ${config.blackFridayTitle || 'BLACK FRIDAY DEALS'}</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyBlackFriday()" aria-label="Close Black Friday timer" style="color: white;">×</button>
+          </div>
+          <div class="widgetify-content">
+            <div style="text-align: center; padding: 20px 0;">
+              <div style="font-size: 48px; margin-bottom: 15px;">🛍️</div>
+              <h2 style="margin: 0 0 10px 0; color: #ff6b6b;">${config.blackFridayOffer || 'UP TO 70% OFF!'}</h2>
+              <p style="margin: 0 0 20px 0; opacity: 0.9;">Don't miss out on our biggest sale of the year!</p>
+              
+              <div id="bf-timer" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0;">
+                <div class="bf-time-unit">
+                  <span id="bf-days" style="display: block; font-size: 24px; font-weight: 700; color: #ff6b6b;">00</span>
+                  <label style="font-size: 12px; opacity: 0.8;">DAYS</label>
+                </div>
+                <div class="bf-time-unit">
+                  <span id="bf-hours" style="display: block; font-size: 24px; font-weight: 700; color: #ff6b6b;">00</span>
+                  <label style="font-size: 12px; opacity: 0.8;">HOURS</label>
+                </div>
+                <div class="bf-time-unit">
+                  <span id="bf-minutes" style="display: block; font-size: 24px; font-weight: 700; color: #ff6b6b;">00</span>
+                  <label style="font-size: 12px; opacity: 0.8;">MINS</label>
+                </div>
+                <div class="bf-time-unit">
+                  <span id="bf-seconds" style="display: block; font-size: 24px; font-weight: 700; color: #ff6b6b;">00</span>
+                  <label style="font-size: 12px; opacity: 0.8;">SECS</label>
+                </div>
+              </div>
+              
+              <button onclick="window.open('#', '_blank')" style="background: #ff6b6b; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 700; cursor: pointer; font-size: 16px; margin-top: 10px;">🛒 SHOP NOW</button>
+            </div>
+          </div>
+          <div class="widgetify-watermark" style="background: #ff6b6b;">
+            <a href="https://widgetify-two.vercel.app" target="_blank" style="color: white;">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <style>
+          .bf-time-unit { text-align: center; background: rgba(255,107,107,0.1); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,107,107,0.3); }
+        </style>
+
+        <script>
+          function toggleWidgetifyBlackFriday() {
+            const popup = document.getElementById('widgetify-blackfriday-popup');
+            popup.classList.toggle('show');
+          }
+
+          function updateBlackFridayTimer() {
+            const target = new Date('${config.blackFridayEndDate || '2024-11-29'}').getTime();
+            const now = new Date().getTime();
+            const diff = target - now;
+
+            if (diff > 0) {
+              const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+              const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+              const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+              const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+              document.getElementById('bf-days').textContent = days.toString().padStart(2, '0');
+              document.getElementById('bf-hours').textContent = hours.toString().padStart(2, '0');
+              document.getElementById('bf-minutes').textContent = minutes.toString().padStart(2, '0');
+              document.getElementById('bf-seconds').textContent = seconds.toString().padStart(2, '0');
+            }
+          }
+
+          setInterval(updateBlackFridayTimer, 1000);
+          updateBlackFridayTimer();
+        </script>`;
   }
 };
 
@@ -2993,5 +3364,11 @@ export const WIDGET_NAMES: Record<WidgetType, string> = {
   'ai-seo-listing': 'AI SEO Listing Generator',
   'exit-intent-popup': 'Exit Intent Popup',
   'sticky-banner': 'Sticky Promotional Banner',
-  'ai-chatbot': 'AI Chatbot'
+  'ai-chatbot': 'AI Chatbot',
+  'trust-badge': 'Trust Badge Widget',
+  'email-signature-generator': 'Email Signature Generator',
+  'holiday-countdown': 'Holiday Countdown',
+  'flash-sale-banner': 'Flash Sale Banner',
+  'seasonal-greeting': 'Seasonal Greeting Widget',
+  'black-friday-timer': 'Black Friday Timer'
 };
