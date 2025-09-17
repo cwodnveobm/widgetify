@@ -39,26 +39,26 @@ class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-orange-100 p-4">
-          <Card className="w-full max-w-lg mx-auto text-center shadow-lg">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-destructive/5 to-muted/20 p-4">
+          <Card className="w-full max-w-lg mx-auto text-center shadow-elegant">
             <CardHeader className="pb-4">
               <div className="flex justify-center mb-4">
-                <AlertTriangle className="w-16 h-16 text-red-500" />
+                <AlertTriangle className="w-16 h-16 text-destructive" />
               </div>
-              <CardTitle className="text-2xl font-bold text-gray-800">
+              <CardTitle className="text-2xl font-bold text-foreground">
                 Something went wrong
               </CardTitle>
             </CardHeader>
             
             <CardContent className="space-y-4">
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 We encountered an unexpected error. This has been logged for investigation.
               </p>
 
               {this.state.error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-left">
-                  <p className="text-sm text-red-700 font-medium">Error Details:</p>
-                  <code className="text-xs text-red-600 block mt-1 break-all">
+                <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-3 text-left">
+                  <p className="text-sm text-destructive font-medium">Error Details:</p>
+                  <code className="text-xs text-destructive block mt-1 break-all">
                     {this.state.error.message}
                   </code>
                 </div>
@@ -83,8 +83,8 @@ class ErrorBoundary extends Component<Props, State> {
                 </Button>
               </div>
 
-              <div className="pt-4 border-t border-gray-200">
-                <p className="text-xs text-gray-500">
+          <div className="pt-4 border-t border-border">
+            <p className="text-xs text-muted-foreground">
                   Error ID: {Date.now().toString(36)}
                 </p>
               </div>

@@ -41,17 +41,17 @@ const NotFound = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-indigo-100 p-4">
-      <Card className="w-full max-w-md mx-auto text-center shadow-lg">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-muted/50 to-primary/10 p-4">
+      <Card className="w-full max-w-md mx-auto text-center shadow-elegant">
         <CardHeader className="pb-4">
           <div className="flex justify-center mb-4">
             {!isOnline ? (
-              <WifiOff className="w-16 h-16 text-orange-500" />
+              <WifiOff className="w-16 h-16 text-destructive" />
             ) : (
-              <AlertCircle className="w-16 h-16 text-red-500" />
+              <AlertCircle className="w-16 h-16 text-destructive" />
             )}
           </div>
-          <CardTitle className="text-2xl font-bold text-gray-800">
+          <CardTitle className="text-2xl font-bold text-foreground">
             {!isOnline ? "Connection Lost" : "Page Not Found"}
           </CardTitle>
         </CardHeader>
@@ -59,11 +59,11 @@ const NotFound = () => {
         <CardContent className="space-y-4">
           {!isOnline ? (
             <div className="space-y-3">
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 You appear to be offline. Please check your internet connection.
               </p>
-              <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-                <p className="text-sm text-orange-700">
+              <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-3">
+                <p className="text-sm text-destructive">
                   • Check your WiFi connection
                   <br />
                   • Try moving to a better signal area
@@ -74,13 +74,13 @@ const NotFound = () => {
             </div>
           ) : (
             <div className="space-y-3">
-              <p className="text-4xl font-bold text-gray-400">404</p>
-              <p className="text-gray-600">
+              <p className="text-4xl font-bold text-muted-foreground">404</p>
+              <p className="text-muted-foreground">
                 The page you're looking for doesn't exist or has been moved.
               </p>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-sm text-blue-700">
-                  Route attempted: <code className="bg-blue-100 px-1 rounded">{location.pathname}</code>
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
+                <p className="text-sm text-primary">
+                  Route attempted: <code className="bg-primary/10 px-1 rounded">{location.pathname}</code>
                 </p>
               </div>
             </div>
@@ -105,9 +105,9 @@ const NotFound = () => {
             </Button>
           </div>
 
-          <div className="pt-4 border-t border-gray-200">
-            <p className="text-xs text-gray-500">
-              Need help? <Link to="/support" className="text-purple-600 hover:underline">Contact Support</Link>
+          <div className="pt-4 border-t border-border">
+            <p className="text-xs text-muted-foreground">
+              Need help? <Link to="/support" className="text-primary hover:underline">Contact Support</Link>
             </p>
           </div>
         </CardContent>

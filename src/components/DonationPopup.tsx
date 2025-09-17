@@ -50,7 +50,7 @@ const DonationPopup: React.FC = () => {
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b border-border bg-gradient-to-r from-primary/10 to-primary/5 rounded-t-xl">
           <div className="flex items-center gap-2">
-            <Heart className="w-5 h-5 text-red-500" />
+            <Heart className="w-5 h-5 text-destructive" />
             <h3 className="font-semibold text-foreground">Support Widgetify</h3>
           </div>
           <Button
