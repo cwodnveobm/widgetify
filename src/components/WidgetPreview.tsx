@@ -274,6 +274,20 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
             <path d="M7 18V7.2C7 6.07 7.93 5.14 9.06 5.14H14.94C16.07 5.14 17 6.07 17 7.2V18L12 15.18L7 18Z"/>
           </svg>
         );
+      case 'multi-step-survey':
+        return <FileText size={iconSize} color="white" />;
+      case 'loyalty-points':
+        return <Star size={iconSize} color="white" />;
+      case 'live-visitor-counter':
+        return <Users size={iconSize} color="white" />;
+      case 'smart-faq-chatbot':
+        return <MessageSquare size={iconSize} color="white" />;
+      case 'price-drop-alert':
+        return <TrendingUp size={iconSize} color="white" />;
+      case 'product-tour':
+        return <Sparkles size={iconSize} color="white" />;
+      case 'referral-tracking':
+        return <Users size={iconSize} color="white" />;
       default:
         return <MessageCircle size={iconSize} color="white" />;
     }

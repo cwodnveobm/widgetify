@@ -1503,6 +1503,19 @@ add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
           </>
         );
 
+      case 'multi-step-survey':
+      case 'loyalty-points':
+      case 'live-visitor-counter':
+      case 'smart-faq-chatbot':
+      case 'price-drop-alert':
+      case 'product-tour':
+      case 'referral-tracking':
+        return (
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">Advanced widget - configure in preview panel.</p>
+          </div>
+        );
+
       default:
         return (
           <div className="space-y-2">

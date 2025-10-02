@@ -57,6 +57,13 @@ export type WidgetType =
   'holiday-countdown' |
   'flash-sale-banner' |
   'seasonal-greeting' |
-  'black-friday-timer';
+  'black-friday-timer' |
+  'multi-step-survey' |
+  'loyalty-points' |
+  'live-visitor-counter' |
+  'smart-faq-chatbot' |
+  'price-drop-alert' |
+  'product-tour' |
+  'referral-tracking';
 
 export type WidgetSize = 'small' | 'medium' | 'large';

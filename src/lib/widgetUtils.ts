@@ -113,6 +113,36 @@ export interface WidgetConfig {
   blackFridayTitle?: string;
   blackFridayEndDate?: string;
   blackFridayOffer?: string;
+  // Multi-Step Survey properties
+  surveyQuestions?: { question: string; type: 'text' | 'rating' | 'choice'; options?: string[]; }[];
+  surveyTitle?: string;
+  surveySubmitUrl?: string;
+  // Loyalty Points properties
+  pointsBalance?: number;
+  loyaltyTier?: string;
+  pointsToNextTier?: number;
+  rewardsUrl?: string;
+  // Live Visitor Counter properties
+  initialVisitors?: number;
+  visitorVariation?: number;
+  updateInterval?: number;
+  // Smart FAQ Chatbot properties
+  faqKnowledgeBase?: { question: string; answer: string; }[];
+  faqFallbackMessage?: string;
+  // Price Drop Alert properties
+  productName?: string;
+  originalPrice?: number;
+  currentPrice?: number;
+  alertEmail?: string;
+  productUrl?: string;
+  // Product Tour properties
+  tourSteps?: { title: string; description: string; target?: string; }[];
+  tourAutoStart?: boolean;
+  // Referral Tracking properties
+  referralCode?: string;
+  referralReward?: string;
+  referralUrl?: string;
+  referralCount?: number;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
@@ -3309,6 +3339,138 @@ Sent via ${contactBusinessName} Contact Form\`;
           setInterval(updateBlackFridayTimer, 1000);
           updateBlackFridayTimer();
         </script>`;
+
+    case 'multi-step-survey':
+      const questions = config.surveyQuestions || [
+        { question: 'How satisfied are you with our service?', type: 'rating' as const },
+        { question: 'What could we improve?', type: 'text' as const },
+        { question: 'Would you recommend us?', type: 'choice' as const, options: ['Yes', 'No', 'Maybe'] }
+      ];
+      
+      return `${baseStyles}
+        <style>
+          .survey-step { display: none; }
+          .survey-step.active { display: block; animation: fadeIn 0.3s; }
+          @keyframes fadeIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+          .survey-progress { height: 4px; background: #e5e7eb; border-radius: 2px; margin-bottom: 20px; overflow: hidden; }
+          .survey-progress-bar { height: 100%; background: ${buttonColor}; transition: width 0.3s; }
+          .survey-rating { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
+          .survey-rating button { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #e5e7eb; background: white; cursor: pointer; transition: all 0.2s; }
+          .survey-rating button:hover, .survey-rating button.selected { background: ${buttonColor}; color: white; border-color: ${buttonColor}; transform: scale(1.1); }
+        </style>
+        
+        <div id="widgetify-survey" class="widgetify-widget" onclick="toggleWidgetifySurvey()" aria-label="Open survey">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-survey-popup" class="widgetify-popup" role="dialog" style="height: auto; max-height: 500px;">
+          <div class="widgetify-header">
+            <h3>${config.surveyTitle || 'Quick Survey'}</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifySurvey()">×</button>
+          </div>
+          <div class="widgetify-content" style="flex: 1; overflow-y: auto;">
+            <div class="survey-progress">
+              <div id="survey-progress-bar" class="survey-progress-bar" style="width: 0%"></div>
+            </div>
+            ${questions.map((q, idx) => `
+              <div class="survey-step ${idx === 0 ? 'active' : ''}" data-step="${idx}">
+                <h4 style="margin: 0 0 20px 0; font-size: 16px;">${q.question}</h4>
+                ${q.type === 'rating' ? `
+                  <div class="survey-rating">
+                    ${[1,2,3,4,5].map(n => `<button type="button" onclick="selectRating(${idx}, ${n})" data-rating="${n}">${n}</button>`).join('')}
+                  </div>
+                ` : q.type === 'choice' ? `
+                  <div style="display: flex; flex-direction: column; gap: 10px;">
+                    ${(q.options || []).map((opt, i) => `
+                      <button type="button" onclick="selectChoice(${idx}, '${opt}')" style="padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; background: white; cursor: pointer; text-align: left; transition: all 0.2s;" class="survey-choice">
+                        ${opt}
+                      </button>
+                    `).join('')}
+                  </div>
+                ` : `
+                  <textarea id="survey-text-${idx}" rows="4" style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; resize: vertical;"></textarea>
+                `}
+              </div>
+            `).join('')}
+            <div class="survey-step" data-step="complete" style="text-align: center; padding: 30px 0;">
+              <div style="font-size: 48px; margin-bottom: 15px;">🎉</div>
+              <h4 style="margin: 0 0 10px 0;">Thank You!</h4>
+              <p style="margin: 0; color: #6b7280;">Your feedback helps us improve.</p>
+            </div>
+          </div>
+          <div style="padding: 16px; border-top: 1px solid #e5e7eb; display: flex; gap: 10px;">
+            <button id="survey-back" onclick="surveyBack()" style="padding: 10px 20px; border: 1px solid #e5e7eb; background: white; border-radius: 6px; cursor: pointer; display: none;">Back</button>
+            <button id="survey-next" onclick="surveyNext()" style="flex: 1; padding: 10px; background: ${buttonColor}; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Next</button>
+          </div>
+          <div class="widgetify-watermark">
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>
+        </div>
+
+        <script>
+          let currentSurveyStep = 0;
+          const surveyAnswers = [];
+          const totalSteps = ${questions.length};
+
+          function toggleWidgetifySurvey() {
+            document.getElementById('widgetify-survey-popup').classList.toggle('show');
+          }
+
+          function updateSurveyProgress() {
+            const progress = (currentSurveyStep / totalSteps) * 100;
+            document.getElementById('survey-progress-bar').style.width = progress + '%';
+            document.getElementById('survey-back').style.display = currentSurveyStep > 0 ? 'block' : 'none';
+            document.getElementById('survey-next').textContent = currentSurveyStep === totalSteps - 1 ? 'Submit' : 'Next';
+          }
+
+          function selectRating(step, rating) {
+            document.querySelectorAll(\`[data-step="\${step}"] .survey-rating button\`).forEach(b => b.classList.remove('selected'));
+            event.target.classList.add('selected');
+            surveyAnswers[step] = rating;
+          }
+
+          function selectChoice(step, choice) {
+            document.querySelectorAll(\`[data-step="\${step}"] .survey-choice\`).forEach(b => {
+              b.style.background = 'white';
+              b.style.borderColor = '#e5e7eb';
+            });
+            event.target.style.background = '${buttonColor}20';
+            event.target.style.borderColor = '${buttonColor}';
+            surveyAnswers[step] = choice;
+          }
+
+          function surveyNext() {
+            const textArea = document.getElementById('survey-text-' + currentSurveyStep);
+            if (textArea) surveyAnswers[currentSurveyStep] = textArea.value;
+            
+            if (currentSurveyStep === totalSteps - 1) {
+              document.querySelectorAll('.survey-step').forEach(s => s.classList.remove('active'));
+              document.querySelector('[data-step="complete"]').classList.add('active');
+              document.getElementById('survey-next').style.display = 'none';
+              document.getElementById('survey-back').style.display = 'none';
+              console.log('Survey submitted:', surveyAnswers);
+              return;
+            }
+
+            document.querySelectorAll('.survey-step').forEach(s => s.classList.remove('active'));
+            currentSurveyStep++;
+            document.querySelector(\`[data-step="\${currentSurveyStep}"]\`).classList.add('active');
+            updateSurveyProgress();
+          }
+
+          function surveyBack() {
+            if (currentSurveyStep > 0) {
+              document.querySelectorAll('.survey-step').forEach(s => s.classList.remove('active'));
+              currentSurveyStep--;
+              document.querySelector(\`[data-step="\${currentSurveyStep}"]\`).classList.add('active');
+              updateSurveyProgress();
+            }
+          }
+
+          updateSurveyProgress();
+        </script>`;
   }
 };
 
@@ -3370,5 +3532,12 @@ export const WIDGET_NAMES: Record<WidgetType, string> = {
   'holiday-countdown': 'Holiday Countdown',
   'flash-sale-banner': 'Flash Sale Banner',
   'seasonal-greeting': 'Seasonal Greeting Widget',
-  'black-friday-timer': 'Black Friday Timer'
+  'black-friday-timer': 'Black Friday Timer',
+  'multi-step-survey': 'Multi-Step Survey',
+  'loyalty-points': 'Loyalty Points Display',
+  'live-visitor-counter': 'Live Visitor Counter',
+  'smart-faq-chatbot': 'Smart FAQ Chatbot',
+  'price-drop-alert': 'Price Drop Alert',
+  'product-tour': 'Interactive Product Tour',
+  'referral-tracking': 'Referral Tracking'
 };
