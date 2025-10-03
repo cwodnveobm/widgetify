@@ -7,9 +7,23 @@ import FeaturesSection from '@/components/FeaturesSection';
 import FounderSection from '@/components/FounderSection';
 import Footer from '@/components/Footer';
 import PromoPopup from '@/components/PromoPopup';
-import DonationPopup from '@/components/DonationPopup';
 import MobileNavigation from '@/components/MobileNavigation';
 import { PricingSection } from '@/components/PricingSection';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { Menu, X, Sparkles, Wifi, WifiOff, User, LogOut, Crown } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { Button } from '@/components/ui/button';
+import { AuthModal } from '@/components/AuthModal';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { toast } from 'sonner';
 import { Menu, X, Sparkles, Wifi, WifiOff } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
@@ -17,6 +31,9 @@ import { Button } from '@/components/ui/button';
 const Index: React.FC = () => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const { user, hasSubscription } = useAuth();
   const isMobile = useIsMobile();
   
   const toggleMenu = () => {
@@ -72,6 +89,20 @@ const Index: React.FC = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error("Failed to sign out");
+    } else {
+      toast.success("Signed out successfully");
+    }
+  };
+
+  const openAuthModal = (mode: 'signin' | 'signup') => {
+    setAuthMode(mode);
+    setShowAuthModal(true);
+  };
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -105,7 +136,48 @@ const Index: React.FC = () => {
             )}
           </div>
           
-          {isMobile ? (
+          <div className="flex items-center gap-2">
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <User className="w-5 h-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">{user.email}</span>
+                      {hasSubscription && (
+                        <span className="text-xs text-primary flex items-center gap-1 mt-1">
+                          <Crown className="w-3 h-3" />
+                          Premium Member
+                        </span>
+                      )}
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              !isMobile && (
+                <div className="flex gap-2">
+                  <Button variant="ghost" onClick={() => openAuthModal('signin')}>
+                    Sign In
+                  </Button>
+                  <Button onClick={() => openAuthModal('signup')}>
+                    Get Started
+                  </Button>
+                </div>
+              )
+            )}
+          </div>
+          
+          {isMobile && (
             <>
               <button 
                 id="menu-toggle-button" 
@@ -139,6 +211,22 @@ const Index: React.FC = () => {
                 <Link to="/support" className="text-muted-foreground hover:text-primary py-4 flex items-center justify-between border-b border-border pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
                   Support
                 </Link>
+                {!user && (
+                  <>
+                    <button onClick={() => { openAuthModal('signin'); handleMenuItemClick(); }} className="text-muted-foreground hover:text-primary py-4 flex items-center justify-between border-b border-border pb-3 min-h-[44px] font-medium transition-colors duration-200 text-left w-full">
+                      Sign In
+                    </button>
+                    <button onClick={() => { openAuthModal('signup'); handleMenuItemClick(); }} className="text-primary hover:text-primary/80 py-4 flex items-center justify-between min-h-[44px] font-medium transition-colors duration-200 text-left w-full">
+                      Get Started
+                    </button>
+                  </>
+                )}
+                {user && (
+                  <button onClick={() => { handleSignOut(); handleMenuItemClick(); }} className="text-destructive hover:text-destructive/80 py-4 flex items-center gap-2 min-h-[44px] font-medium transition-colors duration-200 text-left w-full">
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </button>
+                )}
               </div>
             </>
           ) : (
@@ -178,8 +266,12 @@ const Index: React.FC = () => {
       {/* Promotional Popup */}
       <PromoPopup />
       
-      {/* Donation Popup */}
-      <DonationPopup />
+      {/* Auth Modal */}
+      <AuthModal 
+        open={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        mode={authMode}
+      />
     </div>
   );
 };

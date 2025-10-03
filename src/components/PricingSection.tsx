@@ -1,11 +1,22 @@
 import { Check, Sparkles } from "lucide-react";
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
+import { useAuth } from "@/hooks/useAuth";
+import { AuthModal } from "./AuthModal";
+import { SubscriptionModal } from "./SubscriptionModal";
 
 export const PricingSection = () => {
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { user } = useAuth();
+
   const handleSubscribe = () => {
-    // Razorpay integration will be implemented here
-    console.log("Razorpay Key: rzp_live_RGiH0mj7MRwJsu");
+    if (!user) {
+      setShowAuthModal(true);
+    } else {
+      setShowSubscriptionModal(true);
+    }
   };
 
   return (
@@ -103,6 +114,18 @@ export const PricingSection = () => {
             Need a custom plan? <a href="#support" className="text-primary hover:underline font-medium">Contact us</a>
           </p>
         </div>
+
+        {/* Modals */}
+        <AuthModal 
+          open={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          mode="signup"
+        />
+        <SubscriptionModal
+          open={showSubscriptionModal}
+          onClose={() => setShowSubscriptionModal(false)}
+          user={user}
+        />
       </div>
     </section>
   );

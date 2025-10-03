@@ -12,15 +12,22 @@ import WidgetPreview from './WidgetPreview';
 import { Copy, Download, Eye, EyeOff, Sparkles, Crown, Smartphone } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/hooks/useAuth';
+import { AuthModal } from './AuthModal';
+import { SubscriptionModal } from './SubscriptionModal';
 import type { WidgetType, WidgetSize } from '@/types';
 
 const WidgetGenerator: React.FC = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const [showPreview, setShowPreview] = useState(!isMobile); // Hide preview by default on mobile
+  const { user, hasSubscription } = useAuth();
+  const [showPreview, setShowPreview] = useState(!isMobile);
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(false);
   const [exportFormat, setExportFormat] = useState<'html' | 'react' | 'wordpress'>('html');
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signup');
 
   const [config, setConfig] = useState<WidgetConfig>({
     type: 'whatsapp' as WidgetType,
@@ -209,6 +216,26 @@ add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
   };
 
   const copyToClipboard = () => {
+    // Check if user is authenticated and has subscription
+    if (!user) {
+      setAuthMode('signup');
+      setShowAuthModal(true);
+      toast({
+        title: "Sign Up Required",
+        description: "Please create an account to copy widget code.",
+      });
+      return;
+    }
+
+    if (!hasSubscription) {
+      setShowSubscriptionModal(true);
+      toast({
+        title: "Premium Feature",
+        description: "Subscribe to copy and download widget code.",
+      });
+      return;
+    }
+
     const code = generateCode();
     if (code) {
       navigator.clipboard.writeText(code).then(() => {
@@ -250,6 +277,26 @@ add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
   };
 
   const copyToClipboardByFormat = () => {
+    // Check if user is authenticated and has subscription
+    if (!user) {
+      setAuthMode('signup');
+      setShowAuthModal(true);
+      toast({
+        title: "Sign Up Required",
+        description: "Please create an account to copy widget code.",
+      });
+      return;
+    }
+
+    if (!hasSubscription) {
+      setShowSubscriptionModal(true);
+      toast({
+        title: "Premium Feature",
+        description: "Subscribe to copy and download widget code.",
+      });
+      return;
+    }
+
     const code = generateCodeByFormat(exportFormat);
     if (code) {
       navigator.clipboard.writeText(code).then(() => {
@@ -1823,6 +1870,18 @@ add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
           </CardContent>
         </Card>
       </div>
+
+      {/* Auth and Subscription Modals */}
+      <AuthModal 
+        open={showAuthModal} 
+        onClose={() => setShowAuthModal(false)}
+        mode={authMode}
+      />
+      <SubscriptionModal
+        open={showSubscriptionModal}
+        onClose={() => setShowSubscriptionModal(false)}
+        user={user}
+      />
     </section>
   );
 };
