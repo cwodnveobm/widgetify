@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 import PromoPopup from '@/components/PromoPopup';
 import DonationPopup from '@/components/DonationPopup';
 import MobileNavigation from '@/components/MobileNavigation';
+import { PricingSection } from '@/components/PricingSection';
 import { Menu, X, Sparkles, Wifi, WifiOff } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
@@ -162,6 +163,9 @@ const Index: React.FC = () => {
           </div>
           <div id="features">
             <FeaturesSection />
+          </div>
+          <div id="pricing">
+            <PricingSection />
           </div>
           <div id="founder">
             <FounderSection />
