@@ -44,14 +44,18 @@ export const useAuth = () => {
   }, []);
 
   const checkUserSubscription = async (userId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('subscriptions')
       .select('*')
       .eq('user_id', userId)
       .eq('status', 'active')
-      .single();
+      .maybeSingle();
 
-    setHasSubscription(!!data);
+    if (!error && data) {
+      setHasSubscription(true);
+    } else {
+      setHasSubscription(false);
+    }
   };
 
   return { user, session, loading, hasSubscription };
