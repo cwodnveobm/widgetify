@@ -44,7 +44,7 @@ export const SubscriptionModal = ({ open, onClose, user }: SubscriptionModalProp
 
         <div className="space-y-4 py-4">
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-bold text-primary">₹299</span>
+            <span className="text-4xl font-bold text-primary">₹199</span>
             <span className="text-muted-foreground">/month</span>
           </div>
 
