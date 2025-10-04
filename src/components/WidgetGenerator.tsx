@@ -120,6 +120,8 @@ const WidgetGenerator: React.FC = () => {
     blackFridayTitle: 'BLACK FRIDAY DEALS',
     blackFridayEndDate: '2024-11-29',
     blackFridayOffer: 'UP TO 70% OFF!',
+    // Branding
+    removeBranding: false,
   });
 
   const handleConfigChange = (key: keyof WidgetConfig, value: any) => {
@@ -1763,6 +1765,41 @@ add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
                       className="flex-1 text-base"
                     />
                   </div>
+                </div>
+
+                {/* Remove Branding Option (Premium) */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border">
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="removeBranding" className="text-sm font-medium cursor-pointer">
+                        Remove Widgetify Branding
+                      </Label>
+                      {hasSubscription && (
+                        <Crown className="w-4 h-4 text-primary" />
+                      )}
+                    </div>
+                    <Switch
+                      id="removeBranding"
+                      checked={config.removeBranding || false}
+                      onCheckedChange={(checked) => {
+                        if (!hasSubscription) {
+                          toast({
+                            title: "Premium Feature",
+                            description: "Subscribe to remove branding from widgets.",
+                          });
+                          setShowSubscriptionModal(true);
+                        } else {
+                          handleConfigChange('removeBranding', checked);
+                        }
+                      }}
+                      disabled={!hasSubscription}
+                    />
+                  </div>
+                  {!hasSubscription && (
+                    <p className="text-xs text-muted-foreground px-1">
+                      Upgrade to premium to remove the "Powered by Widgetify" branding
+                    </p>
+                  )}
                 </div>
               </div>
 

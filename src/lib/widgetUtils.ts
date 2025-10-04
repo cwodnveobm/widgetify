@@ -143,10 +143,21 @@ export interface WidgetConfig {
   referralReward?: string;
   referralUrl?: string;
   referralCount?: number;
+  // Branding options
+  removeBranding?: boolean;
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
-  const { type, handle, welcomeMessage, position, primaryColor, size, networks, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, amount, currency, paymentDescription, upiId, payeeName, emailAddress, bookingUrl, appStoreUrl, playStoreUrl, feedbackUrl, whatsappNumber, businessName, targetDate, title, countdownStyle, showLabels } = config;
+  const { type, handle, welcomeMessage, position, primaryColor, size, networks, shareText, shareUrl, phoneNumber, reviewUrl, followPlatform, amount, currency, paymentDescription, upiId, payeeName, emailAddress, bookingUrl, appStoreUrl, playStoreUrl, feedbackUrl, whatsappNumber, businessName, targetDate, title, countdownStyle, showLabels, removeBranding } = config;
+  
+  // Helper function to generate watermark HTML
+  const generateWatermark = (customStyle = '') => {
+    if (removeBranding) return '';
+    return `
+          <div class="widgetify-watermark"${customStyle ? ` style="${customStyle}"` : ''}>
+            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+          </div>`;
+  };
   
   const sizeMap = {
     small: '50px',
@@ -397,10 +408,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
                 </svg>
               </button>
             </div>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <script>
@@ -526,9 +534,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
             </button>
           </form>
           
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          ${generateWatermark()}
         </div>
 
         <script>
@@ -803,10 +809,10 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
                 Send My Details
               </button>
             </form>
-            
+            ${!removeBranding ? `
             <div class="lead-popup-footer">
               <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-            </div>
+            </div>` : ''}
           </div>
         </div>
 
@@ -991,9 +997,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
 
           <p class="upi-gateway-note">Supports PhonePe, Google Pay, Paytm, BHIM & all UPI apps<br>Secure payment powered by UPI</p>
           
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          ${generateWatermark()}
         </div>
 
         <script>
@@ -1254,10 +1258,8 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
 
   <p class="upi-gateway-note">Supports PhonePe, Google Pay, Paytm, BHIM & all UPI apps<br>Secure payment powered by UPI</p>
   
-  <div class="widgetify-watermark">
-    <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+  ${generateWatermark()}
   </div>
-</div>
 
 <script>
   function toggleWidgetifyPayment() {
@@ -1364,9 +1366,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
 
           <p class="upi-gateway-note">Your message will be sent directly to our WhatsApp<br>We typically respond within a few minutes</p>
           
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          ${generateWatermark()}
         </div>
 
         <script>
@@ -1425,10 +1425,7 @@ Sent via ${contactBusinessName} Contact Form\`;
               <textarea placeholder="Your Message" required rows="4" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; resize: vertical;"></textarea>
               <button type="submit" style="width: 100%; padding: 12px; background: ${buttonColor}; color: white; border: none; border-radius: 4px; cursor: pointer;">Send Email</button>
             </form>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <script>
@@ -1475,10 +1472,7 @@ Sent via ${contactBusinessName} Contact Form\`;
                 </svg>
               </button>
             </div>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <script>
@@ -1533,10 +1527,7 @@ Sent via ${contactBusinessName} Contact Form\`;
             <input type="text" placeholder="Your Name" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
             <input type="email" placeholder="Your Email" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px;">
             <button onclick="bookAppointment()" style="width: 100%; padding: 12px; background: ${buttonColor}; color: white; border: none; border-radius: 4px; cursor: pointer;">Book Appointment</button>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <script>
@@ -1578,10 +1569,7 @@ Sent via ${contactBusinessName} Contact Form\`;
               </div>
               <button type="submit" style="width: 100%; padding: 12px; background: ${buttonColor}; color: white; border: none; border-radius: 4px; cursor: pointer;">Subscribe Now</button>
             </form>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <script>
@@ -1630,10 +1618,7 @@ Sent via ${contactBusinessName} Contact Form\`;
               <textarea placeholder="Your feedback..." required rows="4" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; resize: vertical;"></textarea>
               <button type="submit" style="width: 100%; padding: 12px; background: ${buttonColor}; color: white; border: none; border-radius: 4px; cursor: pointer;">Send Feedback</button>
             </form>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <script>
@@ -1698,10 +1683,7 @@ Sent via ${contactBusinessName} Contact Form\`;
                 Download for Android
               </button>
             </div>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <script>
@@ -1771,10 +1753,7 @@ Sent via ${contactBusinessName} Contact Form\`;
                 </svg>
               </button>
             </div>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <script>
@@ -1803,10 +1782,7 @@ Sent via ${contactBusinessName} Contact Form\`;
               <div id="google_translate_element" style="margin: 10px 0;"></div>
               <p style="margin: 10px 0 0 0; font-size: 10px; color: #9ca3af;">This widget integrates Google Translate for automatic page translation.</p>
             </div>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <script>
@@ -2129,10 +2105,7 @@ Sent via ${contactBusinessName} Contact Form\`;
           </div>
         </div>
 
-        ${!config.isPremium ? `
-        <div class="widgetify-watermark" style="position: fixed; bottom: 10px; left: 10px; z-index: 10001; font-size: 10px; opacity: 0.7;">
-          <a href="https://widgetify-two.vercel.app" target="_blank" style="color: #666; text-decoration: none;">Powered by Widgetify</a>
-        </div>` : ''}
+        ${generateWatermark('position: fixed; bottom: 10px; left: 10px; z-index: 10001; font-size: 10px; opacity: 0.7;')}
 
         <script>
           (function() {
@@ -2301,10 +2274,7 @@ Sent via ${contactBusinessName} Contact Form\`;
           </div>
         </div>
 
-        ${!config.isPremium ? `
-        <div class="widgetify-watermark" style="position: fixed; ${config.bannerPosition === 'bottom' ? 'bottom: 60px;' : 'top: 60px;'} right: 10px; z-index: 10000; font-size: 10px; opacity: 0.7;">
-          <a href="https://widgetify-two.vercel.app" target="_blank" style="color: #666; text-decoration: none;">Powered by Widgetify</a>
-        </div>` : ''}
+        ${generateWatermark(`position: fixed; ${config.bannerPosition === 'bottom' ? 'bottom: 60px;' : 'top: 60px;'} right: 10px; z-index: 10000; font-size: 10px; opacity: 0.7;`)}
 
         <script>
           window.closeBanner = function() {
@@ -2537,10 +2507,7 @@ Sent via ${contactBusinessName} Contact Form\`;
           </div>
         </div>
 
-        ${!config.isPremium ? `
-        <div class="widgetify-watermark" style="position: fixed; bottom: 10px; ${position === 'left' ? 'right' : 'left'}: 10px; z-index: 998; font-size: 10px; opacity: 0.7;">
-          <a href="https://widgetify-two.vercel.app" target="_blank" style="color: #666; text-decoration: none;">Powered by Widgetify</a>
-        </div>` : ''}
+        ${generateWatermark(`position: fixed; bottom: 10px; ${position === 'left' ? 'right' : 'left'}: 10px; z-index: 998; font-size: 10px; opacity: 0.7;`)}
 
         <script>
           const PERPLEXITY_API_KEY = '${config.perplexityApiKey || ''}';
@@ -2673,10 +2640,7 @@ Sent via ${contactBusinessName} Contact Form\`;
           </div>
           <div class="widgetify-content">
             <p>Start a conversation!</p>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <script>
@@ -2779,10 +2743,7 @@ Sent via ${contactBusinessName} Contact Form\`;
           </div>
           <div class="widgetify-content" style="padding:0;">
             <iframe src="${config.pdfUrl || 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf'}" title="PDF Document" style="width:100%;height:480px;border:0;"></iframe>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
         <script>
           function toggleWidgetifyPdf(){ const p=document.getElementById('widgetify-pdf-popup'); if(p) p.classList.toggle('show'); }
@@ -2805,10 +2766,7 @@ Sent via ${contactBusinessName} Contact Form\`;
             <h3 id="video-title">Floating Video</h3>
             <button class="widgetify-close" onclick="toggleWidgetifyVideo()" aria-label="Close video">×</button>
           </div>
-          <div class="widgetify-content" style="padding:0;">${'${inner}'}</div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          <div class="widgetify-content" style="padding:0;">${'${inner}'}</div>${generateWatermark()}
         </div>
         <script>
           function toggleWidgetifyVideo(){ const p=document.getElementById('widgetify-video-popup'); if(p) p.classList.toggle('show'); }
@@ -2845,10 +2803,7 @@ Sent via ${contactBusinessName} Contact Form\`;
           </div>
           <div class="widgetify-content" style="padding: 0;">
             ${innerContent}
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <script>
@@ -2910,10 +2865,7 @@ Sent via ${contactBusinessName} Contact Form\`;
             </div>
           </div>
           
-          ${!config.isPremium ? `
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>` : ''}
+          ${generateWatermark()}
         </div>
 
         <style>
@@ -3034,10 +2986,7 @@ Sent via ${contactBusinessName} Contact Form\`;
                 </div>
               `).join('')}
             </div>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <style>
@@ -3083,10 +3032,7 @@ Sent via ${contactBusinessName} Contact Form\`;
               ` : ''}
             </div>
             <button onclick="copySignature()" style="width: 100%; padding: 12px; background: ${primaryColor}; color: white; border: none; border-radius: 6px; cursor: pointer; margin-top: 15px;">📋 Copy Signature</button>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <style>
@@ -3145,10 +3091,7 @@ Sent via ${contactBusinessName} Contact Form\`;
               <div class="time-unit"><span id="seconds">00</span><label>Seconds</label></div>
             </div>
             <p style="text-align: center; margin-top: 15px; color: #6b7280;">${config.holidayMessage || `Time until ${holidayName}!`}</p>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <style>
@@ -3251,10 +3194,7 @@ Sent via ${contactBusinessName} Contact Form\`;
               <h2 style="margin: 0 0 10px 0; color: white;">${greeting.text}</h2>
               <p style="margin: 0; opacity: 0.9; font-size: 14px;">${config.customGreeting || 'Wishing you joy and happiness!'}</p>
             </div>
-          </div>
-          <div class="widgetify-watermark" style="border-top: 1px solid rgba(255,255,255,0.2);">
-            <a href="https://widgetify-two.vercel.app" target="_blank" style="color: rgba(255,255,255,0.8);">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark('border-top: 1px solid rgba(255,255,255,0.2);')}
         </div>
 
         <script>
@@ -3302,10 +3242,7 @@ Sent via ${contactBusinessName} Contact Form\`;
               
               <button onclick="window.open('#', '_blank')" style="background: #ff6b6b; color: white; border: none; padding: 12px 30px; border-radius: 25px; font-weight: 700; cursor: pointer; font-size: 16px; margin-top: 10px;">🛒 SHOP NOW</button>
             </div>
-          </div>
-          <div class="widgetify-watermark" style="background: #ff6b6b;">
-            <a href="https://widgetify-two.vercel.app" target="_blank" style="color: white;">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark('background: #ff6b6b;')}
         </div>
 
         <style>
@@ -3403,10 +3340,7 @@ Sent via ${contactBusinessName} Contact Form\`;
           <div style="padding: 16px; border-top: 1px solid #e5e7eb; display: flex; gap: 10px;">
             <button id="survey-back" onclick="surveyBack()" style="padding: 10px 20px; border: 1px solid #e5e7eb; background: white; border-radius: 6px; cursor: pointer; display: none;">Back</button>
             <button id="survey-next" onclick="surveyNext()" style="flex: 1; padding: 10px; background: ${buttonColor}; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Next</button>
-          </div>
-          <div class="widgetify-watermark">
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
-          </div>
+          </div>${generateWatermark()}
         </div>
 
         <script>
