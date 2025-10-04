@@ -75,9 +75,14 @@ export const SubscriptionModal = ({ open, onClose, user }: SubscriptionModalProp
             Subscribe Now
           </Button>
 
-          <p className="text-xs text-center text-muted-foreground">
-            Secure payment powered by Razorpay
-          </p>
+          <div className="space-y-2">
+            <p className="text-xs text-center text-muted-foreground">
+              Secure payment powered by Razorpay
+            </p>
+            <p className="text-xs text-center text-muted-foreground">
+              Please note that this payment link isn't specifically created for this idea, but you can still use it to make a payment for your overall requirements.
+            </p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
