@@ -24,9 +24,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from 'sonner';
-import { Menu, X, Sparkles, Wifi, WifiOff } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { Button } from '@/components/ui/button';
 
 const Index: React.FC = () => {
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -177,7 +174,7 @@ const Index: React.FC = () => {
             )}
           </div>
           
-          {isMobile && (
+          {isMobile ? (
             <>
               <button 
                 id="menu-toggle-button" 
