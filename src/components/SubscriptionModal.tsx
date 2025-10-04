@@ -1,6 +1,4 @@
-import { useState } from "react";
 import { User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
 import {
   Dialog,
   DialogContent,
@@ -18,72 +16,17 @@ interface SubscriptionModalProps {
   user: User | null;
 }
 
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
-}
-
 export const SubscriptionModal = ({ open, onClose, user }: SubscriptionModalProps) => {
-  const [loading, setLoading] = useState(false);
 
-  const handleSubscribe = async () => {
+  const handleSubscribe = () => {
     if (!user) {
       toast.error("Please sign in to subscribe");
       return;
     }
 
-    setLoading(true);
-
-    try {
-      // Call edge function to create Razorpay order
-      const { data, error } = await supabase.functions.invoke('create-razorpay-order', {
-        body: { amount: 29900 } // ₹299 in paise
-      });
-
-      if (error) throw error;
-
-      const options = {
-        key: 'rzp_live_RGiH0mj7MRwJsu',
-        amount: data.amount,
-        currency: data.currency,
-        name: 'Widgetify Premium',
-        description: 'Premium Subscription - Monthly',
-        order_id: data.id,
-        handler: async function (response: any) {
-          // Verify payment
-          const { error: verifyError } = await supabase.functions.invoke('verify-razorpay-payment', {
-            body: {
-              razorpay_order_id: response.razorpay_order_id,
-              razorpay_payment_id: response.razorpay_payment_id,
-              razorpay_signature: response.razorpay_signature,
-            }
-          });
-
-          if (verifyError) {
-            toast.error("Payment verification failed");
-            return;
-          }
-
-          toast.success("Subscription activated successfully!");
-          onClose();
-          window.location.reload();
-        },
-        prefill: {
-          email: user.email,
-        },
-        theme: {
-          color: '#6366f1'
-        }
-      };
-
-      const razorpay = new window.Razorpay(options);
-      razorpay.open();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to initiate payment");
-    } finally {
-      setLoading(false);
-    }
+    // Open Razorpay payment link
+    window.open('https://rzp.io/rzp/SccKXCI7', '_blank');
+    onClose();
   };
 
   return (
@@ -128,9 +71,8 @@ export const SubscriptionModal = ({ open, onClose, user }: SubscriptionModalProp
             onClick={handleSubscribe}
             className="w-full"
             size="lg"
-            disabled={loading}
           >
-            {loading ? "Processing..." : "Subscribe Now"}
+            Subscribe Now
           </Button>
 
           <p className="text-xs text-center text-muted-foreground">
