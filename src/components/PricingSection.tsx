@@ -43,10 +43,10 @@ export const PricingSection = () => {
             <div className="relative p-8">
               <div className="mb-8">
                 <h3 className="text-2xl font-bold mb-2">Premium</h3>
-                <div className="flex items-baseline gap-2 mb-4">
-                  <span className="text-5xl font-bold text-primary">₹199</span>
-                  <span className="text-muted-foreground">/month</span>
-                </div>
+            <div className="flex items-baseline gap-2 mb-4">
+              <span className="text-5xl font-bold text-primary">₹299</span>
+              <span className="text-muted-foreground">/month</span>
+            </div>
                 <p className="text-muted-foreground">
                   Everything you need to create stunning, professional widgets
                 </p>
