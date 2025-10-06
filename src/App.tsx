@@ -10,6 +10,8 @@ import Preloader from "@/components/Preloader";
 import Index from "./pages/Index";
 import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
+import Integrations from "./pages/Integrations";
+import CustomBuilder from "./pages/CustomBuilder";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -67,6 +69,8 @@ const App = () => {
               <Route path="/generate" element={<Index />} />
               <Route path="/features" element={<Index />} />
               <Route path="/founder" element={<Index />} />
+              <Route path="/integrations" element={<Integrations />} />
+              <Route path="/custom-builder" element={<CustomBuilder />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

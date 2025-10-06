@@ -9,10 +9,11 @@ import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { generateWidgetCode, WidgetConfig } from '@/lib/widgetUtils';
 import WidgetPreview from './WidgetPreview';
-import { Copy, Download, Eye, EyeOff, Sparkles, Crown, Smartphone } from 'lucide-react';
+import { Copy, Download, Eye, EyeOff, Sparkles, Crown, Smartphone, Star } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/hooks/useAuth';
+import { useFavoriteWidgets } from '@/hooks/useFavoriteWidgets';
 import { AuthModal } from './AuthModal';
 import { SubscriptionModal } from './SubscriptionModal';
 import type { WidgetType, WidgetSize } from '@/types';
@@ -21,9 +22,11 @@ const WidgetGenerator: React.FC = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
   const { user, hasSubscription } = useAuth();
+  const { favorites, toggleFavorite, isFavorite } = useFavoriteWidgets();
   const [showPreview, setShowPreview] = useState(!isMobile);
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(false);
+  const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const [exportFormat, setExportFormat] = useState<'html' | 'react' | 'wordpress' | 'vue' | 'angular' | 'svelte' | 'flutter' | 'django' | 'laravel' | 'aspnet' | 'shopify'>('html');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
@@ -1879,7 +1882,18 @@ ${widgetCode}
             <CardContent className="space-y-4 md:space-y-6">
               {/* Widget Type Selection */}
               <div className="space-y-2">
-                <Label htmlFor="widgetType" className="text-sm font-medium">Widget Type</Label>
+                <div className="flex items-center justify-between mb-2">
+                  <Label htmlFor="widgetType" className="text-sm font-medium">Widget Type</Label>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowOnlyFavorites(!showOnlyFavorites)}
+                    className={showOnlyFavorites ? "text-yellow-500" : ""}
+                  >
+                    <Star className={`w-4 h-4 mr-1 ${showOnlyFavorites ? "fill-yellow-500" : ""}`} />
+                    {showOnlyFavorites ? "Show All" : "Favorites"}
+                  </Button>
+                </div>
                 <Select
                   value={config.type}
                   onValueChange={(value: WidgetType) => handleConfigChange('type', value)}
@@ -1888,7 +1902,18 @@ ${widgetCode}
                     <SelectValue />
                   </SelectTrigger>
                    <SelectContent>
-     <SelectItem value="whatsapp">WhatsApp Chat</SelectItem>
+     {(!showOnlyFavorites || isFavorite('whatsapp')) && <SelectItem value="whatsapp">
+       <div className="flex items-center justify-between w-full">
+         WhatsApp Chat
+         <Star
+           className={`w-4 h-4 ml-2 cursor-pointer ${isFavorite('whatsapp') ? 'fill-yellow-500 text-yellow-500' : 'text-gray-300'}`}
+           onClick={(e) => {
+             e.stopPropagation();
+             toggleFavorite('whatsapp');
+           }}
+         />
+       </div>
+     </SelectItem>}
                      <SelectItem value="whatsapp-form">WhatsApp Form</SelectItem>
                      <SelectItem value="lead-capture-popup">Lead Capture Popup</SelectItem>
                      <SelectItem value="exit-intent-popup">Exit Intent Popup</SelectItem>
