@@ -21,7 +21,7 @@ import type { WidgetType, WidgetSize } from '@/types';
 const WidgetGenerator: React.FC = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const { user, hasSubscription } = useAuth();
+  const { user, hasSubscription, grantPremiumAccess } = useAuth();
   const { favorites, toggleFavorite, isFavorite } = useFavoriteWidgets();
   const [showPreview, setShowPreview] = useState(!isMobile);
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
@@ -126,6 +126,14 @@ const WidgetGenerator: React.FC = () => {
     // Branding
     removeBranding: false,
   });
+
+  // Automatically unlock premium if user has subscription
+  React.useEffect(() => {
+    if (hasSubscription) {
+      setIsPremiumUnlocked(true);
+      setSelectedTier('premium');
+    }
+  }, [hasSubscription]);
 
   const handleConfigChange = (key: keyof WidgetConfig, value: any) => {
     setConfig(prev => ({ ...prev, [key]: value }));
@@ -537,20 +545,38 @@ ${widgetCode}
     }
   };
 
-  const handlePremiumUpgrade = () => {
+  const handlePremiumUpgrade = async () => {
+    if (!user) {
+      setAuthMode('signup');
+      setShowAuthModal(true);
+      toast({
+        title: "Sign Up Required",
+        description: "Please create an account first.",
+      });
+      return;
+    }
+
     toast({
-      title: "Processing Payment...",
-      description: "Please wait while we process your upgrade.",
+      title: "Activating Premium...",
+      description: "Please wait while we activate your premium access.",
     });
     
-    setTimeout(() => {
+    const result = await grantPremiumAccess();
+    
+    if (result.success) {
       setIsPremiumUnlocked(true);
       setSelectedTier('premium');
       toast({
         title: "Premium Unlocked! 🎉",
-        description: "You now have access to watermark-free widgets.",
+        description: "You now have access to all premium features including watermark-free widgets.",
       });
-    }, 2000);
+    } else {
+      toast({
+        title: "Activation Failed",
+        description: result.error || "Failed to activate premium access. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   const renderFormFields = () => {
