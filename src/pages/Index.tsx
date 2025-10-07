@@ -205,6 +205,12 @@ const Index: React.FC = () => {
                 <button onClick={() => scrollToSection('founder')} className="text-muted-foreground hover:text-primary py-4 flex items-center justify-between border-b border-border pb-3 min-h-[44px] font-medium transition-colors duration-200 text-left">
                   Founder
                 </button>
+                <Link to="/integrations" className="text-muted-foreground hover:text-primary py-4 flex items-center justify-between border-b border-border pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
+                  Integrations
+                </Link>
+                <Link to="/custom-builder" className="text-muted-foreground hover:text-primary py-4 flex items-center justify-between border-b border-border pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
+                  Custom Builder
+                </Link>
                 <Link to="/support" className="text-muted-foreground hover:text-primary py-4 flex items-center justify-between border-b border-border pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
                   Support
                 </Link>
@@ -232,6 +238,8 @@ const Index: React.FC = () => {
               <button onClick={() => scrollToSection('widget-generator')} className="text-muted-foreground hover:text-primary font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full">Generate</button>
               <button onClick={() => scrollToSection('features')} className="text-muted-foreground hover:text-primary font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full">Features</button>
               <button onClick={() => scrollToSection('founder')} className="text-muted-foreground hover:text-primary font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full">Founder</button>
+              <Link to="/integrations" className="text-muted-foreground hover:text-primary font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full">Integrations</Link>
+              <Link to="/custom-builder" className="text-muted-foreground hover:text-primary font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full">Custom Builder</Link>
               <Link to="/support" className="text-muted-foreground hover:text-primary font-medium transition-colors duration-200 relative after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-[-4px] after:left-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full">Support</Link>
             </nav>
           )}
