@@ -7,6 +7,7 @@ import FeaturesSection from '@/components/FeaturesSection';
 import FounderSection from '@/components/FounderSection';
 import Footer from '@/components/Footer';
 import PromoPopup from '@/components/PromoPopup';
+import StoreLinkAd from '@/components/StoreLinkAd';
 import MobileNavigation from '@/components/MobileNavigation';
 import { PricingSection } from '@/components/PricingSection';
 import { useAuth } from '@/hooks/useAuth';
@@ -270,6 +271,9 @@ const Index: React.FC = () => {
       
       {/* Promotional Popup */}
       <PromoPopup />
+      
+      {/* Store.link Advertisement */}
+      <StoreLinkAd />
       
       {/* Auth Modal */}
       <AuthModal 
