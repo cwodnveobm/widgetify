@@ -25,7 +25,7 @@ export const SubscriptionModal = ({ open, onClose, user }: SubscriptionModalProp
     }
 
     // Open Razorpay payment link
-    window.open('https://rzp.io/rzp/rYB4zouV', '_blank');
+    window.open('https://razorpay.me/@adnan4402?amount=kXxURMaXFk%2Bmrv%2B9uGrYpg%3D%3D', '_blank');
     onClose();
   };
 
