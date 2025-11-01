@@ -19,7 +19,7 @@ const Integrations = () => {
       id: "webflow",
       name: "Webflow",
       description: "Add widgets to your Webflow sites with custom code embed",
-      logo: "/lovable-uploads/f3abf221-51f1-4f78-86e7-68587902f35a.png",
+      logo: "/lovable-uploads/Webflow.jpeg",
       instructions: [
         "Generate your widget code from the Widget Generator",
         "In Webflow Designer, add an Embed component where you want the widget",
@@ -32,7 +32,7 @@ const Integrations = () => {
       id: "wix",
       name: "Wix",
       description: "Integrate widgets into your Wix website using HTML iframe",
-      logo: "/lovable-uploads/82cc7537-74e6-4d4f-8c9b-18fc07568b45.png",
+      logo: "/lovable-uploads/wix.jpeg",
       instructions: [
         "Create your widget and copy the HTML code",
         "In Wix Editor, click '+' and go to Embed Code",
@@ -45,7 +45,7 @@ const Integrations = () => {
       id: "squarespace",
       name: "Squarespace",
       description: "Embed widgets in Squarespace with Code Blocks",
-      logo: "/lovable-uploads/08c2f5ff-5a6f-4a3e-8470-7f98661e663f.png",
+      logo: "/lovable-uploads/squarespace.jpeg",
       instructions: [
         "Generate widget code from Widgetify",
         "In Squarespace, add a Code Block to your page",
