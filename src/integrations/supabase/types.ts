@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      custom_widgets: {
+        Row: {
+          background_color: string
+          border_radius: string | null
+          button_action: string | null
+          button_color: string
+          button_text: string
+          created_at: string
+          custom_css: string | null
+          description: string | null
+          font_family: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          position: string
+          shadow: string | null
+          size: string
+          text_color: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          background_color?: string
+          border_radius?: string | null
+          button_action?: string | null
+          button_color?: string
+          button_text: string
+          created_at?: string
+          custom_css?: string | null
+          description?: string | null
+          font_family?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          position?: string
+          shadow?: string | null
+          size?: string
+          text_color?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          background_color?: string
+          border_radius?: string | null
+          button_action?: string | null
+          button_color?: string
+          button_text?: string
+          created_at?: string
+          custom_css?: string | null
+          description?: string | null
+          font_family?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          position?: string
+          shadow?: string | null
+          size?: string
+          text_color?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       favorite_widgets: {
         Row: {
           created_at: string
