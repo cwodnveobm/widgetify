@@ -2,6 +2,8 @@
 import React from 'react';
 import ReferAFriend from '@/components/ReferAFriend';
 import { Button } from '@/components/ui/button';
+import { Linkedin, Instagram } from 'lucide-react';
+import { FaXTwitter } from 'react-icons/fa6';
 
 const Footer: React.FC = () => {
   return <footer className="bg-secondary/5 text-muted-foreground border-t border-border">
@@ -59,7 +61,36 @@ const Footer: React.FC = () => {
         
         <div className="border-t border-border mt-8 md:mt-12 pt-6 md:pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs md:text-sm text-center md:text-left text-muted-foreground">© 2025 Widgetify. All rights reserved | Powered by Muhammed Adnan</p>
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
+            <div className="flex gap-3">
+              <a 
+                href="https://www.linkedin.com/in/muhammedadnanvv/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="LinkedIn"
+              >
+                <Linkedin size={20} />
+              </a>
+              <a 
+                href="https://www.instagram.com/adnanvv.ad/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram size={20} />
+              </a>
+              <a 
+                href="https://x.com/MuhammadAd93421" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary transition-colors"
+                aria-label="X (Twitter)"
+              >
+                <FaXTwitter size={20} />
+              </a>
+            </div>
             <ReferAFriend />
           </div>
         </div>
