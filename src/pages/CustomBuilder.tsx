@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthModal } from "@/components/AuthModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Navigation } from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 interface CustomWidget {
   id: string;
@@ -33,10 +35,16 @@ interface CustomWidget {
 const CustomBuilder = () => {
   const { user, loading } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [savedWidgets, setSavedWidgets] = useState<CustomWidget[]>([]);
   const [editingWidget, setEditingWidget] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const openAuthModal = (mode: 'signin' | 'signup') => {
+    setAuthMode(mode);
+    setShowAuthModal(true);
+  };
 
   const [widgetConfig, setWidgetConfig] = useState({
     name: "My Widget",
@@ -364,24 +372,29 @@ ${logoHtml}  <h3 style="color: ${widgetConfig.textColor}; margin: 0 0 8px 0; fon
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
-        <Card className="p-8 max-w-md text-center">
-          <h2 className="text-2xl font-bold mb-4">Sign In Required</h2>
-          <p className="text-muted-foreground mb-6">
-            Please sign in to access the Custom Widget Builder and manage your widgets.
-          </p>
-          <Button onClick={() => setShowAuthModal(true)} className="w-full">
-            Sign In
-          </Button>
-        </Card>
-        <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+        <Navigation onAuthModalOpen={openAuthModal} />
+        <div className="flex-1 flex items-center justify-center p-4">
+          <Card className="p-8 max-w-md text-center">
+            <h2 className="text-2xl font-bold mb-4">Sign In Required</h2>
+            <p className="text-muted-foreground mb-6">
+              Please sign in to access the Custom Widget Builder and manage your widgets.
+            </p>
+            <Button onClick={() => openAuthModal('signin')} className="w-full">
+              Sign In
+            </Button>
+          </Card>
+        </div>
+        <Footer />
+        <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} mode={authMode} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
-      <div className="container mx-auto px-4 py-12">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+      <Navigation onAuthModalOpen={openAuthModal} />
+      <div className="flex-1 container mx-auto px-4 py-12">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
@@ -769,7 +782,8 @@ ${logoHtml}  <h3 style="color: ${widgetConfig.textColor}; margin: 0 0 8px 0; fon
         </div>
       </div>
 
-      <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} />
+      <Footer />
+      <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} mode={authMode} />
     </div>
   );
 };

@@ -1,25 +1,22 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import { LifeBuoy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Navigation } from '@/components/Navigation';
+import { AuthModal } from '@/components/AuthModal';
+import Footer from '@/components/Footer';
 const Support: React.FC = () => {
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+
+  const openAuthModal = (mode: 'signin' | 'signup') => {
+    setAuthMode(mode);
+    setShowAuthModal(true);
+  };
+
   return <div className="min-h-screen flex flex-col">
-      <header className="bg-background/80 backdrop-blur-md border-b border-border py-4 px-6 sticky top-0 z-40 shadow-soft">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="text-2xl font-bold gradient-text">Widgetify</div>
-          <nav className="hidden md:flex gap-6">
-            <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">Home</Link>
-            <Link to="/support" className="text-primary font-medium">Support</Link>
-          </nav>
-          <div className="md:hidden">
-            <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Navigation onAuthModalOpen={openAuthModal} />
       
       <main className="flex-grow container mx-auto px-4 py-8 md:py-12">
         <div className="max-w-4xl mx-auto">
@@ -101,6 +98,9 @@ const Support: React.FC = () => {
           </div>
         </div>
       </main>
+
+      <Footer />
+      <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} mode={authMode} />
     </div>;
 };
 export default Support;

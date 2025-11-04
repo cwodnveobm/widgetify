@@ -3,9 +3,19 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink, Copy, Check } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Navigation } from "@/components/Navigation";
+import { AuthModal } from "@/components/AuthModal";
+import Footer from "@/components/Footer";
 
 const Integrations = () => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+
+  const openAuthModal = (mode: 'signin' | 'signup') => {
+    setAuthMode(mode);
+    setShowAuthModal(true);
+  };
 
   const handleCopy = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -83,7 +93,8 @@ const Integrations = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+      <Navigation onAuthModalOpen={openAuthModal} />
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
@@ -169,6 +180,14 @@ const Integrations = () => {
           </Card>
         </div>
       </div>
+      
+      <Footer />
+      
+      <AuthModal 
+        open={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        mode={authMode}
+      />
     </div>
   );
 };
