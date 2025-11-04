@@ -53,6 +53,32 @@ const Integrations = () => {
         "Save and preview to test functionality"
       ],
       docUrl: "https://support.squarespace.com/hc/en-us/articles/205815928-Code-Blocks"
+    },
+    {
+      id: "framer",
+      name: "Framer",
+      description: "Add widgets to Framer sites with custom code components",
+      logo: "/lovable-uploads/framer.png",
+      instructions: [
+        "Generate your widget code from Widgetify",
+        "In Framer, add a Code Component to your canvas",
+        "Paste the widget HTML/JavaScript code",
+        "Publish your site to make the widget live"
+      ],
+      docUrl: "https://www.framer.com/developers/guides/custom-code/"
+    },
+    {
+      id: "bubble",
+      name: "Bubble",
+      description: "Integrate widgets into Bubble apps using HTML elements",
+      logo: "/lovable-uploads/bubble.png",
+      instructions: [
+        "Create your widget and copy the embed code",
+        "In Bubble Editor, add an HTML element to your page",
+        "Paste your widget code into the HTML element",
+        "Preview and publish to see the widget in action"
+      ],
+      docUrl: "https://manual.bubble.io/core-resources/api/the-bubble-api"
     }
   ];
 
