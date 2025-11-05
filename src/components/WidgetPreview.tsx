@@ -288,6 +288,12 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return <Sparkles size={iconSize} color="white" />;
       case 'referral-tracking':
         return <Users size={iconSize} color="white" />;
+      case 'lead-magnet':
+        return <Download size={iconSize} color="white" />;
+      case 'smart-query':
+        return <MessageSquare size={iconSize} color="white" />;
+      case 'service-estimator':
+        return <TrendingUp size={iconSize} color="white" />;
       default:
         return <MessageCircle size={iconSize} color="white" />;
     }
@@ -755,6 +761,128 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     );
   };
 
+  const renderLeadMagnetPopup = () => {
+    return (
+      <div style={popupStyle} className="animate-fade-in">
+        <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-lg border-b border-border">
+          <div className="font-medium text-foreground">{config.resourceTitle || 'Free Resource'}</div>
+          <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+        </div>
+        <div className="flex-grow p-3 bg-background overflow-y-auto">
+          <p className="text-xs text-muted-foreground mb-3">{config.resourceDescription || 'Enter your details to download this free resource.'}</p>
+          <div className="space-y-2">
+            <input type="text" placeholder="Your Name" className="w-full px-3 py-2 border border-input rounded text-xs bg-background" />
+            <input type="email" placeholder="Your Email" className="w-full px-3 py-2 border border-input rounded text-xs bg-background" />
+            <label className="flex items-start gap-2 text-xs text-muted-foreground">
+              <input type="checkbox" className="mt-1" />
+              <span>I agree to receive emails and updates</span>
+            </label>
+            <button style={{ backgroundColor: config.primaryColor }} className="w-full text-white py-2 rounded font-medium hover:opacity-90 transition-opacity text-xs mt-3">
+              Download Now
+            </button>
+          </div>
+        </div>
+        <div className="bg-muted/50 border-t border-border p-2 text-center">
+          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
+            Powered by Widgetify
+          </a>
+        </div>
+      </div>
+    );
+  };
+
+  const renderSmartQueryPopup = () => {
+    return (
+      <div style={{ ...popupStyle, height: '450px' }} className="animate-fade-in">
+        <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-lg border-b border-border">
+          <div className="font-medium text-foreground">{config.queryTitle || 'Submit Your Query'}</div>
+          <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+        </div>
+        <div className="flex-grow p-3 bg-background overflow-y-auto">
+          <div className="space-y-2">
+            <div>
+              <label className="block text-xs font-medium mb-1">Query Type</label>
+              <select className="w-full px-2 py-1.5 border border-input rounded text-xs bg-background">
+                <option>General Inquiry</option>
+                <option>Technical Support</option>
+                <option>Sales Question</option>
+                <option>Feature Request</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-medium mb-1">Priority</label>
+              <select className="w-full px-2 py-1.5 border border-input rounded text-xs bg-background">
+                <option>Low - Can wait</option>
+                <option>Medium - Normal</option>
+                <option>High - Urgent</option>
+              </select>
+            </div>
+            <input type="text" placeholder="Your Name" className="w-full px-3 py-1.5 border border-input rounded text-xs bg-background" />
+            <input type="email" placeholder="Your Email" className="w-full px-3 py-1.5 border border-input rounded text-xs bg-background" />
+            <input type="tel" placeholder="Phone (Optional)" className="w-full px-3 py-1.5 border border-input rounded text-xs bg-background" />
+            <textarea placeholder="Your message..." rows={3} className="w-full px-3 py-1.5 border border-input rounded text-xs bg-background resize-none"></textarea>
+            <button style={{ backgroundColor: config.primaryColor }} className="w-full text-white py-2 rounded font-medium hover:opacity-90 transition-opacity text-xs mt-2">
+              Submit Query
+            </button>
+          </div>
+        </div>
+        <div className="bg-muted/50 border-t border-border p-2 text-center">
+          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
+            Powered by Widgetify
+          </a>
+        </div>
+      </div>
+    );
+  };
+
+  const renderServiceEstimatorPopup = () => {
+    const services = config.services || [
+      { name: 'Web Design', basePrice: 500, unit: 'page' },
+      { name: 'SEO Optimization', basePrice: 300, unit: 'month' }
+    ];
+
+    return (
+      <div style={{ ...popupStyle, height: '450px' }} className="animate-fade-in">
+        <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-lg border-b border-border">
+          <div className="font-medium text-foreground">{config.estimatorTitle || 'Service Cost Estimator'}</div>
+          <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+        </div>
+        <div className="flex-grow p-3 bg-background overflow-y-auto">
+          <p className="text-xs text-muted-foreground mb-3">Select services to get an estimate:</p>
+          <div className="space-y-2">
+            {services.slice(0, 2).map((service, idx) => (
+              <div key={idx} className="border border-input rounded p-2">
+                <div className="flex items-center justify-between mb-1">
+                  <label className="flex items-center gap-2 text-xs font-medium">
+                    <input type="checkbox" />
+                    {service.name}
+                  </label>
+                  <span className="text-xs text-muted-foreground">${service.basePrice}/{service.unit}</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-muted-foreground">Qty:</span>
+                  <input type="number" min="1" defaultValue="1" className="w-16 px-2 py-1 border border-input rounded bg-background" />
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ backgroundColor: `${config.primaryColor}15` }} className="mt-3 p-3 rounded text-center">
+            <div className="text-xs text-muted-foreground mb-1">Estimated Total</div>
+            <div style={{ color: config.primaryColor }} className="text-2xl font-bold">$0</div>
+          </div>
+          <button style={{ backgroundColor: config.primaryColor }} className="w-full text-white py-2 rounded font-medium hover:opacity-90 transition-opacity text-xs mt-3">
+            Request Detailed Quote
+          </button>
+        </div>
+        <div className="bg-muted/50 border-t border-border p-2 text-center">
+          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
+            Powered by Widgetify
+          </a>
+        </div>
+      </div>
+    );
+  };
+
   const getWidgetContent = () => {
     if (type === 'social-share') {
       return renderSocialButtons();
@@ -790,6 +918,18 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     
     if (type === 'spotify-embed') {
       return renderSpotifyPopup();
+    }
+    
+    if (type === 'lead-magnet') {
+      return renderLeadMagnetPopup();
+    }
+    
+    if (type === 'smart-query') {
+      return renderSmartQueryPopup();
+    }
+    
+    if (type === 'service-estimator') {
+      return renderServiceEstimatorPopup();
     }
     
     if (type === 'call-now' || type === 'review-now' || type === 'follow-us' || type === 'back-to-top' || type === 'dark-mode-toggle' || type === 'click-to-copy') {
@@ -878,6 +1018,11 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         window.print();
         break;
       case 'ai-seo-listing':
+        togglePopup();
+        break;
+      case 'lead-magnet':
+      case 'smart-query':
+      case 'service-estimator':
         togglePopup();
         break;
       default:

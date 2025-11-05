@@ -143,6 +143,15 @@ export interface WidgetConfig {
   referralReward?: string;
   referralUrl?: string;
   referralCount?: number;
+  // Lead Magnet properties
+  resourceTitle?: string;
+  resourceDescription?: string;
+  resourceUrl?: string;
+  // Smart Query properties
+  queryTitle?: string;
+  // Service Estimator properties
+  estimatorTitle?: string;
+  services?: { name: string; basePrice: number; unit: string; }[];
   // Branding options
   removeBranding?: boolean;
 }
@@ -3405,6 +3414,288 @@ Sent via ${contactBusinessName} Contact Form\`;
 
           updateSurveyProgress();
         </script>`;
+
+    case 'lead-magnet':
+      return `
+        ${baseStyles}
+        <style>
+          .lead-magnet-form { display: flex; flex-direction: column; gap: 12px; }
+          .lead-magnet-input { padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; }
+          .lead-magnet-checkbox { display: flex; align-items: start; gap: 8px; font-size: 12px; color: #6b7280; }
+        </style>
+
+        <div class="widgetify-button" onclick="toggleWidgetifyLeadMagnet()" style="background: ${buttonColor};">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-lead-magnet-popup" class="widgetify-popup" role="dialog">
+          <div class="widgetify-header">
+            <h3>${config.resourceTitle || 'Free Resource'}</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyLeadMagnet()">×</button>
+          </div>
+          <div class="widgetify-content">
+            <p style="margin: 0 0 20px 0; color: #6b7280; font-size: 14px;">${config.resourceDescription || 'Enter your details to download this free resource.'}</p>
+            <form class="lead-magnet-form" onsubmit="submitLeadMagnet(event)">
+              <input type="text" id="lead-name" class="lead-magnet-input" placeholder="Your Name" required />
+              <input type="email" id="lead-email" class="lead-magnet-input" placeholder="Your Email" required />
+              <label class="lead-magnet-checkbox">
+                <input type="checkbox" required />
+                <span>I agree to receive emails and updates</span>
+              </label>
+              <button type="submit" style="padding: 12px; background: ${buttonColor}; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 8px;">
+                Download Now
+              </button>
+            </form>
+          </div>${generateWatermark()}
+        </div>
+
+        <script>
+          function toggleWidgetifyLeadMagnet() {
+            document.getElementById('widgetify-lead-magnet-popup').classList.toggle('show');
+          }
+
+          function submitLeadMagnet(e) {
+            e.preventDefault();
+            const name = document.getElementById('lead-name').value;
+            const email = document.getElementById('lead-email').value;
+            
+            console.log('Lead captured:', { name, email });
+            alert('Thank you! Your download will start shortly.');
+            
+            ${config.resourceUrl ? `window.open('${config.resourceUrl}', '_blank');` : ''}
+            toggleWidgetifyLeadMagnet();
+            e.target.reset();
+          }
+        </script>`;
+
+    case 'smart-query':
+      return `
+        ${baseStyles}
+        <style>
+          .query-form { display: flex; flex-direction: column; gap: 12px; }
+          .query-input, .query-select, .query-textarea { padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; }
+          .query-textarea { resize: vertical; min-height: 100px; }
+          .priority-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+          .priority-low { background: #d1fae5; color: #065f46; }
+          .priority-medium { background: #fed7aa; color: #92400e; }
+          .priority-high { background: #fecaca; color: #991b1b; }
+        </style>
+
+        <div class="widgetify-button" onclick="toggleWidgetifyQuery()" style="background: ${buttonColor};">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zm-4 6V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-query-popup" class="widgetify-popup" role="dialog" style="height: auto; max-height: 550px;">
+          <div class="widgetify-header">
+            <h3>${config.queryTitle || 'Submit Your Query'}</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyQuery()">×</button>
+          </div>
+          <div class="widgetify-content" style="flex: 1; overflow-y: auto;">
+            <form class="query-form" onsubmit="submitQuery(event)">
+              <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600;">Query Type</label>
+                <select id="query-type" class="query-select" required>
+                  <option value="">Select type...</option>
+                  <option value="general">General Inquiry</option>
+                  <option value="support">Technical Support</option>
+                  <option value="sales">Sales Question</option>
+                  <option value="feature">Feature Request</option>
+                  <option value="feedback">Feedback</option>
+                </select>
+              </div>
+              
+              <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600;">Priority</label>
+                <select id="query-priority" class="query-select" required>
+                  <option value="low">Low - Can wait</option>
+                  <option value="medium" selected>Medium - Normal</option>
+                  <option value="high">High - Urgent</option>
+                </select>
+              </div>
+
+              <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600;">Your Name</label>
+                <input type="text" id="query-name" class="query-input" placeholder="John Doe" required />
+              </div>
+
+              <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600;">Email</label>
+                <input type="email" id="query-email" class="query-input" placeholder="you@example.com" required />
+              </div>
+
+              <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600;">Phone (Optional)</label>
+                <input type="tel" id="query-phone" class="query-input" placeholder="+1 234 567 8900" />
+              </div>
+
+              <div>
+                <label style="display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600;">Your Message</label>
+                <textarea id="query-message" class="query-textarea" placeholder="Describe your query in detail..." required></textarea>
+              </div>
+
+              <button type="submit" style="padding: 12px; background: ${buttonColor}; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 8px;">
+                Submit Query
+              </button>
+            </form>
+          </div>${generateWatermark()}
+        </div>
+
+        <script>
+          function toggleWidgetifyQuery() {
+            document.getElementById('widgetify-query-popup').classList.toggle('show');
+          }
+
+          function submitQuery(e) {
+            e.preventDefault();
+            const formData = {
+              type: document.getElementById('query-type').value,
+              priority: document.getElementById('query-priority').value,
+              name: document.getElementById('query-name').value,
+              email: document.getElementById('query-email').value,
+              phone: document.getElementById('query-phone').value,
+              message: document.getElementById('query-message').value,
+              timestamp: new Date().toISOString()
+            };
+            
+            console.log('Query submitted:', formData);
+            alert('Thank you! Your query has been submitted. We will get back to you soon.');
+            toggleWidgetifyQuery();
+            e.target.reset();
+          }
+        </script>`;
+
+    case 'service-estimator':
+      const services = config.services || [
+        { name: 'Web Design', basePrice: 500, unit: 'page' },
+        { name: 'SEO Optimization', basePrice: 300, unit: 'month' },
+        { name: 'Content Writing', basePrice: 50, unit: 'article' }
+      ];
+
+      return `
+        ${baseStyles}
+        <style>
+          .estimator-form { display: flex; flex-direction: column; gap: 16px; }
+          .service-item { padding: 16px; border: 2px solid #e5e7eb; border-radius: 8px; transition: all 0.2s; }
+          .service-item:hover { border-color: ${buttonColor}; }
+          .service-item.selected { border-color: ${buttonColor}; background: ${buttonColor}15; }
+          .service-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+          .service-checkbox { width: 20px; height: 20px; cursor: pointer; }
+          .service-details { display: flex; align-items: center; gap: 12px; }
+          .quantity-input { width: 80px; padding: 8px; border: 1px solid #e5e7eb; border-radius: 6px; text-align: center; }
+          .estimate-total { background: ${buttonColor}15; padding: 20px; border-radius: 8px; text-align: center; margin-top: 20px; }
+          .estimate-price { font-size: 32px; font-weight: bold; color: ${buttonColor}; }
+        </style>
+
+        <div class="widgetify-button" onclick="toggleWidgetifyEstimator()" style="background: ${buttonColor};">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-estimator-popup" class="widgetify-popup" role="dialog" style="height: auto; max-height: 600px;">
+          <div class="widgetify-header">
+            <h3>${config.estimatorTitle || 'Service Cost Estimator'}</h3>
+            <button class="widgetify-close" onclick="toggleWidgetifyEstimator()">×</button>
+          </div>
+          <div class="widgetify-content" style="flex: 1; overflow-y: auto;">
+            <p style="margin: 0 0 20px 0; color: #6b7280; font-size: 14px;">Select services and quantities to get an instant estimate:</p>
+            
+            <div class="estimator-form">
+              ${services.map((service, idx) => `
+                <div class="service-item" id="service-${idx}">
+                  <div class="service-header">
+                    <input type="checkbox" class="service-checkbox" id="checkbox-${idx}" onchange="updateEstimate()" />
+                    <label for="checkbox-${idx}" style="flex: 1; cursor: pointer; font-weight: 600;">
+                      ${service.name}
+                    </label>
+                    <span style="color: #6b7280; font-size: 14px;">$${service.basePrice}/${service.unit}</span>
+                  </div>
+                  <div class="service-details">
+                    <label style="font-size: 13px; color: #6b7280;">Quantity:</label>
+                    <input 
+                      type="number" 
+                      class="quantity-input" 
+                      id="quantity-${idx}" 
+                      min="1" 
+                      value="1" 
+                      onchange="updateEstimate()"
+                      disabled
+                    />
+                    <span style="font-size: 13px; color: #6b7280;">${service.unit}(s)</span>
+                  </div>
+                </div>
+              `).join('')}
+
+              <div class="estimate-total">
+                <div style="font-size: 14px; color: #6b7280; margin-bottom: 8px;">Estimated Total</div>
+                <div class="estimate-price" id="total-estimate">$0</div>
+                <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">Final price may vary</div>
+              </div>
+
+              <button onclick="requestQuote()" style="width: 100%; padding: 12px; background: ${buttonColor}; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 12px;">
+                Request Detailed Quote
+              </button>
+            </div>
+          </div>${generateWatermark()}
+        </div>
+
+        <script>
+          const services = ${JSON.stringify(services)};
+
+          function toggleWidgetifyEstimator() {
+            document.getElementById('widgetify-estimator-popup').classList.toggle('show');
+          }
+
+          function updateEstimate() {
+            let total = 0;
+            services.forEach((service, idx) => {
+              const checkbox = document.getElementById('checkbox-' + idx);
+              const quantity = document.getElementById('quantity-' + idx);
+              const serviceItem = document.getElementById('service-' + idx);
+              
+              if (checkbox.checked) {
+                quantity.disabled = false;
+                serviceItem.classList.add('selected');
+                total += service.basePrice * parseInt(quantity.value);
+              } else {
+                quantity.disabled = true;
+                serviceItem.classList.remove('selected');
+              }
+            });
+            
+            document.getElementById('total-estimate').textContent = '$' + total.toLocaleString();
+          }
+
+          function requestQuote() {
+            const selectedServices = [];
+            services.forEach((service, idx) => {
+              const checkbox = document.getElementById('checkbox-' + idx);
+              if (checkbox.checked) {
+                const quantity = document.getElementById('quantity-' + idx).value;
+                selectedServices.push({
+                  service: service.name,
+                  quantity: quantity,
+                  subtotal: service.basePrice * quantity
+                });
+              }
+            });
+
+            if (selectedServices.length === 0) {
+              alert('Please select at least one service');
+              return;
+            }
+
+            console.log('Quote requested:', selectedServices);
+            alert('Thank you! We will send you a detailed quote shortly.');
+            toggleWidgetifyEstimator();
+          }
+
+          updateEstimate();
+        </script>`;
   }
 };
 
@@ -3473,5 +3764,8 @@ export const WIDGET_NAMES: Record<WidgetType, string> = {
   'smart-faq-chatbot': 'Smart FAQ Chatbot',
   'price-drop-alert': 'Price Drop Alert',
   'product-tour': 'Interactive Product Tour',
-  'referral-tracking': 'Referral Tracking'
+  'referral-tracking': 'Referral Tracking',
+  'lead-magnet': 'Lead Magnet & Resource Access',
+  'smart-query': 'Smart Query / Request Widget',
+  'service-estimator': 'Interactive Service Estimator'
 };

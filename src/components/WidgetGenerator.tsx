@@ -1806,6 +1806,9 @@ ${widgetCode}
       case 'price-drop-alert':
       case 'product-tour':
       case 'referral-tracking':
+      case 'lead-magnet':
+      case 'smart-query':
+      case 'service-estimator':
         return (
           <div className="space-y-2">
             <p className="text-sm text-muted-foreground">Advanced widget - configure in preview panel.</p>

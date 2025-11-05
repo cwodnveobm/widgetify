@@ -64,6 +64,9 @@ export type WidgetType =
   'smart-faq-chatbot' |
   'price-drop-alert' |
   'product-tour' |
-  'referral-tracking';
+  'referral-tracking' |
+  'lead-magnet' |
+  'smart-query' |
+  'service-estimator';
 
 export type WidgetSize = 'small' | 'medium' | 'large';
