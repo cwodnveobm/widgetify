@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { generateWidgetCode, WidgetConfig } from '@/lib/widgetUtils';
+import { generateCodeByFormat, getFileExtension, getMimeType, type ExportFormat } from '@/lib/codeGenerators';
 import WidgetPreview from './WidgetPreview';
 import { Copy, Download, Eye, EyeOff, Sparkles, Crown, Smartphone, Star } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -27,7 +28,7 @@ const WidgetGenerator: React.FC = () => {
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(false);
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
-  const [exportFormat, setExportFormat] = useState<'html' | 'react' | 'wordpress' | 'vue' | 'angular' | 'svelte' | 'flutter' | 'django' | 'laravel' | 'aspnet' | 'shopify'>('html');
+  const [exportFormat, setExportFormat] = useState<ExportFormat>('html');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signup');
@@ -135,18 +136,18 @@ const WidgetGenerator: React.FC = () => {
     }
   }, [hasSubscription]);
 
-  const handleConfigChange = (key: keyof WidgetConfig, value: any) => {
+  const handleConfigChange = useCallback((key: keyof WidgetConfig, value: any) => {
     setConfig(prev => ({ ...prev, [key]: value }));
-  };
+  }, []);
 
-  const handleNetworkChange = (network: string, checked: boolean) => {
+  const handleNetworkChange = useCallback((network: string, checked: boolean) => {
     const currentNetworks = config.networks || [];
     if (checked) {
       handleConfigChange('networks', [...currentNetworks, network]);
     } else {
       handleConfigChange('networks', currentNetworks.filter(n => n !== network));
     }
-  };
+  }, [config.networks, handleConfigChange]);
 
   const generateCode = () => {
     try {
@@ -173,253 +174,10 @@ const WidgetGenerator: React.FC = () => {
     }
   };
 
-  const generateCodeByFormat = (format: typeof exportFormat) => {
-    const finalConfig = {
-      ...config,
-      isPremium: selectedTier === 'premium' && isPremiumUnlocked
-    };
-
-    switch (format) {
-      case 'react':
-        return generateReactCode(finalConfig);
-      case 'wordpress':
-        return generateWordPressCode(finalConfig);
-      case 'vue':
-        return generateVueCode(finalConfig);
-      case 'angular':
-        return generateAngularCode(finalConfig);
-      case 'svelte':
-        return generateSvelteCode(finalConfig);
-      case 'flutter':
-        return generateFlutterCode(finalConfig);
-      case 'django':
-        return generateDjangoCode(finalConfig);
-      case 'laravel':
-        return generateLaravelCode(finalConfig);
-      case 'aspnet':
-        return generateAspNetCode(finalConfig);
-      case 'shopify':
-        return generateShopifyCode(finalConfig);
-      default:
-        return generateWidgetCode(finalConfig);
-    }
-  };
-
-  const generateReactCode = (config: WidgetConfig) => {
-    const widgetCode = generateWidgetCode(config);
-    return `import React, { useEffect } from 'react';
-
-const ${config.type.charAt(0).toUpperCase() + config.type.slice(1)}Widget = () => {
-  useEffect(() => {
-    // Widget initialization code
-    ${widgetCode.includes('<script>') ? widgetCode.split('<script>')[1].split('</script>')[0] : ''}
-  }, []);
-
-  return (
-    <div dangerouslySetInnerHTML={{
-      __html: \`${widgetCode.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`
-    }} />
-  );
-};
-
-export default ${config.type.charAt(0).toUpperCase() + config.type.slice(1)}Widget;`;
-  };
-
-  const generateWordPressCode = (config: WidgetConfig) => {
-    const widgetCode = generateWidgetCode(config);
-    return `<?php
-/**
- * Plugin Name: ${config.type.charAt(0).toUpperCase() + config.type.slice(1)} Widget
- * Description: A customizable ${config.type} widget for WordPress
- * Version: 1.0
- */
-
-function add_${config.type.replace('-', '_')}_widget() {
-    ?>
-    ${widgetCode}
-    <?php
-}
-
-add_action('wp_footer', 'add_${config.type.replace('-', '_')}_widget');
-?>`;
-  };
-
-  const generateVueCode = (config: WidgetConfig) => {
-    const widgetCode = generateWidgetCode(config);
-    const scriptContent = widgetCode.includes('<script>') ? widgetCode.split('<script>')[1].split('</script>')[0] : '';
-    return `<template>
-  <div v-html="widgetHtml"></div>
-</template>
-
-<script>
-export default {
-  name: '${config.type.charAt(0).toUpperCase() + config.type.slice(1)}Widget',
-  data() {
-    return {
-      widgetHtml: \`${widgetCode.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`
-    }
-  },
-  mounted() {
-    ${scriptContent}
-  }
-}
-</script>
-
-<style scoped>
-/* Widget styles are included in the HTML */
-</style>`;
-  };
-
-  const generateAngularCode = (config: WidgetConfig) => {
-    const widgetCode = generateWidgetCode(config);
-    const componentName = config.type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('');
-    return `import { Component, OnInit } from '@angular/core';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-
-@Component({
-  selector: 'app-${config.type}-widget',
-  template: \`<div [innerHTML]="widgetHtml"></div>\`,
-  styles: []
-})
-export class ${componentName}WidgetComponent implements OnInit {
-  widgetHtml: SafeHtml;
-
-  constructor(private sanitizer: DomSanitizer) {
-    this.widgetHtml = this.sanitizer.bypassSecurityTrustHtml(\`${widgetCode.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`);
-  }
-
-  ngOnInit(): void {
-    ${widgetCode.includes('<script>') ? '// Widget initialization' : ''}
-  }
-}`;
-  };
-
-  const generateSvelteCode = (config: WidgetConfig) => {
-    const widgetCode = generateWidgetCode(config);
-    const scriptContent = widgetCode.includes('<script>') ? widgetCode.split('<script>')[1].split('</script>')[0] : '';
-    return `<script>
-  import { onMount } from 'svelte';
-  
-  let widgetHtml = \`${widgetCode.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`;
-  
-  onMount(() => {
-    ${scriptContent}
-  });
-</script>
-
-<div>
-  {@html widgetHtml}
-</div>
-
-<style>
-  /* Widget styles are included in the HTML */
-</style>`;
-  };
-
-  const generateFlutterCode = (config: WidgetConfig) => {
-    return `import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
-
-class ${config.type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}Widget extends StatefulWidget {
-  @override
-  _${config.type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}WidgetState createState() => 
-    _${config.type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}WidgetState();
-}
-
-class _${config.type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}WidgetState 
-    extends State<${config.type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}Widget> {
-  late final WebViewController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadHtmlString('''
-        ${generateWidgetCode(config).replace(/'/g, "\\'")}
-      ''');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 80,
-      width: 80,
-      child: WebViewWidget(controller: controller),
-    );
-  }
-}`;
-  };
-
-  const generateDjangoCode = (config: WidgetConfig) => {
-    const widgetCode = generateWidgetCode(config);
-    return `{% comment %}
-  ${config.type.charAt(0).toUpperCase() + config.type.slice(1)} Widget Template
-  Usage: {% include '${config.type}_widget.html' %}
-{% endcomment %}
-
-${widgetCode}
-
-{% comment %}
-  To use this widget:
-  1. Save this file as templates/${config.type}_widget.html
-  2. Include it in your template: {% include '${config.type}_widget.html' %}
-  3. Or load it as safe HTML: {{ widget_html|safe }}
-{% endcomment %}`;
-  };
-
-  const generateLaravelCode = (config: WidgetConfig) => {
-    const widgetCode = generateWidgetCode(config);
-    return `{{-- ${config.type.charAt(0).toUpperCase() + config.type.slice(1)} Widget Blade Template --}}
-{{-- Usage: @include('widgets.${config.type}') --}}
-
-{!! $widgetHtml ?? '${widgetCode.replace(/'/g, "\\'")}' !!}
-
-{{--
-  To use this widget:
-  1. Save this file as resources/views/widgets/${config.type}.blade.php
-  2. Include it in your blade template: @include('widgets.${config.type}')
-  3. Or pass HTML from controller: return view('page', ['widgetHtml' => $html]);
---}}`;
-  };
-
-  const generateAspNetCode = (config: WidgetConfig) => {
-    const widgetCode = generateWidgetCode(config);
-    return `@* ${config.type.charAt(0).toUpperCase() + config.type.slice(1)} Widget Razor Component *@
-@* Usage: <partial name="_${config.type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}Widget" /> *@
-
-@{
-    var widgetHtml = @"${widgetCode.replace(/"/g, '\\"')}";
-}
-
-@Html.Raw(widgetHtml)
-
-@*
-  To use this widget:
-  1. Save this file as Views/Shared/_${config.type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}Widget.cshtml
-  2. Include it in your view: <partial name="_${config.type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}Widget" />
-  3. Or use: @await Html.PartialAsync("_${config.type.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join('')}Widget")
-*@`;
-  };
-
-  const generateShopifyCode = (config: WidgetConfig) => {
-    const widgetCode = generateWidgetCode(config);
-    return `{% comment %}
-  ${config.type.charAt(0).toUpperCase() + config.type.slice(1)} Widget for Shopify
-  Usage: {% include '${config.type}-widget' %}
-{% endcomment %}
-
-${widgetCode}
-
-{% comment %}
-  To use this widget:
-  1. Go to Shopify Admin > Online Store > Themes > Actions > Edit code
-  2. Create a new snippet: snippets/${config.type}-widget.liquid
-  3. Paste this code and save
-  4. Include in your theme: {% include '${config.type}-widget' %}
-  5. Common locations: theme.liquid, product.liquid, or page templates
-{% endcomment %}`;
-  };
+  const finalConfig = useMemo(() => ({
+    ...config,
+    isPremium: selectedTier === 'premium' && isPremiumUnlocked
+  }), [config, selectedTier, isPremiumUnlocked]);
 
   const copyToClipboard = () => {
     // Check if user is authenticated and has subscription
@@ -459,45 +217,25 @@ ${widgetCode}
     }
   };
 
-  const downloadCode = () => {
-    const code = generateCodeByFormat(exportFormat);
+  const downloadCode = useCallback(() => {
+    const code = generateCodeByFormat(finalConfig, exportFormat);
     if (code) {
-      const extensions: Record<typeof exportFormat, string> = { 
-        html: 'html', 
-        react: 'jsx', 
-        wordpress: 'php',
-        vue: 'vue',
-        angular: 'ts',
-        svelte: 'svelte',
-        flutter: 'dart',
-        django: 'html',
-        laravel: 'blade.php',
-        aspnet: 'cshtml',
-        shopify: 'liquid'
-      };
-      
-      const mimeTypes: Record<typeof exportFormat, string> = { 
-        html: 'text/html', 
-        react: 'text/javascript', 
-        wordpress: 'text/plain',
-        vue: 'text/plain',
-        angular: 'text/typescript',
-        svelte: 'text/plain',
-        flutter: 'text/plain',
-        django: 'text/html',
-        laravel: 'text/plain',
-        aspnet: 'text/plain',
-        shopify: 'text/plain'
-      };
-      
-      const blob = new Blob([code], { type: mimeTypes[exportFormat] });
+      const blob = new Blob([code], { type: getMimeType(exportFormat) });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${config.type}-widget.${extensions[exportFormat]}`;
+      a.download = `${config.type}-widget.${getFileExtension(exportFormat)}`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Code Downloaded!",
+        description: `Widget code has been downloaded as ${config.type}-widget.${getFileExtension(exportFormat)}`,
+      });
+    }
+  }, [finalConfig, exportFormat, config.type, toast]);
       URL.revokeObjectURL(url);
       
       toast({
