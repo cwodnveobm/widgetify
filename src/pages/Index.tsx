@@ -120,8 +120,8 @@ const Index: React.FC = () => {
       )}
 
       {/* Enhanced Header */}
-      <header className="bg-background/80 backdrop-blur-md border-b border-border py-3 md:py-4 px-2 md:px-6 sticky top-0 z-40 shadow-soft">
-        <div className="max-w-full md:container mx-auto flex justify-between items-center px-1 md:px-0">
+      <header className="bg-background/80 backdrop-blur-md border-b border-border py-3 md:py-4 px-3 sm:px-4 md:px-6 sticky top-0 z-40 shadow-soft">
+        <div className="max-w-full md:container mx-auto flex justify-between items-center px-0">
           <div className="flex items-center gap-2">
             <div className="text-xl md:text-2xl font-bold gradient-text">
               Widgetify
@@ -138,11 +138,11 @@ const Index: React.FC = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full">
+                  <Button variant="ghost" size="icon" className="rounded-full min-h-[44px] min-w-[44px]">
                     <User className="w-5 h-5" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent align="end" className="w-56 bg-popover z-50">
                   <DropdownMenuLabel>
                     <div className="flex flex-col">
                       <span className="text-sm font-medium">{user.email}</span>
@@ -247,21 +247,21 @@ const Index: React.FC = () => {
         </div>
       </header>
       
-      <main className="flex-grow flex flex-col">
-        <div className="flex-1 w-full sm:w-auto px-0 sm:px-4">
-          <div id="hero">
+      <main className="flex-grow flex flex-col w-full overflow-x-hidden">
+        <div className="flex-1 w-full">
+          <div id="hero" className="w-full">
             <HeroSection />
           </div>
-          <div id="widget-generator">
+          <div id="widget-generator" className="w-full">
             <WidgetGenerator />
           </div>
-          <div id="features">
+          <div id="features" className="w-full">
             <FeaturesSection />
           </div>
-          <div id="pricing">
+          <div id="pricing" className="w-full">
             <PricingSection />
           </div>
-          <div id="founder">
+          <div id="founder" className="w-full">
             <FounderSection />
           </div>
         </div>
