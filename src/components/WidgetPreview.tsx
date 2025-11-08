@@ -1024,7 +1024,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         className="hover:scale-105 hover:shadow-lg transition-all duration-300 cursor-pointer border-none" 
         onClick={handleMainButtonClick}
       >
-        {getIcon()}
+        {getIcon}
       </button>
     </div>
   );

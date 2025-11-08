@@ -236,14 +236,6 @@ const WidgetGenerator: React.FC = () => {
       });
     }
   }, [finalConfig, exportFormat, config.type, toast]);
-      URL.revokeObjectURL(url);
-      
-      toast({
-        title: "Download Started",
-        description: `Your ${exportFormat.toUpperCase()} widget code is being downloaded.`,
-      });
-    }
-  };
 
   const copyToClipboardByFormat = () => {
     // Check if user is authenticated and has subscription
@@ -266,7 +258,7 @@ const WidgetGenerator: React.FC = () => {
       return;
     }
 
-    const code = generateCodeByFormat(exportFormat);
+    const code = generateCodeByFormat(finalConfig, exportFormat);
     if (code) {
       navigator.clipboard.writeText(code).then(() => {
         toast({
@@ -1908,7 +1900,7 @@ const WidgetGenerator: React.FC = () => {
           <CardContent>
             <div className="bg-gray-900 text-gray-100 p-3 md:p-4 rounded-lg overflow-auto max-h-64 md:max-h-96">
               <pre className="text-xs md:text-sm whitespace-pre-wrap break-all">
-                <code>{generateCodeByFormat(exportFormat)}</code>
+                <code>{generateCodeByFormat(finalConfig, exportFormat)}</code>
               </pre>
             </div>
             {/* Mobile Copy Button */}
