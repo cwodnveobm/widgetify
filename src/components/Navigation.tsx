@@ -40,6 +40,7 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
     { to: '/', label: 'Home' },
     { to: '/integrations', label: 'Integrations' },
     { to: '/custom-builder', label: 'Custom Builder' },
+    { to: '/ab-testing', label: 'A/B Testing' },
     { to: '/support', label: 'Support' },
   ];
 

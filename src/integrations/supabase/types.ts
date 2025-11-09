@@ -14,6 +14,86 @@ export type Database = {
   }
   public: {
     Tables: {
+      ab_test_metrics: {
+        Row: {
+          created_at: string
+          event_data: Json | null
+          event_type: string
+          id: string
+          ip_address: string | null
+          session_id: string | null
+          user_agent: string | null
+          variation_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          variation_id: string
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          variation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ab_test_metrics_variation_id_fkey"
+            columns: ["variation_id"]
+            isOneToOne: false
+            referencedRelation: "widget_variations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ab_tests: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          name: string
+          start_date: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          widget_config: Json
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name: string
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          widget_config: Json
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          name?: string
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          widget_config?: Json
+        }
+        Relationships: []
+      }
       custom_widgets: {
         Row: {
           background_color: string
@@ -181,6 +261,44 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      widget_variations: {
+        Row: {
+          ab_test_id: string
+          config: Json
+          created_at: string
+          id: string
+          name: string
+          traffic_percentage: number
+          updated_at: string
+        }
+        Insert: {
+          ab_test_id: string
+          config: Json
+          created_at?: string
+          id?: string
+          name: string
+          traffic_percentage?: number
+          updated_at?: string
+        }
+        Update: {
+          ab_test_id?: string
+          config?: Json
+          created_at?: string
+          id?: string
+          name?: string
+          traffic_percentage?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "widget_variations_ab_test_id_fkey"
+            columns: ["ab_test_id"]
+            isOneToOne: false
+            referencedRelation: "ab_tests"
+            referencedColumns: ["id"]
           },
         ]
       }
