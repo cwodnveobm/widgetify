@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { generateWidgetCode, WidgetConfig } from '@/lib/widgetUtils';
 import { generateCodeByFormat, getFileExtension, getMimeType, type ExportFormat } from '@/lib/codeGenerators';
 import WidgetPreview from './WidgetPreview';
-import { Copy, Download, Eye, EyeOff, Sparkles, Crown, Smartphone, Star } from 'lucide-react';
+import { Download, Eye, EyeOff, Sparkles, Crown, Smartphone, Star } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/hooks/useAuth';
@@ -179,14 +179,14 @@ const WidgetGenerator: React.FC = () => {
     isPremium: selectedTier === 'premium' && isPremiumUnlocked
   }), [config, selectedTier, isPremiumUnlocked]);
 
-  const copyToClipboard = () => {
+  const downloadCode = useCallback(() => {
     // Check if user is authenticated and has subscription
     if (!user) {
       setAuthMode('signup');
       setShowAuthModal(true);
       toast({
         title: "Sign Up Required",
-        description: "Please create an account to copy widget code.",
+        description: "Please create an account to download widget code.",
       });
       return;
     }
@@ -195,29 +195,11 @@ const WidgetGenerator: React.FC = () => {
       setShowSubscriptionModal(true);
       toast({
         title: "Premium Feature",
-        description: "Subscribe to copy and download widget code.",
+        description: "Subscribe to download widget code.",
       });
       return;
     }
-
-    const code = generateCode();
-    if (code) {
-      navigator.clipboard.writeText(code).then(() => {
-        toast({
-          title: "Code Copied!",
-          description: "Widget code has been copied to your clipboard.",
-        });
-      }).catch(() => {
-        toast({
-          title: "Copy Failed",
-          description: "Please manually copy the code from the text area.",
-          variant: "destructive",
-        });
-      });
-    }
-  };
-
-  const downloadCode = useCallback(() => {
+    
     const code = generateCodeByFormat(finalConfig, exportFormat);
     if (code) {
       const blob = new Blob([code], { type: getMimeType(exportFormat) });
@@ -235,45 +217,7 @@ const WidgetGenerator: React.FC = () => {
         description: `Widget code has been downloaded as ${config.type}-widget.${getFileExtension(exportFormat)}`,
       });
     }
-  }, [finalConfig, exportFormat, config.type, toast]);
-
-  const copyToClipboardByFormat = () => {
-    // Check if user is authenticated and has subscription
-    if (!user) {
-      setAuthMode('signup');
-      setShowAuthModal(true);
-      toast({
-        title: "Sign Up Required",
-        description: "Please create an account to copy widget code.",
-      });
-      return;
-    }
-
-    if (!hasSubscription) {
-      setShowSubscriptionModal(true);
-      toast({
-        title: "Premium Feature",
-        description: "Subscribe to copy and download widget code.",
-      });
-      return;
-    }
-
-    const code = generateCodeByFormat(finalConfig, exportFormat);
-    if (code) {
-      navigator.clipboard.writeText(code).then(() => {
-        toast({
-          title: "Code Copied!",
-          description: `${exportFormat.toUpperCase()} widget code has been copied to your clipboard.`,
-        });
-      }).catch(() => {
-        toast({
-          title: "Copy Failed",
-          description: "Please manually copy the code from the text area.",
-          variant: "destructive",
-        });
-      });
-    }
-  };
+  }, [finalConfig, exportFormat, config.type, toast, user, hasSubscription, setAuthMode, setShowAuthModal, setShowSubscriptionModal]);
 
   const handlePremiumUpgrade = async () => {
     if (!user) {
@@ -1829,19 +1773,15 @@ const WidgetGenerator: React.FC = () => {
               </div>
 
               {/* Mobile-Optimized Action Buttons */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-4">
-                <Button onClick={copyToClipboardByFormat} className="min-h-[48px] order-1">
-                  <Copy size={16} className="mr-2" />
-                  Copy {exportFormat.toUpperCase()}
-                </Button>
-                <Button onClick={downloadCode} variant="outline" className="min-h-[48px] order-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4">
+                <Button onClick={downloadCode} className="min-h-[48px] order-1">
                   <Download size={16} className="mr-2" />
-                  Download
+                  Download Code
                 </Button>
                 <Button
                   onClick={() => setShowPreview(!showPreview)}
                   variant="outline"
-                  className="min-h-[48px] order-3 md:order-3"
+                  className="min-h-[48px] order-2"
                 >
                   {showPreview ? <EyeOff size={16} className="mr-2" /> : <Eye size={16} className="mr-2" />}
                   {isMobile ? (showPreview ? 'Hide' : 'Show') : ''} Preview
@@ -1903,17 +1843,6 @@ const WidgetGenerator: React.FC = () => {
                 <code>{generateCodeByFormat(finalConfig, exportFormat)}</code>
               </pre>
             </div>
-            {/* Mobile Copy Button */}
-            {isMobile && (
-              <Button 
-                onClick={copyToClipboardByFormat} 
-                className="w-full mt-3 min-h-[48px]"
-                variant="outline"
-              >
-                <Copy size={16} className="mr-2" />
-                Copy {exportFormat.toUpperCase()} Code
-              </Button>
-            )}
           </CardContent>
         </Card>
       </div>
