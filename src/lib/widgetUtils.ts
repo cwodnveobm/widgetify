@@ -3767,5 +3767,7 @@ export const WIDGET_NAMES: Record<WidgetType, string> = {
   'referral-tracking': 'Referral Tracking',
   'lead-magnet': 'Lead Magnet & Resource Access',
   'smart-query': 'Smart Query / Request Widget',
-  'service-estimator': 'Interactive Service Estimator'
+  'service-estimator': 'Interactive Service Estimator',
+  'google-maps': 'Google Maps Embed',
+  'google-reviews': 'Google Reviews Testimonials'
 };
