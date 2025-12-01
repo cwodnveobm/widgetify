@@ -67,6 +67,8 @@ export type WidgetType =
   'referral-tracking' |
   'lead-magnet' |
   'smart-query' |
-  'service-estimator';
+  'service-estimator' |
+  'google-maps' |
+  'google-reviews';
 
 export type WidgetSize = 'small' | 'medium' | 'large';
