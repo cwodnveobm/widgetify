@@ -86,6 +86,10 @@ export interface WidgetConfig {
   chatbotPlaceholder?: string;
   perplexityApiKey?: string;
   chatbotModel?: 'llama-3.1-sonar-small-128k-online' | 'llama-3.1-sonar-large-128k-online' | 'llama-3.1-sonar-huge-128k-online';
+  // Multi-provider AI support
+  aiProvider?: 'gemini' | 'chatgpt' | 'grok' | 'perplexity';
+  aiApiKey?: string;
+  aiModel?: string;
   // Trust Badge properties
   trustBadges?: string[];
   badgeStyle?: 'minimal' | 'detailed' | 'colorful';
@@ -2519,8 +2523,10 @@ Sent via ${contactBusinessName} Contact Form\`;
         ${generateWatermark(`position: fixed; bottom: 10px; ${position === 'left' ? 'right' : 'left'}: 10px; z-index: 998; font-size: 10px; opacity: 0.7;`)}
 
         <script>
-          const PERPLEXITY_API_KEY = '${config.perplexityApiKey || ''}';
-          const CHATBOT_MODEL = '${config.chatbotModel || 'llama-3.1-sonar-small-128k-online'}';
+          // AI Provider Configuration
+          const AI_PROVIDER = '${config.aiProvider || 'gemini'}'; // gemini, chatgpt, grok, perplexity
+          const API_KEY = '${config.aiApiKey || ''}';
+          const MODEL = '${config.aiModel || 'gemini-1.5-flash'}';
           
           window.toggleAiChatbot = function() {
             const popup = document.getElementById('ai-chatbot-popup');
@@ -2537,8 +2543,8 @@ Sent via ${contactBusinessName} Contact Form\`;
             
             if (!message) return;
 
-            if (!PERPLEXITY_API_KEY) {
-              addAiMessage('bot', 'Sorry, the AI chatbot requires an API key to function. Please configure your Perplexity API key.');
+            if (!API_KEY) {
+              addAiMessage('bot', 'Sorry, the AI chatbot requires an API key to function. Please configure your API key for ' + AI_PROVIDER + '.');
               return;
             }
 
@@ -2551,40 +2557,24 @@ Sent via ${contactBusinessName} Contact Form\`;
             const typingId = addAiMessage('bot', 'AI is thinking...', 'typing');
             
             try {
-              const response = await fetch('https://api.perplexity.ai/chat/completions', {
-                method: 'POST',
-                headers: {
-                  'Authorization': \`Bearer \${PERPLEXITY_API_KEY}\`,
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  model: CHATBOT_MODEL,
-                  messages: [
-                    {
-                      role: 'system',
-                      content: 'You are a helpful AI assistant. Be concise and helpful in your responses.'
-                    },
-                    {
-                      role: 'user',
-                      content: message
-                    }
-                  ],
-                  temperature: 0.2,
-                  top_p: 0.9,
-                  max_tokens: 1000,
-                  return_images: false,
-                  return_related_questions: false,
-                  frequency_penalty: 1,
-                  presence_penalty: 0
-                }),
-              });
+              let aiResponse;
               
-              if (!response.ok) {
-                throw new Error('Failed to get AI response');
+              switch(AI_PROVIDER) {
+                case 'gemini':
+                  aiResponse = await callGeminiAPI(message);
+                  break;
+                case 'chatgpt':
+                  aiResponse = await callOpenAIAPI(message);
+                  break;
+                case 'grok':
+                  aiResponse = await callGrokAPI(message);
+                  break;
+                case 'perplexity':
+                  aiResponse = await callPerplexityAPI(message);
+                  break;
+                default:
+                  throw new Error('Unknown AI provider: ' + AI_PROVIDER);
               }
-              
-              const data = await response.json();
-              const aiResponse = data.choices?.[0]?.message?.content || 'Sorry, I couldn\'t generate a response.';
               
               // Remove typing indicator and add response
               removeAiMessage(typingId);
@@ -2593,11 +2583,138 @@ Sent via ${contactBusinessName} Contact Form\`;
             } catch (error) {
               console.error('AI Chat Error:', error);
               removeAiMessage(typingId);
-              addAiMessage('bot', 'Sorry, I encountered an error. Please try again later.');
+              addAiMessage('bot', 'Sorry, I encountered an error: ' + error.message);
             } finally {
               sendBtn.disabled = false;
             }
           };
+
+          async function callGeminiAPI(message) {
+            const response = await fetch(\`https://generativelanguage.googleapis.com/v1beta/models/\${MODEL}:generateContent?key=\${API_KEY}\`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                contents: [{
+                  parts: [{
+                    text: message
+                  }]
+                }],
+                generationConfig: {
+                  temperature: 0.7,
+                  maxOutputTokens: 1000,
+                }
+              }),
+            });
+            
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error('Gemini API error: ' + (errorData.error?.message || response.statusText));
+            }
+            
+            const data = await response.json();
+            return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I couldn\'t generate a response.';
+          }
+
+          async function callOpenAIAPI(message) {
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Authorization': \`Bearer \${API_KEY}\`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                model: MODEL || 'gpt-4o-mini',
+                messages: [
+                  {
+                    role: 'system',
+                    content: 'You are a helpful AI assistant. Be concise and helpful in your responses.'
+                  },
+                  {
+                    role: 'user',
+                    content: message
+                  }
+                ],
+                temperature: 0.7,
+                max_tokens: 1000,
+              }),
+            });
+            
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error('OpenAI API error: ' + (errorData.error?.message || response.statusText));
+            }
+            
+            const data = await response.json();
+            return data.choices?.[0]?.message?.content || 'Sorry, I couldn\'t generate a response.';
+          }
+
+          async function callGrokAPI(message) {
+            const response = await fetch('https://api.x.ai/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Authorization': \`Bearer \${API_KEY}\`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                model: MODEL || 'grok-beta',
+                messages: [
+                  {
+                    role: 'system',
+                    content: 'You are a helpful AI assistant. Be concise and helpful in your responses.'
+                  },
+                  {
+                    role: 'user',
+                    content: message
+                  }
+                ],
+                temperature: 0.7,
+                max_tokens: 1000,
+              }),
+            });
+            
+            if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error('Grok API error: ' + (errorData.error?.message || response.statusText));
+            }
+            
+            const data = await response.json();
+            return data.choices?.[0]?.message?.content || 'Sorry, I couldn\'t generate a response.';
+          }
+
+          async function callPerplexityAPI(message) {
+            const response = await fetch('https://api.perplexity.ai/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Authorization': \`Bearer \${API_KEY}\`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                model: MODEL || 'llama-3.1-sonar-small-128k-online',
+                messages: [
+                  {
+                    role: 'system',
+                    content: 'You are a helpful AI assistant. Be concise and helpful in your responses.'
+                  },
+                  {
+                    role: 'user',
+                    content: message
+                  }
+                ],
+                temperature: 0.2,
+                top_p: 0.9,
+                max_tokens: 1000,
+              }),
+            });
+            
+            if (!response.ok) {
+              throw new Error('Perplexity API error: ' + response.statusText);
+            }
+            
+            const data = await response.json();
+            return data.choices?.[0]?.message?.content || 'Sorry, I couldn\'t generate a response.';
+          }
 
           function addAiMessage(sender, text, className = '') {
             const messages = document.getElementById('ai-chatbot-messages');
