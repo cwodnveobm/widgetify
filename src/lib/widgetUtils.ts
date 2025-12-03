@@ -93,6 +93,11 @@ export interface WidgetConfig {
   // Trust Badge properties
   trustBadges?: string[];
   badgeStyle?: 'minimal' | 'detailed' | 'colorful';
+  // Google Maps properties
+  mapZoom?: number;
+  mapApiKey?: string;
+  // Google Reviews properties
+  googleReviews?: { author: string; rating: number; text: string; date: string; }[];
   // Email Signature properties
   fullName?: string;
   jobTitle?: string;
@@ -3812,6 +3817,228 @@ Sent via ${contactBusinessName} Contact Form\`;
           }
 
           updateEstimate();
+        </script>`;
+
+    case 'google-maps':
+      const mapLocation = config.targetLocation || 'New York, USA';
+      const mapZoom = config.mapZoom || 14;
+      const mapApiKey = config.mapApiKey || '';
+      
+      return `
+        ${baseStyles}
+        <style>
+          .google-maps-container {
+            position: fixed;
+            bottom: ${parseInt(widgetSize) + 30}px;
+            ${positionStyle}
+            width: 400px;
+            max-width: 90vw;
+            height: 350px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 999;
+          }
+          .google-maps-container.show { display: flex; }
+          .google-maps-header {
+            padding: 12px 16px;
+            background: #4285f4;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          .google-maps-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
+          .google-maps-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+          .google-maps-iframe { flex: 1; width: 100%; border: none; }
+          .google-maps-footer { padding: 10px 16px; background: #f9fafb; border-top: 1px solid #e5e7eb; }
+          .google-maps-directions {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #4285f4;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+          }
+          .google-maps-directions:hover { background: #3367d6; }
+        </style>
+
+        <div class="widgetify-widget" onclick="toggleGoogleMaps()" style="background: #4285f4;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-google-maps" class="google-maps-container">
+          <div class="google-maps-header">
+            <h3>📍 ${mapLocation}</h3>
+            <button class="google-maps-close" onclick="toggleGoogleMaps()">×</button>
+          </div>
+          <iframe 
+            class="google-maps-iframe"
+            src="https://www.google.com/maps/embed/v1/place?key=${mapApiKey || 'YOUR_API_KEY'}&q=${encodeURIComponent(mapLocation)}&zoom=${mapZoom}"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+          </iframe>
+          <div class="google-maps-footer">
+            <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapLocation)}" target="_blank" class="google-maps-directions">
+              Get Directions →
+            </a>
+          </div>${generateWatermark('background: #f9fafb; margin: 0; padding: 8px; border-top: 1px solid #e5e7eb;')}
+        </div>
+
+        <script>
+          function toggleGoogleMaps() {
+            document.getElementById('widgetify-google-maps').classList.toggle('show');
+          }
+        </script>`;
+
+    case 'google-reviews':
+      const businessReviewName = config.businessName || 'Amazing Business';
+      const reviews = config.googleReviews || [
+        { author: 'John Smith', rating: 5, text: 'Absolutely fantastic service! Highly recommended.', date: '2 weeks ago' },
+        { author: 'Sarah Johnson', rating: 5, text: 'Professional team, great results. Will use again!', date: '1 month ago' },
+        { author: 'Mike Brown', rating: 4, text: 'Good experience overall. Quick and efficient.', date: '2 months ago' }
+      ];
+      const averageRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+      
+      return `
+        ${baseStyles}
+        <style>
+          .google-reviews-container {
+            position: fixed;
+            bottom: ${parseInt(widgetSize) + 30}px;
+            ${positionStyle}
+            width: 380px;
+            max-width: 90vw;
+            max-height: 500px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 999;
+          }
+          .google-reviews-container.show { display: flex; }
+          .reviews-header {
+            padding: 16px;
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          .reviews-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
+          .reviews-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+          .reviews-summary {
+            padding: 16px;
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+          }
+          .reviews-rating-big { font-size: 36px; font-weight: bold; color: #1f2937; }
+          .reviews-stars { color: #fbbc04; font-size: 18px; }
+          .reviews-count { color: #6b7280; font-size: 13px; }
+          .reviews-list { flex: 1; overflow-y: auto; padding: 12px; }
+          .review-card {
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 12px;
+          }
+          .review-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+          .review-avatar {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+          }
+          .review-author { font-weight: 600; color: #1f2937; font-size: 14px; }
+          .review-date { color: #9ca3af; font-size: 12px; }
+          .review-stars-small { color: #fbbc04; font-size: 14px; margin-bottom: 6px; }
+          .review-text { color: #4b5563; font-size: 13px; line-height: 1.5; }
+          .reviews-footer {
+            padding: 12px 16px;
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+          }
+          .leave-review-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background: #4285f4;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+          }
+          .leave-review-btn:hover { background: #3367d6; }
+        </style>
+
+        <div class="widgetify-widget" onclick="toggleGoogleReviews()" style="background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-google-reviews" class="google-reviews-container">
+          <div class="reviews-header">
+            <h3>⭐ Reviews for ${businessReviewName}</h3>
+            <button class="reviews-close" onclick="toggleGoogleReviews()">×</button>
+          </div>
+          <div class="reviews-summary">
+            <div class="reviews-rating-big">${averageRating.toFixed(1)}</div>
+            <div>
+              <div class="reviews-stars">${'★'.repeat(Math.round(averageRating))}${'☆'.repeat(5 - Math.round(averageRating))}</div>
+              <div class="reviews-count">Based on ${reviews.length} reviews</div>
+            </div>
+          </div>
+          <div class="reviews-list">
+            ${reviews.map(review => `
+              <div class="review-card">
+                <div class="review-header">
+                  <div class="review-avatar">${review.author.charAt(0)}</div>
+                  <div>
+                    <div class="review-author">${review.author}</div>
+                    <div class="review-date">${review.date}</div>
+                  </div>
+                </div>
+                <div class="review-stars-small">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
+                <div class="review-text">${review.text}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="reviews-footer">
+            <a href="${config.reviewUrl || '#'}" target="_blank" class="leave-review-btn">
+              Leave a Review on Google
+            </a>
+          </div>${generateWatermark('background: #f9fafb; margin: 0; padding: 8px; border-top: 1px solid #e5e7eb;')}
+        </div>
+
+        <script>
+          function toggleGoogleReviews() {
+            document.getElementById('widgetify-google-reviews').classList.toggle('show');
+          }
         </script>`;
   }
 };

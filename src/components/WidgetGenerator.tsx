@@ -97,6 +97,10 @@ const WidgetGenerator: React.FC = () => {
     chatbotPlaceholder: 'Type your message...',
     perplexityApiKey: '',
     chatbotModel: 'llama-3.1-sonar-small-128k-online',
+    // AI Provider support
+    aiProvider: 'perplexity',
+    aiApiKey: '',
+    aiModel: 'llama-3.1-sonar-small-128k-online',
     // Trust Badge properties
     trustBadges: ['ssl', 'payment', 'privacy'],
     badgeStyle: 'minimal',
@@ -126,6 +130,9 @@ const WidgetGenerator: React.FC = () => {
     blackFridayOffer: 'UP TO 70% OFF!',
     // Branding
     removeBranding: false,
+    // Google Maps properties
+    mapApiKey: '',
+    mapZoom: 14,
   });
 
   // Automatically unlock premium if user has subscription
@@ -1169,34 +1176,85 @@ const WidgetGenerator: React.FC = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="perplexityApiKey" className="text-sm font-medium">Perplexity API Key</Label>
-              <Input
-                id="perplexityApiKey"
-                type="password"
-                value={config.perplexityApiKey}
-                onChange={(e) => handleConfigChange('perplexityApiKey', e.target.value)}
-                placeholder="Enter your Perplexity API key"
-                className="text-base"
-              />
-              <p className="text-xs text-gray-600">
-                Get your API key from <a href="https://www.perplexity.ai/" target="_blank" className="text-blue-600 hover:underline">Perplexity AI</a>
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="chatbotModel" className="text-sm font-medium">AI Model</Label>
+              <Label htmlFor="aiProvider" className="text-sm font-medium">AI Provider</Label>
               <Select
-                value={config.chatbotModel || 'llama-3.1-sonar-small-128k-online'}
-                onValueChange={(value: 'llama-3.1-sonar-small-128k-online' | 'llama-3.1-sonar-large-128k-online' | 'llama-3.1-sonar-huge-128k-online') => 
-                  handleConfigChange('chatbotModel', value)
-                }
+                value={config.aiProvider || 'perplexity'}
+                onValueChange={(value: 'gemini' | 'chatgpt' | 'grok' | 'perplexity') => handleConfigChange('aiProvider', value)}
               >
                 <SelectTrigger className="text-base min-h-[48px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="llama-3.1-sonar-small-128k-online">Sonar Small (Fastest)</SelectItem>
-                  <SelectItem value="llama-3.1-sonar-large-128k-online">Sonar Large (Balanced)</SelectItem>
-                  <SelectItem value="llama-3.1-sonar-huge-128k-online">Sonar Huge (Most Capable)</SelectItem>
+                  <SelectItem value="gemini">Google Gemini</SelectItem>
+                  <SelectItem value="chatgpt">OpenAI ChatGPT</SelectItem>
+                  <SelectItem value="grok">xAI Grok</SelectItem>
+                  <SelectItem value="perplexity">Perplexity AI</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="aiApiKey" className="text-sm font-medium">
+                {config.aiProvider === 'gemini' ? 'Gemini' : 
+                 config.aiProvider === 'chatgpt' ? 'OpenAI' : 
+                 config.aiProvider === 'grok' ? 'Grok' : 'Perplexity'} API Key
+              </Label>
+              <Input
+                id="aiApiKey"
+                type="password"
+                value={config.aiApiKey || config.perplexityApiKey || ''}
+                onChange={(e) => {
+                  handleConfigChange('aiApiKey', e.target.value);
+                  handleConfigChange('perplexityApiKey', e.target.value);
+                }}
+                placeholder={`Enter your ${config.aiProvider || 'AI'} API key`}
+                className="text-base"
+              />
+              <p className="text-xs text-muted-foreground">
+                {config.aiProvider === 'gemini' && 'Get your API key from Google AI Studio'}
+                {config.aiProvider === 'chatgpt' && 'Get your API key from OpenAI Platform'}
+                {config.aiProvider === 'grok' && 'Get your API key from xAI Console'}
+                {(!config.aiProvider || config.aiProvider === 'perplexity') && 'Get your API key from Perplexity AI'}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="aiModel" className="text-sm font-medium">AI Model</Label>
+              <Select
+                value={config.aiModel || config.chatbotModel || 'llama-3.1-sonar-small-128k-online'}
+                onValueChange={(value) => {
+                  handleConfigChange('aiModel', value);
+                  handleConfigChange('chatbotModel', value);
+                }}
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {config.aiProvider === 'gemini' && (
+                    <>
+                      <SelectItem value="gemini-pro">Gemini Pro</SelectItem>
+                      <SelectItem value="gemini-pro-vision">Gemini Pro Vision</SelectItem>
+                    </>
+                  )}
+                  {config.aiProvider === 'chatgpt' && (
+                    <>
+                      <SelectItem value="gpt-4o">GPT-4o (Latest)</SelectItem>
+                      <SelectItem value="gpt-4-turbo">GPT-4 Turbo</SelectItem>
+                      <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo (Fast)</SelectItem>
+                    </>
+                  )}
+                  {config.aiProvider === 'grok' && (
+                    <>
+                      <SelectItem value="grok-beta">Grok Beta</SelectItem>
+                      <SelectItem value="grok-vision-beta">Grok Vision Beta</SelectItem>
+                    </>
+                  )}
+                  {(!config.aiProvider || config.aiProvider === 'perplexity') && (
+                    <>
+                      <SelectItem value="llama-3.1-sonar-small-128k-online">Sonar Small (Fastest)</SelectItem>
+                      <SelectItem value="llama-3.1-sonar-large-128k-online">Sonar Large (Balanced)</SelectItem>
+                      <SelectItem value="llama-3.1-sonar-huge-128k-online">Sonar Huge (Most Capable)</SelectItem>
+                    </>
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -1489,6 +1547,83 @@ const WidgetGenerator: React.FC = () => {
           </div>
         );
 
+      case 'google-maps':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="targetLocation" className="text-sm font-medium">Location Address</Label>
+              <Input
+                id="targetLocation"
+                value={config.targetLocation}
+                onChange={(e) => handleConfigChange('targetLocation', e.target.value)}
+                placeholder="New York, USA or 1600 Amphitheatre Parkway"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="mapApiKey" className="text-sm font-medium">Google Maps API Key</Label>
+              <Input
+                id="mapApiKey"
+                type="password"
+                value={config.mapApiKey || ''}
+                onChange={(e) => handleConfigChange('mapApiKey', e.target.value)}
+                placeholder="Enter your Google Maps API key"
+                className="text-base"
+              />
+              <p className="text-xs text-muted-foreground">
+                Get your API key from <a href="https://console.cloud.google.com/apis/credentials" target="_blank" className="text-primary hover:underline">Google Cloud Console</a>
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="mapZoom" className="text-sm font-medium">Zoom Level</Label>
+              <Select
+                value={String(config.mapZoom || 14)}
+                onValueChange={(value) => handleConfigChange('mapZoom', parseInt(value))}
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">City View (10)</SelectItem>
+                  <SelectItem value="12">Neighborhood (12)</SelectItem>
+                  <SelectItem value="14">Street Level (14)</SelectItem>
+                  <SelectItem value="16">Close Up (16)</SelectItem>
+                  <SelectItem value="18">Building (18)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </>
+        );
+
+      case 'google-reviews':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="businessName" className="text-sm font-medium">Business Name</Label>
+              <Input
+                id="businessName"
+                value={config.businessName}
+                onChange={(e) => handleConfigChange('businessName', e.target.value)}
+                placeholder="Your Business Name"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reviewUrl" className="text-sm font-medium">Google Review URL</Label>
+              <Input
+                id="reviewUrl"
+                value={config.reviewUrl}
+                onChange={(e) => handleConfigChange('reviewUrl', e.target.value)}
+                placeholder="https://g.page/r/your-business/review"
+                className="text-base"
+              />
+              <p className="text-xs text-muted-foreground">
+                Where users can leave new reviews for your business
+              </p>
+            </div>
+          </>
+        );
+
       default:
         return (
           <div className="space-y-2">
@@ -1650,6 +1785,8 @@ const WidgetGenerator: React.FC = () => {
                       <SelectItem value="flash-sale-banner">Flash Sale Banner</SelectItem>
                       <SelectItem value="seasonal-greeting">Seasonal Greeting Widget</SelectItem>
                       <SelectItem value="black-friday-timer">Black Friday Timer</SelectItem>
+                      <SelectItem value="google-maps">Google Maps Embed</SelectItem>
+                      <SelectItem value="google-reviews">Google Reviews Testimonials</SelectItem>
                    </SelectContent>
                 </Select>
               </div>
