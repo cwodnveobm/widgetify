@@ -10,8 +10,9 @@ import {
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { Check, Sparkles, Lock } from "lucide-react";
+import { Check, Sparkles, Lock, Zap } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SubscriptionModalProps {
   open: boolean;
@@ -25,6 +26,7 @@ export const SubscriptionModal = ({ open, onClose, user }: SubscriptionModalProp
   const [otpCode, setOtpCode] = useState("");
   const [otpVerified, setOtpVerified] = useState(false);
   const [otpError, setOtpError] = useState(false);
+  const [activating, setActivating] = useState(false);
 
   const handleVerifyOtp = () => {
     if (otpCode === ACCESS_OTP_CODE) {
@@ -34,6 +36,50 @@ export const SubscriptionModal = ({ open, onClose, user }: SubscriptionModalProp
     } else {
       setOtpError(true);
       toast.error("Invalid access code. Please try again.");
+    }
+  };
+
+  const handleActivatePremium = async () => {
+    if (!user) {
+      toast.error("Please sign in to activate premium");
+      return;
+    }
+
+    if (!otpVerified) {
+      toast.error("Please verify the access code first");
+      return;
+    }
+
+    setActivating(true);
+
+    try {
+      // Create a premium subscription directly
+      const endDate = new Date();
+      endDate.setFullYear(endDate.getFullYear() + 1); // 1 year subscription
+
+      const { error } = await supabase
+        .from('subscriptions')
+        .insert({
+          user_id: user.id,
+          status: 'active',
+          plan_type: 'premium',
+          amount: 19900,
+          currency: 'INR',
+          start_date: new Date().toISOString(),
+          end_date: endDate.toISOString(),
+        });
+
+      if (error) throw error;
+
+      toast.success("Premium activated successfully! 🎉");
+      
+      // Reload to refresh subscription status
+      window.location.reload();
+    } catch (error: any) {
+      console.error('Error activating premium:', error);
+      toast.error(error.message || "Failed to activate premium. Please try again.");
+    } finally {
+      setActivating(false);
     }
   };
 
@@ -114,6 +160,10 @@ export const SubscriptionModal = ({ open, onClose, user }: SubscriptionModalProp
               <Check className="w-5 h-5 text-primary mt-0.5" />
               <span>Remove Widgetify branding</span>
             </div>
+            <div className="flex items-start gap-2">
+              <Check className="w-5 h-5 text-primary mt-0.5" />
+              <span>Download widget code</span>
+            </div>
           </div>
 
           {/* OTP Verification Section */}
@@ -147,18 +197,41 @@ export const SubscriptionModal = ({ open, onClose, user }: SubscriptionModalProp
               <p className="text-xs text-red-500">Invalid access code. Please try again.</p>
             )}
             {otpVerified && (
-              <p className="text-xs text-green-600">Access code verified. You can now proceed to payment.</p>
+              <p className="text-xs text-green-600">Access code verified. You can now proceed.</p>
             )}
           </div>
 
-          <Button 
-            onClick={handleSubscribe}
-            className="w-full"
-            size="lg"
-            disabled={!otpVerified}
-          >
-            {otpVerified ? "Subscribe Now" : "Verify Code to Continue"}
-          </Button>
+          {/* Action Buttons */}
+          <div className="space-y-3 pt-2">
+            <Button 
+              onClick={handleActivatePremium}
+              className="w-full"
+              size="lg"
+              disabled={!otpVerified || activating}
+            >
+              <Zap className="w-4 h-4 mr-2" />
+              {activating ? "Activating..." : "Activate Premium Now"}
+            </Button>
+            
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">or pay via</span>
+              </div>
+            </div>
+
+            <Button 
+              onClick={handleSubscribe}
+              variant="outline"
+              className="w-full"
+              size="lg"
+              disabled={!otpVerified}
+            >
+              Pay with Razorpay
+            </Button>
+          </div>
 
           <p className="text-xs text-center text-muted-foreground">
             Secure payment powered by Razorpay
