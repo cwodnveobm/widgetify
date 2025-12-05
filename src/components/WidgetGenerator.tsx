@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { generateWidgetCode, WidgetConfig } from '@/lib/widgetUtils';
 import { generateCodeByFormat, getFileExtension, getMimeType, type ExportFormat } from '@/lib/codeGenerators';
 import WidgetPreview from './WidgetPreview';
-import { Download, Eye, EyeOff, Sparkles, Crown, Smartphone, Star } from 'lucide-react';
+import { Download, Eye, EyeOff, Sparkles, Crown, Smartphone, Star, Radio } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/hooks/useAuth';
@@ -1934,16 +1934,20 @@ const WidgetGenerator: React.FC = () => {
                 <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                   <Smartphone size={20} className="md:hidden" />
                   Live Preview
+                  <span className="inline-flex items-center gap-1.5 ml-2 px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded-full animate-pulse">
+                    <Radio size={10} className="animate-pulse" />
+                    Live
+                  </span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="bg-gray-50 rounded-lg p-4 min-h-[300px] md:min-h-[400px] relative">
-                  <WidgetPreview 
-                    config={{
-                      ...config,
-                      isPremium: selectedTier === 'premium' && isPremiumUnlocked
-                    }} 
-                  />
+                <div className="bg-gray-50 rounded-lg p-4 min-h-[300px] md:min-h-[400px] relative overflow-hidden">
+                  <div 
+                    key={JSON.stringify(finalConfig)}
+                    className="animate-fade-in w-full h-full"
+                  >
+                    <WidgetPreview config={finalConfig} />
+                  </div>
                 </div>
                 
                 {/* Mobile-Optimized Tier Info */}
@@ -1963,6 +1967,9 @@ const WidgetGenerator: React.FC = () => {
                       <span className="text-xs text-gray-500">Includes watermark</span>
                     )}
                   </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    Preview updates instantly as you change settings
+                  </p>
                 </div>
               </CardContent>
             </Card>
