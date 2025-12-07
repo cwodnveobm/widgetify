@@ -1857,7 +1857,14 @@ const WidgetGenerator: React.FC = () => {
 
                 {/* Remove Branding Option */}
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border">
+                  <div 
+                    className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border cursor-pointer hover:bg-muted/70 transition-colors"
+                    onClick={() => {
+                      if (!hasSubscription && !brandingUnlockedViaFollow) {
+                        setShowFollowModal(true);
+                      }
+                    }}
+                  >
                     <div className="flex items-center gap-2">
                       <Label htmlFor="removeBranding" className="text-sm font-medium cursor-pointer">
                         Remove Widgetify Branding
@@ -1876,7 +1883,6 @@ const WidgetGenerator: React.FC = () => {
                           handleConfigChange('removeBranding', checked);
                         }
                       }}
-                      disabled={!hasSubscription && !brandingUnlockedViaFollow}
                     />
                   </div>
                   {!hasSubscription && !brandingUnlockedViaFollow && (
