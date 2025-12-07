@@ -17,6 +17,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useFavoriteWidgets } from '@/hooks/useFavoriteWidgets';
 import { AuthModal } from './AuthModal';
 import { SubscriptionModal } from './SubscriptionModal';
+import { FollowToUnlockModal } from './FollowToUnlockModal';
 import type { WidgetType, WidgetSize } from '@/types';
 
 const WidgetGenerator: React.FC = () => {
@@ -31,6 +32,10 @@ const WidgetGenerator: React.FC = () => {
   const [exportFormat, setExportFormat] = useState<ExportFormat>('html');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  const [showFollowModal, setShowFollowModal] = useState(false);
+  const [brandingUnlockedViaFollow, setBrandingUnlockedViaFollow] = useState(() => {
+    return localStorage.getItem("widgetify_branding_unlocked") === "true";
+  });
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signup');
 
   const [config, setConfig] = useState<WidgetConfig>({
@@ -1850,14 +1855,14 @@ const WidgetGenerator: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Remove Branding Option (Premium) */}
+                {/* Remove Branding Option */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border">
                     <div className="flex items-center gap-2">
                       <Label htmlFor="removeBranding" className="text-sm font-medium cursor-pointer">
                         Remove Widgetify Branding
                       </Label>
-                      {hasSubscription && (
+                      {(hasSubscription || brandingUnlockedViaFollow) && (
                         <Crown className="w-4 h-4 text-primary" />
                       )}
                     </div>
@@ -1865,22 +1870,18 @@ const WidgetGenerator: React.FC = () => {
                       id="removeBranding"
                       checked={config.removeBranding || false}
                       onCheckedChange={(checked) => {
-                        if (!hasSubscription) {
-                          toast({
-                            title: "Premium Feature",
-                            description: "Subscribe to remove branding from widgets.",
-                          });
-                          setShowSubscriptionModal(true);
+                        if (!hasSubscription && !brandingUnlockedViaFollow) {
+                          setShowFollowModal(true);
                         } else {
                           handleConfigChange('removeBranding', checked);
                         }
                       }}
-                      disabled={!hasSubscription}
+                      disabled={!hasSubscription && !brandingUnlockedViaFollow}
                     />
                   </div>
-                  {!hasSubscription && (
+                  {!hasSubscription && !brandingUnlockedViaFollow && (
                     <p className="text-xs text-muted-foreground px-1">
-                      Upgrade to premium to remove the "Powered by Widgetify" branding
+                      Follow our Instagram accounts to unlock branding removal for free!
                     </p>
                   )}
                 </div>
@@ -2001,6 +2002,14 @@ const WidgetGenerator: React.FC = () => {
         open={showSubscriptionModal}
         onClose={() => setShowSubscriptionModal(false)}
         user={user}
+      />
+      <FollowToUnlockModal
+        open={showFollowModal}
+        onClose={() => setShowFollowModal(false)}
+        onUnlock={() => {
+          setBrandingUnlockedViaFollow(true);
+          handleConfigChange('removeBranding', true);
+        }}
       />
     </section>
   );
