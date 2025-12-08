@@ -95,41 +95,42 @@ const Integrations = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       <Navigation onAuthModalOpen={openAuthModal} />
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto container-padding py-6 sm:py-8 md:py-12">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <div className="text-center mb-8 sm:mb-10 md:mb-12">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent px-2">
               No-Code Platform Integrations
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
               Seamlessly connect Widgetify with popular website builders. Follow our step-by-step guides to add widgets to your site.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
             {integrations.map((integration) => (
-              <Card key={integration.id} className="p-6 hover:shadow-lg transition-shadow">
-                <div className="flex items-center gap-4 mb-4">
+              <Card key={integration.id} className="p-4 sm:p-5 md:p-6 hover:shadow-lg transition-shadow">
+                <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
                   <img 
                     src={integration.logo} 
                     alt={`${integration.name} logo`}
-                    className="w-12 h-12 object-contain"
+                    className="w-10 h-10 sm:w-12 sm:h-12 object-contain flex-shrink-0"
+                    loading="lazy"
                   />
                   <div>
-                    <h3 className="text-xl font-semibold">{integration.name}</h3>
+                    <h3 className="text-lg sm:text-xl font-semibold">{integration.name}</h3>
                   </div>
                 </div>
 
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
                   {integration.description}
                 </p>
 
-                <div className="space-y-3 mb-4">
-                  <h4 className="font-medium text-sm">Quick Setup:</h4>
-                  <ol className="space-y-2 text-sm">
+                <div className="space-y-2 sm:space-y-3 mb-4">
+                  <h4 className="font-medium text-xs sm:text-sm">Quick Setup:</h4>
+                  <ol className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
                     {integration.instructions.map((step, idx) => (
                       <li key={idx} className="flex gap-2">
-                        <span className="font-medium text-primary">{idx + 1}.</span>
+                        <span className="font-medium text-primary flex-shrink-0">{idx + 1}.</span>
                         <span className="text-muted-foreground">{step}</span>
                       </li>
                     ))}
@@ -138,26 +139,26 @@ const Integrations = () => {
 
                 <Button 
                   variant="outline" 
-                  className="w-full"
+                  className="w-full min-h-[44px] text-sm"
                   onClick={() => window.open(integration.docUrl, '_blank')}
                 >
-                  <ExternalLink className="w-4 h-4 mr-2" />
+                  <ExternalLink className="w-4 h-4 mr-2 flex-shrink-0" />
                   View Official Docs
                 </Button>
               </Card>
             ))}
           </div>
 
-          <Card className="mt-12 p-8 bg-gradient-to-r from-primary/10 to-secondary/10">
-            <h2 className="text-2xl font-bold mb-4">Universal Embed Code</h2>
-            <p className="text-muted-foreground mb-6">
+          <Card className="mt-8 sm:mt-10 md:mt-12 p-4 sm:p-6 md:p-8 bg-gradient-to-r from-primary/10 to-secondary/10">
+            <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Universal Embed Code</h2>
+            <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
               Use this code snippet structure for any platform that supports custom HTML:
             </p>
-            <div className="bg-background/50 p-4 rounded-lg font-mono text-sm relative">
+            <div className="bg-background/50 p-3 sm:p-4 rounded-lg font-mono text-xs sm:text-sm relative">
               <Button
                 size="sm"
                 variant="ghost"
-                className="absolute top-2 right-2"
+                className="absolute top-2 right-2 min-h-[36px] min-w-[36px]"
                 onClick={() => handleCopy(
                   `<!-- Widgetify Widget -->\n<div id="widgetify-container"></div>\n<script>\n  // Your widget code here\n</script>`,
                   'universal'
@@ -169,7 +170,7 @@ const Integrations = () => {
                   <Copy className="w-4 h-4" />
                 )}
               </Button>
-              <pre className="text-xs overflow-x-auto">
+              <pre className="text-xs overflow-x-auto scrollbar-hide pr-10">
 {`<!-- Widgetify Widget -->
 <div id="widgetify-container"></div>
 <script>

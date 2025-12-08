@@ -375,12 +375,12 @@ ${logoHtml}  <h3 style="color: ${widgetConfig.textColor}; margin: 0 0 8px 0; fon
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5">
         <Navigation onAuthModalOpen={openAuthModal} />
         <div className="flex-1 flex items-center justify-center p-4">
-          <Card className="p-8 max-w-md text-center">
-            <h2 className="text-2xl font-bold mb-4">Sign In Required</h2>
-            <p className="text-muted-foreground mb-6">
+          <Card className="p-6 sm:p-8 max-w-md text-center mx-4">
+            <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">Sign In Required</h2>
+            <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">
               Please sign in to access the Custom Widget Builder and manage your widgets.
             </p>
-            <Button onClick={() => openAuthModal('signin')} className="w-full">
+            <Button onClick={() => openAuthModal('signin')} className="w-full min-h-[48px]">
               Sign In
             </Button>
           </Card>
@@ -394,29 +394,29 @@ ${logoHtml}  <h3 style="color: ${widgetConfig.textColor}; margin: 0 0 8px 0; fon
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5">
       <Navigation onAuthModalOpen={openAuthModal} />
-      <div className="flex-1 container mx-auto px-4 py-12">
+      <div className="flex-1 container mx-auto container-padding py-6 sm:py-8 md:py-12">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <div className="text-center mb-6 sm:mb-8 md:mb-12">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent px-2">
               Custom Widget Builder
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
               Create unique widgets with custom logos and styling. Save and manage all your widgets in one place.
             </p>
           </div>
 
-          <Tabs defaultValue="builder" className="space-y-8">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
-              <TabsTrigger value="builder">Builder</TabsTrigger>
-              <TabsTrigger value="saved">My Widgets ({savedWidgets.length})</TabsTrigger>
+          <Tabs defaultValue="builder" className="space-y-6 sm:space-y-8">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 h-12">
+              <TabsTrigger value="builder" className="text-sm sm:text-base">Builder</TabsTrigger>
+              <TabsTrigger value="saved" className="text-sm sm:text-base">My Widgets ({savedWidgets.length})</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="builder" className="space-y-8">
-              <div className="grid lg:grid-cols-2 gap-8">
+            <TabsContent value="builder" className="space-y-6 sm:space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
                 {/* Configuration Panel */}
-                <Card className="p-6">
-                  <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
-                    <Layout className="w-6 h-6" />
+                <Card className="p-4 sm:p-5 md:p-6">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-4 sm:mb-6 flex items-center gap-2">
+                    <Layout className="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" />
                     Widget Configuration
                   </h2>
 
