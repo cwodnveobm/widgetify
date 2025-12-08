@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 import PromoPopup from '@/components/PromoPopup';
 import StoreLinkAd from '@/components/StoreLinkAd';
 import MobileNavigation from '@/components/MobileNavigation';
+import BottomNavigation from '@/components/BottomNavigation';
 import { PricingSection } from '@/components/PricingSection';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -110,7 +111,7 @@ const Index: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background pb-16 md:pb-0">
       {/* Network Status Indicator */}
       {!isOnline && (
         <div className="bg-destructive text-destructive-foreground text-center py-2 px-4 text-sm flex items-center justify-center gap-2 sticky top-0 z-50">
@@ -274,6 +275,9 @@ const Index: React.FC = () => {
       
       {/* Store.link Advertisement */}
       <StoreLinkAd />
+      
+      {/* Bottom Navigation for Mobile */}
+      <BottomNavigation />
       
       {/* Auth Modal */}
       <AuthModal 
