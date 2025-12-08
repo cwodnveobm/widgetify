@@ -105,20 +105,20 @@ export const AuthModal = ({ open, onClose, mode = "signin" }: AuthModalProps) =>
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>{isSignIn ? "Sign In" : "Create Account"}</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="w-[calc(100%-2rem)] max-w-md mx-auto p-4 sm:p-6 rounded-xl">
+        <DialogHeader className="space-y-2">
+          <DialogTitle className="text-xl sm:text-2xl">{isSignIn ? "Sign In" : "Create Account"}</DialogTitle>
+          <DialogDescription className="text-sm sm:text-base">
             {isSignIn
               ? "Sign in to access your premium features"
               : "Create an account to get started"}
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
           {!isSignIn && (
             <div className="space-y-2">
-              <Label htmlFor="fullName">Full Name</Label>
+              <Label htmlFor="fullName" className="text-sm font-medium">Full Name</Label>
               <Input
                 id="fullName"
                 type="text"
@@ -126,12 +126,13 @@ export const AuthModal = ({ open, onClose, mode = "signin" }: AuthModalProps) =>
                 onChange={(e) => setFullName(e.target.value)}
                 required
                 placeholder="John Doe"
+                className="min-h-[48px] text-base"
               />
             </div>
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className="text-sm font-medium">Email</Label>
             <Input
               id="email"
               type="email"
@@ -139,11 +140,12 @@ export const AuthModal = ({ open, onClose, mode = "signin" }: AuthModalProps) =>
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="you@example.com"
+              className="min-h-[48px] text-base"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-sm font-medium">Password</Label>
             <Input
               id="password"
               type="password"
@@ -151,18 +153,19 @@ export const AuthModal = ({ open, onClose, mode = "signin" }: AuthModalProps) =>
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="••••••••"
+              className="min-h-[48px] text-base"
             />
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full min-h-[48px] text-base font-medium" disabled={loading}>
             {loading ? "Loading..." : isSignIn ? "Sign In" : "Create Account"}
           </Button>
 
-          <div className="text-center">
+          <div className="text-center pt-2">
             <button
               type="button"
               onClick={() => setIsSignIn(!isSignIn)}
-              className="text-sm text-primary hover:underline"
+              className="text-sm text-primary hover:underline min-h-[44px] px-4"
             >
               {isSignIn
                 ? "Don't have an account? Sign up"

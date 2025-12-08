@@ -67,13 +67,13 @@ export const FollowToUnlockModal = ({ open, onClose, onUnlock }: FollowToUnlockM
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Instagram className="w-5 h-5 text-pink-500" />
-            Remove Branding for Free
+      <DialogContent className="w-[calc(100%-2rem)] max-w-md mx-auto p-4 sm:p-6 rounded-xl">
+        <DialogHeader className="space-y-2">
+          <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
+            <Instagram className="w-5 h-5 text-pink-500 flex-shrink-0" />
+            <span>Remove Branding for Free</span>
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-sm">
             Follow our Instagram accounts to unlock branding removal
           </DialogDescription>
         </DialogHeader>
@@ -87,13 +87,13 @@ export const FollowToUnlockModal = ({ open, onClose, onUnlock }: FollowToUnlockM
             {INSTAGRAM_ACCOUNTS.map((account) => (
               <div
                 key={account.id}
-                className="flex items-center justify-between p-3 rounded-lg border bg-card"
+                className="flex items-center justify-between p-3 sm:p-4 rounded-lg border bg-card gap-3"
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center">
-                    <Instagram className="w-5 h-5 text-white" />
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-purple-500 via-pink-500 to-orange-500 flex items-center justify-center flex-shrink-0">
+                    <Instagram className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                   </div>
-                  <span className="font-medium">{account.name}</span>
+                  <span className="font-medium text-sm sm:text-base truncate">{account.name}</span>
                 </div>
                 
                 <Button
@@ -101,16 +101,17 @@ export const FollowToUnlockModal = ({ open, onClose, onUnlock }: FollowToUnlockM
                   size="sm"
                   onClick={() => handleFollowClick(account)}
                   disabled={followedAccounts[account.id]}
+                  className="min-h-[40px] flex-shrink-0"
                 >
                   {followedAccounts[account.id] ? (
                     <>
                       <Check className="w-4 h-4 mr-1" />
-                      Followed
+                      <span className="hidden sm:inline">Followed</span>
                     </>
                   ) : (
                     <>
-                      <ExternalLink className="w-4 h-4 mr-1" />
-                      Follow
+                      <ExternalLink className="w-4 h-4 sm:mr-1" />
+                      <span className="hidden sm:inline">Follow</span>
                     </>
                   )}
                 </Button>
@@ -120,14 +121,14 @@ export const FollowToUnlockModal = ({ open, onClose, onUnlock }: FollowToUnlockM
 
           <Button
             onClick={handleUnlock}
-            className="w-full"
+            className="w-full min-h-[48px] text-sm sm:text-base"
             size="lg"
             disabled={!allFollowed}
           >
-            {allFollowed ? "Unlock Branding Removal" : "Follow Both Accounts to Unlock"}
+            {allFollowed ? "Unlock Branding Removal" : "Follow Both to Unlock"}
           </Button>
 
-          <p className="text-xs text-center text-muted-foreground">
+          <p className="text-xs text-center text-muted-foreground px-4">
             By unlocking, you confirm you've followed both accounts
           </p>
         </div>
