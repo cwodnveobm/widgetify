@@ -5,15 +5,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Download, Eye, Palette, Type, Layout, Upload, Save, Trash2, Edit, Plus, Image as ImageIcon } from "lucide-react";
+import { 
+  Download, Eye, Palette, Type, Layout, Upload, Save, Trash2, Edit, Plus, 
+  Image as ImageIcon, Zap, Sparkles, Mail, Bell, Tag, Calendar, MessageCircle,
+  HelpCircle, Heart, Share2, Inbox, Rocket, MessageSquare, Star, FileDown,
+  LayoutTemplate, Check
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthModal } from "@/components/AuthModal";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Navigation } from "@/components/Navigation";
 import Footer from "@/components/Footer";
-
+import BottomNavigation from "@/components/BottomNavigation";
+import { widgetTemplates, templateCategories, WidgetTemplate } from "@/data/widgetTemplates";
 interface CustomWidget {
   id: string;
   name: string;
@@ -32,6 +39,82 @@ interface CustomWidget {
   button_action: string | null;
 }
 
+// Icon mapping for templates
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Zap, Sparkles, Mail, Bell, Tag, Calendar, MessageCircle, HelpCircle, 
+  Heart, Share2, Inbox, Rocket, MessageSquare, Star, Download, FileDown
+};
+
+// Template Card Component
+const TemplateCard = ({ 
+  template, 
+  onSelect 
+}: { 
+  template: WidgetTemplate; 
+  onSelect: (template: WidgetTemplate) => void;
+}) => {
+  const IconComponent = iconMap[template.icon] || Zap;
+  
+  return (
+    <Card 
+      className="group p-4 hover:shadow-lg transition-all duration-300 cursor-pointer border-2 hover:border-primary/50"
+      onClick={() => onSelect(template)}
+    >
+      {/* Mini Preview */}
+      <div 
+        className="mb-4 p-3 rounded-lg min-h-[100px] flex flex-col justify-center"
+        style={{
+          background: template.preview.backgroundColor,
+          boxShadow: template.preview.shadow,
+          borderRadius: template.preview.borderRadius,
+        }}
+      >
+        <h4 
+          className="text-xs font-semibold mb-1 line-clamp-1"
+          style={{ color: template.preview.textColor }}
+        >
+          {template.preview.title}
+        </h4>
+        <p 
+          className="text-[10px] mb-2 line-clamp-2 opacity-70"
+          style={{ color: template.preview.textColor }}
+        >
+          {template.preview.description}
+        </p>
+        <div 
+          className="text-[9px] py-1 px-2 rounded text-center text-white font-medium"
+          style={{ backgroundColor: template.preview.buttonColor }}
+        >
+          {template.preview.buttonText}
+        </div>
+      </div>
+
+      {/* Template Info */}
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <IconComponent className="w-4 h-4 text-primary flex-shrink-0" />
+            <h3 className="font-semibold text-sm truncate">{template.name}</h3>
+          </div>
+          <Badge variant="secondary" className="text-xs">
+            {template.category}
+          </Badge>
+        </div>
+        <Button 
+          size="sm" 
+          variant="ghost"
+          className="opacity-0 group-hover:opacity-100 transition-opacity min-h-[32px]"
+        >
+          <Check className="w-4 h-4" />
+        </Button>
+      </div>
+      <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
+        {template.description}
+      </p>
+    </Card>
+  );
+};
+
 const CustomBuilder = () => {
   const { user, loading } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -39,6 +122,7 @@ const CustomBuilder = () => {
   const [savedWidgets, setSavedWidgets] = useState<CustomWidget[]>([]);
   const [editingWidget, setEditingWidget] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const openAuthModal = (mode: 'signin' | 'signup') => {
@@ -372,7 +456,7 @@ ${logoHtml}  <h3 style="color: ${widgetConfig.textColor}; margin: 0 0 8px 0; fon
 
   if (!user) {
     return (
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5 pb-16 md:pb-0">
         <Navigation onAuthModalOpen={openAuthModal} />
         <div className="flex-1 flex items-center justify-center p-4">
           <Card className="p-6 sm:p-8 max-w-md text-center mx-4">
@@ -386,13 +470,14 @@ ${logoHtml}  <h3 style="color: ${widgetConfig.textColor}; margin: 0 0 8px 0; fon
           </Card>
         </div>
         <Footer />
+        <BottomNavigation />
         <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} mode={authMode} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5 pb-16 md:pb-0">
       <Navigation onAuthModalOpen={openAuthModal} />
       <div className="flex-1 container mx-auto container-padding py-6 sm:py-8 md:py-12">
         <div className="max-w-7xl mx-auto">
@@ -405,11 +490,70 @@ ${logoHtml}  <h3 style="color: ${widgetConfig.textColor}; margin: 0 0 8px 0; fon
             </p>
           </div>
 
-          <Tabs defaultValue="builder" className="space-y-6 sm:space-y-8">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 h-12">
-              <TabsTrigger value="builder" className="text-sm sm:text-base">Builder</TabsTrigger>
-              <TabsTrigger value="saved" className="text-sm sm:text-base">My Widgets ({savedWidgets.length})</TabsTrigger>
+          <Tabs defaultValue="templates" className="space-y-6 sm:space-y-8">
+            <TabsList className="grid w-full max-w-lg mx-auto grid-cols-3 h-12">
+              <TabsTrigger value="templates" className="text-sm sm:text-base flex items-center gap-1.5">
+                <LayoutTemplate className="w-4 h-4" />
+                <span className="hidden sm:inline">Templates</span>
+              </TabsTrigger>
+              <TabsTrigger value="builder" className="text-sm sm:text-base flex items-center gap-1.5">
+                <Palette className="w-4 h-4" />
+                <span className="hidden sm:inline">Builder</span>
+              </TabsTrigger>
+              <TabsTrigger value="saved" className="text-sm sm:text-base flex items-center gap-1.5">
+                <Save className="w-4 h-4" />
+                <span className="hidden sm:inline">Saved</span>
+                <Badge variant="secondary" className="ml-1 text-xs">{savedWidgets.length}</Badge>
+              </TabsTrigger>
             </TabsList>
+
+            {/* Templates Tab */}
+            <TabsContent value="templates" className="space-y-6">
+              {/* Category Filter */}
+              <div className="flex flex-wrap gap-2 justify-center">
+                {templateCategories.map((category) => (
+                  <Button
+                    key={category}
+                    variant={selectedCategory === category ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedCategory(category)}
+                    className="min-h-[36px]"
+                  >
+                    {category}
+                  </Button>
+                ))}
+              </div>
+
+              {/* Templates Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {widgetTemplates
+                  .filter(template => selectedCategory === "All" || template.category === selectedCategory)
+                  .map((template) => (
+                    <TemplateCard 
+                      key={template.id} 
+                      template={template} 
+                      onSelect={(template) => {
+                        setWidgetConfig({
+                          ...widgetConfig,
+                          name: template.name,
+                          title: template.preview.title,
+                          description: template.preview.description,
+                          buttonText: template.preview.buttonText,
+                          buttonColor: template.preview.buttonColor,
+                          textColor: template.preview.textColor,
+                          backgroundColor: template.preview.backgroundColor.startsWith('linear') 
+                            ? '#ffffff' 
+                            : template.preview.backgroundColor,
+                          borderRadius: template.preview.borderRadius,
+                          shadow: template.preview.shadow,
+                        });
+                        toast.success(`Template "${template.name}" applied!`);
+                      }}
+                    />
+                  ))}
+              </div>
+            </TabsContent>
+
 
             <TabsContent value="builder" className="space-y-6 sm:space-y-8">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
@@ -783,6 +927,7 @@ ${logoHtml}  <h3 style="color: ${widgetConfig.textColor}; margin: 0 0 8px 0; fon
       </div>
 
       <Footer />
+      <BottomNavigation />
       <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} mode={authMode} />
     </div>
   );
