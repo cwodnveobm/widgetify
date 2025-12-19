@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Navigation } from "@/components/Navigation";
 import { AuthModal } from "@/components/AuthModal";
+import BottomNavigation from "@/components/BottomNavigation";
 import Footer from "@/components/Footer";
 
 const Integrations = () => {
@@ -93,7 +94,7 @@ const Integrations = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5 pb-16 md:pb-0">
       <Navigation onAuthModalOpen={openAuthModal} />
       <div className="container mx-auto container-padding py-6 sm:py-8 md:py-12">
         <div className="max-w-6xl mx-auto">
@@ -181,8 +182,8 @@ const Integrations = () => {
           </Card>
         </div>
       </div>
-      
       <Footer />
+      <BottomNavigation />
       
       <AuthModal 
         open={showAuthModal}
