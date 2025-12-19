@@ -10,6 +10,7 @@ import PromoPopup from '@/components/PromoPopup';
 import StoreLinkAd from '@/components/StoreLinkAd';
 import MobileNavigation from '@/components/MobileNavigation';
 import BottomNavigation from '@/components/BottomNavigation';
+import FloatingActionButton from '@/components/FloatingActionButton';
 import { PricingSection } from '@/components/PricingSection';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -276,7 +277,8 @@ const Index: React.FC = () => {
       {/* Store.link Advertisement */}
       <StoreLinkAd />
       
-      {/* Bottom Navigation for Mobile */}
+      {/* Mobile Navigation Components */}
+      <FloatingActionButton />
       <BottomNavigation />
       
       {/* Auth Modal */}
