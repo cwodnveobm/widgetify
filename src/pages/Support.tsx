@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { LifeBuoy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Navigation } from '@/components/Navigation';
 import { AuthModal } from '@/components/AuthModal';
 import Footer from '@/components/Footer';
+import BottomNavigation from '@/components/BottomNavigation';
+
 const Support: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
@@ -15,7 +16,7 @@ const Support: React.FC = () => {
     setShowAuthModal(true);
   };
 
-  return <div className="min-h-screen flex flex-col">
+  return <div className="min-h-screen flex flex-col pb-16 md:pb-0">
       <Navigation onAuthModalOpen={openAuthModal} />
       
       <main className="flex-grow container mx-auto container-padding py-6 sm:py-8 md:py-12">
@@ -98,6 +99,7 @@ const Support: React.FC = () => {
       </main>
 
       <Footer />
+      <BottomNavigation />
       <AuthModal open={showAuthModal} onClose={() => setShowAuthModal(false)} mode={authMode} />
     </div>;
 };

@@ -8,11 +8,11 @@ const FloatingActionButton = () => {
 
   const handleClick = () => {
     if (location.pathname === "/") {
-      document.getElementById("generate")?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById("widget-generator")?.scrollIntoView({ behavior: "smooth" });
     } else {
       navigate("/");
       setTimeout(() => {
-        document.getElementById("generate")?.scrollIntoView({ behavior: "smooth" });
+        document.getElementById("widget-generator")?.scrollIntoView({ behavior: "smooth" });
       }, 100);
     }
   };

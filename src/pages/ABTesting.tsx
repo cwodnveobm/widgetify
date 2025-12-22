@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Navigation } from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import BottomNavigation from '@/components/BottomNavigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Play, Pause, Trash2, BarChart3, Edit } from 'lucide-react';
@@ -70,14 +71,14 @@ const ABTesting: React.FC = () => {
 
   if (showAnalytics) {
     return (
-      <>
+      <div className="min-h-screen flex flex-col bg-background pb-16 md:pb-0">
         <Navigation onAuthModalOpen={() => setShowAuthModal(true)} />
-        <div className="min-h-screen bg-background">
-          <div className="container mx-auto py-8 px-4">
+        <div className="flex-1">
+          <div className="container mx-auto container-padding py-6 sm:py-8">
             <Button
               variant="outline"
               onClick={() => setShowAnalytics(null)}
-              className="mb-6"
+              className="mb-4 sm:mb-6 min-h-[44px]"
             >
               ← Back to Tests
             </Button>
@@ -85,23 +86,24 @@ const ABTesting: React.FC = () => {
           </div>
         </div>
         <Footer />
-      </>
+        <BottomNavigation />
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="min-h-screen flex flex-col bg-background pb-16 md:pb-0">
       <Navigation onAuthModalOpen={() => setShowAuthModal(true)} />
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto py-8 px-4">
-          <div className="flex justify-between items-center mb-8">
+      <div className="flex-1">
+        <div className="container mx-auto container-padding py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
             <div>
-              <h1 className="text-4xl font-bold gradient-text mb-2">A/B Testing</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold gradient-text mb-2">A/B Testing</h1>
+              <p className="text-sm sm:text-base text-muted-foreground">
                 Test widget variations and optimize for better performance
               </p>
             </div>
-            <Button onClick={handleCreateTest} size="lg">
+            <Button onClick={handleCreateTest} size="lg" className="min-h-[48px] w-full sm:w-auto">
               <Plus className="w-4 h-4 mr-2" />
               Create Test
             </Button>
@@ -126,9 +128,9 @@ const ABTesting: React.FC = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {tests.map((test) => (
-                <Card key={test.id} className="hover:shadow-lg transition-shadow">
+                <Card key={test.id} className="hover:shadow-lg transition-shadow card-mobile">
                   <CardHeader>
                     <div className="flex justify-between items-start mb-2">
                       <CardTitle className="text-xl">{test.name}</CardTitle>
@@ -192,6 +194,7 @@ const ABTesting: React.FC = () => {
         </div>
       </div>
       <Footer />
+      <BottomNavigation />
 
       <AuthModal
         open={showAuthModal}
@@ -227,7 +230,7 @@ const ABTesting: React.FC = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </div>
   );
 };
 
