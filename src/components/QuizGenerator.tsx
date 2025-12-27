@@ -352,51 +352,51 @@ export const QuizGenerator = () => {
   return (
     <section className="section-spacing container-padding">
       <div className="container mx-auto">
-        <div className="text-center mb-8 md:mb-12">
-          <Badge variant="secondary" className="mb-4">
-            <ClipboardCheck className="w-4 h-4 mr-2" />
+        <div className="text-center mb-6 sm:mb-8 md:mb-12">
+          <Badge variant="secondary" className="mb-3 sm:mb-4 text-xs sm:text-sm">
+            <ClipboardCheck className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
             Lead Magnet Quiz Generator
           </Badge>
-          <h2 className="heading-responsive mb-4">
+          <h2 className="heading-responsive mb-3 sm:mb-4 px-2">
             Create <span className="gradient-text">Interactive Quizzes</span>
           </h2>
-          <p className="text-muted-foreground subheading-responsive max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto px-4">
             Generate engaging quizzes that capture leads and provide personalized recommendations
           </p>
         </div>
 
         {/* Industry Templates */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold mb-4">Quick Start Templates</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="mb-6 sm:mb-8">
+          <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Quick Start Templates</h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
             {industryTemplates.map((template) => (
               <button
                 key={template.name}
                 onClick={() => applyTemplate(template)}
-                className="p-4 rounded-xl border border-border bg-card hover:border-primary hover:shadow-elegant transition-all duration-300 text-left"
+                className="p-3 sm:p-4 rounded-xl border border-border bg-card hover:border-primary hover:shadow-elegant transition-all duration-300 text-left active:scale-[0.98]"
               >
-                <span className="text-2xl mb-2 block">{template.icon}</span>
-                <span className="font-medium text-sm">{template.name}</span>
+                <span className="text-xl sm:text-2xl mb-1 sm:mb-2 block">{template.icon}</span>
+                <span className="font-medium text-xs sm:text-sm">{template.name}</span>
               </button>
             ))}
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Builder */}
           <Card className="shadow-elegant">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-primary" />
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                 Quiz Builder
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-4 sm:space-y-6 p-4 sm:p-6 pt-0">
               <Tabs defaultValue="content">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="content">Content</TabsTrigger>
-                  <TabsTrigger value="questions">Questions</TabsTrigger>
-                  <TabsTrigger value="style">Style</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-3 h-10 sm:h-11">
+                  <TabsTrigger value="content" className="text-xs sm:text-sm">Content</TabsTrigger>
+                  <TabsTrigger value="questions" className="text-xs sm:text-sm">Questions</TabsTrigger>
+                  <TabsTrigger value="style" className="text-xs sm:text-sm">Style</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="content" className="space-y-4 mt-4">
@@ -539,12 +539,12 @@ export const QuizGenerator = () => {
                 </TabsContent>
               </Tabs>
 
-              <div className="flex gap-2 pt-4 border-t border-border">
-                <Button onClick={generateCode} className="flex-1">
+              <div className="flex flex-col sm:flex-row gap-2 pt-4 border-t border-border">
+                <Button onClick={generateCode} className="flex-1 min-h-[44px] text-sm sm:text-base">
                   <Copy className="w-4 h-4 mr-2" />
                   Copy Code
                 </Button>
-                <Button onClick={downloadCode} variant="outline" className="flex-1">
+                <Button onClick={downloadCode} variant="outline" className="flex-1 min-h-[44px] text-sm sm:text-base">
                   <Download className="w-4 h-4 mr-2" />
                   Download
                 </Button>
@@ -554,32 +554,32 @@ export const QuizGenerator = () => {
 
           {/* Preview */}
           <Card className="shadow-elegant">
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="flex items-center justify-between text-base sm:text-lg">
                 <div className="flex items-center gap-2">
-                  <Eye className="w-5 h-5 text-primary" />
+                  <Eye className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                   Live Preview
                 </div>
-                <Button variant="ghost" size="sm" onClick={resetPreview}>
+                <Button variant="ghost" size="sm" onClick={resetPreview} className="min-h-[36px]">
                   <RotateCcw className="w-4 h-4 mr-1" />
-                  Reset
+                  <span className="hidden sm:inline">Reset</span>
                 </Button>
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 sm:p-6 pt-0">
               <div 
-                className="rounded-xl p-6 min-h-[400px] transition-all duration-300"
+                className="rounded-xl p-4 sm:p-6 min-h-[350px] sm:min-h-[400px] transition-all duration-300"
                 style={{ backgroundColor: config.backgroundColor }}
               >
                 {/* Start Screen */}
                 {previewStep === 'start' && (
                   <div className="text-center animate-fade-in">
-                    <h3 className="text-xl font-bold mb-2 text-foreground">{config.title}</h3>
-                    <p className="text-muted-foreground mb-6">{config.description}</p>
+                    <h3 className="text-lg sm:text-xl font-bold mb-2 text-foreground">{config.title}</h3>
+                    <p className="text-muted-foreground mb-4 sm:mb-6 text-sm sm:text-base">{config.description}</p>
                     <Button 
                       onClick={() => setPreviewStep('quiz')}
                       style={{ backgroundColor: config.primaryColor }}
-                      className="text-white"
+                      className="text-white min-h-[44px]"
                     >
                       {config.buttonText}
                       <ArrowRight className="w-4 h-4 ml-2" />
