@@ -13,7 +13,12 @@ import FloatingActionButton from '@/components/FloatingActionButton';
 import { PricingSection } from '@/components/PricingSection';
 import { QuizGenerator } from '@/components/QuizGenerator';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { PersonalizedHero } from '@/components/PersonalizedHero';
+import { PersonalizedCTA } from '@/components/PersonalizedCTA';
+import { PersonalizedRecommendations } from '@/components/PersonalizedRecommendations';
+import { PersonalizationDebug } from '@/components/PersonalizationDebug';
 import { useAuth } from '@/hooks/useAuth';
+import { usePersonalization } from '@/hooks/usePersonalization';
 import { supabase } from '@/integrations/supabase/client';
 import { Menu, X, Sparkles, Wifi, WifiOff, User, LogOut, Crown } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -35,11 +40,17 @@ const Index: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const { user, hasSubscription } = useAuth();
+  const { trackPageView, trackClick, content } = usePersonalization();
   const isMobile = useIsMobile();
   
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
+
+  // Track page view on mount
+  useEffect(() => {
+    trackPageView('/');
+  }, [trackPageView]);
 
   // Handle online/offline status
   useEffect(() => {
@@ -256,17 +267,19 @@ const Index: React.FC = () => {
       <main className="flex-grow flex flex-col w-full overflow-x-hidden">
         <div className="flex-1 w-full">
           <div id="hero" className="w-full">
-            <HeroSection />
+            <PersonalizedHero onScrollToGenerator={() => scrollToSection('widget-generator')} />
           </div>
           <div id="widget-generator" className="w-full">
             <WidgetGenerator />
           </div>
+          <PersonalizedRecommendations />
           <div id="features" className="w-full">
             <FeaturesSection />
           </div>
           <div id="quiz-generator" className="w-full">
             <QuizGenerator />
           </div>
+          <PersonalizedCTA />
           <div id="pricing" className="w-full">
             <PricingSection />
           </div>
@@ -294,6 +307,9 @@ const Index: React.FC = () => {
         onClose={() => setShowAuthModal(false)}
         mode={authMode}
       />
+      
+      {/* Personalization Debug (dev only) */}
+      <PersonalizationDebug />
     </div>
   );
 };
