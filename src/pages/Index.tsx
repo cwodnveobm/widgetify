@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import HeroSection from '@/components/HeroSection';
@@ -12,6 +11,8 @@ import MobileNavigation from '@/components/MobileNavigation';
 import BottomNavigation from '@/components/BottomNavigation';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import { PricingSection } from '@/components/PricingSection';
+import { QuizGenerator } from '@/components/QuizGenerator';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Menu, X, Sparkles, Wifi, WifiOff, User, LogOut, Crown } from 'lucide-react';
@@ -136,7 +137,10 @@ const Index: React.FC = () => {
             )}
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
+            {/* Dark Mode Toggle */}
+            <ThemeToggle />
+            
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -259,6 +263,9 @@ const Index: React.FC = () => {
           </div>
           <div id="features" className="w-full">
             <FeaturesSection />
+          </div>
+          <div id="quiz-generator" className="w-full">
+            <QuizGenerator />
           </div>
           <div id="pricing" className="w-full">
             <PricingSection />

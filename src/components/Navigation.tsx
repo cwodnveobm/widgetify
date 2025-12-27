@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -54,7 +55,10 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
           <Sparkles className="w-5 h-5 text-primary" />
         </Link>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
+          {/* Dark Mode Toggle */}
+          <ThemeToggle />
+          
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -7,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import Preloader from "@/components/Preloader";
+import { ThemeProvider } from "@/hooks/useTheme";
 import Index from "./pages/Index";
 import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
@@ -58,27 +58,29 @@ const App = () => {
 
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/support" element={<Support />} />
-              <Route path="/home" element={<Index />} />
-              <Route path="/generate" element={<Index />} />
-              <Route path="/features" element={<Index />} />
-              <Route path="/founder" element={<Index />} />
-              <Route path="/integrations" element={<Integrations />} />
-              <Route path="/custom-builder" element={<CustomBuilder />} />
-              <Route path="/ab-testing" element={<ABTesting />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/support" element={<Support />} />
+                <Route path="/home" element={<Index />} />
+                <Route path="/generate" element={<Index />} />
+                <Route path="/features" element={<Index />} />
+                <Route path="/founder" element={<Index />} />
+                <Route path="/integrations" element={<Integrations />} />
+                <Route path="/custom-builder" element={<CustomBuilder />} />
+                <Route path="/ab-testing" element={<ABTesting />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 };
