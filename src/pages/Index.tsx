@@ -10,17 +10,17 @@ import StoreLinkAd from '@/components/StoreLinkAd';
 import MobileNavigation from '@/components/MobileNavigation';
 import BottomNavigation from '@/components/BottomNavigation';
 import FloatingActionButton from '@/components/FloatingActionButton';
-import { PricingSection } from '@/components/PricingSection';
 import { QuizGenerator } from '@/components/QuizGenerator';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { PersonalizedHero } from '@/components/PersonalizedHero';
 import { PersonalizedCTA } from '@/components/PersonalizedCTA';
 import { PersonalizedRecommendations } from '@/components/PersonalizedRecommendations';
 import { PersonalizationDebug } from '@/components/PersonalizationDebug';
+import { DonateButton } from '@/components/DonateButton';
 import { useAuth } from '@/hooks/useAuth';
 import { usePersonalization } from '@/hooks/usePersonalization';
 import { supabase } from '@/integrations/supabase/client';
-import { Menu, X, Sparkles, Wifi, WifiOff, User, LogOut, Crown } from 'lucide-react';
+import { Menu, X, Sparkles, Wifi, WifiOff, User, LogOut, Heart } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from '@/components/ui/button';
 import { AuthModal } from '@/components/AuthModal';
@@ -39,7 +39,7 @@ const Index: React.FC = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
-  const { user, hasSubscription } = useAuth();
+  const { user } = useAuth();
   const { trackPageView, trackClick, content } = usePersonalization();
   const isMobile = useIsMobile();
   
@@ -152,6 +152,9 @@ const Index: React.FC = () => {
             {/* Dark Mode Toggle */}
             <ThemeToggle />
             
+            {/* Donate Button */}
+            <DonateButton variant="outline" size="sm" className="hidden sm:flex" />
+            
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -163,12 +166,6 @@ const Index: React.FC = () => {
                   <DropdownMenuLabel>
                     <div className="flex flex-col">
                       <span className="text-sm font-medium">{user.email}</span>
-                      {hasSubscription && (
-                        <span className="text-xs text-primary flex items-center gap-1 mt-1">
-                          <Crown className="w-3 h-3" />
-                          Premium Member
-                        </span>
-                      )}
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -280,9 +277,6 @@ const Index: React.FC = () => {
             <QuizGenerator />
           </div>
           <PersonalizedCTA />
-          <div id="pricing" className="w-full">
-            <PricingSection />
-          </div>
           <div id="founder" className="w-full">
             <FounderSection />
           </div>
