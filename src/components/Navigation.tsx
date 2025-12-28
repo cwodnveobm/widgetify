@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Sparkles, User, LogOut, Crown } from 'lucide-react';
+import { Menu, X, Sparkles, User, LogOut, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { DonateButton } from '@/components/DonateButton';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +23,7 @@ interface NavigationProps {
 
 export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { user, hasSubscription } = useAuth();
+  const { user } = useAuth();
   const isMobile = useIsMobile();
   const location = useLocation();
 
@@ -59,6 +60,9 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
           {/* Dark Mode Toggle */}
           <ThemeToggle />
           
+          {/* Donate Button */}
+          <DonateButton variant="outline" size="sm" className="hidden sm:flex" />
+          
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -70,12 +74,6 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
                 <DropdownMenuLabel>
                   <div className="flex flex-col">
                     <span className="text-sm font-medium">{user.email}</span>
-                    {hasSubscription && (
-                      <span className="text-xs text-primary flex items-center gap-1 mt-1">
-                        <Crown className="w-3 h-3" />
-                        Premium Member
-                      </span>
-                    )}
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />

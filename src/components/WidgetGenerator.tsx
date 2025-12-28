@@ -16,22 +16,20 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/hooks/useAuth';
 import { useFavoriteWidgets } from '@/hooks/useFavoriteWidgets';
 import { AuthModal } from './AuthModal';
-import { SubscriptionModal } from './SubscriptionModal';
 import { FollowToUnlockModal } from './FollowToUnlockModal';
 import type { WidgetType, WidgetSize } from '@/types';
 
 const WidgetGenerator: React.FC = () => {
   const { toast } = useToast();
   const isMobile = useIsMobile();
-  const { user, hasSubscription, grantPremiumAccess } = useAuth();
+  const { user } = useAuth();
   const { favorites, toggleFavorite, isFavorite } = useFavoriteWidgets();
   const [showPreview, setShowPreview] = useState(!isMobile);
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
-  const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(false);
+  const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(true); // Always unlocked now
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const [exportFormat, setExportFormat] = useState<ExportFormat>('html');
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [showFollowModal, setShowFollowModal] = useState(false);
   const [brandingUnlockedViaFollow, setBrandingUnlockedViaFollow] = useState(() => {
     return localStorage.getItem("widgetify_branding_unlocked") === "true";
@@ -140,13 +138,11 @@ const WidgetGenerator: React.FC = () => {
     mapZoom: 14,
   });
 
-  // Automatically unlock premium if user has subscription
+  // Premium is always unlocked now
   React.useEffect(() => {
-    if (hasSubscription) {
-      setIsPremiumUnlocked(true);
-      setSelectedTier('premium');
-    }
-  }, [hasSubscription]);
+    setIsPremiumUnlocked(true);
+    setSelectedTier('premium');
+  }, []);
 
   const handleConfigChange = useCallback((key: keyof WidgetConfig, value: any) => {
     setConfig(prev => ({ ...prev, [key]: value }));
@@ -192,22 +188,13 @@ const WidgetGenerator: React.FC = () => {
   }), [config, selectedTier, isPremiumUnlocked]);
 
   const downloadCode = useCallback(() => {
-    // Check if user is authenticated and has subscription
+    // Check if user is authenticated
     if (!user) {
       setAuthMode('signup');
       setShowAuthModal(true);
       toast({
         title: "Sign Up Required",
         description: "Please create an account to download widget code.",
-      });
-      return;
-    }
-
-    if (!hasSubscription) {
-      setShowSubscriptionModal(true);
-      toast({
-        title: "Premium Feature",
-        description: "Subscribe to download widget code.",
       });
       return;
     }
@@ -229,40 +216,16 @@ const WidgetGenerator: React.FC = () => {
         description: `Widget code has been downloaded as ${config.type}-widget.${getFileExtension(exportFormat)}`,
       });
     }
-  }, [finalConfig, exportFormat, config.type, toast, user, hasSubscription, setAuthMode, setShowAuthModal, setShowSubscriptionModal]);
+  }, [finalConfig, exportFormat, config.type, toast, user, setAuthMode, setShowAuthModal]);
 
   const handlePremiumUpgrade = async () => {
-    if (!user) {
-      setAuthMode('signup');
-      setShowAuthModal(true);
-      toast({
-        title: "Sign Up Required",
-        description: "Please create an account first.",
-      });
-      return;
-    }
-
+    // Premium is always unlocked now - just show a toast
     toast({
-      title: "Activating Premium...",
-      description: "Please wait while we activate your premium access.",
+      title: "Premium Unlocked!",
+      description: "All premium features are now available for free.",
     });
-    
-    const result = await grantPremiumAccess();
-    
-    if (result.success) {
-      setIsPremiumUnlocked(true);
-      setSelectedTier('premium');
-      toast({
-        title: "Premium Unlocked! 🎉",
-        description: "You now have access to all premium features including watermark-free widgets.",
-      });
-    } else {
-      toast({
-        title: "Activation Failed",
-        description: result.error || "Failed to activate premium access. Please try again.",
-        variant: "destructive",
-      });
-    }
+    setIsPremiumUnlocked(true);
+    setSelectedTier('premium');
   };
 
   const renderFormFields = () => {
@@ -1860,7 +1823,7 @@ const WidgetGenerator: React.FC = () => {
                   <div 
                     className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border cursor-pointer hover:bg-muted/70 transition-colors"
                     onClick={() => {
-                      if (!hasSubscription && !brandingUnlockedViaFollow) {
+                      if (!brandingUnlockedViaFollow) {
                         setShowFollowModal(true);
                       }
                     }}
@@ -1869,7 +1832,7 @@ const WidgetGenerator: React.FC = () => {
                       <Label htmlFor="removeBranding" className="text-sm font-medium cursor-pointer">
                         Remove Widgetify Branding
                       </Label>
-                      {(hasSubscription || brandingUnlockedViaFollow) && (
+                      {brandingUnlockedViaFollow && (
                         <Crown className="w-4 h-4 text-primary" />
                       )}
                     </div>
@@ -1877,7 +1840,7 @@ const WidgetGenerator: React.FC = () => {
                       id="removeBranding"
                       checked={config.removeBranding || false}
                       onCheckedChange={(checked) => {
-                        if (!hasSubscription && !brandingUnlockedViaFollow) {
+                        if (!brandingUnlockedViaFollow) {
                           setShowFollowModal(true);
                         } else {
                           handleConfigChange('removeBranding', checked);
@@ -1885,7 +1848,7 @@ const WidgetGenerator: React.FC = () => {
                       }}
                     />
                   </div>
-                  {!hasSubscription && !brandingUnlockedViaFollow && (
+                  {!brandingUnlockedViaFollow && (
                     <p className="text-xs text-muted-foreground px-1">
                       Follow our Instagram accounts to unlock branding removal for free!
                     </p>
@@ -1998,16 +1961,11 @@ const WidgetGenerator: React.FC = () => {
         </Card>
       </div>
 
-      {/* Auth and Subscription Modals */}
+      {/* Auth Modal */}
       <AuthModal 
         open={showAuthModal} 
         onClose={() => setShowAuthModal(false)}
         mode={authMode}
-      />
-      <SubscriptionModal
-        open={showSubscriptionModal}
-        onClose={() => setShowSubscriptionModal(false)}
-        user={user}
       />
       <FollowToUnlockModal
         open={showFollowModal}
