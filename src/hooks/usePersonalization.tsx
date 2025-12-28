@@ -332,22 +332,28 @@ export const PersonalizationProvider = ({ children }: { children: ReactNode }) =
   }, [trackEvent]);
   
   const trackPageView = useCallback((pagePath: string) => {
-    setBehavior(prev => ({
-      ...prev,
-      pageViews: prev.pageViews + 1,
-    }));
-    storeData('pageViews', behavior.pageViews + 1);
+    setBehavior(prev => {
+      const newPageViews = prev.pageViews + 1;
+      storeData('pageViews', newPageViews);
+      return {
+        ...prev,
+        pageViews: newPageViews,
+      };
+    });
     trackEvent('page_view', { path: pagePath });
-  }, [behavior.pageViews, trackEvent]);
+  }, [trackEvent]);
   
   const trackWidgetGeneration = useCallback(() => {
-    setBehavior(prev => ({
-      ...prev,
-      widgetsGenerated: prev.widgetsGenerated + 1,
-    }));
-    storeData('widgetsGenerated', behavior.widgetsGenerated + 1);
+    setBehavior(prev => {
+      const newCount = prev.widgetsGenerated + 1;
+      storeData('widgetsGenerated', newCount);
+      return {
+        ...prev,
+        widgetsGenerated: newCount,
+      };
+    });
     trackEvent('widget_generated');
-  }, [behavior.widgetsGenerated, trackEvent]);
+  }, [trackEvent]);
   
   const getPersonalizedCTA = useCallback(() => {
     return content.ctaText;

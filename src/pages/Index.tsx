@@ -10,6 +10,7 @@ import StoreLinkAd from '@/components/StoreLinkAd';
 import MobileNavigation from '@/components/MobileNavigation';
 import BottomNavigation from '@/components/BottomNavigation';
 import FloatingActionButton from '@/components/FloatingActionButton';
+import FloatingDonateButton from '@/components/FloatingDonateButton';
 import { QuizGenerator } from '@/components/QuizGenerator';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { PersonalizedHero } from '@/components/PersonalizedHero';
@@ -39,6 +40,7 @@ const Index: React.FC = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const hasTrackedPageView = React.useRef(false);
   const { user } = useAuth();
   const { trackPageView, trackClick, content } = usePersonalization();
   const isMobile = useIsMobile();
@@ -47,9 +49,12 @@ const Index: React.FC = () => {
     setMenuOpen(!menuOpen);
   };
 
-  // Track page view on mount
+  // Track page view on mount (only once)
   useEffect(() => {
-    trackPageView('/');
+    if (!hasTrackedPageView.current) {
+      trackPageView('/');
+      hasTrackedPageView.current = true;
+    }
   }, [trackPageView]);
 
   // Handle online/offline status
@@ -229,6 +234,13 @@ const Index: React.FC = () => {
                 <Link to="/support" className="text-muted-foreground hover:text-primary py-4 flex items-center justify-between border-b border-border pb-3 min-h-[44px] font-medium transition-colors duration-200" onClick={handleMenuItemClick}>
                   Support
                 </Link>
+                <button 
+                  onClick={() => { window.open('https://razorpay.me/@adnan4402', '_blank', 'noopener,noreferrer'); handleMenuItemClick(); }} 
+                  className="text-destructive hover:text-destructive/80 py-4 flex items-center gap-2 border-b border-border pb-3 min-h-[44px] font-medium transition-colors duration-200 text-left w-full"
+                >
+                  <Heart className="w-4 h-4" />
+                  Donate
+                </button>
                 {!user && (
                   <>
                     <button onClick={() => { openAuthModal('signin'); handleMenuItemClick(); }} className="text-muted-foreground hover:text-primary py-4 flex items-center justify-between border-b border-border pb-3 min-h-[44px] font-medium transition-colors duration-200 text-left w-full">
@@ -293,6 +305,7 @@ const Index: React.FC = () => {
       
       {/* Mobile Navigation Components */}
       <FloatingActionButton />
+      <FloatingDonateButton />
       <BottomNavigation />
       
       {/* Auth Modal */}
