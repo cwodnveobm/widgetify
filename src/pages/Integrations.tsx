@@ -8,6 +8,7 @@ import { Navigation } from "@/components/Navigation";
 import { AuthModal } from "@/components/AuthModal";
 import BottomNavigation from "@/components/BottomNavigation";
 import Footer from "@/components/Footer";
+import { JSScriptGenerator } from "@/components/JSScriptGenerator";
 
 interface Integration {
   id: string;
@@ -128,7 +129,7 @@ const Integrations = () => {
       id: "wordpress",
       name: "WordPress",
       description: "Add widgets to WordPress with Custom HTML blocks or plugins",
-      icon: Globe,
+      logo: "/logos/wordpress.svg",
       instructions: [
         "Generate your widget code from Widgetify",
         "In WordPress editor, add a Custom HTML block",
@@ -143,7 +144,7 @@ const Integrations = () => {
       id: "shopify",
       name: "Shopify",
       description: "Embed widgets in your Shopify store theme",
-      icon: ShoppingCart,
+      logo: "/logos/shopify.svg",
       instructions: [
         "Generate your widget code from Widgetify",
         "Go to Online Store > Themes > Edit code",
@@ -172,7 +173,7 @@ const Integrations = () => {
       id: "notion",
       name: "Notion",
       description: "Embed widgets in Notion pages for enhanced functionality",
-      icon: BookOpen,
+      logo: "/logos/notion.svg",
       instructions: [
         "Generate your widget and host it on a URL",
         "In Notion, type /embed and paste the widget URL",
@@ -228,7 +229,7 @@ const Integrations = () => {
       id: "woocommerce",
       name: "WooCommerce",
       description: "Add widgets to WooCommerce WordPress stores",
-      icon: ShoppingCart,
+      logo: "/logos/woocommerce.svg",
       instructions: [
         "Generate your widget code from Widgetify",
         "Add Custom HTML block in WordPress editor",
@@ -511,6 +512,9 @@ const Integrations = () => {
               </pre>
             </div>
           </Card>
+
+          {/* JS Script Generator Section */}
+          <JSScriptGenerator />
         </div>
       </div>
       <Footer />
