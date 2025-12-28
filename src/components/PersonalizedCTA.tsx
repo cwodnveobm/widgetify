@@ -41,7 +41,7 @@ export const PersonalizedCTA = () => {
           icon: Gift,
           badge: 'Free Templates',
           title: 'Find Your Perfect Template',
-          description: 'Browse our library of 16+ professionally designed widget templates.',
+          description: 'Browse our library of 34+ professionally designed widget templates.',
           buttonText: 'View All Templates',
           buttonLink: '/custom-builder',
           gradient: 'from-secondary/30 to-muted/30',
