@@ -22,6 +22,9 @@ const allTemplates: TemplateRecommendation[] = [
   { id: 'quiz', name: 'Lead Quiz', description: 'Qualify leads automatically', icon: MessageSquare, category: 'lead-gen', conversionRate: '+52%' },
   { id: 'feedback', name: 'Feedback Widget', description: 'Collect user insights', icon: MessageSquare, category: 'feedback', conversionRate: '+18%' },
   { id: 'download', name: 'Download CTA', description: 'Promote resources', icon: Download, category: 'conversion', conversionRate: '+38%' },
+  { id: 'ai-chat', name: 'AI Chat Assistant', description: 'Instant AI support 24/7', icon: MessageSquare, category: 'support', conversionRate: '+48%' },
+  { id: 'whatsapp', name: 'WhatsApp Chat', description: 'Direct messaging support', icon: MessageSquare, category: 'support', conversionRate: '+42%' },
+  { id: 'lead-capture', name: 'Lead Capture Pro', description: 'High-converting forms', icon: TrendingUp, category: 'lead-gen', conversionRate: '+55%' },
 ];
 
 export const PersonalizedRecommendations = () => {
