@@ -16,7 +16,7 @@ const Support: React.FC = () => {
     setShowAuthModal(true);
   };
 
-  return <div className="min-h-screen flex flex-col pb-16 md:pb-0">
+  return <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5 pb-16 md:pb-0">
       <Navigation onAuthModalOpen={openAuthModal} />
       
       <main className="flex-grow container mx-auto container-padding py-6 sm:py-8 md:py-12">

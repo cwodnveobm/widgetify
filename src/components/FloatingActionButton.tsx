@@ -24,7 +24,7 @@ const FloatingActionButton = () => {
     <button
       onClick={handleClick}
       className={cn(
-        "fixed right-4 bottom-20 z-40 md:hidden",
+        "fixed right-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-40 md:hidden",
         "w-14 h-14 rounded-full",
         "bg-gradient-to-br from-primary to-primary/80",
         "text-primary-foreground shadow-lg shadow-primary/30",
