@@ -8,13 +8,13 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import Preloader from "@/components/Preloader";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { PersonalizationProvider } from "@/hooks/usePersonalization";
+import { usePlatformProtection } from "@/hooks/usePlatformProtection";
 import Index from "./pages/Index";
 import Support from "./pages/Support";
 import NotFound from "./pages/NotFound";
 import Integrations from "./pages/Integrations";
 import CustomBuilder from "./pages/CustomBuilder";
 import ABTesting from "./pages/ABTesting";
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -33,6 +33,9 @@ const queryClient = new QueryClient({
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
+
+  // Enable platform-wide protection (Disable Inspect + Anti-Screenshot)
+  usePlatformProtection();
 
   useEffect(() => {
     // Register service worker

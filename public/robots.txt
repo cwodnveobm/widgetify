@@ -12,3 +12,8 @@ Allow: /
 
 User-agent: *
 Allow: /
+
+# Widgetify - Chat Widgets Platform
+# https://widgetify.app
+
+Sitemap: https://widgetify.app/sitemap.xml
