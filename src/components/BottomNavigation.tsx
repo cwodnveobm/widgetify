@@ -35,8 +35,8 @@ const BottomNavigation = () => {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background/95 backdrop-blur-lg border-t border-border safe-area-bottom">
-      <div className="flex items-center justify-around h-16 px-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background/95 backdrop-blur-lg border-t border-border pb-[env(safe-area-inset-bottom)]">
+      <div className="flex items-center justify-around h-16 px-2 max-w-lg mx-auto">
         {navItems.map((item) => {
           const active = isActive(item.path);
           return (
@@ -44,14 +44,14 @@ const BottomNavigation = () => {
               key={item.path}
               onClick={() => handleNavigation(item.path)}
               className={cn(
-                "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-colors touch-target",
+                "flex flex-col items-center justify-center flex-1 h-full gap-1 transition-all duration-200 min-h-[48px] min-w-[48px] rounded-lg active:scale-95",
                 active
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "text-primary bg-primary/10"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               )}
             >
-              <item.icon className={cn("h-5 w-5", active && "scale-110")} />
-              <span className="text-xs font-medium">{item.label}</span>
+              <item.icon className={cn("h-5 w-5 transition-transform", active && "scale-110")} />
+              <span className="text-[10px] sm:text-xs font-medium">{item.label}</span>
             </button>
           );
         })}

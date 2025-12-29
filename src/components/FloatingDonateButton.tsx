@@ -10,7 +10,7 @@ const FloatingDonateButton = () => {
     <button
       onClick={handleDonate}
       className={cn(
-        "fixed left-4 bottom-20 z-40 md:hidden",
+        "fixed left-4 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-40 md:hidden",
         "w-12 h-12 rounded-full",
         "bg-gradient-to-br from-destructive to-destructive/80",
         "text-destructive-foreground shadow-lg",
