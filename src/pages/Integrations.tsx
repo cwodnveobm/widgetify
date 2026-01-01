@@ -9,6 +9,8 @@ import { AuthModal } from "@/components/AuthModal";
 import BottomNavigation from "@/components/BottomNavigation";
 import Footer from "@/components/Footer";
 import { JSScriptGenerator } from "@/components/JSScriptGenerator";
+import { SEOHead } from "@/components/SEOHead";
+import { StructuredData } from "@/components/StructuredData";
 
 interface Integration {
   id: string;
@@ -401,6 +403,18 @@ const Integrations = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5 pb-16 md:pb-0">
+      <SEOHead 
+        title="Platform Integrations"
+        description="Integrate Widgetify chat widgets with 25+ platforms including WordPress, Shopify, Wix, Squarespace, Webflow, Framer, and more. Step-by-step guides included."
+        keywords="WordPress chat widget, Shopify chat plugin, Wix integration, Squarespace widget, Webflow embed, website builder integrations"
+      />
+      <StructuredData 
+        type="breadcrumb" 
+        data={{ items: [
+          { name: 'Home', url: 'https://widgetify.app/' },
+          { name: 'Integrations', url: 'https://widgetify.app/integrations' }
+        ]}}
+      />
       <Navigation onAuthModalOpen={openAuthModal} />
       <div className="container mx-auto container-padding py-6 sm:py-8 md:py-12">
         <div className="max-w-6xl mx-auto">

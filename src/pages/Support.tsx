@@ -6,6 +6,8 @@ import { Navigation } from '@/components/Navigation';
 import { AuthModal } from '@/components/AuthModal';
 import Footer from '@/components/Footer';
 import BottomNavigation from '@/components/BottomNavigation';
+import { SEOHead } from '@/components/SEOHead';
+import { StructuredData } from '@/components/StructuredData';
 
 const Support: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -17,6 +19,18 @@ const Support: React.FC = () => {
   };
 
   return <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5 pb-16 md:pb-0">
+      <SEOHead 
+        title="Support & Help Center"
+        description="Get help with Widgetify chat widgets. FAQs, troubleshooting guides, and contact information for technical support. We're here to help!"
+        keywords="Widgetify support, chat widget help, widget troubleshooting, customer support, FAQ, technical help"
+      />
+      <StructuredData 
+        type="breadcrumb" 
+        data={{ items: [
+          { name: 'Home', url: 'https://widgetify.app/' },
+          { name: 'Support', url: 'https://widgetify.app/support' }
+        ]}}
+      />
       <Navigation onAuthModalOpen={openAuthModal} />
       
       <main className="flex-grow container mx-auto container-padding py-6 sm:py-8 md:py-12">

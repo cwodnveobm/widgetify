@@ -21,6 +21,8 @@ import { Navigation } from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import BottomNavigation from "@/components/BottomNavigation";
 import { widgetTemplates, templateCategories, WidgetTemplate } from "@/data/widgetTemplates";
+import { SEOHead } from "@/components/SEOHead";
+import { StructuredData } from "@/components/StructuredData";
 interface CustomWidget {
   id: string;
   name: string;
@@ -457,6 +459,11 @@ ${logoHtml}  <h3 style="color: ${widgetConfig.textColor}; margin: 0 0 8px 0; fon
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5 pb-16 md:pb-0">
+        <SEOHead 
+          title="Custom Widget Builder"
+          description="Create custom chat widgets with your own branding, logos, and styling. Build unique widgets from templates or from scratch. Free custom widget generator."
+          keywords="custom widget builder, widget generator, branded widgets, custom chat widget, widget templates, widget designer"
+        />
         <Navigation onAuthModalOpen={openAuthModal} />
         <div className="flex-1 flex items-center justify-center p-4">
           <Card className="p-6 sm:p-8 max-w-md text-center mx-4">
@@ -478,6 +485,18 @@ ${logoHtml}  <h3 style="color: ${widgetConfig.textColor}; margin: 0 0 8px 0; fon
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-primary/5 via-background to-secondary/5 pb-16 md:pb-0">
+      <SEOHead 
+        title="Custom Widget Builder"
+        description="Create custom chat widgets with your own branding, logos, and styling. Build unique widgets from templates or from scratch. Free custom widget generator."
+        keywords="custom widget builder, widget generator, branded widgets, custom chat widget, widget templates, widget designer"
+      />
+      <StructuredData 
+        type="breadcrumb" 
+        data={{ items: [
+          { name: 'Home', url: 'https://widgetify.app/' },
+          { name: 'Custom Builder', url: 'https://widgetify.app/custom-builder' }
+        ]}}
+      />
       <Navigation onAuthModalOpen={openAuthModal} />
       <div className="flex-1 container mx-auto container-padding py-6 sm:py-8 md:py-12">
         <div className="max-w-7xl mx-auto">
