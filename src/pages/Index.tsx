@@ -18,6 +18,8 @@ import { PersonalizedCTA } from '@/components/PersonalizedCTA';
 import { PersonalizedRecommendations } from '@/components/PersonalizedRecommendations';
 import { PersonalizationDebug } from '@/components/PersonalizationDebug';
 import { DonateButton } from '@/components/DonateButton';
+import { SEOHead } from '@/components/SEOHead';
+import { HomePageStructuredData } from '@/components/StructuredData';
 import { useAuth } from '@/hooks/useAuth';
 import { usePersonalization } from '@/hooks/usePersonalization';
 import { supabase } from '@/integrations/supabase/client';
@@ -130,6 +132,14 @@ const Index: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background pb-16 md:pb-0">
+      {/* SEO Components */}
+      <SEOHead 
+        title="Free Chat Widgets for Your Website"
+        description="Generate customized chat widgets for WhatsApp, Telegram, Messenger & 15+ platforms. Easy integration with WordPress, Shopify, Wix. Free, no coding required."
+        keywords="chat widget, WhatsApp widget, website chat, social media widget, customer support, free chat widget, WordPress, Shopify, Telegram, Messenger"
+      />
+      <HomePageStructuredData />
+      
       {/* Network Status Indicator */}
       {!isOnline && (
         <div className="bg-destructive text-destructive-foreground text-center py-2 px-4 text-sm flex items-center justify-center gap-2 sticky top-0 z-50">

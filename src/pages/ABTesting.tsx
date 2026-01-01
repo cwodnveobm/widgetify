@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { ABTestDialog } from '@/components/ABTestDialog';
 import { ABTestAnalytics } from '@/components/ABTestAnalytics';
+import { SEOHead } from '@/components/SEOHead';
+import { StructuredData } from '@/components/StructuredData';
 
 const ABTesting: React.FC = () => {
   const { user } = useAuth();
@@ -93,6 +95,18 @@ const ABTesting: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background pb-16 md:pb-0">
+      <SEOHead 
+        title="A/B Testing for Widgets"
+        description="Test and optimize your chat widgets with A/B testing. Compare variations, track performance metrics, and improve conversions with data-driven decisions."
+        keywords="A/B testing, widget optimization, conversion testing, split testing, widget analytics, performance testing"
+      />
+      <StructuredData 
+        type="breadcrumb" 
+        data={{ items: [
+          { name: 'Home', url: 'https://widgetify.app/' },
+          { name: 'A/B Testing', url: 'https://widgetify.app/ab-testing' }
+        ]}}
+      />
       <Navigation onAuthModalOpen={() => setShowAuthModal(true)} />
       <div className="flex-1">
         <div className="container mx-auto container-padding py-6 sm:py-8">
