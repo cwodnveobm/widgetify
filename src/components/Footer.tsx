@@ -52,9 +52,10 @@ const Footer: React.FC = () => {
           <div className="col-span-1">
             <h4 className="text-sm sm:text-base text-foreground font-medium mb-3 sm:mb-4">Links</h4>
             <ul className="space-y-1 sm:space-y-2">
-              <li><a href="#" className="hover:text-primary transition-colors min-h-[44px] flex items-center text-xs sm:text-sm md:text-base">Home</a></li>
+              <li><a href="/" className="hover:text-primary transition-colors min-h-[44px] flex items-center text-xs sm:text-sm md:text-base">Home</a></li>
               <li><a href="#widget-generator" className="hover:text-primary transition-colors min-h-[44px] flex items-center text-xs sm:text-sm md:text-base">Generate Widget</a></li>
               <li><a href="#features" className="hover:text-primary transition-colors min-h-[44px] flex items-center text-xs sm:text-sm md:text-base">Features</a></li>
+              <li><a href="/faq" className="hover:text-primary transition-colors min-h-[44px] flex items-center text-xs sm:text-sm md:text-base">FAQ</a></li>
             </ul>
           </div>
         </div>
