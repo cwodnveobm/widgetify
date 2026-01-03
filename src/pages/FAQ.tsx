@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Navigation } from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import BottomNavigation from '@/components/BottomNavigation';
@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/accordion';
 import { Search, HelpCircle, Wrench, Palette, Code, Zap } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { usePersonalization } from '@/hooks/usePersonalization';
 
 interface FAQItem {
   question: string;
@@ -149,10 +150,21 @@ const FAQ: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [searchQuery, setSearchQuery] = useState('');
+  const { trackPageView, trackClick } = usePersonalization();
+  const hasTrackedPageView = useRef(false);
+
+  // Track page view on mount
+  useEffect(() => {
+    if (!hasTrackedPageView.current) {
+      trackPageView('/faq');
+      hasTrackedPageView.current = true;
+    }
+  }, [trackPageView]);
 
   const openAuthModal = (mode: 'signin' | 'signup') => {
     setAuthMode(mode);
     setShowAuthModal(true);
+    trackClick('faq-auth-modal');
   };
 
   // Filter FAQs based on search query

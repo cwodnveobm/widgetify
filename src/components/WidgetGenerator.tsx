@@ -17,6 +17,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useFavoriteWidgets } from '@/hooks/useFavoriteWidgets';
 import { AuthModal } from './AuthModal';
 import { FollowToUnlockModal } from './FollowToUnlockModal';
+import { usePersonalization } from '@/hooks/usePersonalization';
 import type { WidgetType, WidgetSize } from '@/types';
 
 const WidgetGenerator: React.FC = () => {
@@ -24,6 +25,7 @@ const WidgetGenerator: React.FC = () => {
   const isMobile = useIsMobile();
   const { user } = useAuth();
   const { favorites, toggleFavorite, isFavorite } = useFavoriteWidgets();
+  const { trackClick, trackWidgetGeneration } = usePersonalization();
   const [showPreview, setShowPreview] = useState(!isMobile);
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(true); // Always unlocked now
@@ -211,12 +213,16 @@ const WidgetGenerator: React.FC = () => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       
+      // Track widget generation for personalization
+      trackWidgetGeneration();
+      trackClick(`widget-download-${config.type}`);
+      
       toast({
         title: "Code Downloaded!",
         description: `Widget code has been downloaded as ${config.type}-widget.${getFileExtension(exportFormat)}`,
       });
     }
-  }, [finalConfig, exportFormat, config.type, toast, user, setAuthMode, setShowAuthModal]);
+  }, [finalConfig, exportFormat, config.type, toast, user, setAuthMode, setShowAuthModal, trackWidgetGeneration, trackClick]);
 
   const handlePremiumUpgrade = async () => {
     // Premium is always unlocked now - just show a toast
