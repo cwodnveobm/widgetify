@@ -23,6 +23,7 @@ import BottomNavigation from "@/components/BottomNavigation";
 import { widgetTemplates, templateCategories, WidgetTemplate } from "@/data/widgetTemplates";
 import { SEOHead } from "@/components/SEOHead";
 import { StructuredData } from "@/components/StructuredData";
+import { usePersonalization } from "@/hooks/usePersonalization";
 interface CustomWidget {
   id: string;
   name: string;
@@ -119,6 +120,7 @@ const TemplateCard = ({
 
 const CustomBuilder = () => {
   const { user, loading } = useAuth();
+  const { trackPageView, trackClick } = usePersonalization();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [savedWidgets, setSavedWidgets] = useState<CustomWidget[]>([]);
@@ -126,10 +128,20 @@ const CustomBuilder = () => {
   const [uploading, setUploading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const hasTrackedPageView = useRef(false);
+
+  // Track page view on mount
+  useEffect(() => {
+    if (!hasTrackedPageView.current) {
+      trackPageView('/custom-builder');
+      hasTrackedPageView.current = true;
+    }
+  }, [trackPageView]);
 
   const openAuthModal = (mode: 'signin' | 'signup') => {
     setAuthMode(mode);
     setShowAuthModal(true);
+    trackClick('custom-builder-auth-modal');
   };
 
   const [widgetConfig, setWidgetConfig] = useState({
@@ -156,7 +168,6 @@ const CustomBuilder = () => {
       loadSavedWidgets();
     }
   }, [user]);
-
   const loadSavedWidgets = async () => {
     if (!user) return;
 

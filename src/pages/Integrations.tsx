@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Copy, Check, Globe, Layers, Box, Layout, Blocks, Smartphone, ShoppingCart, FileText, Palette, Zap, Code2, PenTool, Laptop, Store, BookOpen } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { Navigation } from "@/components/Navigation";
 import { AuthModal } from "@/components/AuthModal";
@@ -11,6 +11,7 @@ import Footer from "@/components/Footer";
 import { JSScriptGenerator } from "@/components/JSScriptGenerator";
 import { SEOHead } from "@/components/SEOHead";
 import { StructuredData } from "@/components/StructuredData";
+import { usePersonalization } from "@/hooks/usePersonalization";
 
 interface Integration {
   id: string;
@@ -29,15 +30,27 @@ const Integrations = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [activeCategory, setActiveCategory] = useState<string>('all');
+  const { trackPageView, trackClick } = usePersonalization();
+  const hasTrackedPageView = useRef(false);
+
+  // Track page view on mount
+  useEffect(() => {
+    if (!hasTrackedPageView.current) {
+      trackPageView('/integrations');
+      hasTrackedPageView.current = true;
+    }
+  }, [trackPageView]);
 
   const openAuthModal = (mode: 'signin' | 'signup') => {
     setAuthMode(mode);
     setShowAuthModal(true);
+    trackClick('integrations-auth-modal');
   };
 
   const handleCopy = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
+    trackClick(`copy-integration-${id}`);
     toast.success("Copied to clipboard!");
     setTimeout(() => setCopiedId(null), 2000);
   };
