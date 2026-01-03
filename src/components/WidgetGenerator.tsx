@@ -1499,9 +1499,55 @@ const WidgetGenerator: React.FC = () => {
           </>
         );
 
+      case 'live-visitor-counter':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="initialVisitors" className="text-sm font-medium">Starting Visitor Count</Label>
+              <Input
+                id="initialVisitors"
+                type="number"
+                value={config.initialVisitors || 1247}
+                onChange={(e) => handleConfigChange('initialVisitors', parseInt(e.target.value) || 1247)}
+                placeholder="1247"
+                className="text-base"
+              />
+              <p className="text-xs text-muted-foreground">Base number of total visitors to display</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="visitorVariation" className="text-sm font-medium">Online Visitor Range</Label>
+              <Input
+                id="visitorVariation"
+                type="number"
+                value={config.visitorVariation || 5}
+                onChange={(e) => handleConfigChange('visitorVariation', parseInt(e.target.value) || 5)}
+                placeholder="5"
+                className="text-base"
+              />
+              <p className="text-xs text-muted-foreground">Max variation for live online count (e.g., 5 = 1-5 visitors)</p>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="updateInterval" className="text-sm font-medium">Update Interval (seconds)</Label>
+              <Select
+                value={String(config.updateInterval || 3)}
+                onValueChange={(value) => handleConfigChange('updateInterval', parseInt(value))}
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="2">Every 2 seconds</SelectItem>
+                  <SelectItem value="3">Every 3 seconds</SelectItem>
+                  <SelectItem value="5">Every 5 seconds</SelectItem>
+                  <SelectItem value="10">Every 10 seconds</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </>
+        );
+
       case 'multi-step-survey':
       case 'loyalty-points':
-      case 'live-visitor-counter':
       case 'smart-faq-chatbot':
       case 'price-drop-alert':
       case 'product-tour':

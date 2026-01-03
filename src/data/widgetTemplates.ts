@@ -625,6 +625,42 @@ export const widgetTemplates: WidgetTemplate[] = [
       shadow: "0 6px 20px rgba(99, 102, 241, 0.15)"
     },
     icon: "ClipboardList"
+  },
+  
+  // Analytics & Statistics
+  {
+    id: "visitor-counter-live",
+    name: "Live Visitor Counter",
+    category: "Analytics",
+    description: "Show real-time visitor statistics",
+    preview: {
+      title: "📊 Live Statistics",
+      description: "Display real-time visitor activity on your website.",
+      buttonText: "View Stats",
+      buttonColor: "#6366f1",
+      textColor: "#1A1F2C",
+      backgroundColor: "#eef2ff",
+      borderRadius: "16px",
+      shadow: "0 6px 24px rgba(99, 102, 241, 0.2)"
+    },
+    icon: "Users"
+  },
+  {
+    id: "visitor-counter-minimal",
+    name: "Minimal Visitor Badge",
+    category: "Analytics",
+    description: "Subtle visitor count display",
+    preview: {
+      title: "Visitors Online",
+      description: "Show how many people are viewing your site right now.",
+      buttonText: "12 online",
+      buttonColor: "#22c55e",
+      textColor: "#ffffff",
+      backgroundColor: "#f0fdf4",
+      borderRadius: "50px",
+      shadow: "0 4px 12px rgba(34, 197, 94, 0.2)"
+    },
+    icon: "Eye"
   }
 ];
 
@@ -645,5 +681,6 @@ export const templateCategories = [
   "Booking",
   "Discount",
   "Legal",
-  "Survey"
+  "Survey",
+  "Analytics"
 ];

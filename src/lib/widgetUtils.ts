@@ -4040,6 +4040,179 @@ Sent via ${contactBusinessName} Contact Form\`;
             document.getElementById('widgetify-google-reviews').classList.toggle('show');
           }
         </script>`;
+
+    case 'live-visitor-counter':
+      const initialVisitors = config.initialVisitors || 1247;
+      const visitorVariation = config.visitorVariation || 5;
+      const updateIntervalMs = (config.updateInterval || 3) * 1000;
+      
+      return `
+        ${baseStyles}
+        <style>
+          .visitor-counter-badge {
+            position: fixed;
+            bottom: 20px;
+            ${positionStyle}
+            background: linear-gradient(135deg, ${buttonColor} 0%, ${buttonColor}dd 100%);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 1000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+          }
+          .visitor-counter-badge:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.2);
+          }
+          .visitor-pulse {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+          }
+          @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+          }
+          .visitor-counter-popup {
+            position: fixed;
+            bottom: 80px;
+            ${positionStyle}
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            padding: 20px;
+            width: 280px;
+            max-width: 90vw;
+            display: none;
+            z-index: 999;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          }
+          .visitor-counter-popup.show { display: block; animation: fadeInUp 0.3s ease; }
+          .visitor-stat { display: flex; align-items: center; gap: 12px; padding: 12px; background: #f9fafb; border-radius: 10px; margin-bottom: 10px; }
+          .visitor-stat:last-of-type { margin-bottom: 0; }
+          .visitor-stat-icon { width: 40px; height: 40px; background: ${buttonColor}20; color: ${buttonColor}; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+          .visitor-stat-value { font-size: 22px; font-weight: 700; color: #1f2937; }
+          .visitor-stat-label { font-size: 12px; color: #6b7280; }
+          .visitor-trend { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #22c55e; margin-top: 4px; }
+          .visitor-counter-close { position: absolute; top: 10px; right: 10px; background: none; border: none; font-size: 18px; color: #9ca3af; cursor: pointer; }
+          @media (max-width: 480px) {
+            .visitor-counter-badge { bottom: 15px; ${position === 'left' ? 'left: 15px;' : 'right: 15px;'} font-size: 13px; padding: 8px 14px; }
+            .visitor-counter-popup { bottom: 70px; ${position === 'left' ? 'left: 15px;' : 'right: 15px;'} width: calc(100vw - 30px); }
+          }
+        </style>
+
+        <div id="widgetify-visitor-badge" class="visitor-counter-badge" onclick="toggleVisitorCounter()">
+          <span class="visitor-pulse"></span>
+          <span id="visitor-online-count">${Math.floor(Math.random() * visitorVariation) + 3}</span>
+          <span style="font-weight: 400; opacity: 0.9;">visitors online</span>
+        </div>
+
+        <div id="widgetify-visitor-popup" class="visitor-counter-popup">
+          <button class="visitor-counter-close" onclick="toggleVisitorCounter()">×</button>
+          <h3 style="margin: 0 0 16px 0; font-size: 16px; font-weight: 700; color: #1f2937;">📊 Live Statistics</h3>
+          
+          <div class="visitor-stat">
+            <div class="visitor-stat-icon">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            </div>
+            <div>
+              <div class="visitor-stat-value" id="visitor-total-count">${initialVisitors.toLocaleString()}</div>
+              <div class="visitor-stat-label">Total Visitors</div>
+              <div class="visitor-trend">↑ <span id="visitor-today-count">${Math.floor(Math.random() * 50) + 20}</span> today</div>
+            </div>
+          </div>
+
+          <div class="visitor-stat">
+            <div class="visitor-stat-icon" style="background: #22c55e20; color: #22c55e;">
+              <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            </div>
+            <div>
+              <div class="visitor-stat-value" id="visitor-live-count">${Math.floor(Math.random() * visitorVariation) + 3}</div>
+              <div class="visitor-stat-label">Viewing Now</div>
+              <div style="display: flex; align-items: center; gap: 4px; margin-top: 4px;">
+                <span class="visitor-pulse" style="width: 6px; height: 6px;"></span>
+                <span style="font-size: 11px; color: #22c55e;">Live</span>
+              </div>
+            </div>
+          </div>
+          ${removeBranding ? '' : `
+          <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb; text-align: center;">
+            <a href="https://widgetify-two.vercel.app" target="_blank" style="color: #9ca3af; text-decoration: none; font-size: 10px;">Powered by Widgetify</a>
+          </div>`}
+        </div>
+
+        <script>
+          (function() {
+            let totalVisitors = ${initialVisitors};
+            let onlineVisitors = ${Math.floor(Math.random() * visitorVariation) + 3};
+            let todayVisitors = ${Math.floor(Math.random() * 50) + 20};
+            const storageKey = 'widgetify_visitor_data';
+            
+            // Load from localStorage if available
+            try {
+              const stored = localStorage.getItem(storageKey);
+              if (stored) {
+                const data = JSON.parse(stored);
+                const today = new Date().toDateString();
+                if (data.date === today) {
+                  totalVisitors = data.total;
+                  todayVisitors = data.today;
+                } else {
+                  // New day, reset today count
+                  totalVisitors = data.total + 1;
+                  todayVisitors = 1;
+                }
+              } else {
+                // First visit
+                totalVisitors++;
+                todayVisitors = 1;
+              }
+              
+              // Check if already counted this session
+              if (!sessionStorage.getItem('widgetify_counted')) {
+                totalVisitors++;
+                todayVisitors++;
+                sessionStorage.setItem('widgetify_counted', 'true');
+              }
+              
+              localStorage.setItem(storageKey, JSON.stringify({
+                total: totalVisitors,
+                today: todayVisitors,
+                date: new Date().toDateString()
+              }));
+            } catch(e) {}
+            
+            // Update displays
+            function updateDisplays() {
+              document.getElementById('visitor-online-count').textContent = onlineVisitors;
+              document.getElementById('visitor-total-count').textContent = totalVisitors.toLocaleString();
+              document.getElementById('visitor-live-count').textContent = onlineVisitors;
+              document.getElementById('visitor-today-count').textContent = todayVisitors;
+            }
+            updateDisplays();
+            
+            // Simulate live visitor changes
+            setInterval(function() {
+              const change = Math.random() > 0.5 ? 1 : -1;
+              onlineVisitors = Math.max(1, Math.min(${visitorVariation + 10}, onlineVisitors + change));
+              updateDisplays();
+            }, ${updateIntervalMs});
+          })();
+
+          function toggleVisitorCounter() {
+            document.getElementById('widgetify-visitor-popup').classList.toggle('show');
+          }
+        </script>`;
   }
 };
 
