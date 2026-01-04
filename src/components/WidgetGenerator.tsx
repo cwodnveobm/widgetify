@@ -18,6 +18,10 @@ import { useFavoriteWidgets } from '@/hooks/useFavoriteWidgets';
 import { AuthModal } from './AuthModal';
 import { FollowToUnlockModal } from './FollowToUnlockModal';
 import { usePersonalization } from '@/hooks/usePersonalization';
+import { useWidgetPersonalization } from '@/hooks/useWidgetPersonalization';
+import { SmartWidgetRecommendations } from './SmartWidgetRecommendations';
+import { PersonalizationGuidance } from './PersonalizationGuidance';
+import { SmartContextBanner } from './SmartContextBanner';
 import type { WidgetType, WidgetSize } from '@/types';
 
 const WidgetGenerator: React.FC = () => {
@@ -26,6 +30,7 @@ const WidgetGenerator: React.FC = () => {
   const { user } = useAuth();
   const { favorites, toggleFavorite, isFavorite } = useFavoriteWidgets();
   const { trackClick, trackWidgetGeneration } = usePersonalization();
+  const { getSmartDefaults, userProfile } = useWidgetPersonalization();
   const [showPreview, setShowPreview] = useState(!isMobile);
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(true); // Always unlocked now
@@ -149,6 +154,37 @@ const WidgetGenerator: React.FC = () => {
   const handleConfigChange = useCallback((key: keyof WidgetConfig, value: any) => {
     setConfig(prev => ({ ...prev, [key]: value }));
   }, []);
+
+  // Apply smart defaults when widget type changes
+  const handleWidgetTypeChange = useCallback((widgetType: WidgetType) => {
+    const smartDefaults = getSmartDefaults(widgetType);
+    setConfig(prev => ({
+      ...prev,
+      type: widgetType,
+      welcomeMessage: prev.welcomeMessage === 'Hello! How can I help you today?' ? smartDefaults.welcomeMessage : prev.welcomeMessage,
+      primaryColor: smartDefaults.primaryColor,
+      position: smartDefaults.position,
+      size: smartDefaults.size,
+      title: prev.title || smartDefaults.title,
+      // Apply widget-specific defaults
+      ...(widgetType === 'exit-intent-popup' && {
+        exitTitle: prev.exitTitle === 'Wait! Don\'t Leave Yet!' ? smartDefaults.title : prev.exitTitle,
+        exitButtonText: prev.exitButtonText === 'Claim Offer Now' ? smartDefaults.ctaText : prev.exitButtonText,
+      }),
+      ...(widgetType === 'lead-capture-popup' && {
+        leadCaptureTitle: prev.leadCaptureTitle === 'Get In Touch With Us!' ? smartDefaults.title : prev.leadCaptureTitle,
+        popupDelay: smartDefaults.triggerDelay ?? prev.popupDelay,
+      }),
+      ...(widgetType === 'newsletter-signup' && {
+        title: smartDefaults.title,
+      }),
+      ...(widgetType === 'ai-chatbot' && {
+        chatbotName: prev.chatbotName === 'AI Assistant' ? smartDefaults.title : prev.chatbotName,
+        chatbotWelcome: prev.chatbotWelcome === 'Hello! I\'m your AI assistant. How can I help you today?' ? smartDefaults.welcomeMessage : prev.chatbotWelcome,
+      }),
+    }));
+    trackClick(`widget-type-select-${widgetType}`);
+  }, [getSmartDefaults, trackClick]);
 
   const handleNetworkChange = useCallback((network: string, checked: boolean) => {
     const currentNetworks = config.networks || [];
@@ -1668,9 +1704,13 @@ const WidgetGenerator: React.FC = () => {
           <h2 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
             Widget Generator
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto text-sm md:text-base px-4">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base px-4 mb-4">
             Create powerful, customizable widgets in seconds. Choose your type, customize the settings, and get ready-to-use code.
           </p>
+          {/* Smart Context Banner - Shows detected user profile */}
+          <div className="max-w-md mx-auto">
+            <SmartContextBanner compact />
+          </div>
         </div>
 
         {/* Mobile-Optimized Tier Selection */}
@@ -1738,6 +1778,15 @@ const WidgetGenerator: React.FC = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 md:space-y-6">
+              {/* Personalization Guidance */}
+              <PersonalizationGuidance onSelectWidget={handleWidgetTypeChange} />
+              
+              {/* Smart Widget Recommendations */}
+              <SmartWidgetRecommendations 
+                onSelectWidget={handleWidgetTypeChange} 
+                currentWidget={config.type}
+              />
+              
               {/* Widget Type Selection */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between mb-2">
@@ -1754,7 +1803,7 @@ const WidgetGenerator: React.FC = () => {
                 </div>
                 <Select
                   value={config.type}
-                  onValueChange={(value: WidgetType) => handleConfigChange('type', value)}
+                  onValueChange={(value: WidgetType) => handleWidgetTypeChange(value)}
                 >
                   <SelectTrigger className="text-base min-h-[48px]">
                     <SelectValue />
