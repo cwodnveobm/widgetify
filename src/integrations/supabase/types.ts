@@ -160,6 +160,48 @@ export type Database = {
         }
         Relationships: []
       }
+      email_captures: {
+        Row: {
+          browsing_data: Json | null
+          created_at: string
+          email: string
+          id: string
+          name: string | null
+          source: string | null
+          subscribed_at: string
+          unsubscribed_at: string | null
+          updated_at: string
+          user_segment: string | null
+          widget_preferences: Json | null
+        }
+        Insert: {
+          browsing_data?: Json | null
+          created_at?: string
+          email: string
+          id?: string
+          name?: string | null
+          source?: string | null
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_segment?: string | null
+          widget_preferences?: Json | null
+        }
+        Update: {
+          browsing_data?: Json | null
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string | null
+          source?: string | null
+          subscribed_at?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_segment?: string | null
+          widget_preferences?: Json | null
+        }
+        Relationships: []
+      }
       favorite_widgets: {
         Row: {
           created_at: string

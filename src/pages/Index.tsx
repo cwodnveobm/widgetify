@@ -20,6 +20,7 @@ import { PersonalizationDebug } from '@/components/PersonalizationDebug';
 import { DonateButton } from '@/components/DonateButton';
 import { SEOHead } from '@/components/SEOHead';
 import { HomePageStructuredData } from '@/components/StructuredData';
+import EmailCaptureModal from '@/components/EmailCaptureModal';
 import { useAuth } from '@/hooks/useAuth';
 import { usePersonalization } from '@/hooks/usePersonalization';
 import { supabase } from '@/integrations/supabase/client';
@@ -42,9 +43,11 @@ const Index: React.FC = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [showEmailCapture, setShowEmailCapture] = useState(false);
   const hasTrackedPageView = React.useRef(false);
+  const emailCaptureShownRef = React.useRef(false);
   const { user } = useAuth();
-  const { trackPageView, trackClick, content } = usePersonalization();
+  const { trackPageView, trackClick, content, session, behavior } = usePersonalization();
   const isMobile = useIsMobile();
   
   const toggleMenu = () => {
@@ -58,6 +61,39 @@ const Index: React.FC = () => {
       hasTrackedPageView.current = true;
     }
   }, [trackPageView]);
+
+  // Show email capture modal for returning users with engagement
+  useEffect(() => {
+    const alreadyCaptured = localStorage.getItem('widgetify_email_captured') === 'true';
+    const alreadyDismissed = sessionStorage.getItem('widgetify_email_dismissed') === 'true';
+    
+    // Don't show if already captured, dismissed, user is logged in, or already shown this session
+    if (alreadyCaptured || alreadyDismissed || user || emailCaptureShownRef.current) {
+      return;
+    }
+    
+    // Show for returning users OR users with significant engagement
+    const shouldShow = (
+      (session.isReturningUser && behavior.timeOnSite > 15) ||
+      (behavior.widgetsGenerated > 0 && behavior.timeOnSite > 30) ||
+      (behavior.scrollDepth > 60 && behavior.timeOnSite > 45)
+    );
+    
+    if (shouldShow) {
+      emailCaptureShownRef.current = true;
+      // Delay showing the modal to not be intrusive
+      const timer = setTimeout(() => {
+        setShowEmailCapture(true);
+      }, 2000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [session.isReturningUser, behavior.timeOnSite, behavior.widgetsGenerated, behavior.scrollDepth, user]);
+
+  const handleCloseEmailCapture = () => {
+    setShowEmailCapture(false);
+    sessionStorage.setItem('widgetify_email_dismissed', 'true');
+  };
 
   // Handle online/offline status
   useEffect(() => {
@@ -323,6 +359,12 @@ const Index: React.FC = () => {
         open={showAuthModal}
         onClose={() => setShowAuthModal(false)}
         mode={authMode}
+      />
+      
+      {/* Email Capture Modal for Returning Users */}
+      <EmailCaptureModal
+        open={showEmailCapture}
+        onClose={handleCloseEmailCapture}
       />
       
       {/* Personalization Debug (dev only) */}
