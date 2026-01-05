@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import HeroSection from '@/components/HeroSection';
 import WidgetGenerator from '@/components/WidgetGenerator';
@@ -17,12 +17,16 @@ import { PersonalizedHero } from '@/components/PersonalizedHero';
 import { PersonalizedCTA } from '@/components/PersonalizedCTA';
 import { PersonalizedRecommendations } from '@/components/PersonalizedRecommendations';
 import { PersonalizationDebug } from '@/components/PersonalizationDebug';
+import { PersonalizedOnboarding } from '@/components/PersonalizedOnboarding';
+import { PredictiveActions } from '@/components/PredictiveActions';
+import { PricingNudge } from '@/components/PricingNudge';
 import { DonateButton } from '@/components/DonateButton';
 import { SEOHead } from '@/components/SEOHead';
 import { HomePageStructuredData } from '@/components/StructuredData';
 import EmailCaptureModal from '@/components/EmailCaptureModal';
 import { useAuth } from '@/hooks/useAuth';
 import { usePersonalization } from '@/hooks/usePersonalization';
+import { useHyperPersonalization } from '@/hooks/useHyperPersonalization';
 import { supabase } from '@/integrations/supabase/client';
 import { Menu, X, Sparkles, Wifi, WifiOff, User, LogOut, Heart } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -44,10 +48,13 @@ const Index: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [showEmailCapture, setShowEmailCapture] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(true);
   const hasTrackedPageView = React.useRef(false);
   const emailCaptureShownRef = React.useRef(false);
+  const widgetGeneratorRef = React.useRef<{ selectWidget: (type: string) => void } | null>(null);
   const { user } = useAuth();
   const { trackPageView, trackClick, content, session, behavior } = usePersonalization();
+  const { shouldShowOnboarding, extendedProfile, uiPersonalization } = useHyperPersonalization();
   const isMobile = useIsMobile();
   
   const toggleMenu = () => {
@@ -165,6 +172,21 @@ const Index: React.FC = () => {
     }
     handleMenuItemClick();
   };
+
+  const handleOnboardingComplete = useCallback(() => {
+    setShowOnboarding(false);
+  }, []);
+
+  const handleOnboardingWidgetSelect = useCallback((widgetType: string) => {
+    setShowOnboarding(false);
+    // Scroll to widget generator and select widget
+    scrollToSection('widget-generator');
+    // Small delay to allow scroll to complete
+    setTimeout(() => {
+      const event = new CustomEvent('select-widget', { detail: { type: widgetType } });
+      window.dispatchEvent(event);
+    }, 500);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-background pb-16 md:pb-0">
@@ -366,6 +388,22 @@ const Index: React.FC = () => {
         open={showEmailCapture}
         onClose={handleCloseEmailCapture}
       />
+      
+      {/* Personalized Onboarding Flow */}
+      {showOnboarding && shouldShowOnboarding && (
+        <PersonalizedOnboarding
+          onComplete={handleOnboardingComplete}
+          onSelectWidget={handleOnboardingWidgetSelect}
+        />
+      )}
+      
+      {/* Predictive Actions Floating Widget */}
+      {!showOnboarding && uiPersonalization.showRecommendations && behavior.widgetsGenerated > 0 && (
+        <PredictiveActions 
+          variant="floating" 
+          onSelectWidget={handleOnboardingWidgetSelect}
+        />
+      )}
       
       {/* Personalization Debug (dev only) */}
       <PersonalizationDebug />

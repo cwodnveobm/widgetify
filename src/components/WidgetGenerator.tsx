@@ -19,9 +19,11 @@ import { AuthModal } from './AuthModal';
 import { FollowToUnlockModal } from './FollowToUnlockModal';
 import { usePersonalization } from '@/hooks/usePersonalization';
 import { useWidgetPersonalization } from '@/hooks/useWidgetPersonalization';
+import { useHyperPersonalization } from '@/hooks/useHyperPersonalization';
 import { SmartWidgetRecommendations } from './SmartWidgetRecommendations';
 import { PersonalizationGuidance } from './PersonalizationGuidance';
 import { SmartContextBanner } from './SmartContextBanner';
+import { PricingNudge } from './PricingNudge';
 import type { WidgetType, WidgetSize } from '@/types';
 
 const WidgetGenerator: React.FC = () => {
@@ -31,6 +33,12 @@ const WidgetGenerator: React.FC = () => {
   const { favorites, toggleFavorite, isFavorite } = useFavoriteWidgets();
   const { trackClick, trackWidgetGeneration } = usePersonalization();
   const { getSmartDefaults, userProfile } = useWidgetPersonalization();
+  const { 
+    uiPersonalization, 
+    extendedProfile, 
+    getPersonalizedCopy,
+    formatMessage 
+  } = useHyperPersonalization();
   const [showPreview, setShowPreview] = useState(!isMobile);
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(true); // Always unlocked now
@@ -149,6 +157,20 @@ const WidgetGenerator: React.FC = () => {
   React.useEffect(() => {
     setIsPremiumUnlocked(true);
     setSelectedTier('premium');
+  }, []);
+
+  // Listen for external widget selection events
+  React.useEffect(() => {
+    const handleSelectWidget = (event: CustomEvent<{ type: string }>) => {
+      if (event.detail?.type) {
+        handleWidgetTypeChange(event.detail.type as WidgetType);
+      }
+    };
+    
+    window.addEventListener('select-widget', handleSelectWidget as EventListener);
+    return () => {
+      window.removeEventListener('select-widget', handleSelectWidget as EventListener);
+    };
   }, []);
 
   const handleConfigChange = useCallback((key: keyof WidgetConfig, value: any) => {
