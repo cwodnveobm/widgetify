@@ -1,6 +1,44 @@
 
 import { WidgetType, WidgetSize } from '@/types';
 
+/**
+ * Escapes HTML special characters to prevent XSS attacks in generated widget code.
+ * This is critical as user inputs are embedded into HTML strings that will be executed
+ * on third-party websites.
+ */
+export function escapeHtml(text: string | undefined | null): string {
+  if (text === undefined || text === null) return '';
+  const str = String(text);
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#x27;',
+    '/': '&#x2F;',
+    '`': '&#x60;',
+    '=': '&#x3D;'
+  };
+  return str.replace(/[&<>"'`=/]/g, (m) => map[m]);
+}
+
+/**
+ * Escapes text for use in JavaScript string literals within generated code.
+ * Prevents breaking out of JS strings via quotes or newlines.
+ */
+export function escapeJsString(text: string | undefined | null): string {
+  if (text === undefined || text === null) return '';
+  const str = String(text);
+  return str
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/"/g, '\\"')
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r')
+    .replace(/\t/g, '\\t')
+    .replace(/<\/script>/gi, '<\\/script>');
+}
+
 export interface WidgetConfig {
   type: WidgetType;
   handle: string;
@@ -414,7 +452,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           </div>
           <div class="widgetify-content">
             <div style="background-color: #f3f4f6; padding: 8px; border-radius: 8px; margin-bottom: 8px; max-width: 80%;">
-              <p style="margin: 0; font-size: 12px; color: #374151;">${welcomeMessage || 'Hello! How can I help you today?'}</p>
+              <p style="margin: 0; font-size: 12px; color: #374151;">${escapeHtml(welcomeMessage) || 'Hello! How can I help you today?'}</p>
             </div>
           </div>
           <div style="padding: 12px; border-top: 1px solid #e5e7eb; background-color: #f9fafb; border-radius: 0 0 10px 10px;">
@@ -437,9 +475,9 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         </script>`;
 
     case 'whatsapp-form':
-      const waFormTitle = config.formTitle || 'Contact Us';
+      const waFormTitle = escapeHtml(config.formTitle) || 'Contact Us';
       const waFormFields = config.formFields || ['name', 'email', 'message'];
-      const waFormMessage = config.formMessage || 'Hello! I would like to get in touch about...';
+      const waFormMessage = escapeJsString(config.formMessage) || 'Hello! I would like to get in touch about...';
       const waNumber = (config.handle || '').replace(/[^0-9]/g, '');
       
       return `${baseStyles}
@@ -597,8 +635,8 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
         </script>`;
 
     case 'lead-capture-popup':
-      const leadTitle = config.leadCaptureTitle || 'Get In Touch With Us!';
-      const leadSubtitle = config.leadCaptureSubtitle || 'Leave your details and we\'ll contact you soon';
+      const leadTitle = escapeHtml(config.leadCaptureTitle) || 'Get In Touch With Us!';
+      const leadSubtitle = escapeHtml(config.leadCaptureSubtitle) || 'Leave your details and we\'ll contact you soon';
       const adminWhatsApp = (config.adminWhatsApp || '').replace(/[^0-9]/g, '');
       const popupDelay = (config.popupDelay || 5) * 1000; // Convert to milliseconds
       
@@ -963,7 +1001,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
           }
 
           function shareOnTwitter() {
-            window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent('${shareText || 'Check this out!'}') + '&url=' + encodeURIComponent('${shareUrl || window.location.href}'), '_blank');
+            window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent('${escapeJsString(shareText) || 'Check this out!'}') + '&url=' + encodeURIComponent('${escapeJsString(shareUrl) || window.location.href}'), '_blank');
           }
 
           function shareOnLinkedin() {
@@ -1474,7 +1512,7 @@ Sent via ${contactBusinessName} Contact Form\`;
           </div>
           <div class="widgetify-content" style="padding: 20px; height: 200px; overflow-y: auto;">
             <div style="background: #f0f0f0; padding: 10px; border-radius: 10px; margin-bottom: 10px;">
-              <p style="margin: 0; font-size: 14px;">${welcomeMessage || 'Hello! How can I help you today?'}</p>
+              <p style="margin: 0; font-size: 14px;">${escapeHtml(welcomeMessage) || 'Hello! How can I help you today?'}</p>
             </div>
             <div style="text-align: center; color: #666; font-size: 12px; margin-top: 20px;">
               <div style="display: inline-block; width: 8px; height: 8px; background: #4CAF50; border-radius: 50%; margin-right: 5px;"></div>
@@ -1759,7 +1797,7 @@ Sent via ${contactBusinessName} Contact Form\`;
           </div>
           <div class="widgetify-content">
             <div style="background-color: #f3f4f6; padding: 8px; border-radius: 8px; margin-bottom: 8px; max-width: 80%;">
-              <p style="margin: 0; font-size: 12px; color: #374151;">${welcomeMessage || 'Hello! How can I help you today?'}</p>
+              <p style="margin: 0; font-size: 12px; color: #374151;">${escapeHtml(welcomeMessage) || 'Hello! How can I help you today?'}</p>
             </div>
           </div>
           <div style="padding: 12px; border-top: 1px solid #e5e7eb; background-color: #f9fafb;">
@@ -1812,7 +1850,7 @@ Sent via ${contactBusinessName} Contact Form\`;
 
     case 'countdown-timer':
         const targetDateTime = targetDate || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16);
-        const timerTitle = title || 'Countdown Timer';
+        const timerTitle = escapeHtml(title) || 'Countdown Timer';
         const style = countdownStyle || 'digital';
         const showTimeLabels = showLabels !== false;
 
@@ -2116,10 +2154,10 @@ Sent via ${contactBusinessName} Contact Form\`;
         <div id="exit-intent-overlay" class="exit-intent-overlay" onclick="closeExitIntent(event)">
           <div class="exit-intent-popup">
             <button class="exit-intent-close" onclick="closeExitIntent()" aria-label="Close popup">×</button>
-            <h2 class="exit-intent-title">${config.exitTitle || 'Wait! Don\'t Leave Yet!'}</h2>
-            <p class="exit-intent-subtitle">${config.exitSubtitle || 'Get an exclusive offer before you go'}</p>
-            <div class="exit-intent-offer">${config.exitOffer || '🎉 20% OFF Your First Order!'}</div>
-            <a href="${config.exitActionUrl || '#'}" class="exit-intent-button" onclick="closeExitIntent()">${config.exitButtonText || 'Claim Offer Now'}</a>
+            <h2 class="exit-intent-title">${escapeHtml(config.exitTitle) || 'Wait! Don\'t Leave Yet!'}</h2>
+            <p class="exit-intent-subtitle">${escapeHtml(config.exitSubtitle) || 'Get an exclusive offer before you go'}</p>
+            <div class="exit-intent-offer">${escapeHtml(config.exitOffer) || '🎉 20% OFF Your First Order!'}</div>
+            <a href="${escapeHtml(config.exitActionUrl) || '#'}" class="exit-intent-button" onclick="closeExitIntent()">${escapeHtml(config.exitButtonText) || 'Claim Offer Now'}</a>
           </div>
         </div>
 
@@ -2282,9 +2320,9 @@ Sent via ${contactBusinessName} Contact Form\`;
 
         <div id="sticky-banner" class="sticky-banner">
           <div class="banner-content">
-            <span class="banner-text">${config.bannerText || '🎉 Special Offer: Get 20% OFF on all products!'}</span>
+            <span class="banner-text">${escapeHtml(config.bannerText) || '🎉 Special Offer: Get 20% OFF on all products!'}</span>
             ${config.bannerActionUrl && config.bannerActionText ? `
-              <a href="${config.bannerActionUrl}" class="banner-action">${config.bannerActionText}</a>
+              <a href="${escapeHtml(config.bannerActionUrl)}" class="banner-action">${escapeHtml(config.bannerActionText)}</a>
             ` : ''}
             ${config.bannerDismissible !== false ? `
               <button class="banner-close" onclick="closeBanner()" aria-label="Close banner">×</button>
@@ -2500,13 +2538,13 @@ Sent via ${contactBusinessName} Contact Form\`;
 
         <div id="ai-chatbot-popup" class="ai-chatbot-popup">
           <div class="ai-chatbot-header">
-            <h3>${config.chatbotName || 'AI Assistant'}</h3>
+            <h3>${escapeHtml(config.chatbotName) || 'AI Assistant'}</h3>
             <button class="ai-chatbot-close" onclick="toggleAiChatbot()" aria-label="Close chat">×</button>
           </div>
           
           <div id="ai-chatbot-messages" class="ai-chatbot-messages">
             <div class="ai-message bot">
-              ${config.chatbotWelcome || 'Hello! I\'m your AI assistant. How can I help you today?'}
+              ${escapeHtml(config.chatbotWelcome) || 'Hello! I\'m your AI assistant. How can I help you today?'}
             </div>
           </div>
           
@@ -2514,7 +2552,7 @@ Sent via ${contactBusinessName} Contact Form\`;
             <textarea 
               id="ai-chatbot-input" 
               class="ai-chatbot-input" 
-              placeholder="${config.chatbotPlaceholder || 'Type your message...'}"
+              placeholder="${escapeHtml(config.chatbotPlaceholder) || 'Type your message...'}"
               rows="1"
             ></textarea>
             <button id="ai-chatbot-send" class="ai-chatbot-send" onclick="sendAiMessage()" aria-label="Send message">
@@ -2815,7 +2853,7 @@ Sent via ${contactBusinessName} Contact Form\`;
       return `${baseStyles}
         <div id="widgetify-consent" style="position:fixed;left:20px;right:20px;bottom:20px;max-width:760px;margin:0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);display:none;z-index:10000">
           <div style="display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap">
-            <div style="font-size:14px;color:#374151;line-height:1.5;flex:1 1 auto;min-width:200px;">${config.consentMessage || 'We use cookies to personalize content and analyze traffic.'}</div>
+            <div style="font-size:14px;color:#374151;line-height:1.5;flex:1 1 auto;min-width:200px;">${escapeHtml(config.consentMessage) || 'We use cookies to personalize content and analyze traffic.'}</div>
             <div style="display:flex;gap:8px;flex-shrink:0">
               <button onclick="widgetifyAcceptCookies()" style="background:${buttonColor};color:#fff;padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-weight:600">Accept</button>
               <button onclick="document.getElementById('widgetify-consent').style.display='none'" style="background:#f3f4f6;color:#374151;padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-weight:500">Later</button>
@@ -3151,14 +3189,14 @@ Sent via ${contactBusinessName} Contact Form\`;
             <button class="widgetify-close" onclick="toggleWidgetifySignature()" aria-label="Close signature generator">×</button>
           </div>
           <div class="widgetify-content">
-            <div class="signature-preview ${config.signatureStyle || 'professional'}">
-              <div class="signature-name">${config.fullName || 'Your Name'}</div>
-              <div class="signature-title">${config.jobTitle || 'Your Job Title'}</div>
-              <div class="signature-company">${config.companyName || 'Company Name'}</div>
-              ${config.companyWebsite ? `<div class="signature-website"><a href="${config.companyWebsite}" style="color: ${primaryColor}">${config.companyWebsite}</a></div>` : ''}
+            <div class="signature-preview ${escapeHtml(config.signatureStyle) || 'professional'}">
+              <div class="signature-name">${escapeHtml(config.fullName) || 'Your Name'}</div>
+              <div class="signature-title">${escapeHtml(config.jobTitle) || 'Your Job Title'}</div>
+              <div class="signature-company">${escapeHtml(config.companyName) || 'Company Name'}</div>
+              ${config.companyWebsite ? `<div class="signature-website"><a href="${escapeHtml(config.companyWebsite)}" style="color: ${primaryColor}">${escapeHtml(config.companyWebsite)}</a></div>` : ''}
               ${config.socialLinks?.length ? `
                 <div class="signature-social">
-                  ${config.socialLinks.map(link => `<a href="${link.url}" style="color: ${primaryColor}; margin-right: 10px;">${link.platform}</a>`).join('')}
+                  ${config.socialLinks.map(link => `<a href="${escapeHtml(link.url)}" style="color: ${primaryColor}; margin-right: 10px;">${escapeHtml(link.platform)}</a>`).join('')}
                 </div>
               ` : ''}
             </div>
@@ -3200,7 +3238,7 @@ Sent via ${contactBusinessName} Contact Form\`;
         </script>`;
 
     case 'holiday-countdown':
-      const holidayName = config.holidayName || 'Christmas';
+      const holidayName = escapeHtml(config.holidayName) || 'Christmas';
       const holidayDate = config.holidayDate || '2024-12-25';
       return `${baseStyles}
         <div id="widgetify-holiday" class="widgetify-widget" onclick="toggleWidgetifyHoliday()" aria-label="Holiday countdown">
@@ -3323,7 +3361,7 @@ Sent via ${contactBusinessName} Contact Form\`;
             <div style="text-align: center; padding: 20px 0;">
               <div style="font-size: 60px; margin-bottom: 15px;">${greeting.emoji}</div>
               <h2 style="margin: 0 0 10px 0; color: white;">${greeting.text}</h2>
-              <p style="margin: 0; opacity: 0.9; font-size: 14px;">${config.customGreeting || 'Wishing you joy and happiness!'}</p>
+              <p style="margin: 0; opacity: 0.9; font-size: 14px;">${escapeHtml(config.customGreeting) || 'Wishing you joy and happiness!'}</p>
             </div>
           </div>${generateWatermark('border-top: 1px solid rgba(255,255,255,0.2);')}
         </div>
@@ -3343,13 +3381,13 @@ Sent via ${contactBusinessName} Contact Form\`;
 
         <div id="widgetify-blackfriday-popup" class="widgetify-popup" role="dialog" aria-labelledby="bf-title" style="width: 400px; max-width: 95vw; background: linear-gradient(135deg, #000, #1a1a1a); color: white; border: 2px solid #ff6b6b;">
           <div class="widgetify-header" style="background: #ff6b6b; color: white;">
-            <h3 id="bf-title">🖤 ${config.blackFridayTitle || 'BLACK FRIDAY DEALS'}</h3>
+            <h3 id="bf-title">🖤 ${escapeHtml(config.blackFridayTitle) || 'BLACK FRIDAY DEALS'}</h3>
             <button class="widgetify-close" onclick="toggleWidgetifyBlackFriday()" aria-label="Close Black Friday timer" style="color: white;">×</button>
           </div>
           <div class="widgetify-content">
             <div style="text-align: center; padding: 20px 0;">
               <div style="font-size: 48px; margin-bottom: 15px;">🛍️</div>
-              <h2 style="margin: 0 0 10px 0; color: #ff6b6b;">${config.blackFridayOffer || 'UP TO 70% OFF!'}</h2>
+              <h2 style="margin: 0 0 10px 0; color: #ff6b6b;">${escapeHtml(config.blackFridayOffer) || 'UP TO 70% OFF!'}</h2>
               <p style="margin: 0 0 20px 0; opacity: 0.9;">Don't miss out on our biggest sale of the year!</p>
               
               <div id="bf-timer" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0;">
@@ -3435,7 +3473,7 @@ Sent via ${contactBusinessName} Contact Form\`;
 
         <div id="widgetify-survey-popup" class="widgetify-popup" role="dialog" style="height: auto; max-height: 500px;">
           <div class="widgetify-header">
-            <h3>${config.surveyTitle || 'Quick Survey'}</h3>
+            <h3>${escapeHtml(config.surveyTitle) || 'Quick Survey'}</h3>
             <button class="widgetify-close" onclick="toggleWidgetifySurvey()">×</button>
           </div>
           <div class="widgetify-content" style="flex: 1; overflow-y: auto;">
@@ -3554,11 +3592,11 @@ Sent via ${contactBusinessName} Contact Form\`;
 
         <div id="widgetify-lead-magnet-popup" class="widgetify-popup" role="dialog">
           <div class="widgetify-header">
-            <h3>${config.resourceTitle || 'Free Resource'}</h3>
+            <h3>${escapeHtml(config.resourceTitle) || 'Free Resource'}</h3>
             <button class="widgetify-close" onclick="toggleWidgetifyLeadMagnet()">×</button>
           </div>
           <div class="widgetify-content">
-            <p style="margin: 0 0 20px 0; color: #6b7280; font-size: 14px;">${config.resourceDescription || 'Enter your details to download this free resource.'}</p>
+            <p style="margin: 0 0 20px 0; color: #6b7280; font-size: 14px;">${escapeHtml(config.resourceDescription) || 'Enter your details to download this free resource.'}</p>
             <form class="lead-magnet-form" onsubmit="submitLeadMagnet(event)">
               <input type="text" id="lead-name" class="lead-magnet-input" placeholder="Your Name" required />
               <input type="email" id="lead-email" class="lead-magnet-input" placeholder="Your Email" required />
@@ -3586,7 +3624,7 @@ Sent via ${contactBusinessName} Contact Form\`;
             console.log('Lead captured:', { name, email });
             alert('Thank you! Your download will start shortly.');
             
-            ${config.resourceUrl ? `window.open('${config.resourceUrl}', '_blank');` : ''}
+            ${config.resourceUrl ? `window.open('${escapeJsString(config.resourceUrl)}', '_blank');` : ''}
             toggleWidgetifyLeadMagnet();
             e.target.reset();
           }
@@ -3902,7 +3940,7 @@ Sent via ${contactBusinessName} Contact Form\`;
         </script>`;
 
     case 'google-reviews':
-      const businessReviewName = config.businessName || 'Amazing Business';
+      const businessReviewName = escapeHtml(config.businessName) || 'Amazing Business';
       const reviews = config.googleReviews || [
         { author: 'John Smith', rating: 5, text: 'Absolutely fantastic service! Highly recommended.', date: '2 weeks ago' },
         { author: 'Sarah Johnson', rating: 5, text: 'Professional team, great results. Will use again!', date: '1 month ago' },
@@ -4017,19 +4055,19 @@ Sent via ${contactBusinessName} Contact Form\`;
             ${reviews.map(review => `
               <div class="review-card">
                 <div class="review-header">
-                  <div class="review-avatar">${review.author.charAt(0)}</div>
+                  <div class="review-avatar">${escapeHtml(review.author?.charAt(0))}</div>
                   <div>
-                    <div class="review-author">${review.author}</div>
-                    <div class="review-date">${review.date}</div>
+                    <div class="review-author">${escapeHtml(review.author)}</div>
+                    <div class="review-date">${escapeHtml(review.date)}</div>
                   </div>
                 </div>
-                <div class="review-stars-small">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
-                <div class="review-text">${review.text}</div>
+                <div class="review-stars-small">${'★'.repeat(Math.min(5, Math.max(0, Math.floor(Number(review.rating) || 0))))}${'☆'.repeat(5 - Math.min(5, Math.max(0, Math.floor(Number(review.rating) || 0))))}</div>
+                <div class="review-text">${escapeHtml(review.text)}</div>
               </div>
             `).join('')}
           </div>
           <div class="reviews-footer">
-            <a href="${config.reviewUrl || '#'}" target="_blank" class="leave-review-btn">
+            <a href="${escapeHtml(config.reviewUrl) || '#'}" target="_blank" class="leave-review-btn">
               Leave a Review on Google
             </a>
           </div>${generateWatermark('background: #f9fafb; margin: 0; padding: 8px; border-top: 1px solid #e5e7eb;')}
