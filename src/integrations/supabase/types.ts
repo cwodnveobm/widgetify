@@ -349,6 +349,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_email_rate_limit: { Args: { p_email: string }; Returns: boolean }
       has_active_subscription: {
         Args: { user_id_param: string }
         Returns: boolean
