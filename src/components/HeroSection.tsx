@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowDownCircle, Sparkles, Zap, Globe } from 'lucide-react';
+import { ArrowDownCircle, Sparkles, Zap, Globe, ArrowRight } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const HeroSection: React.FC = () => {
@@ -25,86 +25,118 @@ const HeroSection: React.FC = () => {
 
   return (
     <section className="relative py-8 sm:py-12 md:py-20 lg:py-32 overflow-hidden min-h-screen flex items-center">
-      {/* Enhanced Background with multiple layers */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 z-0">
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-background/50 to-transparent"></div>
+      {/* Premium Background with layered gradients */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-background to-accent/8 z-0" />
+      
+      {/* Animated mesh gradient overlay */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-gradient-to-br from-primary/25 to-transparent rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-gradient-to-tl from-accent/20 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-primary/10 via-transparent to-transparent rounded-full blur-2xl" />
       </div>
       
-      {/* Animated background elements */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/20 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute top-40 right-10 w-72 h-72 bg-secondary/20 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-accent/20 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '4s' }}></div>
-      </div>
+      {/* Subtle grid pattern */}
+      <div className="absolute inset-0 z-0 opacity-[0.015] dark:opacity-[0.03]" 
+           style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)', backgroundSize: '40px 40px' }} />
 
       <div className="container mx-auto container-padding relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Enhanced badge */}
-          <div className="inline-flex items-center gap-2 bg-background/80 backdrop-blur-sm border border-primary/20 rounded-full px-3 sm:px-4 py-2 mb-4 sm:mb-6 shadow-lg">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <span className="text-xs sm:text-sm font-medium text-primary">Next-Gen Widget Builder</span>
+        <div className="max-w-5xl mx-auto text-center">
+          {/* Premium badge with glow */}
+          <div className="inline-flex items-center gap-2 bg-background/90 backdrop-blur-xl border border-primary/20 rounded-full px-4 sm:px-5 py-2.5 mb-6 sm:mb-8 shadow-brand">
+            <div className="relative">
+              <Sparkles className="w-4 h-4 text-primary animate-pulse" />
+              <div className="absolute inset-0 w-4 h-4 bg-primary/30 blur-md rounded-full" />
+            </div>
+            <span className="text-xs sm:text-sm font-semibold text-foreground">Next-Gen Widget Platform</span>
+            <span className="hidden sm:inline-flex items-center gap-1 text-xs text-primary font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+              Live
+            </span>
           </div>
 
-          {/* Enhanced title with better typography */}
-          <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold mb-4 sm:mb-6 leading-tight hero-title">
-            <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+          {/* Brand Name with premium typography */}
+          <h1 className="mb-6 sm:mb-8 leading-none">
+            <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold brand-logo-xl brand-gradient-vibrant tracking-tight">
               Widgetify
             </span>
-            <br />
-            <span className="mt-2 sm:mt-3 block text-xl sm:text-2xl md:text-3xl lg:text-5xl text-foreground font-bold">
-              Connect • Engage • Convert
+            <span className="block mt-4 sm:mt-6 text-lg sm:text-xl md:text-2xl lg:text-3xl font-medium text-muted-foreground tracking-wide">
+              <span className="text-foreground font-semibold">Connect</span>
+              <span className="mx-2 sm:mx-3 text-primary/40">•</span>
+              <span className="text-foreground font-semibold">Engage</span>
+              <span className="mx-2 sm:mx-3 text-accent/60">•</span>
+              <span className="text-foreground font-semibold">Convert</span>
             </span>
           </h1>
           
-          {/* Enhanced description */}
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 md:mb-12 px-2 md:px-8 mx-auto max-w-3xl leading-relaxed">
-            Create stunning, customizable widgets that transform your website visitors into engaged customers. 
-            <span className="font-semibold text-primary"> No coding required.</span> 
-            Launch in seconds, not hours.
+          {/* Value proposition with better typography */}
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-8 sm:mb-10 md:mb-12 px-2 md:px-12 mx-auto max-w-3xl leading-relaxed">
+            Build stunning, high-converting widgets in seconds.
+            <span className="text-foreground font-medium"> Zero code required.</span>
+            <br className="hidden sm:block" />
+            Seamlessly integrate with any platform and watch your engagement soar.
           </p>
 
-          {/* Enhanced feature highlights */}
-          <div className="flex flex-wrap justify-center gap-3 sm:gap-6 mb-8 sm:mb-10 md:mb-12">
-            <div className="flex items-center gap-2 bg-background/70 backdrop-blur-sm rounded-full px-3 sm:px-4 py-2 shadow-md">
-              <Zap className="w-4 h-4 text-chart-1" />
-              <span className="text-xs sm:text-sm font-medium text-foreground">Lightning Fast</span>
-            </div>
-            <div className="flex items-center gap-2 bg-background/70 backdrop-blur-sm rounded-full px-3 sm:px-4 py-2 shadow-md">
-              <Globe className="w-4 h-4 text-chart-2" />
-              <span className="text-xs sm:text-sm font-medium text-foreground">Works Everywhere</span>
-            </div>
-            <div className="flex items-center gap-2 bg-background/70 backdrop-blur-sm rounded-full px-3 sm:px-4 py-2 shadow-md">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-xs sm:text-sm font-medium text-foreground">Fully Customizable</span>
-            </div>
+          {/* Feature pills with modern styling */}
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-10 sm:mb-12">
+            {[
+              { icon: Zap, label: 'Lightning Fast', color: 'text-amber-500' },
+              { icon: Globe, label: 'Universal Embed', color: 'text-accent' },
+              { icon: Sparkles, label: 'AI-Powered', color: 'text-primary' },
+            ].map(({ icon: Icon, label, color }) => (
+              <div key={label} className="flex items-center gap-2 bg-card/80 backdrop-blur-sm border border-border rounded-full px-4 py-2.5 shadow-soft hover:shadow-elegant hover:border-primary/30 transition-all duration-300">
+                <Icon className={`w-4 h-4 ${color}`} />
+                <span className="text-sm font-medium text-foreground">{label}</span>
+              </div>
+            ))}
           </div>
           
-          {/* Enhanced CTA buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 md:gap-6 mobile-stack">
+          {/* Premium CTA buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5">
             <Button 
               onClick={scrollToGenerator} 
-              size={isMobile ? "lg" : "lg"}
-              className="bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-primary-foreground w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 min-h-[48px]"
+              size="lg"
+              className="group brand-gradient-bg hover:opacity-90 text-white w-full sm:w-auto px-8 py-6 text-base sm:text-lg font-semibold shadow-brand hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 rounded-xl"
             >
-              <Sparkles className="w-4 sm:w-5 h-4 sm:h-5 mr-2" />
-              Create Your Widget
+              <Sparkles className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
+              Start Building Free
+              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
             
             <Button 
               variant="outline" 
-              size={isMobile ? "lg" : "lg"}
-              className="border-2 border-primary/30 text-primary hover:bg-primary/5 w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-semibold backdrop-blur-sm bg-background/80 hover:border-primary/50 transition-all duration-300 min-h-[48px]"
+              size="lg"
+              className="border-2 border-border hover:border-primary/40 text-foreground hover:text-primary w-full sm:w-auto px-8 py-6 text-base sm:text-lg font-semibold bg-background/80 backdrop-blur-sm transition-all duration-300 rounded-xl"
               onClick={scrollToPreview}
             >
-              Watch Demo
+              See Examples
             </Button>
           </div>
           
+          {/* Stats bar */}
+          <div className="mt-12 sm:mt-16 flex flex-wrap justify-center gap-8 sm:gap-12 text-center">
+            {[
+              { value: '10K+', label: 'Widgets Created' },
+              { value: '50+', label: 'Platforms Supported' },
+              { value: '99.9%', label: 'Uptime' },
+            ].map(({ value, label }) => (
+              <div key={label} className="flex flex-col">
+                <span className="text-2xl sm:text-3xl font-bold brand-gradient-text">{value}</span>
+                <span className="text-xs sm:text-sm text-muted-foreground mt-1">{label}</span>
+              </div>
+            ))}
+          </div>
+          
           {/* Enhanced scroll indicator */}
-          <div className="mt-12 md:mt-16 justify-center animate-bounce hidden md:flex">
-            <div className="bg-background/80 backdrop-blur-sm rounded-full p-3 shadow-lg cursor-pointer hover:bg-background transition-all duration-300" onClick={scrollToGenerator}>
-              <ArrowDownCircle className="h-8 w-8 text-primary" />
-            </div>
+          <div className="mt-12 md:mt-16 justify-center hidden md:flex">
+            <button 
+              onClick={scrollToGenerator}
+              className="group flex flex-col items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+            >
+              <span className="text-xs font-medium uppercase tracking-wider">Explore</span>
+              <div className="p-3 rounded-full border border-border group-hover:border-primary/40 bg-background/80 backdrop-blur-sm shadow-soft group-hover:shadow-elegant transition-all duration-300 animate-bounce">
+                <ArrowDownCircle className="h-6 w-6" />
+              </div>
+            </button>
           </div>
         </div>
       </div>
