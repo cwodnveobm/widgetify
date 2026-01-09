@@ -2,17 +2,20 @@ import React from 'react';
 import ReferAFriend from '@/components/ReferAFriend';
 import VisitorCounter from '@/components/VisitorCounter';
 import { Button } from '@/components/ui/button';
-import { Linkedin, Instagram } from 'lucide-react';
+import { Linkedin, Instagram, Sparkles } from 'lucide-react';
 import { FaXTwitter } from 'react-icons/fa6';
 
 const Footer: React.FC = () => {
-  return <footer className="bg-secondary/5 text-muted-foreground border-t border-border w-full">
-      <div className="container mx-auto container-padding py-6 sm:py-10 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+  return <footer className="bg-gradient-to-b from-background to-secondary/10 text-muted-foreground border-t border-border/50 w-full">
+      <div className="container mx-auto container-padding py-8 sm:py-12 md:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 sm:gap-10">
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-3 sm:mb-4">Widgetify</h3>
-            <p className="mb-3 sm:mb-4 text-xs sm:text-sm md:text-base text-muted-foreground">
-              The easiest way to add chat widgets to your website and connect with your visitors via their preferred social media platform.
+            <div className="flex items-center gap-2 mb-4">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl brand-logo brand-gradient-vibrant">Widgetify</h3>
+              <Sparkles className="w-5 h-5 text-primary" />
+            </div>
+            <p className="mb-4 sm:mb-5 text-sm sm:text-base text-muted-foreground max-w-md leading-relaxed">
+              The most powerful widget platform for modern websites. Connect with your visitors through their preferred channels and boost conversions instantly.
             </p>
             
             <div className="mt-4 flex flex-col gap-3 items-center md:items-start">

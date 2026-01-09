@@ -48,13 +48,16 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
   ];
 
   return (
-    <header className="bg-background/80 backdrop-blur-md border-b border-border py-3 md:py-4 px-2 md:px-6 sticky top-0 z-40 shadow-soft">
+    <header className="bg-background/80 backdrop-blur-xl border-b border-border/50 py-3 md:py-4 px-2 md:px-6 sticky top-0 z-40 shadow-soft">
       <div className="max-w-full md:container mx-auto flex justify-between items-center px-1 md:px-0">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="text-xl md:text-2xl font-bold gradient-text">
+        <Link to="/" className="group flex items-center gap-2.5">
+          <div className="text-xl md:text-2xl brand-logo brand-gradient-vibrant">
             Widgetify
           </div>
-          <Sparkles className="w-5 h-5 text-primary" />
+          <div className="relative">
+            <Sparkles className="w-5 h-5 text-primary group-hover:rotate-12 transition-transform duration-300" />
+            <div className="absolute inset-0 w-5 h-5 bg-primary/20 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
         </Link>
         
         <div className="flex items-center gap-1 sm:gap-2">
