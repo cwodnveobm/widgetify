@@ -20,6 +20,7 @@ import { PersonalizationDebug } from '@/components/PersonalizationDebug';
 import { PersonalizedOnboarding } from '@/components/PersonalizedOnboarding';
 import { PredictiveActions } from '@/components/PredictiveActions';
 import { PricingNudge } from '@/components/PricingNudge';
+import { SmartAutoSuggestions } from '@/components/SmartAutoSuggestions';
 import { DonateButton } from '@/components/DonateButton';
 import { SEOHead } from '@/components/SEOHead';
 import { HomePageStructuredData } from '@/components/StructuredData';
@@ -41,6 +42,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from 'sonner';
+import type { WidgetType } from '@/types';
 
 const Index: React.FC = () => {
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -394,6 +396,14 @@ const Index: React.FC = () => {
         <PersonalizedOnboarding
           onComplete={handleOnboardingComplete}
           onSelectWidget={handleOnboardingWidgetSelect}
+        />
+      )}
+      
+      {/* Smart Auto-Suggestions based on widget affinities */}
+      {!showOnboarding && behavior.timeOnSite > 10 && (
+        <SmartAutoSuggestions
+          onSelectWidget={(widgetType: WidgetType) => handleOnboardingWidgetSelect(widgetType)}
+          currentWidget={undefined}
         />
       )}
       
