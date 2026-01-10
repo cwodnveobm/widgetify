@@ -244,15 +244,22 @@ export const useWidgetPersonalization = () => {
     };
   }, [behavior, session, device, intent]);
 
-  // Generate smart widget recommendations
+  // Generate smart widget recommendations with affinity integration
   const getRecommendations = useCallback((limit: number = 3): WidgetRecommendation[] => {
     const benchmarks = INDUSTRY_BENCHMARKS[userProfile.industry];
     const goalWidgets = GOAL_WIDGET_MAP[userProfile.primaryGoal] || [];
+    const affinities = behavior.widgetAffinities || {};
     
-    // Score widgets based on multiple factors
+    // Score widgets based on multiple factors including affinities
     const scoredWidgets = Object.entries(WIDGET_METADATA)
       .map(([type, meta]) => {
         let score = meta.conversionImpact;
+        const affinityScore = affinities[type] || 0;
+        
+        // MAJOR: Boost based on user's widget affinity (behavior-driven)
+        if (affinityScore > 0) {
+          score += Math.min(40, affinityScore * 2); // Up to 40 point boost
+        }
         
         // Boost industry-relevant widgets
         if (benchmarks.topWidgets.includes(type as WidgetType)) {
@@ -278,24 +285,37 @@ export const useWidgetPersonalization = () => {
           }
         }
         
+        // Boost widgets user has interacted with but not downloaded
+        const hasViewed = behavior.clickedElements.includes(`widget-type-select-${type}`);
+        const hasDownloaded = behavior.clickedElements.includes(`widget-download-${type}`);
+        
+        if (hasViewed && !hasDownloaded) {
+          score += 15; // They showed interest but didn't complete
+        }
+        
         // Don't recommend already-generated widgets heavily
-        if (behavior.clickedElements.includes(`widget-download-${type}`)) {
+        if (hasDownloaded) {
           score -= 30;
         }
         
-        return { type: type as WidgetType, meta, score };
+        return { type: type as WidgetType, meta, score, affinityScore };
       })
       .sort((a, b) => b.score - a.score)
       .slice(0, limit);
 
-    return scoredWidgets.map(({ type, meta, score }) => {
+    return scoredWidgets.map(({ type, meta, score, affinityScore }) => {
       const isTopPick = score > 100;
       const isGoodMatch = score > 80;
+      const isAffinityDriven = affinityScore > 15;
       
       let reason = '';
       let expectedImpact = '';
       
-      if (userProfile.industry !== 'unknown' && benchmarks.topWidgets.includes(type)) {
+      // Prioritize affinity-based reasons
+      if (isAffinityDriven) {
+        reason = `Based on your ${affinityScore > 30 ? 'strong' : 'growing'} interest`;
+        expectedImpact = `+${Math.round(meta.conversionImpact * 0.8)}% conversion potential`;
+      } else if (userProfile.industry !== 'unknown' && benchmarks.topWidgets.includes(type)) {
         reason = `Top performer for ${userProfile.industry.replace('_', ' ')} websites`;
         expectedImpact = `+${Math.round(meta.conversionImpact * 0.7)}% conversion lift expected`;
       } else if (goalWidgets.includes(type)) {
@@ -317,7 +337,7 @@ export const useWidgetPersonalization = () => {
         setupTime: meta.setupTime,
       };
     });
-  }, [userProfile, behavior.clickedElements]);
+  }, [userProfile, behavior.clickedElements, behavior.widgetAffinities]);
 
   // Generate smart defaults for a widget type
   const getSmartDefaults = useCallback((widgetType: WidgetType): SmartDefaults => {
