@@ -5,6 +5,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Conversion optimization animations */
+@keyframes pulse-subtle {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4); }
+  50% { transform: scale(1.02); box-shadow: 0 0 20px 4px hsl(var(--primary) / 0.2); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

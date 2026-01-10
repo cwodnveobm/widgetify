@@ -1,9 +1,11 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useHyperPersonalization } from '@/hooks/useHyperPersonalization';
 import { usePersonalization } from '@/hooks/usePersonalization';
+import { useConversionOptimization } from '@/hooks/useConversionOptimization';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Sparkles, TrendingUp, Users, Zap } from 'lucide-react';
+import { ArrowRight, Sparkles, TrendingUp, Users, Zap, Star, Flame, Shield } from 'lucide-react';
 
 interface PersonalizedHeroSectionProps {
   onPrimaryAction?: () => void;
@@ -16,20 +18,28 @@ export const PersonalizedHeroSection: React.FC<PersonalizedHeroSectionProps> = (
 }) => {
   const { 
     extendedProfile, 
-    getPersonalizedCopy, 
     uiPersonalization,
     industryBenchmarks 
   } = useHyperPersonalization();
-  const { session, behavior } = usePersonalization();
+  const { session, behavior, conversionProbability } = usePersonalization();
+  const { 
+    getConversionContent, 
+    conversionSignals, 
+    getDynamicCTA,
+    isHighIntent 
+  } = useConversionOptimization();
   
-  const copy = getPersonalizedCopy();
+  const content = getConversionContent('hero');
   const showEmojis = uiPersonalization.showEmojis;
 
   // Show returning user banner
   const isReturningUser = session.isReturningUser && behavior.widgetsGenerated > 0;
   
-  // Social proof based on segment
+  // Social proof based on segment and conversion optimization
   const getSocialProof = () => {
+    if (conversionSignals.showSocialProof && content.socialProof) {
+      return { icon: Users, text: content.socialProof };
+    }
     if (extendedProfile.role === 'marketer') {
       return { icon: TrendingUp, text: 'Used by 10,000+ marketers worldwide' };
     }
@@ -45,14 +55,26 @@ export const PersonalizedHeroSection: React.FC<PersonalizedHeroSectionProps> = (
   const socialProof = getSocialProof();
   const SocialIcon = socialProof.icon;
 
+  // Dynamic CTA based on conversion optimization
+  const primaryCTA = getDynamicCTA(content.cta);
+
   return (
     <div className="text-center space-y-6">
       {/* Returning user badge */}
-      {isReturningUser && (
-        <Badge variant="secondary" className="animate-in fade-in-0 slide-in-from-top-2">
-          {showEmojis ? '👋 ' : ''}Welcome back! You've created {behavior.widgetsGenerated} widget{behavior.widgetsGenerated !== 1 ? 's' : ''}
-        </Badge>
-      )}
+      <AnimatePresence>
+        {isReturningUser && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+          >
+            <Badge variant="secondary" className="animate-in fade-in-0 slide-in-from-top-2">
+              {showEmojis ? '👋 ' : ''}Welcome back! You've created {behavior.widgetsGenerated} widget{behavior.widgetsGenerated !== 1 ? 's' : ''}
+              {conversionProbability > 0.5 && <span className="ml-1 text-primary">• Keep building!</span>}
+            </Badge>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* UTM-based welcome */}
       {session.utmSource?.includes('producthunt') && (
@@ -61,15 +83,53 @@ export const PersonalizedHeroSection: React.FC<PersonalizedHeroSectionProps> = (
         </Badge>
       )}
 
-      {/* Main headline */}
-      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-        {copy.heroTitle}
-      </h1>
+      {/* Urgency indicator */}
+      <AnimatePresence>
+        {conversionSignals.isUrgent && content.urgencyMessage && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex items-center justify-center gap-2 text-sm text-primary"
+          >
+            <Flame className="w-4 h-4 animate-pulse" />
+            <span className="font-medium">{content.urgencyMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Main headline - conversion optimized */}
+      <motion.h1 
+        className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {content.headline}
+      </motion.h1>
       
-      {/* Subtitle */}
-      <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-        {copy.heroSubtitle}
-      </p>
+      {/* Subtitle - conversion optimized */}
+      <motion.p 
+        className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        {content.subheadline}
+      </motion.p>
+
+      {/* Value proposition */}
+      {conversionSignals.showBenefits && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="flex items-center justify-center gap-2 text-sm text-primary"
+        >
+          <Zap className="w-4 h-4" />
+          <span className="font-medium">{content.valueProposition}</span>
+        </motion.div>
+      )}
       
       {/* Industry benchmark for marketers/founders */}
       {(extendedProfile.role === 'marketer' || extendedProfile.role === 'founder') && industryBenchmarks && (
@@ -81,14 +141,19 @@ export const PersonalizedHeroSection: React.FC<PersonalizedHeroSectionProps> = (
         </div>
       )}
       
-      {/* CTAs */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+      {/* CTAs - conversion optimized */}
+      <motion.div 
+        className="flex flex-col sm:flex-row gap-4 justify-center pt-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
         <Button 
           size="lg" 
           onClick={onPrimaryAction}
-          className="text-lg px-8"
+          className={`text-lg px-8 shadow-elegant ${isHighIntent ? 'animate-pulse-subtle' : ''}`}
         >
-          {copy.primaryCTA}
+          {primaryCTA}
           <ArrowRight className="w-5 h-5 ml-2" />
         </Button>
         <Button 
@@ -97,19 +162,36 @@ export const PersonalizedHeroSection: React.FC<PersonalizedHeroSectionProps> = (
           onClick={onSecondaryAction}
           className="text-lg px-8"
         >
-          {copy.secondaryCTA}
+          {content.cta === primaryCTA ? 'View Templates' : content.cta}
         </Button>
-      </div>
+      </motion.div>
       
       {/* Social proof */}
-      <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground pt-4">
+      <motion.div 
+        className="flex items-center justify-center gap-2 text-sm text-muted-foreground pt-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4 }}
+      >
         <SocialIcon className="w-4 h-4" />
         <span>{socialProof.text}</span>
-      </div>
+        {conversionSignals.showSocialProof && (
+          <>
+            <span className="mx-2">•</span>
+            <Shield className="w-4 h-4 text-green-500" />
+            <span>Free forever</span>
+          </>
+        )}
+      </motion.div>
       
       {/* Quick stats for power users */}
-      {extendedProfile.skillLevel === 'advanced' || extendedProfile.skillLevel === 'expert' ? (
-        <div className="flex items-center justify-center gap-6 text-sm pt-2">
+      {(extendedProfile.skillLevel === 'advanced' || extendedProfile.skillLevel === 'expert') && (
+        <motion.div 
+          className="flex items-center justify-center gap-6 text-sm pt-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
           <span className="flex items-center gap-1">
             <Zap className="w-4 h-4 text-amber-500" />
             ~3KB gzipped
@@ -119,8 +201,23 @@ export const PersonalizedHeroSection: React.FC<PersonalizedHeroSectionProps> = (
             No dependencies
           </span>
           <span>MIT License</span>
-        </div>
-      ) : null}
+        </motion.div>
+      )}
+
+      {/* High-intent benefit highlight */}
+      {isHighIntent && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="text-sm font-medium text-primary"
+        >
+          <span className="inline-flex items-center gap-1.5">
+            <Star className="w-4 h-4" />
+            {content.benefit}
+          </span>
+        </motion.div>
+      )}
     </div>
   );
 };
