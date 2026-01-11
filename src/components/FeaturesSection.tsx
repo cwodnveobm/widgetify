@@ -1,7 +1,21 @@
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { 
+  AdaptiveSection, 
+  AdaptiveHeading, 
+  AdaptiveSubheading,
+  AdaptiveGrid,
+  AdaptiveCard 
+} from '@/components/adaptive';
+import { useAdaptiveStyles } from '@/hooks/useAdaptiveUI';
+import { useConversionOptimization } from '@/hooks/useConversionOptimization';
+import { CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const FeaturesSection: React.FC = () => {
+  const { showEmoji, density } = useAdaptiveStyles();
+  const { getOptimizedSectionContent } = useConversionOptimization();
+  
+  const sectionContent = getOptimizedSectionContent('features');
+  
   const features = [
     {
       title: 'Multiple Platforms',
@@ -36,28 +50,34 @@ const FeaturesSection: React.FC = () => {
   ];
 
   return (
-    <section className="section-spacing bg-muted/30">
+    <AdaptiveSection variant="muted" id="features">
       <div className="container mx-auto container-padding">
         <div className="text-center mb-8 sm:mb-12 md:mb-16">
-          <h2 className="heading-responsive mb-3 sm:mb-4 text-foreground px-2">
-            Why Choose Widgetify?
-          </h2>
-          <p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl mx-auto px-4">
-            Our widgets are designed to help you connect with your website visitors
-            instantly and boost your engagement rates.
-          </p>
+          <AdaptiveHeading as="h2" className="mb-3 sm:mb-4 px-2">
+            {sectionContent.title}
+          </AdaptiveHeading>
+          <AdaptiveSubheading className="max-w-2xl mx-auto px-4">
+            {sectionContent.subtitle || 'Our widgets are designed to help you connect with your website visitors instantly and boost your engagement rates.'}
+          </AdaptiveSubheading>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 max-w-6xl mx-auto">
+        <AdaptiveGrid 
+          columns="auto" 
+          gap={density === 'compact' ? 'sm' : 'md'} 
+          className="max-w-6xl mx-auto"
+        >
           {features.map((feature, index) => (
-            <Card 
+            <AdaptiveCard 
               key={index} 
-              className="border border-border hover:shadow-elegant transition-all duration-300 p-4 sm:p-5 md:p-6 bg-card group hover:border-primary/30"
+              variant="interactive"
+              className="p-4 sm:p-5 md:p-6"
             >
               <CardHeader className="pb-2 p-0 mb-2 sm:mb-3">
-                <div className="text-2xl sm:text-3xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform duration-300">
-                  {feature.icon}
-                </div>
+                {showEmoji && (
+                  <div className="text-2xl sm:text-3xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform duration-300">
+                    {feature.icon}
+                  </div>
+                )}
                 <CardTitle className="text-base sm:text-lg md:text-xl text-card-foreground">
                   {feature.title}
                 </CardTitle>
@@ -67,11 +87,11 @@ const FeaturesSection: React.FC = () => {
                   {feature.description}
                 </CardDescription>
               </CardContent>
-            </Card>
+            </AdaptiveCard>
           ))}
-        </div>
+        </AdaptiveGrid>
       </div>
-    </section>
+    </AdaptiveSection>
   );
 };
 
