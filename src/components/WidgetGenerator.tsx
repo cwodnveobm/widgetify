@@ -10,7 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { generateWidgetCode, WidgetConfig } from '@/lib/widgetUtils';
 import { generateCodeByFormat, getFileExtension, getMimeType, type ExportFormat } from '@/lib/codeGenerators';
 import WidgetPreview from './WidgetPreview';
-import { Download, Eye, EyeOff, Sparkles, Crown, Smartphone, Star, Radio } from 'lucide-react';
+import { Download, Eye, EyeOff, Sparkles, Crown, Smartphone, Star, Radio, Users, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useAuth } from '@/hooks/useAuth';
@@ -24,6 +24,18 @@ import { SmartWidgetRecommendations } from './SmartWidgetRecommendations';
 import { PersonalizationGuidance } from './PersonalizationGuidance';
 import { SmartContextBanner } from './SmartContextBanner';
 import { PricingNudge } from './PricingNudge';
+import { 
+  AdaptiveSection, 
+  AdaptiveHeading, 
+  AdaptiveCard, 
+  AdaptiveButton, 
+  AdaptiveBadge,
+  AdaptiveGrid,
+  SocialProofBadge,
+  UrgencyBadge 
+} from '@/components/adaptive';
+import { useAdaptiveUI } from '@/hooks/useAdaptiveUI';
+import { motion } from 'framer-motion';
 import type { WidgetType, WidgetSize } from '@/types';
 
 const WidgetGenerator: React.FC = () => {
@@ -39,6 +51,7 @@ const WidgetGenerator: React.FC = () => {
     getPersonalizedCopy,
     formatMessage 
   } = useHyperPersonalization();
+  const { config: adaptiveConfig, classes, shouldShowElement, isVibrantMode } = useAdaptiveUI();
   const [showPreview, setShowPreview] = useState(!isMobile);
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(true); // Always unlocked now
@@ -1719,32 +1732,73 @@ const WidgetGenerator: React.FC = () => {
     }
   };
 
+  // Animation config
+  const shouldAnimate = adaptiveConfig.content.animationLevel !== 'none';
+  const animationDuration = adaptiveConfig.content.animationLevel === 'full' ? 0.5 : 0.3;
+
   return (
-    <section id="widget-generator" className="py-8 md:py-20 px-2 md:px-4">
+    <AdaptiveSection 
+      id="widget-generator" 
+      variant="default"
+      className="px-2 md:px-4"
+    >
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-8 md:mb-12">
-          <h2 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+        {/* Header with Adaptive Typography */}
+        <motion.div 
+          className="text-center mb-8 md:mb-12"
+          initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: animationDuration }}
+        >
+          <AdaptiveHeading as="h2" className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent mb-4">
             Widget Generator
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-sm md:text-base px-4 mb-4">
+          </AdaptiveHeading>
+          <p className={`${classes.muted} max-w-2xl mx-auto px-4 mb-4`}>
             Create powerful, customizable widgets in seconds. Choose your type, customize the settings, and get ready-to-use code.
           </p>
-          {/* Smart Context Banner - Shows detected user profile */}
+          
+          {/* Social Proof - Adaptive */}
+          {shouldShowElement('socialProof') && (
+            <div className="flex flex-wrap justify-center gap-3 mb-4">
+              <SocialProofBadge 
+                message="500+ widgets created today" 
+                icon={<Zap className="w-3 h-3" />}
+              />
+              <SocialProofBadge 
+                message="Trusted by 2,500+ users" 
+                icon={<Users className="w-3 h-3" />}
+              />
+            </div>
+          )}
+
+          {/* Urgency - Adaptive */}
+          {shouldShowElement('urgency') && (
+            <div className="flex justify-center mb-4">
+              <UrgencyBadge message="⚡ Limited: Premium features free for early users" />
+            </div>
+          )}
+
+          {/* Smart Context Banner */}
           <div className="max-w-md mx-auto">
             <SmartContextBanner compact />
           </div>
-        </div>
+        </motion.div>
 
-        {/* Mobile-Optimized Tier Selection */}
-        <div className="flex justify-center mb-6 md:mb-8 px-4">
-          <div className="bg-white rounded-lg p-1 shadow-md w-full max-w-md">
+        {/* Tier Selection - Adaptive */}
+        <motion.div 
+          className="flex justify-center mb-6 md:mb-8 px-4"
+          initial={shouldAnimate ? { opacity: 0, scale: 0.95 } : false}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: animationDuration, delay: 0.1 }}
+        >
+          <div className={`bg-card rounded-lg p-1 shadow-md w-full max-w-md border border-border ${classes.animation}`}>
             <div className="grid grid-cols-2 gap-1">
               <button
                 onClick={() => setSelectedTier('free')}
-                className={`px-3 md:px-6 py-3 md:py-3 rounded-md flex items-center justify-center gap-2 transition-all text-sm md:text-base ${
+                className={`px-3 md:px-6 py-3 md:py-3 rounded-md flex items-center justify-center gap-2 ${classes.animation} text-sm md:text-base ${
                   selectedTier === 'free'
-                    ? 'bg-purple-100 text-purple-700 shadow-sm'
-                    : 'text-gray-600 hover:text-purple-600'
+                    ? 'bg-primary/10 text-primary shadow-sm'
+                    : 'text-muted-foreground hover:text-primary'
                 }`}
               >
                 <Sparkles size={16} />
@@ -1753,12 +1807,12 @@ const WidgetGenerator: React.FC = () => {
               <button
                 onClick={() => setSelectedTier('premium')}
                 disabled={!isPremiumUnlocked}
-                className={`px-3 md:px-6 py-3 md:py-3 rounded-md flex items-center justify-center gap-2 transition-all text-sm md:text-base ${
+                className={`px-3 md:px-6 py-3 md:py-3 rounded-md flex items-center justify-center gap-2 ${classes.animation} text-sm md:text-base ${
                   selectedTier === 'premium' && isPremiumUnlocked
-                    ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-sm'
+                    ? 'bg-gradient-to-r from-amber-400 to-orange-500 text-white shadow-sm'
                     : selectedTier === 'premium'
-                    ? 'bg-gray-100 text-gray-400'
-                    : 'text-gray-600 hover:text-orange-600'
+                    ? 'bg-muted text-muted-foreground'
+                    : 'text-muted-foreground hover:text-amber-500'
                 }`}
               >
                 <Crown size={16} />
@@ -1767,30 +1821,40 @@ const WidgetGenerator: React.FC = () => {
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Premium Upgrade Banner */}
+        {/* Premium Upgrade Banner - Adaptive */}
         {selectedTier === 'premium' && !isPremiumUnlocked && (
-          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4 md:p-6 mb-6 md:mb-8 mx-2 md:mx-0">
-            <div className="text-center">
-              <Crown className="mx-auto mb-3 text-yellow-600" size={24} />
-              <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-2">Upgrade to Premium</h3>
-              <p className="text-gray-600 mb-4 text-sm md:text-base">
-                Get watermark-free widgets, priority support, and advanced customization options.
-              </p>
-              <Button
-                onClick={handlePremiumUpgrade}
-                className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 min-h-[48px] w-full md:w-auto"
-              >
-                Upgrade Now - $9.99
-              </Button>
-            </div>
-          </div>
+          <motion.div 
+            className="mb-6 md:mb-8 mx-2 md:mx-0"
+            initial={shouldAnimate ? { opacity: 0, y: -10 } : false}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: animationDuration }}
+          >
+            <AdaptiveCard variant="highlighted" className="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200 dark:border-amber-800 p-4 md:p-6">
+              <div className="text-center">
+                <Crown className="mx-auto mb-3 text-amber-600" size={24} />
+                <h3 className="text-lg md:text-xl font-semibold text-foreground mb-2">Upgrade to Premium</h3>
+                <p className="text-muted-foreground mb-4 text-sm md:text-base">
+                  Get watermark-free widgets, priority support, and advanced customization options.
+                </p>
+                <AdaptiveButton
+                  onClick={handlePremiumUpgrade}
+                  adaptiveVariant="cta"
+                  showGlow={isVibrantMode}
+                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 min-h-[48px] w-full md:w-auto"
+                >
+                  Upgrade Now - $9.99
+                </AdaptiveButton>
+              </div>
+            </AdaptiveCard>
+          </motion.div>
         )}
 
-        <div className={`grid gap-6 md:gap-8 ${isMobile ? 'grid-cols-1' : 'lg:grid-cols-2'}`}>
+        {/* Main Grid - Adaptive */}
+        <AdaptiveGrid columns={isMobile ? 1 : 2} gap="lg">
           {/* Configuration Panel */}
-          <Card className="mx-2 md:mx-0">
+          <AdaptiveCard variant="default" className="mx-2 md:mx-0 p-0">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                 Configure Your Widget
@@ -2004,60 +2068,66 @@ const WidgetGenerator: React.FC = () => {
 
               {/* Mobile-Optimized Action Buttons */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4">
-                <Button onClick={downloadCode} className="min-h-[48px] order-1">
+                <AdaptiveButton onClick={downloadCode} adaptiveVariant="cta" className="min-h-[48px] order-1">
                   <Download size={16} className="mr-2" />
                   Download Code
-                </Button>
-                <Button
+                </AdaptiveButton>
+                <AdaptiveButton
                   onClick={() => setShowPreview(!showPreview)}
-                  variant="outline"
+                  adaptiveVariant="secondary"
                   className="min-h-[48px] order-2"
                 >
                   {showPreview ? <EyeOff size={16} className="mr-2" /> : <Eye size={16} className="mr-2" />}
                   {isMobile ? (showPreview ? 'Hide' : 'Show') : ''} Preview
-                </Button>
+                </AdaptiveButton>
               </div>
             </CardContent>
-          </Card>
+          </AdaptiveCard>
 
-          {/* Preview Panel - Conditional rendering for mobile */}
+          {/* Preview Panel - Adaptive */}
           {showPreview && (
-            <Card className="mx-2 md:mx-0">
+            <AdaptiveCard variant="default" className="mx-2 md:mx-0 p-0">
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                   <Smartphone size={20} className="md:hidden" />
                   Live Preview
-                  <span className="inline-flex items-center gap-1.5 ml-2 px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700 rounded-full animate-pulse">
-                    <Radio size={10} className="animate-pulse" />
+                  <AdaptiveBadge 
+                    className="ml-2 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800"
+                    pulse
+                  >
+                    <Radio size={10} className="animate-pulse mr-1" />
                     Live
-                  </span>
+                  </AdaptiveBadge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="bg-gray-50 rounded-lg p-4 min-h-[300px] md:min-h-[400px] relative overflow-hidden">
-                  <div 
+                <div className="bg-muted/50 rounded-lg p-4 min-h-[300px] md:min-h-[400px] relative overflow-hidden">
+                  <motion.div 
                     key={JSON.stringify(finalConfig)}
-                    className="animate-fade-in w-full h-full"
+                    className="w-full h-full"
+                    initial={shouldAnimate ? { opacity: 0 } : false}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
                   >
                     <WidgetPreview config={finalConfig} />
-                  </div>
+                  </motion.div>
                 </div>
                 
-                {/* Mobile-Optimized Tier Info */}
-                <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                {/* Tier Info - Adaptive */}
+                <div className="mt-4 p-3 bg-muted/30 rounded-lg border border-border">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">
+                    <span className="text-muted-foreground">
                       Current Tier: 
                       <span className={`ml-1 font-medium ${
                         selectedTier === 'premium' && isPremiumUnlocked 
-                          ? 'text-yellow-600' 
-                          : 'text-purple-600'
+                          ? 'text-amber-600' 
+                          : 'text-primary'
                       }`}>
                         {selectedTier === 'premium' && isPremiumUnlocked ? 'Premium' : 'Free'}
                       </span>
                     </span>
                     {selectedTier === 'free' && (
-                      <span className="text-xs text-gray-500">Includes watermark</span>
+                      <span className="text-xs text-muted-foreground">Includes watermark</span>
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
@@ -2065,23 +2135,29 @@ const WidgetGenerator: React.FC = () => {
                   </p>
                 </div>
               </CardContent>
-            </Card>
+            </AdaptiveCard>
           )}
-        </div>
+        </AdaptiveGrid>
 
-        {/* Mobile-Optimized Generated Code Display */}
-        <Card className="mt-6 md:mt-8 mx-2 md:mx-0">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg md:text-xl">Generated Code</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-gray-900 text-gray-100 p-3 md:p-4 rounded-lg overflow-auto max-h-64 md:max-h-96">
-              <pre className="text-xs md:text-sm whitespace-pre-wrap break-all">
-                <code>{generateCodeByFormat(finalConfig, exportFormat)}</code>
-              </pre>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Generated Code Display - Adaptive */}
+        <motion.div
+          initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: animationDuration, delay: 0.2 }}
+        >
+          <AdaptiveCard variant="default" className="mt-6 md:mt-8 mx-2 md:mx-0 p-0">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg md:text-xl">Generated Code</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-gray-900 dark:bg-gray-950 text-gray-100 p-3 md:p-4 rounded-lg overflow-auto max-h-64 md:max-h-96 border border-gray-800">
+                <pre className="text-xs md:text-sm whitespace-pre-wrap break-all">
+                  <code>{generateCodeByFormat(finalConfig, exportFormat)}</code>
+                </pre>
+              </div>
+            </CardContent>
+          </AdaptiveCard>
+        </motion.div>
       </div>
 
       {/* Auth Modal */}
@@ -2098,7 +2174,7 @@ const WidgetGenerator: React.FC = () => {
           handleConfigChange('removeBranding', true);
         }}
       />
-    </section>
+    </AdaptiveSection>
   );
 };
 
