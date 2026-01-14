@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 interface PreloaderProps {
   onComplete: () => void;
@@ -8,28 +8,51 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [progress, setProgress] = useState(0);
 
+  const completeLoading = useCallback(() => {
+    setIsVisible(false);
+    setTimeout(onComplete, 600); // Wait for fade-out animation
+  }, [onComplete]);
+
   useEffect(() => {
-    // Animate progress bar
+    // Fast-track for returning users
+    const isReturningUser = localStorage.getItem('widgetify_visit_count');
+    const loadingDuration = isReturningUser ? 1200 : 2000;
+    
+    // Animate progress bar with smoother increments
     const progressInterval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
           clearInterval(progressInterval);
           return 100;
         }
-        return prev + Math.random() * 15 + 5;
+        // Smoother progress curve
+        const remaining = 100 - prev;
+        const increment = Math.min(remaining * 0.15 + 3, 20);
+        return Math.min(prev + increment, 100);
       });
-    }, 150);
+    }, 100);
 
     const timer = setTimeout(() => {
-      setIsVisible(false);
-      setTimeout(onComplete, 600); // Wait for fade-out animation
-    }, 2000);
+      completeLoading();
+    }, loadingDuration);
+
+    // Allow skipping for impatient users
+    const handleInteraction = () => {
+      if (progress > 50) {
+        completeLoading();
+      }
+    };
+    
+    window.addEventListener('click', handleInteraction);
+    window.addEventListener('keydown', handleInteraction);
 
     return () => {
       clearTimeout(timer);
       clearInterval(progressInterval);
+      window.removeEventListener('click', handleInteraction);
+      window.removeEventListener('keydown', handleInteraction);
     };
-  }, [onComplete]);
+  }, [completeLoading, progress]);
 
   return (
     <div className={`preloader ${!isVisible ? 'fade-out' : ''}`}>
