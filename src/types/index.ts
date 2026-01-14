@@ -69,6 +69,39 @@ export type WidgetType =
   'smart-query' |
   'service-estimator' |
   'google-maps' |
-  'google-reviews';
+  'google-reviews' |
+  // New high-conversion chatbot widgets
+  'job-application-chatbot' |
+  'subscriber-capture-chatbot' |
+  'lead-generation-chatbot' |
+  'webinar-registration-chatbot' |
+  'ecommerce-assistant-chatbot' |
+  'whatsapp-interactive-form';
 
 export type WidgetSize = 'small' | 'medium' | 'large';
+
+// Marketplace template types
+export interface MarketplaceTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  widgetType: WidgetType;
+  previewImage?: string;
+  author: string;
+  rating: number;
+  downloads: number;
+  tags: string[];
+  isPremium: boolean;
+  config: Record<string, unknown>;
+  conversionRate?: string;
+  useCases: string[];
+}
+
+export interface MarketplaceCategory {
+  id: string;
+  name: string;
+  icon: string;
+  description: string;
+  count: number;
+}

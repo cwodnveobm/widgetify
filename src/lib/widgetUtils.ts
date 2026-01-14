@@ -4324,5 +4324,12 @@ export const WIDGET_NAMES: Record<WidgetType, string> = {
   'smart-query': 'Smart Query / Request Widget',
   'service-estimator': 'Interactive Service Estimator',
   'google-maps': 'Google Maps Embed',
-  'google-reviews': 'Google Reviews Testimonials'
+  'google-reviews': 'Google Reviews Testimonials',
+  // New high-conversion chatbot widgets
+  'job-application-chatbot': 'Job Application Chatbot',
+  'subscriber-capture-chatbot': 'Subscriber Capture Chatbot',
+  'lead-generation-chatbot': 'Lead Generation Chatbot',
+  'webinar-registration-chatbot': 'Webinar Registration Chatbot',
+  'ecommerce-assistant-chatbot': 'E-commerce Assistant Chatbot',
+  'whatsapp-interactive-form': 'WhatsApp Interactive Form'
 };

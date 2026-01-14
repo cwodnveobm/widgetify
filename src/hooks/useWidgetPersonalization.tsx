@@ -167,6 +167,13 @@ const WIDGET_METADATA: Record<WidgetType, { name: string; category: string; comp
   'lead-magnet': { name: 'Lead Magnet', category: 'Lead Generation', complexity: 2, conversionImpact: 85, setupTime: '1.5 min' },
   'smart-query': { name: 'Smart Query', category: 'Support', complexity: 3, conversionImpact: 65, setupTime: '2 min' },
   'service-estimator': { name: 'Service Estimator', category: 'Conversion', complexity: 3, conversionImpact: 88, setupTime: '3 min' },
+  // New high-conversion chatbot widgets
+  'job-application-chatbot': { name: 'Job Application Chatbot', category: 'Lead Generation', complexity: 2, conversionImpact: 85, setupTime: '2 min' },
+  'subscriber-capture-chatbot': { name: 'Subscriber Capture Chatbot', category: 'Lead Generation', complexity: 2, conversionImpact: 78, setupTime: '1.5 min' },
+  'lead-generation-chatbot': { name: 'Lead Generation Chatbot', category: 'Lead Generation', complexity: 2, conversionImpact: 90, setupTime: '2 min' },
+  'webinar-registration-chatbot': { name: 'Webinar Registration Chatbot', category: 'Events', complexity: 2, conversionImpact: 82, setupTime: '1.5 min' },
+  'ecommerce-assistant-chatbot': { name: 'E-commerce Assistant', category: 'Sales', complexity: 3, conversionImpact: 88, setupTime: '3 min' },
+  'whatsapp-interactive-form': { name: 'WhatsApp Interactive Form', category: 'Lead Generation', complexity: 1, conversionImpact: 85, setupTime: '1 min' },
 };
 
 export const useWidgetPersonalization = () => {
