@@ -56,12 +56,16 @@ export const PersonalizedHero = ({ onScrollToGenerator }: PersonalizedHeroProps)
   const primaryCtaText = getDynamicCTA(content.ctaText);
 
   return (
-    <section className="relative min-h-[80vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden section-spacing">
-      {/* Animated background with conversion-optimized intensity */}
+    <section 
+      className="relative min-h-[80vh] sm:min-h-[90vh] flex items-center justify-center overflow-hidden section-spacing"
+      role="banner"
+      aria-label="Welcome to Widgetify"
+    >
+      {/* Animated background with conversion-optimized intensity - reduced motion support */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden motion-reduce:hidden">
         <motion.div 
-          className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-primary/10 rounded-full blur-3xl"
+          className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-primary/10 rounded-full blur-3xl will-change-transform"
           animate={{ 
             scale: isHighIntent ? [1, 1.2, 1] : [1, 1.1, 1],
             opacity: isHighIntent ? [0.1, 0.2, 0.1] : [0.05, 0.1, 0.05]
@@ -69,7 +73,7 @@ export const PersonalizedHero = ({ onScrollToGenerator }: PersonalizedHeroProps)
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div 
-          className="absolute bottom-1/4 right-1/4 w-48 h-48 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-accent/10 rounded-full blur-3xl"
+          className="absolute bottom-1/4 right-1/4 w-48 h-48 sm:w-72 sm:h-72 md:w-96 md:h-96 bg-accent/10 rounded-full blur-3xl will-change-transform"
           animate={{ 
             scale: isHighIntent ? [1.2, 1, 1.2] : [1.1, 1, 1.1],
             opacity: isHighIntent ? [0.2, 0.1, 0.2] : [0.1, 0.05, 0.1]
