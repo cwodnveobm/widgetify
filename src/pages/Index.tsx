@@ -12,6 +12,7 @@ import BottomNavigation from '@/components/BottomNavigation';
 import FloatingActionButton from '@/components/FloatingActionButton';
 import FloatingDonateButton from '@/components/FloatingDonateButton';
 import { QuizGenerator } from '@/components/QuizGenerator';
+import { DonationBanner } from '@/components/DonationBanner';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { PersonalizedHero } from '@/components/PersonalizedHero';
 import { PersonalizedCTA } from '@/components/PersonalizedCTA';
@@ -414,6 +415,9 @@ const Index: React.FC = () => {
           onSelectWidget={handleOnboardingWidgetSelect}
         />
       )}
+      
+      {/* Smart Donation Banner - shows after engagement */}
+      <DonationBanner variant="floating" />
       
       {/* Personalization Debug (dev only) */}
       <PersonalizationDebug />
