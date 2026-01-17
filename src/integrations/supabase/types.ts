@@ -160,6 +160,54 @@ export type Database = {
         }
         Relationships: []
       }
+      donations: {
+        Row: {
+          amount: number
+          badge_type: string
+          created_at: string
+          currency: string
+          display_name: string
+          email: string | null
+          id: string
+          is_public: boolean
+          message: string | null
+          payment_id: string | null
+          payment_provider: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          badge_type?: string
+          created_at?: string
+          currency?: string
+          display_name: string
+          email?: string | null
+          id?: string
+          is_public?: boolean
+          message?: string | null
+          payment_id?: string | null
+          payment_provider?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          badge_type?: string
+          created_at?: string
+          currency?: string
+          display_name?: string
+          email?: string | null
+          id?: string
+          is_public?: boolean
+          message?: string | null
+          payment_id?: string | null
+          payment_provider?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       email_captures: {
         Row: {
           browsing_data: Json | null
