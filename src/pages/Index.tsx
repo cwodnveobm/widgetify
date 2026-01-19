@@ -24,11 +24,14 @@ import { PricingNudge } from '@/components/PricingNudge';
 import { SmartAutoSuggestions } from '@/components/SmartAutoSuggestions';
 import { DonateButton } from '@/components/DonateButton';
 import { SEOHead } from '@/components/SEOHead';
+import SmartNudgeSystem from '@/components/SmartNudgeSystem';
+import { AdaptiveTrustSignals, AdaptiveSocialProof } from '@/components/AdaptiveContent';
 import { HomePageStructuredData } from '@/components/StructuredData';
 import EmailCaptureModal from '@/components/EmailCaptureModal';
 import { useAuth } from '@/hooks/useAuth';
 import { usePersonalization } from '@/hooks/usePersonalization';
 import { useHyperPersonalization } from '@/hooks/useHyperPersonalization';
+import { useRealTimeBehavior } from '@/hooks/useRealTimeBehavior';
 import { supabase } from '@/integrations/supabase/client';
 import { Menu, X, Sparkles, Wifi, WifiOff, User, LogOut, Heart } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -58,6 +61,7 @@ const Index: React.FC = () => {
   const { user } = useAuth();
   const { trackPageView, trackClick, content, session, behavior } = usePersonalization();
   const { shouldShowOnboarding, extendedProfile, uiPersonalization } = useHyperPersonalization();
+  const { trackClick: trackBehaviorClick, psychologicalProfile } = useRealTimeBehavior();
   const isMobile = useIsMobile();
   
   const toggleMenu = () => {
@@ -418,6 +422,9 @@ const Index: React.FC = () => {
       
       {/* Smart Donation Banner - shows after engagement */}
       <DonationBanner variant="floating" />
+      
+      {/* Real-Time Behavior Smart Nudge System */}
+      <SmartNudgeSystem />
       
       {/* Personalization Debug (dev only) */}
       <PersonalizationDebug />
