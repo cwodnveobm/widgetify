@@ -19,6 +19,8 @@ import ABTesting from "./pages/ABTesting";
 import FAQ from "./pages/FAQ";
 import Marketplace from "./pages/Marketplace";
 import SupportersWall from "./pages/SupportersWall";
+import ReferralDashboard from "./pages/ReferralDashboard";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -87,6 +89,7 @@ const App = () => {
                     <Route path="/faq" element={<FAQ />} />
                     <Route path="/marketplace" element={<Marketplace />} />
                     <Route path="/supporters" element={<SupportersWall />} />
+                    <Route path="/referrals" element={<ReferralDashboard />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
