@@ -94,6 +94,44 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          referral_id: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          referral_id?: string | null
+          transaction_type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          referral_id?: string | null
+          transaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "credit_transactions_referral_id_fkey"
+            columns: ["referral_id"]
+            isOneToOne: false
+            referencedRelation: "referrals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       custom_widgets: {
         Row: {
           background_color: string
@@ -298,6 +336,72 @@ export type Database = {
         }
         Relationships: []
       }
+      referral_tiers: {
+        Row: {
+          badge_color: string
+          bonus_credits: number
+          created_at: string
+          credits_per_referral: number
+          id: string
+          min_referrals: number
+          tier_name: string
+        }
+        Insert: {
+          badge_color?: string
+          bonus_credits?: number
+          created_at?: string
+          credits_per_referral: number
+          id?: string
+          min_referrals: number
+          tier_name: string
+        }
+        Update: {
+          badge_color?: string
+          bonus_credits?: number
+          created_at?: string
+          credits_per_referral?: number
+          id?: string
+          min_referrals?: number
+          tier_name?: string
+        }
+        Relationships: []
+      }
+      referrals: {
+        Row: {
+          converted_at: string | null
+          created_at: string
+          credited_at: string | null
+          id: string
+          referral_code: string
+          referred_email: string
+          referred_user_id: string | null
+          referrer_id: string
+          status: string
+        }
+        Insert: {
+          converted_at?: string | null
+          created_at?: string
+          credited_at?: string | null
+          id?: string
+          referral_code: string
+          referred_email: string
+          referred_user_id?: string | null
+          referrer_id: string
+          status?: string
+        }
+        Update: {
+          converted_at?: string | null
+          created_at?: string
+          credited_at?: string | null
+          id?: string
+          referral_code?: string
+          referred_email?: string
+          referred_user_id?: string | null
+          referrer_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           amount: number
@@ -353,6 +457,36 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      user_credits: {
+        Row: {
+          created_at: string
+          id: string
+          redeemed_credits: number
+          total_credits: number
+          total_referrals: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          redeemed_credits?: number
+          total_credits?: number
+          total_referrals?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          redeemed_credits?: number
+          total_credits?: number
+          total_referrals?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       widget_variations: {
         Row: {
