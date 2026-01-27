@@ -76,7 +76,25 @@ export type WidgetType =
   'lead-generation-chatbot' |
   'webinar-registration-chatbot' |
   'ecommerce-assistant-chatbot' |
-  'whatsapp-interactive-form';
+  'whatsapp-interactive-form' |
+  // New widgets for enhanced functionality
+  'visitor-counter' |
+  'bug-report' |
+  'product-cards' |
+  'zoom-meeting' |
+  // Additional categories
+  'testimonial-slider' |
+  'social-proof-popup' |
+  'cart-abandonment' |
+  'product-comparison' |
+  'wishlist' |
+  'size-guide' |
+  'stock-alert' |
+  'quick-view' |
+  'announcement-bar' |
+  'team-member' |
+  'faq-accordion' |
+  'video-testimonial';
 
 export type WidgetSize = 'small' | 'medium' | 'large';
 

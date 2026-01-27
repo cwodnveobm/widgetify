@@ -174,6 +174,24 @@ const WIDGET_METADATA: Record<WidgetType, { name: string; category: string; comp
   'webinar-registration-chatbot': { name: 'Webinar Registration Chatbot', category: 'Events', complexity: 2, conversionImpact: 82, setupTime: '1.5 min' },
   'ecommerce-assistant-chatbot': { name: 'E-commerce Assistant', category: 'Sales', complexity: 3, conversionImpact: 88, setupTime: '3 min' },
   'whatsapp-interactive-form': { name: 'WhatsApp Interactive Form', category: 'Lead Generation', complexity: 1, conversionImpact: 85, setupTime: '1 min' },
+  // New enhanced functionality widgets
+  'visitor-counter': { name: 'Visitor Counter', category: 'Social Proof', complexity: 1, conversionImpact: 70, setupTime: '30 sec' },
+  'bug-report': { name: 'Bug Report Template', category: 'Support', complexity: 2, conversionImpact: 45, setupTime: '1 min' },
+  'product-cards': { name: 'Product Cards', category: 'eCommerce', complexity: 2, conversionImpact: 85, setupTime: '2 min' },
+  'zoom-meeting': { name: 'Zoom Meeting', category: 'Communication', complexity: 1, conversionImpact: 80, setupTime: '45 sec' },
+  // Additional widget categories
+  'testimonial-slider': { name: 'Testimonial Slider', category: 'Social Proof', complexity: 2, conversionImpact: 75, setupTime: '2 min' },
+  'social-proof-popup': { name: 'Social Proof Popup', category: 'Social Proof', complexity: 1, conversionImpact: 72, setupTime: '1 min' },
+  'cart-abandonment': { name: 'Cart Abandonment', category: 'eCommerce', complexity: 2, conversionImpact: 88, setupTime: '1.5 min' },
+  'product-comparison': { name: 'Product Comparison', category: 'eCommerce', complexity: 3, conversionImpact: 70, setupTime: '3 min' },
+  'wishlist': { name: 'Wishlist', category: 'eCommerce', complexity: 2, conversionImpact: 65, setupTime: '1.5 min' },
+  'size-guide': { name: 'Size Guide', category: 'eCommerce', complexity: 1, conversionImpact: 55, setupTime: '1 min' },
+  'stock-alert': { name: 'Stock Alert', category: 'eCommerce', complexity: 2, conversionImpact: 78, setupTime: '1 min' },
+  'quick-view': { name: 'Quick View', category: 'eCommerce', complexity: 2, conversionImpact: 60, setupTime: '1.5 min' },
+  'announcement-bar': { name: 'Announcement Bar', category: 'Announcement', complexity: 1, conversionImpact: 50, setupTime: '30 sec' },
+  'team-member': { name: 'Team Member', category: 'Content', complexity: 1, conversionImpact: 35, setupTime: '1 min' },
+  'faq-accordion': { name: 'FAQ Accordion', category: 'Support', complexity: 1, conversionImpact: 55, setupTime: '2 min' },
+  'video-testimonial': { name: 'Video Testimonial', category: 'Social Proof', complexity: 2, conversionImpact: 82, setupTime: '1.5 min' },
 };
 
 export const useWidgetPersonalization = () => {
