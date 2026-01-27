@@ -32,6 +32,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { usePersonalization } from '@/hooks/usePersonalization';
 import { useHyperPersonalization } from '@/hooks/useHyperPersonalization';
 import { useRealTimeBehavior } from '@/hooks/useRealTimeBehavior';
+import { useReferralTracking } from '@/hooks/useReferralTracking';
 import { supabase } from '@/integrations/supabase/client';
 import { Menu, X, Sparkles, Wifi, WifiOff, User, LogOut, Heart } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -63,6 +64,9 @@ const Index: React.FC = () => {
   const { shouldShowOnboarding, extendedProfile, uiPersonalization } = useHyperPersonalization();
   const { trackClick: trackBehaviorClick, psychologicalProfile } = useRealTimeBehavior();
   const isMobile = useIsMobile();
+  
+  // Track referral code from URL
+  useReferralTracking();
   
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);

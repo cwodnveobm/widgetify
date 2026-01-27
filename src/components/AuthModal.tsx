@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { toast } from "sonner";
+import { getStoredReferralCode, clearStoredReferralCode } from "@/hooks/useReferralTracking";
 
 const emailSchema = z.string().email("Invalid email address");
 const passwordSchema = z.string().min(6, "Password must be at least 6 characters");
@@ -84,6 +85,86 @@ export const AuthModal = ({ open, onClose, mode = "signin" }: AuthModalProps) =>
 
           if (profileError) {
             console.error('Profile creation error:', profileError);
+          }
+
+          // Handle referral tracking
+          const referralCode = getStoredReferralCode();
+          if (referralCode) {
+            try {
+              // Find the referral and update it
+              const { data: referralData, error: findError } = await supabase
+                .from('referrals')
+                .select('id, referrer_id, status')
+                .eq('referral_code', referralCode)
+                .eq('status', 'pending')
+                .limit(1)
+                .maybeSingle();
+
+              if (referralData && !findError) {
+                // Update referral status to signed_up
+                await supabase
+                  .from('referrals')
+                  .update({
+                    status: 'signed_up',
+                    referred_user_id: data.user.id,
+                    converted_at: new Date().toISOString(),
+                  })
+                  .eq('id', referralData.id);
+
+                // Credit the referrer
+                const { data: creditsData } = await supabase
+                  .from('user_credits')
+                  .select('*')
+                  .eq('user_id', referralData.referrer_id)
+                  .maybeSingle();
+
+                if (creditsData) {
+                  // Get current tier for credit calculation
+                  const { data: tierData } = await supabase
+                    .from('referral_tiers')
+                    .select('credits_per_referral')
+                    .lte('min_referrals', creditsData.total_referrals)
+                    .order('min_referrals', { ascending: false })
+                    .limit(1)
+                    .maybeSingle();
+
+                  const creditsPerReferral = tierData?.credits_per_referral || 0.005;
+
+                  // Update referrer's credits
+                  await supabase
+                    .from('user_credits')
+                    .update({
+                      total_credits: Number(creditsData.total_credits) + creditsPerReferral,
+                      total_referrals: creditsData.total_referrals + 1,
+                    })
+                    .eq('user_id', referralData.referrer_id);
+
+                  // Update referral to credited
+                  await supabase
+                    .from('referrals')
+                    .update({
+                      status: 'credited',
+                      credited_at: new Date().toISOString(),
+                    })
+                    .eq('id', referralData.id);
+
+                  // Create transaction record
+                  await supabase
+                    .from('credit_transactions')
+                    .insert({
+                      user_id: referralData.referrer_id,
+                      amount: creditsPerReferral,
+                      transaction_type: 'earned',
+                      description: `Referral signup: ${email}`,
+                      referral_id: referralData.id,
+                    });
+                }
+              }
+
+              clearStoredReferralCode();
+            } catch (refError) {
+              console.error('Referral tracking error:', refError);
+            }
           }
         }
 

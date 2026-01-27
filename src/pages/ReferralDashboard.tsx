@@ -31,10 +31,12 @@ import {
   MessageCircle,
   Twitter,
   Mail,
-  IndianRupee
+  IndianRupee,
+  Wallet
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { AuthModal } from '@/components/AuthModal';
+import { CreditRedemptionModal } from '@/components/CreditRedemptionModal';
 
 const ReferralDashboard = () => {
   const { user, loading: authLoading } = useAuth();
@@ -52,12 +54,16 @@ const ReferralDashboard = () => {
     creditsToRupees,
     copyReferralLink,
     trackReferralShare,
+    refetch,
     CREDITS_PER_2000_REFERRALS,
     RS_PER_2000_CREDITS
   } = useReferrals();
 
   const [emailInput, setEmailInput] = useState('');
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showRedemptionModal, setShowRedemptionModal] = useState(false);
+
+  const availableCredits = (credits?.total_credits || 0) - (credits?.redeemed_credits || 0);
 
   const handleInvite = async () => {
     if (!emailInput.trim()) return;
@@ -213,11 +219,20 @@ const ReferralDashboard = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-4xl font-bold text-green-500">
-                  ₹{creditsToRupees((credits?.total_credits || 0) - (credits?.redeemed_credits || 0)).toFixed(2)}
+                  ₹{creditsToRupees(availableCredits).toFixed(2)}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {((credits?.total_credits || 0) - (credits?.redeemed_credits || 0)).toFixed(2)} credits available
+                  {availableCredits.toFixed(2)} credits available
                 </p>
+                <Button 
+                  onClick={() => setShowRedemptionModal(true)}
+                  className="w-full mt-3"
+                  size="sm"
+                  disabled={availableCredits < 2000}
+                >
+                  <Wallet className="w-4 h-4 mr-2" />
+                  {availableCredits >= 2000 ? 'Redeem Now' : 'Need 2000 credits'}
+                </Button>
               </CardContent>
             </Card>
           </div>
@@ -523,6 +538,17 @@ const ReferralDashboard = () => {
       </main>
 
       <Footer />
+
+      {/* Redemption Modal */}
+      {user && (
+        <CreditRedemptionModal
+          open={showRedemptionModal}
+          onClose={() => setShowRedemptionModal(false)}
+          availableCredits={availableCredits}
+          userId={user.id}
+          onSuccess={refetch}
+        />
+      )}
     </div>
   );
 };
