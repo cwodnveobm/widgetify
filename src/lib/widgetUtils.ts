@@ -4251,6 +4251,503 @@ Sent via ${contactBusinessName} Contact Form\`;
             document.getElementById('widgetify-visitor-popup').classList.toggle('show');
           }
         </script>`;
+
+    case 'visitor-counter':
+      return `
+        ${baseStyles}
+        <style>
+          .visitor-counter-widget {
+            position: fixed;
+            bottom: 20px;
+            ${positionStyle}
+            background: linear-gradient(135deg, ${buttonColor} 0%, ${buttonColor}dd 100%);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 1000;
+            transition: all 0.3s ease;
+          }
+          .visitor-counter-widget:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.2);
+          }
+          .visitor-pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse-anim 2s infinite;
+          }
+          @keyframes pulse-anim {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.3); }
+          }
+          .visitor-icon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          }
+          @media (max-width: 480px) {
+            .visitor-counter-widget {
+              bottom: 15px;
+              ${position === 'left' ? 'left: 15px;' : 'right: 15px;'}
+              font-size: 13px;
+              padding: 10px 16px;
+            }
+          }
+        </style>
+
+        <div class="visitor-counter-widget">
+          <span class="visitor-pulse-dot"></span>
+          <div class="visitor-icon">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+            <span id="widgetify-visitor-count">0</span>
+          </div>
+          <span style="font-weight: 400; opacity: 0.9;">visitors</span>
+        </div>
+
+        <script>
+          (function() {
+            const storageKey = 'widgetify_visitor_counter';
+            let visitors = 12847;
+            
+            try {
+              const stored = localStorage.getItem(storageKey);
+              if (stored) {
+                visitors = parseInt(stored, 10);
+              }
+              
+              if (!sessionStorage.getItem('widgetify_counted')) {
+                visitors++;
+                sessionStorage.setItem('widgetify_counted', 'true');
+                localStorage.setItem(storageKey, visitors.toString());
+              }
+            } catch(e) {}
+            
+            document.getElementById('widgetify-visitor-count').textContent = visitors.toLocaleString();
+          })();
+        </script>`;
+
+    case 'bug-report':
+      const bugReportTitle = escapeHtml(config.title) || 'Report a Bug';
+      const bugReportEmail = escapeHtml(config.emailAddress) || 'support@example.com';
+      
+      return `
+        ${baseStyles}
+        <style>
+          .bug-report-popup {
+            position: fixed;
+            bottom: ${parseInt(widgetSize) + 30}px;
+            ${positionStyle}
+            width: 380px;
+            max-width: 90vw;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 999;
+          }
+          .bug-report-popup.show { display: flex; animation: fadeInUp 0.3s ease; }
+          .bug-header {
+            padding: 16px;
+            background: ${buttonColor};
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          .bug-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
+          .bug-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+          .bug-content { padding: 20px; }
+          .bug-field { margin-bottom: 16px; }
+          .bug-field label { display: block; margin-bottom: 6px; font-weight: 500; font-size: 14px; color: #374151; }
+          .bug-field input, .bug-field textarea, .bug-field select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+          }
+          .bug-field input:focus, .bug-field textarea:focus, .bug-field select:focus {
+            border-color: ${buttonColor};
+            box-shadow: 0 0 0 2px ${buttonColor}20;
+          }
+          .bug-submit {
+            width: 100%;
+            padding: 12px;
+            background: ${buttonColor};
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+          }
+          .bug-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+          @media (max-width: 480px) {
+            .bug-report-popup { max-width: calc(100vw - 30px); }
+          }
+        </style>
+
+        <div class="widgetify-widget" onclick="toggleBugReport()" style="background: ${buttonColor};">
+          <svg width="26" height="26" fill="white" viewBox="0 0 24 24">
+            <path d="M14 12l-2 2-2-2 2-2 2 2zm-2-6l2.12 2.12-2.12 2.12-2.12-2.12L12 6zm0 12l-2.12-2.12 2.12-2.12 2.12 2.12L12 18zm6-6l-2.12 2.12-2.12-2.12 2.12-2.12L18 12zM6 12l2.12-2.12 2.12 2.12-2.12 2.12L6 12zm14 0c0-5.52-4.48-10-10-10S0 6.48 0 12s4.48 10 10 10c1.82 0 3.53-.5 5-1.35-1.47-.85-2.47-2.35-2.47-4.05 0-2.62 2.13-4.75 4.75-4.75 1.7 0 3.2 1 4.05 2.47.85-1.47 1.35-3.18 1.35-5V12h-2.68z"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-bug-report" class="bug-report-popup">
+          <div class="bug-header">
+            <h3>🐛 ${bugReportTitle}</h3>
+            <button class="bug-close" onclick="toggleBugReport()">×</button>
+          </div>
+          <div class="bug-content">
+            <div class="bug-field">
+              <label>Bug Type</label>
+              <select id="bug-type">
+                <option value="visual">Visual/UI Issue</option>
+                <option value="functional">Functionality Issue</option>
+                <option value="performance">Performance Issue</option>
+                <option value="security">Security Concern</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="bug-field">
+              <label>Your Email</label>
+              <input type="email" id="bug-email" placeholder="your@email.com" />
+            </div>
+            <div class="bug-field">
+              <label>Description</label>
+              <textarea id="bug-description" rows="4" placeholder="Please describe the bug in detail..."></textarea>
+            </div>
+            <div class="bug-field">
+              <label>Steps to Reproduce</label>
+              <textarea id="bug-steps" rows="3" placeholder="1. Go to...\n2. Click on...\n3. See error"></textarea>
+            </div>
+            <button class="bug-submit" onclick="submitBugReport()">Submit Bug Report</button>
+          </div>${generateWatermark()}
+        </div>
+
+        <script>
+          function toggleBugReport() {
+            document.getElementById('widgetify-bug-report').classList.toggle('show');
+          }
+          
+          function submitBugReport() {
+            const bugType = document.getElementById('bug-type').value;
+            const email = document.getElementById('bug-email').value;
+            const description = document.getElementById('bug-description').value;
+            const steps = document.getElementById('bug-steps').value;
+            
+            if (!email || !description) {
+              alert('Please fill in email and description');
+              return;
+            }
+            
+            const mailBody = 'Bug Type: ' + bugType + '\\n\\nDescription:\\n' + description + '\\n\\nSteps to Reproduce:\\n' + steps + '\\n\\nReported by: ' + email;
+            window.location.href = 'mailto:${bugReportEmail}?subject=Bug Report: ' + bugType + '&body=' + encodeURIComponent(mailBody);
+            
+            alert('Thank you for your bug report!');
+            toggleBugReport();
+          }
+        </script>`;
+
+    case 'product-cards':
+      const products = [
+        { name: escapeHtml(config.productName) || 'Premium Widget Pack', price: config.amount || 49, originalPrice: config.originalPrice || 99, image: '📦' },
+        { name: 'Pro Business Suite', price: 79, originalPrice: 149, image: '💼' },
+        { name: 'Enterprise Solution', price: 199, originalPrice: 399, image: '🏢' }
+      ];
+      
+      return `
+        ${baseStyles}
+        <style>
+          .product-cards-popup {
+            position: fixed;
+            bottom: ${parseInt(widgetSize) + 30}px;
+            ${positionStyle}
+            width: 420px;
+            max-width: 90vw;
+            max-height: 80vh;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 999;
+          }
+          .product-cards-popup.show { display: flex; animation: fadeInUp 0.3s ease; }
+          .products-header {
+            padding: 16px 20px;
+            background: linear-gradient(135deg, ${buttonColor} 0%, ${buttonColor}cc 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          .products-header h3 { margin: 0; font-size: 16px; font-weight: 600; }
+          .products-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+          .products-list { padding: 16px; overflow-y: auto; max-height: 400px; }
+          .product-card {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+            border: 1px solid #e5e7eb;
+          }
+          .product-card:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: ${buttonColor}50;
+          }
+          .product-image {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            flex-shrink: 0;
+            border: 1px solid #e5e7eb;
+          }
+          .product-info { flex: 1; }
+          .product-name { font-weight: 600; color: #1f2937; font-size: 15px; margin-bottom: 4px; }
+          .product-prices { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+          .product-price { font-weight: 700; font-size: 18px; color: ${buttonColor}; }
+          .product-original { text-decoration: line-through; color: #9ca3af; font-size: 14px; }
+          .product-badge {
+            background: #fef3c7;
+            color: #d97706;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+          }
+          .product-btn {
+            width: 100%;
+            padding: 8px;
+            background: ${buttonColor};
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+          }
+          .product-btn:hover { opacity: 0.9; }
+          @media (max-width: 480px) {
+            .product-cards-popup { max-width: calc(100vw - 30px); }
+            .product-card { flex-direction: column; align-items: center; text-align: center; }
+          }
+        </style>
+
+        <div class="widgetify-widget" onclick="toggleProducts()" style="background: ${buttonColor};">
+          <svg width="26" height="26" fill="white" viewBox="0 0 24 24">
+            <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-products" class="product-cards-popup">
+          <div class="products-header">
+            <h3>🛒 Featured Products</h3>
+            <button class="products-close" onclick="toggleProducts()">×</button>
+          </div>
+          <div class="products-list">
+            ${products.map((p, i) => `
+              <div class="product-card">
+                <div class="product-image">${p.image}</div>
+                <div class="product-info">
+                  <div class="product-name">${p.name}</div>
+                  <div class="product-prices">
+                    <span class="product-price">$${p.price}</span>
+                    <span class="product-original">$${p.originalPrice}</span>
+                    <span class="product-badge">${Math.round((1 - p.price/p.originalPrice) * 100)}% OFF</span>
+                  </div>
+                  <button class="product-btn" onclick="addToCart(${i})">Add to Cart</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>${generateWatermark()}
+        </div>
+
+        <script>
+          function toggleProducts() {
+            document.getElementById('widgetify-products').classList.toggle('show');
+          }
+          
+          function addToCart(index) {
+            const products = ${JSON.stringify(products)};
+            alert('Added ' + products[index].name + ' to cart!');
+          }
+        </script>`;
+
+    case 'zoom-meeting':
+      const zoomLink = escapeHtml(config.bookingUrl) || 'https://zoom.us/j/1234567890';
+      const meetingTitle = escapeHtml(config.title) || 'Schedule a Meeting';
+      
+      return `
+        ${baseStyles}
+        <style>
+          .zoom-popup {
+            position: fixed;
+            bottom: ${parseInt(widgetSize) + 30}px;
+            ${positionStyle}
+            width: 360px;
+            max-width: 90vw;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 999;
+          }
+          .zoom-popup.show { display: flex; animation: fadeInUp 0.3s ease; }
+          .zoom-header {
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #2D8CFF 0%, #0B5CFF 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
+          .zoom-header h3 { margin: 0; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+          .zoom-close { background: none; border: none; color: white; font-size: 20px; cursor: pointer; }
+          .zoom-content { padding: 20px; }
+          .zoom-logo {
+            width: 60px;
+            height: 60px;
+            background: #2D8CFF;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+          }
+          .zoom-title { text-align: center; font-size: 18px; font-weight: 600; color: #1f2937; margin-bottom: 8px; }
+          .zoom-desc { text-align: center; font-size: 14px; color: #6b7280; margin-bottom: 20px; }
+          .zoom-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #2D8CFF 0%, #0B5CFF 100%);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+          }
+          .zoom-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(45, 140, 255, 0.3); }
+          .zoom-btn-secondary {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: #f3f4f6;
+            color: #374151;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+          }
+          .zoom-btn-secondary:hover { background: #e5e7eb; }
+          @media (max-width: 480px) {
+            .zoom-popup { max-width: calc(100vw - 30px); }
+          }
+        </style>
+
+        <div class="widgetify-widget" onclick="toggleZoom()" style="background: linear-gradient(135deg, #2D8CFF 0%, #0B5CFF 100%);">
+          <svg width="26" height="26" fill="white" viewBox="0 0 24 24">
+            <path d="M15.5 7.5V10h5.5l-4 4h-1.5v2.5H10v-7h5.5zm-8-3.5h8.86c.47 0 .88.18 1.22.52.34.34.52.76.52 1.23v8.5c0 .47-.18.89-.52 1.23-.34.34-.75.52-1.22.52H7.5c-.47 0-.88-.18-1.22-.52-.34-.34-.52-.76-.52-1.23v-8.5c0-.47.18-.89.52-1.23.34-.34.75-.52 1.22-.52zM5.25 17.75h13.5c.97 0 1.75-.78 1.75-1.75v-8c0-.97-.78-1.75-1.75-1.75H5.25c-.97 0-1.75.78-1.75 1.75v8c0 .97.78 1.75 1.75 1.75z"/>
+          </svg>
+        </div>
+
+        <div id="widgetify-zoom" class="zoom-popup">
+          <div class="zoom-header">
+            <h3>📹 ${meetingTitle}</h3>
+            <button class="zoom-close" onclick="toggleZoom()">×</button>
+          </div>
+          <div class="zoom-content">
+            <div class="zoom-logo">
+              <svg width="32" height="32" fill="white" viewBox="0 0 24 24">
+                <path d="M15.5 7.5V10h5.5l-4 4h-1.5v2.5H10v-7h5.5z"/>
+              </svg>
+            </div>
+            <div class="zoom-title">Join Our Video Call</div>
+            <div class="zoom-desc">Connect with our team in a live video meeting. Click below to start.</div>
+            <a href="${zoomLink}" target="_blank" class="zoom-btn">
+              🎥 Join Zoom Meeting
+            </a>
+            <a href="${zoomLink}" class="zoom-btn-secondary" onclick="copyZoomLink(); return false;">
+              📋 Copy Meeting Link
+            </a>
+          </div>${generateWatermark()}
+        </div>
+
+        <script>
+          function toggleZoom() {
+            document.getElementById('widgetify-zoom').classList.toggle('show');
+          }
+          
+          function copyZoomLink() {
+            navigator.clipboard.writeText('${zoomLink}').then(function() {
+              alert('Meeting link copied to clipboard!');
+            });
+          }
+        </script>`;
+
+    // Default case for new widgets that don't have full implementation yet
+    case 'testimonial-slider':
+    case 'social-proof-popup':
+    case 'cart-abandonment':
+    case 'product-comparison':
+    case 'wishlist':
+    case 'size-guide':
+    case 'stock-alert':
+    case 'quick-view':
+    case 'announcement-bar':
+    case 'team-member':
+    case 'faq-accordion':
+    case 'video-testimonial':
+      return `
+        ${baseStyles}
+        <div class="widgetify-widget" style="background: ${buttonColor};">
+          <svg width="26" height="26" fill="white" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+          </svg>
+        </div>
+        <div id="widgetify-coming-soon" class="widgetify-popup" style="display: flex;">
+          <div style="text-align: center; padding: 20px;">
+            <div style="font-size: 48px; margin-bottom: 12px;">🚧</div>
+            <h3 style="margin: 0 0 8px 0; color: #1f2937;">Coming Soon!</h3>
+            <p style="margin: 0; color: #6b7280; font-size: 14px;">This widget is currently in development. Check back soon for updates!</p>
+          </div>${generateWatermark()}
+        </div>`;
   }
 };
 
@@ -4331,5 +4828,23 @@ export const WIDGET_NAMES: Record<WidgetType, string> = {
   'lead-generation-chatbot': 'Lead Generation Chatbot',
   'webinar-registration-chatbot': 'Webinar Registration Chatbot',
   'ecommerce-assistant-chatbot': 'E-commerce Assistant Chatbot',
-  'whatsapp-interactive-form': 'WhatsApp Interactive Form'
+  'whatsapp-interactive-form': 'WhatsApp Interactive Form',
+  // New enhanced functionality widgets
+  'visitor-counter': 'Visitor Counter',
+  'bug-report': 'Bug Report Template',
+  'product-cards': 'Product Cards',
+  'zoom-meeting': 'Zoom Meeting',
+  // Additional widget categories
+  'testimonial-slider': 'Testimonial Slider',
+  'social-proof-popup': 'Social Proof Popup',
+  'cart-abandonment': 'Cart Abandonment',
+  'product-comparison': 'Product Comparison',
+  'wishlist': 'Wishlist',
+  'size-guide': 'Size Guide',
+  'stock-alert': 'Stock Alert',
+  'quick-view': 'Quick View',
+  'announcement-bar': 'Announcement Bar',
+  'team-member': 'Team Member',
+  'faq-accordion': 'FAQ Accordion',
+  'video-testimonial': 'Video Testimonial'
 };

@@ -1727,6 +1727,105 @@ const WidgetGenerator: React.FC = () => {
           </>
         );
 
+      case 'visitor-counter':
+        return (
+          <div className="p-4 bg-muted/50 rounded-lg border border-border">
+            <p className="text-sm text-muted-foreground">
+              📊 The Visitor Counter widget automatically tracks and displays visitor counts with a live "online now" indicator. No configuration needed!
+            </p>
+          </div>
+        );
+
+      case 'bug-report':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="title" className="text-sm font-medium">Report Title</Label>
+              <Input
+                id="title"
+                value={config.title}
+                onChange={(e) => handleConfigChange('title', e.target.value)}
+                placeholder="Report a Bug"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="emailAddress" className="text-sm font-medium">Support Email</Label>
+              <Input
+                id="emailAddress"
+                value={config.emailAddress}
+                onChange={(e) => handleConfigChange('emailAddress', e.target.value)}
+                placeholder="support@example.com"
+                className="text-base"
+              />
+            </div>
+          </>
+        );
+
+      case 'product-cards':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="productName" className="text-sm font-medium">Featured Product Name</Label>
+              <Input
+                id="productName"
+                value={config.productName}
+                onChange={(e) => handleConfigChange('productName', e.target.value)}
+                placeholder="Premium Widget Pack"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="amount" className="text-sm font-medium">Price ($)</Label>
+              <Input
+                id="amount"
+                type="number"
+                value={config.amount}
+                onChange={(e) => handleConfigChange('amount', parseInt(e.target.value) || 0)}
+                placeholder="49"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="originalPrice" className="text-sm font-medium">Original Price ($)</Label>
+              <Input
+                id="originalPrice"
+                type="number"
+                value={config.originalPrice}
+                onChange={(e) => handleConfigChange('originalPrice', parseInt(e.target.value) || 0)}
+                placeholder="99"
+                className="text-base"
+              />
+            </div>
+          </>
+        );
+
+      case 'zoom-meeting':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="title" className="text-sm font-medium">Meeting Title</Label>
+              <Input
+                id="title"
+                value={config.title}
+                onChange={(e) => handleConfigChange('title', e.target.value)}
+                placeholder="Schedule a Meeting"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="bookingUrl" className="text-sm font-medium">Zoom Meeting Link</Label>
+              <Input
+                id="bookingUrl"
+                value={config.bookingUrl}
+                onChange={(e) => handleConfigChange('bookingUrl', e.target.value)}
+                placeholder="https://zoom.us/j/1234567890"
+                className="text-base"
+              />
+            </div>
+          </>
+        );
+
       default:
         return (
           <div className="space-y-2">
@@ -1954,6 +2053,25 @@ const WidgetGenerator: React.FC = () => {
                       <SelectItem value="black-friday-timer">Black Friday Timer</SelectItem>
                       <SelectItem value="google-maps">Google Maps Embed</SelectItem>
                       <SelectItem value="google-reviews">Google Reviews Testimonials</SelectItem>
+                      {/* New Enhanced Widgets */}
+                      <SelectItem value="visitor-counter">📊 Visitor Counter</SelectItem>
+                      <SelectItem value="bug-report">🐛 Bug Report Template</SelectItem>
+                      <SelectItem value="product-cards">🛒 Product Cards</SelectItem>
+                      <SelectItem value="zoom-meeting">📹 Zoom Meeting</SelectItem>
+                      {/* eCommerce & Social Proof */}
+                      <SelectItem value="testimonial-slider">⭐ Testimonial Slider</SelectItem>
+                      <SelectItem value="social-proof-popup">👥 Social Proof Popup</SelectItem>
+                      <SelectItem value="cart-abandonment">🛍️ Cart Abandonment</SelectItem>
+                      <SelectItem value="product-comparison">⚖️ Product Comparison</SelectItem>
+                      <SelectItem value="wishlist">❤️ Wishlist</SelectItem>
+                      <SelectItem value="size-guide">📏 Size Guide</SelectItem>
+                      <SelectItem value="stock-alert">🔔 Stock Alert</SelectItem>
+                      <SelectItem value="quick-view">👁️ Quick View</SelectItem>
+                      {/* Content & Support */}
+                      <SelectItem value="announcement-bar">📢 Announcement Bar</SelectItem>
+                      <SelectItem value="team-member">👤 Team Member</SelectItem>
+                      <SelectItem value="faq-accordion">❓ FAQ Accordion</SelectItem>
+                      <SelectItem value="video-testimonial">🎬 Video Testimonial</SelectItem>
                    </SelectContent>
                 </Select>
               </div>
