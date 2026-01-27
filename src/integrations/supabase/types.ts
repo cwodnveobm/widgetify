@@ -309,6 +309,57 @@ export type Database = {
         }
         Relationships: []
       }
+      payout_requests: {
+        Row: {
+          account_holder_name: string | null
+          admin_notes: string | null
+          amount_credits: number
+          amount_rupees: number
+          bank_account: string | null
+          created_at: string
+          id: string
+          ifsc_code: string | null
+          payment_method: string
+          processed_at: string | null
+          status: string
+          updated_at: string
+          upi_id: string | null
+          user_id: string
+        }
+        Insert: {
+          account_holder_name?: string | null
+          admin_notes?: string | null
+          amount_credits: number
+          amount_rupees: number
+          bank_account?: string | null
+          created_at?: string
+          id?: string
+          ifsc_code?: string | null
+          payment_method?: string
+          processed_at?: string | null
+          status?: string
+          updated_at?: string
+          upi_id?: string | null
+          user_id: string
+        }
+        Update: {
+          account_holder_name?: string | null
+          admin_notes?: string | null
+          amount_credits?: number
+          amount_rupees?: number
+          bank_account?: string | null
+          created_at?: string
+          id?: string
+          ifsc_code?: string | null
+          payment_method?: string
+          processed_at?: string | null
+          status?: string
+          updated_at?: string
+          upi_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
