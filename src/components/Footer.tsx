@@ -21,6 +21,8 @@ const Footer: React.FC = () => {
     { href: '/', label: 'Home' },
     { href: '#widget-generator', label: 'Generate Widget' },
     { href: '#features', label: 'Features' },
+    { href: '/creators', label: 'Creator Portal' },
+    { href: '/referrals', label: 'Referrals' },
     { href: '/faq', label: 'FAQ' },
   ];
 

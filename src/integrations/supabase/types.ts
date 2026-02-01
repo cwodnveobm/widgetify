@@ -94,6 +94,51 @@ export type Database = {
         }
         Relationships: []
       }
+      creator_verifications: {
+        Row: {
+          application_note: string | null
+          badge_type: string
+          created_at: string
+          earning_multiplier: number
+          follower_count: number | null
+          id: string
+          instagram_handle: string
+          rejection_reason: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          application_note?: string | null
+          badge_type?: string
+          created_at?: string
+          earning_multiplier?: number
+          follower_count?: number | null
+          id?: string
+          instagram_handle: string
+          rejection_reason?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          application_note?: string | null
+          badge_type?: string
+          created_at?: string
+          earning_multiplier?: number
+          follower_count?: number | null
+          id?: string
+          instagram_handle?: string
+          rejection_reason?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       credit_transactions: {
         Row: {
           amount: number
@@ -583,10 +628,12 @@ export type Database = {
     }
     Functions: {
       check_email_rate_limit: { Args: { p_email: string }; Returns: boolean }
+      get_creator_multiplier: { Args: { p_user_id: string }; Returns: number }
       has_active_subscription: {
         Args: { user_id_param: string }
         Returns: boolean
       }
+      is_verified_creator: { Args: { p_user_id: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
