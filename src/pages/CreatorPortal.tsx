@@ -7,10 +7,12 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useReferrals } from '@/hooks/useReferrals';
+import { useCreatorVerification } from '@/hooks/useCreatorVerification';
 import { useToast } from '@/hooks/use-toast';
 import { Navigation } from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import { AuthModal } from '@/components/AuthModal';
+import CreatorVerificationCard from '@/components/CreatorVerificationCard';
 import { 
   Instagram, 
   Download, 
@@ -28,7 +30,8 @@ import {
   Zap,
   Gift,
   Camera,
-  Play
+  Play,
+  Shield
 } from 'lucide-react';
 
 const CreatorPortal: React.FC = () => {
@@ -36,6 +39,7 @@ const CreatorPortal: React.FC = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const { referralLink, credits, referrals, currentTier, creditsToRupees } = useReferrals();
+  const { isVerified, verification, getBadgeConfig } = useCreatorVerification();
   const [showAuthModal, setShowAuthModal] = useState(false);
 
   const copyToClipboard = async (text: string, label: string) => {
@@ -202,9 +206,15 @@ const CreatorPortal: React.FC = () => {
       <section className="py-12 px-4">
         <div className="max-w-6xl mx-auto">
           <Tabs defaultValue="guidelines" className="space-y-8">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3">
+            <TabsList className="grid w-full max-w-lg mx-auto grid-cols-4">
               <TabsTrigger value="guidelines">Guidelines</TabsTrigger>
               <TabsTrigger value="assets">Assets</TabsTrigger>
+              <TabsTrigger value="verification" className="relative">
+                Verification
+                {isVerified && (
+                  <Shield className="w-3 h-3 text-blue-500 absolute -top-1 -right-1" />
+                )}
+              </TabsTrigger>
               <TabsTrigger value="earnings">Earnings</TabsTrigger>
             </TabsList>
 
@@ -423,6 +433,43 @@ const CreatorPortal: React.FC = () => {
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
+
+            {/* Verification Tab */}
+            <TabsContent value="verification" className="space-y-6">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl font-bold mb-2">Creator Verification</h2>
+                <p className="text-muted-foreground">Get verified to unlock higher earning rates and exclusive benefits</p>
+              </div>
+
+              <div className="max-w-xl mx-auto">
+                <CreatorVerificationCard onAuthRequired={() => setShowAuthModal(true)} />
+              </div>
+
+              {/* Verification Tiers Info */}
+              <Card className="max-w-xl mx-auto">
+                <CardHeader>
+                  <CardTitle className="text-lg">Verification Tiers</CardTitle>
+                  <CardDescription>Higher tiers unlock better earning multipliers</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {[
+                      { badge: 'Verified', color: 'bg-blue-500', multiplier: '1.5x', requirement: '1K+ followers' },
+                      { badge: 'Premium', color: 'bg-purple-500', multiplier: '1.75x', requirement: '10K+ followers' },
+                      { badge: 'Elite', color: 'bg-gradient-to-r from-yellow-500 to-orange-500', multiplier: '2x', requirement: '50K+ followers' },
+                    ].map((tier) => (
+                      <div key={tier.badge} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <Badge className={`${tier.color} text-white`}>{tier.badge}</Badge>
+                          <span className="text-sm text-muted-foreground">{tier.requirement}</span>
+                        </div>
+                        <span className="font-medium text-green-600">{tier.multiplier}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             {/* Earnings Tab */}
