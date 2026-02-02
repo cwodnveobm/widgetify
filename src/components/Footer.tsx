@@ -21,9 +21,12 @@ const Footer: React.FC = () => {
     { href: '/', label: 'Home' },
     { href: '#widget-generator', label: 'Generate Widget' },
     { href: '#features', label: 'Features' },
-    { href: '/creators', label: 'Creator Portal' },
-    { href: '/referrals', label: 'Referrals' },
     { href: '/faq', label: 'FAQ' },
+  ];
+
+  const referralLinks = [
+    { href: '/creators', label: 'Creator Portal' },
+    { href: '/referrals', label: 'Referral Dashboard' },
   ];
 
   const socialLinks = [
@@ -38,7 +41,7 @@ const Footer: React.FC = () => {
         <AdaptiveGrid columns={3} gap="lg" stagger={shouldAnimate}>
           {/* Brand Section */}
           <motion.div 
-            className="col-span-3 md:col-span-2"
+            className="col-span-3 sm:col-span-1"
             initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -97,7 +100,7 @@ const Footer: React.FC = () => {
           
           {/* Links Section */}
           <motion.div 
-            className="col-span-3 md:col-span-1"
+            className="col-span-3 sm:col-span-1"
             initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -106,6 +109,35 @@ const Footer: React.FC = () => {
             <h4 className="text-sm sm:text-base text-foreground font-medium mb-3 sm:mb-4">Links</h4>
             <ul className="space-y-1 sm:space-y-2">
               {footerLinks.map((link, index) => (
+                <motion.li 
+                  key={link.href}
+                  initial={shouldAnimate ? { opacity: 0, x: -10 } : false}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.2, delay: index * 0.05 }}
+                >
+                  <a 
+                    href={link.href} 
+                    className={`hover:text-primary ${classes.animation} min-h-[44px] flex items-center text-xs sm:text-sm md:text-base`}
+                  >
+                    {link.label}
+                  </a>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Referral & Earn Section */}
+          <motion.div 
+            className="col-span-3 sm:col-span-1"
+            initial={shouldAnimate ? { opacity: 0, y: 20 } : false}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: animationDuration, delay: 0.15 }}
+          >
+            <h4 className="text-sm sm:text-base text-foreground font-medium mb-3 sm:mb-4">Referral & Earn</h4>
+            <ul className="space-y-1 sm:space-y-2">
+              {referralLinks.map((link, index) => (
                 <motion.li 
                   key={link.href}
                   initial={shouldAnimate ? { opacity: 0, x: -10 } : false}
