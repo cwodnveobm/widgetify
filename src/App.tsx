@@ -21,6 +21,7 @@ import Marketplace from "./pages/Marketplace";
 import SupportersWall from "./pages/SupportersWall";
 import ReferralDashboard from "./pages/ReferralDashboard";
 import CreatorPortal from "./pages/CreatorPortal";
+import AdminPanel from "./pages/AdminPanel";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -92,6 +93,7 @@ const App = () => {
                     <Route path="/supporters" element={<SupportersWall />} />
                     <Route path="/referrals" element={<ReferralDashboard />} />
                     <Route path="/creators" element={<CreatorPortal />} />
+                    <Route path="/admin" element={<AdminPanel />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
