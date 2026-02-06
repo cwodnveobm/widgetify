@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import ReferAFriend from '@/components/ReferAFriend';
 import VisitorCounter from '@/components/VisitorCounter';
 import { Linkedin, Instagram, Sparkles, Users, Zap } from 'lucide-react';
@@ -18,15 +19,15 @@ const Footer: React.FC = () => {
   const animationDuration = config.content.animationLevel === 'full' ? 0.5 : 0.3;
 
   const footerLinks = [
-    { href: '/', label: 'Home' },
-    { href: '#widget-generator', label: 'Generate Widget' },
-    { href: '#features', label: 'Features' },
-    { href: '/faq', label: 'FAQ' },
+    { to: '/', label: 'Home', isRoute: true },
+    { to: '#widget-generator', label: 'Generate Widget', isRoute: false },
+    { to: '#features', label: 'Features', isRoute: false },
+    { to: '/faq', label: 'FAQ', isRoute: true },
   ];
 
   const referralLinks = [
-    { href: '/creators', label: 'Creator Portal' },
-    { href: '/referrals', label: 'Referral Dashboard' },
+    { to: '/creators', label: 'Creator Portal', isRoute: true },
+    { to: '/referrals', label: 'Referral Dashboard', isRoute: true },
   ];
 
   const socialLinks = [
@@ -110,18 +111,27 @@ const Footer: React.FC = () => {
             <ul className="space-y-1 sm:space-y-2">
               {footerLinks.map((link, index) => (
                 <motion.li 
-                  key={link.href}
+                  key={link.to}
                   initial={shouldAnimate ? { opacity: 0, x: -10 } : false}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.2, delay: index * 0.05 }}
                 >
-                  <a 
-                    href={link.href} 
-                    className={`hover:text-primary ${classes.animation} min-h-[44px] flex items-center text-xs sm:text-sm md:text-base`}
-                  >
-                    {link.label}
-                  </a>
+                  {link.isRoute ? (
+                    <Link 
+                      to={link.to}
+                      className={`hover:text-primary ${classes.animation} min-h-[44px] flex items-center text-xs sm:text-sm md:text-base`}
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <a 
+                      href={link.to} 
+                      className={`hover:text-primary ${classes.animation} min-h-[44px] flex items-center text-xs sm:text-sm md:text-base`}
+                    >
+                      {link.label}
+                    </a>
+                  )}
                 </motion.li>
               ))}
             </ul>
@@ -139,18 +149,18 @@ const Footer: React.FC = () => {
             <ul className="space-y-1 sm:space-y-2">
               {referralLinks.map((link, index) => (
                 <motion.li 
-                  key={link.href}
+                  key={link.to}
                   initial={shouldAnimate ? { opacity: 0, x: -10 } : false}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.2, delay: index * 0.05 }}
                 >
-                  <a 
-                    href={link.href} 
+                  <Link 
+                    to={link.to}
                     className={`hover:text-primary ${classes.animation} min-h-[44px] flex items-center text-xs sm:text-sm md:text-base`}
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </motion.li>
               ))}
             </ul>
