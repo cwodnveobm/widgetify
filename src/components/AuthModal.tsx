@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,6 +26,11 @@ interface AuthModalProps {
 
 export const AuthModal = ({ open, onClose, mode = "signin" }: AuthModalProps) => {
   const [isSignIn, setIsSignIn] = useState(mode === "signin");
+
+  // Sync internal state when mode prop changes
+  useEffect(() => {
+    setIsSignIn(mode === "signin");
+  }, [mode]);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
