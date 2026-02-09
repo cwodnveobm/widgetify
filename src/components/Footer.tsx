@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ReferAFriend from '@/components/ReferAFriend';
 import VisitorCounter from '@/components/VisitorCounter';
 import { Linkedin, Instagram, Sparkles, Users, Zap } from 'lucide-react';
@@ -15,8 +15,21 @@ import { useAdaptiveUI } from '@/hooks/useAdaptiveUI';
 
 const Footer: React.FC = () => {
   const { config, classes, shouldShowElement } = useAdaptiveUI();
+  const location = useLocation();
+  const navigate = useNavigate();
   const shouldAnimate = config.content.animationLevel !== 'none';
   const animationDuration = config.content.animationLevel === 'full' ? 0.5 : 0.3;
+
+  const handleHashLink = (hash: string) => {
+    if (location.pathname === '/') {
+      document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate('/');
+      setTimeout(() => {
+        document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth' });
+      }, 300);
+    }
+  };
 
   const footerLinks = [
     { to: '/', label: 'Home', isRoute: true },
@@ -125,12 +138,12 @@ const Footer: React.FC = () => {
                       {link.label}
                     </Link>
                   ) : (
-                    <a 
-                      href={link.to} 
-                      className={`hover:text-primary ${classes.animation} min-h-[44px] flex items-center text-xs sm:text-sm md:text-base`}
+                    <button 
+                      onClick={() => handleHashLink(link.to.replace('#', ''))}
+                      className={`hover:text-primary ${classes.animation} min-h-[44px] flex items-center text-xs sm:text-sm md:text-base text-left`}
                     >
                       {link.label}
-                    </a>
+                    </button>
                   )}
                 </motion.li>
               ))}
