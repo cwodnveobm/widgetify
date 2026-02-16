@@ -192,6 +192,7 @@ const WIDGET_METADATA: Record<WidgetType, { name: string; category: string; comp
   'team-member': { name: 'Team Member', category: 'Content', complexity: 1, conversionImpact: 35, setupTime: '1 min' },
   'faq-accordion': { name: 'FAQ Accordion', category: 'Support', complexity: 1, conversionImpact: 55, setupTime: '2 min' },
   'video-testimonial': { name: 'Video Testimonial', category: 'Social Proof', complexity: 2, conversionImpact: 82, setupTime: '1.5 min' },
+  'lastset': { name: 'LastSet — Link-in-Bio', category: 'Personal Branding', complexity: 2, conversionImpact: 90, setupTime: '2 min' },
 };
 
 export const useWidgetPersonalization = () => {

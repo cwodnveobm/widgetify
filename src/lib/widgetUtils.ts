@@ -201,6 +201,13 @@ export interface WidgetConfig {
   services?: { name: string; basePrice: number; unit: string; }[];
   // Branding options
   removeBranding?: boolean;
+  // LastSet link-in-bio properties
+  lastsetDisplayName?: string;
+  lastsetBio?: string;
+  lastsetAvatarUrl?: string;
+  lastsetLinks?: { label: string; url: string; icon?: string }[];
+  lastsetTheme?: 'glass' | 'neon' | 'aurora' | 'minimal';
+  lastsetShape?: 'rounded' | 'pill' | 'sharp';
 }
 
 export const generateWidgetCode = (config: WidgetConfig): string => {
@@ -4748,6 +4755,152 @@ Sent via ${contactBusinessName} Contact Form\`;
             <p style="margin: 0; color: #6b7280; font-size: 14px;">This widget is currently in development. Check back soon for updates!</p>
           </div>${generateWatermark()}
         </div>`;
+
+    case 'lastset': {
+      const lsName = escapeHtml(config.lastsetDisplayName) || 'Your Name';
+      const lsBio = escapeHtml(config.lastsetBio) || 'Creator · Designer · Developer';
+      const lsAvatar = escapeHtml(config.lastsetAvatarUrl) || '';
+      const lsTheme = config.lastsetTheme || 'glass';
+      const lsShape = config.lastsetShape || 'pill';
+      const lsLinks = config.lastsetLinks || [
+        { label: 'Portfolio', url: '#', icon: '🌐' },
+        { label: 'Instagram', url: '#', icon: '📸' },
+        { label: 'YouTube', url: '#', icon: '🎬' },
+        { label: 'Newsletter', url: '#', icon: '✉️' },
+      ];
+      
+      const themeStyles: Record<string, { bg: string; card: string; text: string; linkBg: string; linkHover: string; accent: string }> = {
+        glass: { bg: 'linear-gradient(135deg, #0f0c29, #302b63, #24243e)', card: 'rgba(255,255,255,0.08)', text: '#fff', linkBg: 'rgba(255,255,255,0.1)', linkHover: 'rgba(255,255,255,0.2)', accent: 'rgba(139,92,246,0.5)' },
+        neon: { bg: 'linear-gradient(135deg, #000000, #0a0a0a)', card: 'rgba(0,255,136,0.05)', text: '#00ff88', linkBg: 'rgba(0,255,136,0.08)', linkHover: 'rgba(0,255,136,0.18)', accent: '#00ff88' },
+        aurora: { bg: 'linear-gradient(135deg, #0f172a, #1e1b4b, #0f172a)', card: 'rgba(255,255,255,0.06)', text: '#e2e8f0', linkBg: 'linear-gradient(135deg, rgba(56,189,248,0.12), rgba(168,85,247,0.12))', linkHover: 'linear-gradient(135deg, rgba(56,189,248,0.25), rgba(168,85,247,0.25))', accent: 'linear-gradient(90deg, #38bdf8, #a855f7)' },
+        minimal: { bg: '#ffffff', card: '#f8fafc', text: '#0f172a', linkBg: '#f1f5f9', linkHover: '#e2e8f0', accent: '#6366f1' },
+      };
+      
+      const t = themeStyles[lsTheme] || themeStyles.glass;
+      const borderRadius = lsShape === 'pill' ? '999px' : lsShape === 'rounded' ? '12px' : '4px';
+      
+      const linksHtml = lsLinks.map((link, i) => `
+        <a href="${escapeHtml(link.url)}" target="_blank" rel="noopener noreferrer" class="ls-link" style="
+          display: flex; align-items: center; gap: 12px; padding: 14px 20px;
+          background: ${t.linkBg}; border-radius: ${borderRadius};
+          color: ${t.text}; text-decoration: none; font-size: 15px; font-weight: 500;
+          backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(255,255,255,0.06);
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          animation: ls-fadeUp 0.5s ease forwards;
+          animation-delay: ${0.1 + i * 0.08}s; opacity: 0;
+        ">
+          <span style="font-size: 20px;">${link.icon || '🔗'}</span>
+          <span style="flex:1;">${escapeHtml(link.label)}</span>
+          <svg width="16" height="16" fill="none" stroke="${t.text}" stroke-width="2" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+        </a>
+      `).join('');
+      
+      return `
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+          
+          .ls-container {
+            position: fixed; inset: 0; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            background: ${t.bg}; font-family: 'Space Grotesk', sans-serif;
+            overflow-y: auto; padding: 40px 16px;
+          }
+          
+          .ls-card {
+            width: 100%; max-width: 420px;
+            background: ${t.card};
+            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px; padding: 40px 28px;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+            animation: ls-scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+          }
+          
+          .ls-avatar {
+            width: 96px; height: 96px; border-radius: 50%;
+            object-fit: cover; margin: 0 auto 16px;
+            display: block; border: 3px solid ${t.accent};
+            box-shadow: 0 0 30px ${t.accent};
+            animation: ls-pulse 3s ease-in-out infinite;
+          }
+          
+          .ls-avatar-placeholder {
+            width: 96px; height: 96px; border-radius: 50%;
+            margin: 0 auto 16px; display: flex; align-items: center;
+            justify-content: center; font-size: 40px;
+            background: ${t.linkBg}; border: 3px solid ${t.accent};
+            box-shadow: 0 0 30px ${t.accent};
+            animation: ls-pulse 3s ease-in-out infinite;
+          }
+          
+          .ls-name {
+            text-align: center; font-size: 24px; font-weight: 700;
+            color: ${t.text}; margin: 0 0 4px 0;
+            animation: ls-fadeUp 0.4s ease forwards; animation-delay: 0.05s; opacity: 0;
+          }
+          
+          .ls-bio {
+            text-align: center; font-size: 14px;
+            color: ${t.text}; opacity: 0.7; margin: 0 0 28px 0;
+            animation: ls-fadeUp 0.4s ease forwards; animation-delay: 0.1s; opacity: 0;
+          }
+          
+          .ls-links { display: flex; flex-direction: column; gap: 10px; }
+          
+          .ls-link:hover {
+            background: ${t.linkHover} !important;
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+          }
+          
+          .ls-link:active { transform: scale(0.98); }
+          
+          .ls-watermark {
+            text-align: center; margin-top: 24px;
+            font-size: 11px; opacity: 0.4;
+          }
+          
+          .ls-watermark a { color: ${t.text}; text-decoration: none; }
+          .ls-watermark a:hover { opacity: 0.8; }
+          
+          @keyframes ls-scaleIn {
+            from { opacity: 0; transform: scale(0.92) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+          }
+          
+          @keyframes ls-fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          
+          @keyframes ls-pulse {
+            0%, 100% { box-shadow: 0 0 20px ${t.accent}; }
+            50% { box-shadow: 0 0 40px ${t.accent}, 0 0 60px ${t.accent}; }
+          }
+          
+          @media (max-width: 480px) {
+            .ls-card { padding: 32px 20px; border-radius: 20px; }
+            .ls-avatar, .ls-avatar-placeholder { width: 80px; height: 80px; }
+            .ls-name { font-size: 20px; }
+          }
+        </style>
+        
+        <div class="ls-container">
+          <div class="ls-card">
+            ${lsAvatar 
+              ? '<img class="ls-avatar" src="' + lsAvatar + '" alt="' + lsName + '" />'
+              : '<div class="ls-avatar-placeholder">👤</div>'
+            }
+            <h1 class="ls-name">${lsName}</h1>
+            <p class="ls-bio">${lsBio}</p>
+            <div class="ls-links">
+              ${linksHtml}
+            </div>
+            ${removeBranding ? '' : '<div class="ls-watermark"><a href="https://widgetify.lovable.app" target="_blank">Built with Widgetify LastSet</a></div>'}
+          </div>
+        </div>`;
+    }
   }
 };
 
@@ -4846,5 +4999,6 @@ export const WIDGET_NAMES: Record<WidgetType, string> = {
   'announcement-bar': 'Announcement Bar',
   'team-member': 'Team Member',
   'faq-accordion': 'FAQ Accordion',
-  'video-testimonial': 'Video Testimonial'
+  'video-testimonial': 'Video Testimonial',
+  'lastset': 'LastSet — Link-in-Bio'
 };

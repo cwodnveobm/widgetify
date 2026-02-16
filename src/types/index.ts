@@ -94,7 +94,8 @@ export type WidgetType =
   'announcement-bar' |
   'team-member' |
   'faq-accordion' |
-  'video-testimonial';
+  'video-testimonial' |
+  'lastset';
 
 export type WidgetSize = 'small' | 'medium' | 'large';
 
