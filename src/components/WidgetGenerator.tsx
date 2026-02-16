@@ -1826,6 +1826,129 @@ const WidgetGenerator: React.FC = () => {
           </>
         );
 
+      case 'lastset':
+        return (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="lastsetDisplayName" className="text-sm font-medium">Display Name</Label>
+              <Input
+                id="lastsetDisplayName"
+                value={config.lastsetDisplayName || ''}
+                onChange={(e) => handleConfigChange('lastsetDisplayName', e.target.value)}
+                placeholder="Your Name"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastsetBio" className="text-sm font-medium">Bio / Tagline</Label>
+              <Input
+                id="lastsetBio"
+                value={config.lastsetBio || ''}
+                onChange={(e) => handleConfigChange('lastsetBio', e.target.value)}
+                placeholder="Creator · Designer · Developer"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastsetAvatarUrl" className="text-sm font-medium">Avatar URL</Label>
+              <Input
+                id="lastsetAvatarUrl"
+                value={config.lastsetAvatarUrl || ''}
+                onChange={(e) => handleConfigChange('lastsetAvatarUrl', e.target.value)}
+                placeholder="https://your-avatar.jpg"
+                className="text-base"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastsetTheme" className="text-sm font-medium">Theme</Label>
+              <Select
+                value={config.lastsetTheme || 'glass'}
+                onValueChange={(value: 'glass' | 'neon' | 'aurora' | 'minimal') => handleConfigChange('lastsetTheme', value)}
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="glass">🌌 Glass (Glassmorphism)</SelectItem>
+                  <SelectItem value="neon">💚 Neon (Cyberpunk)</SelectItem>
+                  <SelectItem value="aurora">🌈 Aurora (Gradient)</SelectItem>
+                  <SelectItem value="minimal">⬜ Minimal (Clean)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastsetShape" className="text-sm font-medium">Button Shape</Label>
+              <Select
+                value={config.lastsetShape || 'pill'}
+                onValueChange={(value: 'rounded' | 'pill' | 'sharp') => handleConfigChange('lastsetShape', value)}
+              >
+                <SelectTrigger className="text-base min-h-[48px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pill">💊 Pill</SelectItem>
+                  <SelectItem value="rounded">⬜ Rounded</SelectItem>
+                  <SelectItem value="sharp">🔷 Sharp</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Links (up to 8)</Label>
+              {(config.lastsetLinks || [
+                { label: 'Portfolio', url: '', icon: '🌐' },
+                { label: 'Instagram', url: '', icon: '📸' },
+              ]).map((link, idx) => (
+                <div key={idx} className="flex gap-2">
+                  <Input
+                    value={link.icon || ''}
+                    onChange={(e) => {
+                      const links = [...(config.lastsetLinks || [{ label: 'Portfolio', url: '', icon: '🌐' }, { label: 'Instagram', url: '', icon: '📸' }])];
+                      links[idx] = { ...links[idx], icon: e.target.value };
+                      handleConfigChange('lastsetLinks', links);
+                    }}
+                    placeholder="🔗"
+                    className="w-14 text-center text-base"
+                  />
+                  <Input
+                    value={link.label}
+                    onChange={(e) => {
+                      const links = [...(config.lastsetLinks || [{ label: 'Portfolio', url: '', icon: '🌐' }, { label: 'Instagram', url: '', icon: '📸' }])];
+                      links[idx] = { ...links[idx], label: e.target.value };
+                      handleConfigChange('lastsetLinks', links);
+                    }}
+                    placeholder="Label"
+                    className="flex-1 text-base"
+                  />
+                  <Input
+                    value={link.url}
+                    onChange={(e) => {
+                      const links = [...(config.lastsetLinks || [{ label: 'Portfolio', url: '', icon: '🌐' }, { label: 'Instagram', url: '', icon: '📸' }])];
+                      links[idx] = { ...links[idx], url: e.target.value };
+                      handleConfigChange('lastsetLinks', links);
+                    }}
+                    placeholder="https://..."
+                    className="flex-1 text-base"
+                  />
+                </div>
+              ))}
+              {(config.lastsetLinks || []).length < 8 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const links = [...(config.lastsetLinks || [{ label: 'Portfolio', url: '', icon: '🌐' }, { label: 'Instagram', url: '', icon: '📸' }])];
+                    links.push({ label: '', url: '', icon: '🔗' });
+                    handleConfigChange('lastsetLinks', links);
+                  }}
+                  className="w-full"
+                >
+                  + Add Link
+                </Button>
+              )}
+            </div>
+          </>
+        );
+
       default:
         return (
           <div className="space-y-2">
@@ -2072,6 +2195,8 @@ const WidgetGenerator: React.FC = () => {
                       <SelectItem value="team-member">👤 Team Member</SelectItem>
                       <SelectItem value="faq-accordion">❓ FAQ Accordion</SelectItem>
                       <SelectItem value="video-testimonial">🎬 Video Testimonial</SelectItem>
+                      {/* 2026 Trending */}
+                      <SelectItem value="lastset">🔗 LastSet — Link-in-Bio</SelectItem>
                    </SelectContent>
                 </Select>
               </div>

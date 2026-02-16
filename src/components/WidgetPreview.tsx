@@ -276,6 +276,14 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return <MessageSquare size={iconSize} color="white" />;
       case 'service-estimator':
         return <TrendingUp size={iconSize} color="white" />;
+      case 'lastset':
+        return (
+          <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="18" height="18" rx="4" stroke="white" strokeWidth="2" />
+            <circle cx="12" cy="9" r="3" stroke="white" strokeWidth="1.5" />
+            <path d="M7 15h10M8 18h8" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+        );
       default:
         return <MessageCircle size={iconSize} color="white" />;
     }
@@ -391,6 +399,8 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         return 'Seasonal Greeting';
       case 'black-friday-timer':
         return 'Black Friday Timer';
+      case 'lastset':
+        return 'LastSet — Link-in-Bio';
       default:
         return null;
     }
