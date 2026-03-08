@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigation } from '@/components/Navigation';
-import AuthModal from '@/components/AuthModal';
+import { AuthModal } from '@/components/AuthModal';
 import { cn } from '@/lib/utils';
 import { SEOHead } from '@/components/SEOHead';
 
