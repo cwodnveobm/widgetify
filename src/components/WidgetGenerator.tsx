@@ -1894,51 +1894,71 @@ const WidgetGenerator: React.FC = () => {
             </div>
             <div className="space-y-3">
               <Label className="text-sm font-medium">Links (up to 8)</Label>
-              {(config.lastsetLinks || [
+              {(config.lastsetLinks && config.lastsetLinks.length > 0 ? config.lastsetLinks : [
                 { label: 'Portfolio', url: '', icon: '🌐' },
                 { label: 'Instagram', url: '', icon: '📸' },
-              ]).map((link, idx) => (
-                <div key={idx} className="flex gap-2">
-                  <Input
-                    value={link.icon || ''}
-                    onChange={(e) => {
-                      const links = [...(config.lastsetLinks || [{ label: 'Portfolio', url: '', icon: '🌐' }, { label: 'Instagram', url: '', icon: '📸' }])];
-                      links[idx] = { ...links[idx], icon: e.target.value };
-                      handleConfigChange('lastsetLinks', links);
-                    }}
-                    placeholder="🔗"
-                    className="w-14 text-center text-base"
-                  />
-                  <Input
-                    value={link.label}
-                    onChange={(e) => {
-                      const links = [...(config.lastsetLinks || [{ label: 'Portfolio', url: '', icon: '🌐' }, { label: 'Instagram', url: '', icon: '📸' }])];
-                      links[idx] = { ...links[idx], label: e.target.value };
-                      handleConfigChange('lastsetLinks', links);
-                    }}
-                    placeholder="Label"
-                    className="flex-1 text-base"
-                  />
-                  <Input
-                    value={link.url}
-                    onChange={(e) => {
-                      const links = [...(config.lastsetLinks || [{ label: 'Portfolio', url: '', icon: '🌐' }, { label: 'Instagram', url: '', icon: '📸' }])];
-                      links[idx] = { ...links[idx], url: e.target.value };
-                      handleConfigChange('lastsetLinks', links);
-                    }}
-                    placeholder="https://..."
-                    className="flex-1 text-base"
-                  />
-                </div>
-              ))}
-              {(config.lastsetLinks || []).length < 8 && (
+              ]).map((link, idx) => {
+                const currentLinks = config.lastsetLinks && config.lastsetLinks.length > 0 
+                  ? config.lastsetLinks 
+                  : [{ label: 'Portfolio', url: '', icon: '🌐' }, { label: 'Instagram', url: '', icon: '📸' }];
+                return (
+                  <div key={idx} className="flex gap-2">
+                    <Input
+                      value={link.icon || ''}
+                      onChange={(e) => {
+                        const links = [...currentLinks];
+                        links[idx] = { ...links[idx], icon: e.target.value };
+                        handleConfigChange('lastsetLinks', links);
+                      }}
+                      placeholder="🔗"
+                      className="w-14 text-center text-base"
+                    />
+                    <Input
+                      value={link.label}
+                      onChange={(e) => {
+                        const links = [...currentLinks];
+                        links[idx] = { ...links[idx], label: e.target.value };
+                        handleConfigChange('lastsetLinks', links);
+                      }}
+                      placeholder="Label"
+                      className="flex-1 text-base"
+                    />
+                    <Input
+                      value={link.url}
+                      onChange={(e) => {
+                        const links = [...currentLinks];
+                        links[idx] = { ...links[idx], url: e.target.value };
+                        handleConfigChange('lastsetLinks', links);
+                      }}
+                      placeholder="https://..."
+                      className="flex-1 text-base"
+                    />
+                    {currentLinks.length > 1 && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          const links = [...currentLinks];
+                          links.splice(idx, 1);
+                          handleConfigChange('lastsetLinks', links);
+                        }}
+                        className="shrink-0 text-muted-foreground hover:text-destructive"
+                      >
+                        ×
+                      </Button>
+                    )}
+                  </div>
+                );
+              })}
+              {(config.lastsetLinks && config.lastsetLinks.length > 0 ? config.lastsetLinks : [1, 2]).length < 8 && (
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    const links = [...(config.lastsetLinks || [{ label: 'Portfolio', url: '', icon: '🌐' }, { label: 'Instagram', url: '', icon: '📸' }])];
-                    links.push({ label: '', url: '', icon: '🔗' });
-                    handleConfigChange('lastsetLinks', links);
+                    const currentLinks = config.lastsetLinks && config.lastsetLinks.length > 0
+                      ? config.lastsetLinks
+                      : [{ label: 'Portfolio', url: '', icon: '🌐' }, { label: 'Instagram', url: '', icon: '📸' }];
+                    handleConfigChange('lastsetLinks', [...currentLinks, { label: '', url: '', icon: '🔗' }]);
                   }}
                   className="w-full"
                 >

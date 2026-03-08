@@ -483,7 +483,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
           </button>
         </div>
         <div className="bg-gray-50 border-t p-2 text-center">
-          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-gray-500 text-xs hover:text-gray-700 transition-colors">
+          <a href="https://widgetify.lovable.app" target="_blank" rel="noopener noreferrer" className="text-gray-500 text-xs hover:text-gray-700 transition-colors">
             Powered by Widgetify
           </a>
         </div>
@@ -556,7 +556,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
           </div>
         </div>
         <div className="bg-gray-50 border-t p-2 text-center">
-          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-gray-500 text-xs hover:text-gray-700 transition-colors">
+          <a href="https://widgetify.lovable.app" target="_blank" rel="noopener noreferrer" className="text-gray-500 text-xs hover:text-gray-700 transition-colors">
             Powered by Widgetify
           </a>
         </div>
@@ -625,7 +625,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
           )}
         </div>
         <div className="bg-muted/50 border-t border-border p-2 text-center">
-          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
+          <a href="https://widgetify.lovable.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
             Powered by Widgetify
           </a>
         </div>
@@ -745,7 +745,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
           </div>
         </div>
         <div className="bg-muted/50 border-t border-border p-2 text-center">
-          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
+          <a href="https://widgetify.lovable.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
             Powered by Widgetify
           </a>
         </div>
@@ -775,7 +775,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
           </div>
         </div>
         <div className="bg-muted/50 border-t border-border p-2 text-center">
-          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
+          <a href="https://widgetify.lovable.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
             Powered by Widgetify
           </a>
         </div>
@@ -819,7 +819,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
           </div>
         </div>
         <div className="bg-muted/50 border-t border-border p-2 text-center">
-          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
+          <a href="https://widgetify.lovable.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
             Powered by Widgetify
           </a>
         </div>
@@ -867,7 +867,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
           </button>
         </div>
         <div className="bg-muted/50 border-t border-border p-2 text-center">
-          <a href="https://widgetify-two.vercel.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
+          <a href="https://widgetify.lovable.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
             Powered by Widgetify
           </a>
         </div>
@@ -875,7 +875,95 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     );
   };
 
+  const renderLastSetPreview = () => {
+    const lsName = config.lastsetDisplayName || 'Your Name';
+    const lsBio = config.lastsetBio || 'Creator · Designer · Developer';
+    const lsLinks = config.lastsetLinks?.length ? config.lastsetLinks : [
+      { label: 'Portfolio', url: '#', icon: '🌐' },
+      { label: 'Instagram', url: '#', icon: '📸' },
+      { label: 'YouTube', url: '#', icon: '🎬' },
+    ];
+    const lsTheme = config.lastsetTheme || 'glass';
+    const lsShape = config.lastsetShape || 'pill';
+
+    const themeBg: Record<string, string> = {
+      glass: 'linear-gradient(135deg, #0f0c29, #302b63)',
+      neon: 'linear-gradient(135deg, #000, #0a0a0a)',
+      aurora: 'linear-gradient(135deg, #0f172a, #1e1b4b)',
+      minimal: '#ffffff',
+    };
+    const themeText: Record<string, string> = {
+      glass: '#fff', neon: '#00ff88', aurora: '#e2e8f0', minimal: '#0f172a',
+    };
+    const themeCard: Record<string, string> = {
+      glass: 'rgba(255,255,255,0.08)', neon: 'rgba(0,255,136,0.05)', aurora: 'rgba(255,255,255,0.06)', minimal: '#f8fafc',
+    };
+    const themeLinkBg: Record<string, string> = {
+      glass: 'rgba(255,255,255,0.1)', neon: 'rgba(0,255,136,0.1)', aurora: 'rgba(56,189,248,0.12)', minimal: '#f1f5f9',
+    };
+    const borderRadius = lsShape === 'pill' ? '999px' : lsShape === 'rounded' ? '10px' : '4px';
+    const bg = themeBg[lsTheme] || themeBg.glass;
+    const textColor = themeText[lsTheme] || '#fff';
+    const cardBg = themeCard[lsTheme] || themeCard.glass;
+    const linkBg = themeLinkBg[lsTheme] || themeLinkBg.glass;
+
+    return (
+      <div
+        style={{
+          position: 'absolute', inset: 0,
+          background: bg,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          borderRadius: '8px', overflow: 'hidden', padding: '12px',
+        }}
+      >
+        <div style={{
+          width: '100%', maxWidth: '260px',
+          background: cardBg,
+          backdropFilter: 'blur(16px)',
+          border: '1px solid rgba(255,255,255,0.1)',
+          borderRadius: '16px', padding: '20px 14px',
+          boxShadow: '0 12px 32px rgba(0,0,0,0.3)',
+        }}>
+          <div style={{
+            width: '52px', height: '52px', borderRadius: '50%',
+            background: linkBg,
+            border: `2px solid ${textColor}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            margin: '0 auto 8px', fontSize: '22px',
+          }}>
+            {config.lastsetAvatarUrl
+              ? <img src={config.lastsetAvatarUrl} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+              : '👤'
+            }
+          </div>
+          <div style={{ textAlign: 'center', color: textColor, fontWeight: 700, fontSize: '14px', marginBottom: '2px' }}>{lsName}</div>
+          <div style={{ textAlign: 'center', color: textColor, opacity: 0.65, fontSize: '10px', marginBottom: '12px' }}>{lsBio}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '7px' }}>
+            {lsLinks.slice(0, 4).map((link, i) => (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'center', gap: '8px',
+                padding: '8px 12px',
+                background: linkBg,
+                borderRadius, color: textColor,
+                fontSize: '11px', fontWeight: 500,
+                border: '1px solid rgba(255,255,255,0.06)',
+              }}>
+                <span style={{ fontSize: '14px' }}>{link.icon || '🔗'}</span>
+                <span style={{ flex: 1 }}>{link.label}</span>
+                <span style={{ opacity: 0.5, fontSize: '9px' }}>↗</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const getWidgetContent = () => {
+    if (type === 'lastset') {
+      return renderLastSetPreview();
+    }
+
     if (type === 'social-share') {
       return renderSocialButtons();
     }
@@ -1021,6 +1109,14 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
         togglePopup();
     }
   };
+
+  if (type === 'lastset') {
+    return (
+      <div className="relative w-full min-h-[340px] rounded-xl overflow-hidden mx-auto" style={{ touchAction: 'manipulation' }}>
+        {getWidgetContent()}
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full h-full min-h-[130px] sm:min-h-[250px] max-w-[360px] mx-auto flex justify-center items-end
