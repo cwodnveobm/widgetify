@@ -218,7 +218,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
     if (removeBranding) return '';
     return `
           <div class="widgetify-watermark"${customStyle ? ` style="${customStyle}"` : ''}>
-            <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+            <a href="https://widgetify.lovable.app" target="_blank">Powered by Widgetify</a>
           </div>`;
   };
   
