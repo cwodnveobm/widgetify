@@ -78,16 +78,16 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   const popupStyle = useMemo(() => ({
     position: 'absolute' as const,
     bottom: '90px',
-    [position || 'right']: '20px',
-    width: '280px',
-    height: '350px',
+    [position || 'right']: '0px',
+    width: '300px',
+    maxHeight: '380px',
     backgroundColor: 'hsl(var(--background))',
-    borderRadius: '10px',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+    borderRadius: '12px',
+    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.18)',
     border: '1px solid hsl(var(--border))',
     transition: 'all 0.3s ease',
     opacity: showPopup ? 1 : 0,
-    transform: showPopup ? 'translateY(0)' : 'translateY(20px)',
+    transform: showPopup ? 'translateY(0)' : 'translateY(12px)',
     visibility: (showPopup ? 'visible' : 'hidden') as 'visible' | 'hidden',
     display: 'flex',
     flexDirection: 'column' as const,
@@ -959,64 +959,180 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     );
   };
 
-  const getWidgetContent = () => {
-    if (type === 'lastset') {
-      return renderLastSetPreview();
-    }
+  // ── Dedicated previews for additional widget types ──────────────────────
+  const renderVisitorCounterPopup = () => (
+    <div style={popupStyle} className="animate-fade-in">
+      <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-xl border-b border-border">
+        <div className="font-medium text-foreground text-sm">Live Visitors</div>
+        <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+      </div>
+      <div className="flex-grow p-4 bg-background flex flex-col items-center justify-center gap-3">
+        <div className="text-5xl font-black" style={{ color: config.primaryColor }}>
+          {config.initialVisitors ?? 1247}
+        </div>
+        <div className="text-sm text-muted-foreground">people viewing this page right now</div>
+        <div className="flex items-center gap-2 text-xs text-green-500">
+          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse inline-block" />
+          Live count
+        </div>
+      </div>
+    </div>
+  );
 
-    if (type === 'social-share') {
-      return renderSocialButtons();
-    }
-    
-    if (type === 'dodo-payment') {
-      return renderPaymentPopup();
-    }
-    
-    if (type === 'google-translate') {
-      return renderTranslatePopup();
-    }
-    
-    if (type === 'contact-form') {
-      return renderContactFormPopup();
-    }
-    
-    if (type === 'countdown-timer') {
-      return renderCountdownPopup();
-    }
-    
-    if (type === 'qr-generator') {
-      return renderQRPopup();
-    }
-    
-    if (type === 'weather-widget') {
-      return renderWeatherPopup();
-    }
-    
-    if (type === 'crypto-prices') {
-      return renderCryptoPopup();
-    }
-    
-    if (type === 'spotify-embed') {
-      return renderSpotifyPopup();
-    }
-    
-    if (type === 'lead-magnet') {
-      return renderLeadMagnetPopup();
-    }
-    
-    if (type === 'smart-query') {
-      return renderSmartQueryPopup();
-    }
-    
-    if (type === 'service-estimator') {
-      return renderServiceEstimatorPopup();
-    }
-    
+  const renderBugReportPopup = () => (
+    <div style={popupStyle} className="animate-fade-in">
+      <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-xl border-b border-border">
+        <div className="font-medium text-foreground text-sm">🐛 Report a Bug</div>
+        <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+      </div>
+      <div className="flex-grow p-3 bg-background overflow-y-auto space-y-2">
+        <input type="text" placeholder="Bug title..." className="w-full px-3 py-2 border border-input rounded text-xs bg-background text-foreground" />
+        <textarea rows={3} placeholder="Describe the issue..." className="w-full px-3 py-2 border border-input rounded text-xs bg-background text-foreground resize-none" />
+        <select className="w-full px-3 py-2 border border-input rounded text-xs bg-background text-foreground">
+          <option>Low priority</option><option>Medium priority</option><option>High priority</option>
+        </select>
+        <button style={{ backgroundColor: config.primaryColor }} className="w-full text-white py-2 rounded text-xs font-medium hover:opacity-90">Submit Bug Report</button>
+      </div>
+    </div>
+  );
+
+  const renderProductCardsPopup = () => (
+    <div style={popupStyle} className="animate-fade-in">
+      <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-xl border-b border-border">
+        <div className="font-medium text-foreground text-sm">🛒 Featured Products</div>
+        <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+      </div>
+      <div className="flex-grow p-3 bg-background overflow-y-auto space-y-2">
+        {[{ name: 'Product A', price: '$29.99', badge: 'Hot' }, { name: 'Product B', price: '$49.99', badge: 'New' }].map((p, i) => (
+          <div key={i} className="flex items-center gap-3 p-2 border border-border rounded-lg">
+            <div className="w-12 h-12 bg-muted rounded-md flex items-center justify-center text-lg">🛍️</div>
+            <div className="flex-1">
+              <div className="text-xs font-semibold text-foreground">{p.name}</div>
+              <div className="text-xs" style={{ color: config.primaryColor }}>{p.price}</div>
+            </div>
+            <span className="text-xs px-1.5 py-0.5 rounded-full text-white text-[10px]" style={{ backgroundColor: config.primaryColor }}>{p.badge}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderZoomMeetingPopup = () => (
+    <div style={popupStyle} className="animate-fade-in">
+      <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-xl border-b border-border">
+        <div className="font-medium text-foreground text-sm">📹 Join Meeting</div>
+        <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+      </div>
+      <div className="flex-grow p-4 bg-background flex flex-col items-center justify-center gap-4">
+        <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-3xl">📹</div>
+        <div className="text-center">
+          <div className="font-semibold text-foreground text-sm">{config.businessName || 'Team Meeting'}</div>
+          <div className="text-xs text-muted-foreground mt-1">Click to join the Zoom call</div>
+        </div>
+        <button style={{ backgroundColor: '#2D8CFF' }} className="w-full text-white py-2.5 rounded-lg text-sm font-medium hover:opacity-90">Join Zoom Meeting</button>
+      </div>
+    </div>
+  );
+
+  const renderTestimonialSliderPopup = () => (
+    <div style={popupStyle} className="animate-fade-in">
+      <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-xl border-b border-border">
+        <div className="font-medium text-foreground text-sm">⭐ Customer Reviews</div>
+        <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+      </div>
+      <div className="flex-grow p-4 bg-background flex flex-col justify-center gap-3">
+        <div className="flex gap-1">{[1,2,3,4,5].map(i => <span key={i} className="text-yellow-400 text-sm">★</span>)}</div>
+        <p className="text-xs text-foreground italic">"This product completely transformed how we work. Highly recommended!"</p>
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">J</div>
+          <div><div className="text-xs font-semibold text-foreground">Jane Smith</div><div className="text-[10px] text-muted-foreground">Verified Buyer</div></div>
+        </div>
+        <div className="flex gap-1 justify-center">{[1,2,3].map(i => <div key={i} className={`w-1.5 h-1.5 rounded-full ${i===1?'bg-primary':'bg-muted'}`}/>)}</div>
+      </div>
+    </div>
+  );
+
+  const renderSocialProofPopup = () => (
+    <div style={popupStyle} className="animate-fade-in">
+      <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-xl border-b border-border">
+        <div className="font-medium text-foreground text-sm">👥 Recent Activity</div>
+        <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+      </div>
+      <div className="flex-grow p-3 bg-background space-y-2">
+        {[{name:'Alice from NY', action:'just purchased', time:'2m ago'},{name:'Bob from CA', action:'left a 5★ review', time:'5m ago'},{name:'Carol from TX', action:'signed up', time:'8m ago'}].map((a,i) => (
+          <div key={i} className="flex items-center gap-2 p-2 bg-muted/40 rounded-lg">
+            <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold flex-shrink-0">{a.name[0]}</div>
+            <div className="flex-1 min-w-0">
+              <div className="text-xs font-medium text-foreground truncate">{a.name}</div>
+              <div className="text-[10px] text-muted-foreground">{a.action} · {a.time}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderCartAbandonmentPopup = () => (
+    <div style={popupStyle} className="animate-fade-in">
+      <div className="p-3 text-center" style={{ background: `linear-gradient(135deg, ${config.primaryColor}22, ${config.primaryColor}11)` }}>
+        <div className="text-2xl mb-1">🛍️</div>
+        <div className="font-bold text-foreground text-sm">Don't leave yet!</div>
+        <div className="text-xs text-muted-foreground mt-1">Complete your order and get</div>
+        <div className="text-2xl font-black mt-1" style={{ color: config.primaryColor }}>10% OFF</div>
+        <div className="text-[10px] text-muted-foreground">Use code: COMEBACK10</div>
+      </div>
+      <div className="p-3 bg-background">
+        <input type="email" placeholder="Enter your email for the code" className="w-full px-3 py-2 border border-input rounded text-xs bg-background text-foreground mb-2" />
+        <button style={{ backgroundColor: config.primaryColor }} className="w-full text-white py-2 rounded text-xs font-medium hover:opacity-90">Claim My Discount</button>
+        <button onClick={togglePopup} className="w-full text-muted-foreground py-1 text-[10px] mt-1 hover:underline">No thanks, I'll pay full price</button>
+      </div>
+    </div>
+  );
+
+  const renderAnnouncementBarPopup = () => (
+    <div style={popupStyle} className="animate-fade-in">
+      <div className="bg-muted/80 p-3 flex justify-between items-center rounded-t-xl border-b border-border">
+        <div className="font-medium text-foreground text-sm">📢 Announcement</div>
+        <button onClick={togglePopup} className="text-muted-foreground hover:text-foreground text-lg">×</button>
+      </div>
+      <div className="flex-grow p-4 bg-background flex flex-col justify-center items-center gap-3 text-center">
+        <div className="text-3xl">📣</div>
+        <div className="font-semibold text-foreground text-sm">{config.bannerText || 'Important announcement for all visitors!'}</div>
+        <button style={{ backgroundColor: config.primaryColor }} className="px-4 py-2 text-white rounded-lg text-xs font-medium hover:opacity-90">
+          {config.bannerActionText || 'Learn More'}
+        </button>
+      </div>
+    </div>
+  );
+
+  const getWidgetContent = () => {
+    if (type === 'lastset') return renderLastSetPreview();
+    if (type === 'social-share') return renderSocialButtons();
+    if (type === 'dodo-payment') return renderPaymentPopup();
+    if (type === 'google-translate') return renderTranslatePopup();
+    if (type === 'contact-form') return renderContactFormPopup();
+    if (type === 'countdown-timer') return renderCountdownPopup();
+    if (type === 'qr-generator') return renderQRPopup();
+    if (type === 'weather-widget') return renderWeatherPopup();
+    if (type === 'crypto-prices') return renderCryptoPopup();
+    if (type === 'spotify-embed') return renderSpotifyPopup();
+    if (type === 'lead-magnet') return renderLeadMagnetPopup();
+    if (type === 'smart-query') return renderSmartQueryPopup();
+    if (type === 'service-estimator') return renderServiceEstimatorPopup();
+    if (type === 'visitor-counter' || type === 'live-visitor-counter') return renderVisitorCounterPopup();
+    if (type === 'bug-report') return renderBugReportPopup();
+    if (type === 'product-cards') return renderProductCardsPopup();
+    if (type === 'zoom-meeting') return renderZoomMeetingPopup();
+    if (type === 'testimonial-slider') return renderTestimonialSliderPopup();
+    if (type === 'social-proof-popup') return renderSocialProofPopup();
+    if (type === 'cart-abandonment') return renderCartAbandonmentPopup();
+    if (type === 'announcement-bar' || type === 'sticky-banner') return renderAnnouncementBarPopup();
+
     if (type === 'call-now' || type === 'review-now' || type === 'follow-us' || type === 'back-to-top' || type === 'dark-mode-toggle' || type === 'click-to-copy') {
       const tooltipText = getTooltipText();
       return tooltipText ? <div style={tooltipStyle}>{tooltipText}</div> : null;
     }
-    
+
     return renderChatPopup();
   };
 
@@ -1119,8 +1235,8 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
   }
 
   return (
-    <div className="relative w-full h-full min-h-[130px] sm:min-h-[250px] max-w-[360px] mx-auto flex justify-center items-end
-     overflow-visible xs:p-0 sm:p-1" style={{ touchAction: 'manipulation' }}>
+    <div className="relative w-full h-full min-h-[480px] sm:min-h-[480px] max-w-[380px] mx-auto flex justify-center items-end
+     overflow-visible xs:p-0 sm:p-2" style={{ touchAction: 'manipulation' }}>
       {showPopup && getWidgetContent()}
       {!showPopup && (type === 'call-now' || type === 'review-now' || type === 'follow-us') && getWidgetContent()}
       
