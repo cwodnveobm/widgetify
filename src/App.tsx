@@ -22,6 +22,8 @@ import SupportersWall from "./pages/SupportersWall";
 import ReferralDashboard from "./pages/ReferralDashboard";
 import CreatorPortal from "./pages/CreatorPortal";
 import AdminPanel from "./pages/AdminPanel";
+import LastSetBuilder from "./pages/LastSetBuilder";
+import LastSetPublic from "./pages/LastSetPublic";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -94,6 +96,8 @@ const App = () => {
                     <Route path="/referrals" element={<ReferralDashboard />} />
                     <Route path="/creators" element={<CreatorPortal />} />
                     <Route path="/admin" element={<AdminPanel />} />
+                    <Route path="/lastset" element={<LastSetBuilder />} />
+                    <Route path="/l/:username" element={<LastSetPublic />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>

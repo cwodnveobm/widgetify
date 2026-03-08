@@ -354,6 +354,54 @@ export type Database = {
         }
         Relationships: []
       }
+      lastset_profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string
+          id: string
+          is_public: boolean
+          links: Json
+          shape: string
+          theme: string
+          updated_at: string
+          user_id: string
+          username: string
+          view_count: number
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          is_public?: boolean
+          links?: Json
+          shape?: string
+          theme?: string
+          updated_at?: string
+          user_id: string
+          username: string
+          view_count?: number
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          is_public?: boolean
+          links?: Json
+          shape?: string
+          theme?: string
+          updated_at?: string
+          user_id?: string
+          username?: string
+          view_count?: number
+        }
+        Relationships: []
+      }
       payout_requests: {
         Row: {
           account_holder_name: string | null
