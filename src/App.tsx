@@ -22,6 +22,8 @@ import SupportersWall from "./pages/SupportersWall";
 import ReferralDashboard from "./pages/ReferralDashboard";
 import CreatorPortal from "./pages/CreatorPortal";
 import AdminPanel from "./pages/AdminPanel";
+import LastSetBuilder from "./pages/LastSetBuilder";
+import LastSetPublic from "./pages/LastSetPublic";
 
 const queryClient = new QueryClient({
   defaultOptions: {
