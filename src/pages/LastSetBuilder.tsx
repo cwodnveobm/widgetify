@@ -219,7 +219,7 @@ export default function LastSetBuilder() {
             avatar_url: data.avatar_url || '',
             theme: data.theme,
             shape: data.shape,
-            links: (data.links as LinkItem[]) || [],
+            links: ((data.links as unknown) as LinkItem[]) || [],
             is_public: data.is_public,
           });
           setUsernameAvailable(true);
