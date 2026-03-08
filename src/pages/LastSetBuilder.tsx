@@ -109,8 +109,8 @@ function LivePreview({ profile }: { profile: LastSetProfile }) {
               <img
                 src={profile.avatar_url}
                 alt={profile.display_name}
-                className="w-24 h-24 rounded-full object-cover ring-2"
-                style={{ ringColor: theme.border }}
+                className="w-24 h-24 rounded-full object-cover"
+                style={{ border: `2px solid ${theme.border}` }}
               />
             ) : (
               <div
