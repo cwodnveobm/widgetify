@@ -1110,6 +1110,14 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
     }
   };
 
+  if (type === 'lastset') {
+    return (
+      <div className="relative w-full min-h-[340px] rounded-xl overflow-hidden mx-auto" style={{ touchAction: 'manipulation' }}>
+        {getWidgetContent()}
+      </div>
+    );
+  }
+
   return (
     <div className="relative w-full h-full min-h-[130px] sm:min-h-[250px] max-w-[360px] mx-auto flex justify-center items-end
      overflow-visible xs:p-0 sm:p-1" style={{ touchAction: 'manipulation' }}>
