@@ -874,7 +874,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
             </form>
             ${!removeBranding ? `
             <div class="lead-popup-footer">
-              <a href="https://widgetify-two.vercel.app" target="_blank">Powered by Widgetify</a>
+              <a href="https://widgetify.lovable.app" target="_blank">Powered by Widgetify</a>
             </div>` : ''}
           </div>
         </div>
