@@ -4192,7 +4192,7 @@ Sent via ${contactBusinessName} Contact Form\`;
           </div>
           ${removeBranding ? '' : `
           <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb; text-align: center;">
-            <a href="https://widgetify-two.vercel.app" target="_blank" style="color: #9ca3af; text-decoration: none; font-size: 10px;">Powered by Widgetify</a>
+            <a href="https://widgetify.lovable.app" target="_blank" style="color: #9ca3af; text-decoration: none; font-size: 10px;">Powered by Widgetify</a>
           </div>`}
         </div>
 
