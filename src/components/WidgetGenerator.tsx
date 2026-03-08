@@ -2376,7 +2376,7 @@ const WidgetGenerator: React.FC = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="bg-muted/50 rounded-lg p-4 min-h-[300px] md:min-h-[400px] relative overflow-hidden">
+                <div className="bg-muted/50 rounded-lg p-4 min-h-[480px] md:min-h-[520px] relative overflow-visible">
                   <motion.div 
                     key={JSON.stringify(finalConfig)}
                     className="w-full h-full"
