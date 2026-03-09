@@ -1,24 +1,27 @@
 /**
  * Widgetify MCP Server
  * =====================
- * A production-ready Model Context Protocol (MCP) server exposing all core
- * Widgetify capabilities as structured tools for AI agents and external clients.
- *
- * Tools exposed:
- *   Widget CRUD   : list_widgets, get_widget, create_widget, update_widget, delete_widget
- *   Code gen      : generate_widget_code
- *   Widget types  : list_widget_types
- *   Templates     : list_templates, get_template
- *   LastSet       : get_lastset_profile, upsert_lastset_profile
- *   A/B Tests     : list_ab_tests, get_ab_test
- *   Subscriptions : get_subscription_status
- *
- * Authentication
- *   Pass a valid Widgetify JWT in the `Authorization: Bearer <token>` header.
- *   Anonymous tools (list_widget_types, list_templates, get_template) work without auth.
+ * Model Context Protocol server exposing all core Widgetify capabilities
+ * as structured tools for AI agents and external clients.
  *
  * Transport : Streamable HTTP (mcp-lite)
  * Endpoint  : POST /functions/v1/widgetify-mcp
+ *
+ * Tools:
+ *   list_widget_types         – No auth – full widget type catalogue
+ *   list_templates            – No auth – custom widget templates
+ *   get_template              – No auth – single template config
+ *   list_widgets              – Auth    – user's custom widgets
+ *   get_widget                – Auth    – single widget config
+ *   create_widget             – Auth    – create a new widget
+ *   update_widget             – Auth    – update widget properties
+ *   delete_widget             – Auth    – delete a widget
+ *   generate_widget_code      – Auth    – HTML embed snippet + preview URL
+ *   get_lastset_profile       – No auth – public link-in-bio profile
+ *   upsert_lastset_profile    – Auth    – create/update link-in-bio page
+ *   list_ab_tests             – Auth    – all A/B tests
+ *   get_ab_test               – Auth    – A/B test + variations
+ *   get_subscription_status   – Auth    – current plan & status
  */
 
 import { Hono } from "npm:hono@^4.0.0";
@@ -26,7 +29,7 @@ import { McpServer, StreamableHttpTransport } from "npm:mcp-lite@^0.10.0";
 import { createClient } from "npm:@supabase/supabase-js@^2";
 
 // ---------------------------------------------------------------------------
-// CORS headers – required for browser clients
+// CORS
 // ---------------------------------------------------------------------------
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -36,16 +39,13 @@ const corsHeaders = {
 };
 
 // ---------------------------------------------------------------------------
-// Supabase admin client (service-role for privileged reads in tools)
+// Supabase clients
 // ---------------------------------------------------------------------------
 const supabaseAdmin = createClient(
   Deno.env.get("SUPABASE_URL") ?? "",
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
 );
 
-// ---------------------------------------------------------------------------
-// Helper – build a user-scoped client from a JWT
-// ---------------------------------------------------------------------------
 function userClient(jwt: string) {
   return createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
@@ -54,18 +54,12 @@ function userClient(jwt: string) {
   );
 }
 
-// ---------------------------------------------------------------------------
-// Helper – extract JWT from request headers
-// ---------------------------------------------------------------------------
 function extractJwt(req: Request): string | null {
   const auth = req.headers.get("authorization") ?? "";
-  const match = auth.match(/^Bearer\s+(.+)$/i);
-  return match ? match[1] : null;
+  const m = auth.match(/^Bearer\s+(.+)$/i);
+  return m ? m[1] : null;
 }
 
-// ---------------------------------------------------------------------------
-// Helper – verify JWT and return user_id
-// ---------------------------------------------------------------------------
 async function verifyJwt(jwt: string): Promise<string | null> {
   const { data, error } = await supabaseAdmin.auth.getUser(jwt);
   if (error || !data?.user) return null;
@@ -73,7 +67,7 @@ async function verifyJwt(jwt: string): Promise<string | null> {
 }
 
 // ---------------------------------------------------------------------------
-// Static widget type catalogue (mirrors src/types/index.ts)
+// Static widget type catalogue
 // ---------------------------------------------------------------------------
 const WIDGET_TYPES = [
   { type: "whatsapp", category: "Social", description: "WhatsApp chat button" },
@@ -99,7 +93,6 @@ const WIDGET_TYPES = [
   { type: "newsletter-signup", category: "Lead Generation", description: "Newsletter signup form" },
   { type: "exit-intent-popup", category: "Lead Generation", description: "Exit-intent popup" },
   { type: "lead-magnet", category: "Lead Generation", description: "Lead magnet download" },
-  { type: "email-signature-generator", category: "Lead Generation", description: "Email signature tool" },
   { type: "booking-calendar", category: "Booking", description: "Appointment booking calendar" },
   { type: "countdown-timer", category: "Ecommerce", description: "Countdown / urgency timer" },
   { type: "flash-sale-banner", category: "Ecommerce", description: "Flash sale announcement" },
@@ -118,7 +111,6 @@ const WIDGET_TYPES = [
   { type: "cookie-consent", category: "Utility", description: "Cookie consent banner" },
   { type: "age-verification", category: "Utility", description: "Age gate / verification" },
   { type: "click-to-copy", category: "Utility", description: "One-click copy to clipboard" },
-  { type: "share-page", category: "Utility", description: "Native share / copy URL" },
   { type: "google-translate", category: "Utility", description: "Google Translate integration" },
   { type: "weather-widget", category: "Info", description: "Local weather display" },
   { type: "calculator", category: "Info", description: "Simple calculator tool" },
@@ -132,7 +124,6 @@ const WIDGET_TYPES = [
   { type: "social-proof-popup", category: "Social Proof", description: "Recent activity popup" },
   { type: "trust-badge", category: "Social Proof", description: "Trust / security badges" },
   { type: "testimonial-slider", category: "Social Proof", description: "Customer testimonials" },
-  { type: "video-testimonial", category: "Social Proof", description: "Video testimonial display" },
   { type: "review-now", category: "Social Proof", description: "Leave a review prompt" },
   { type: "feedback-form", category: "Engagement", description: "User feedback form" },
   { type: "multi-step-survey", category: "Engagement", description: "Multi-step survey flow" },
@@ -153,16 +144,29 @@ const WIDGET_TYPES = [
 ];
 
 // ---------------------------------------------------------------------------
-// Build the MCP server
+// Error helper
 // ---------------------------------------------------------------------------
-const mcp = new McpServer({
-  name: "widgetify-mcp",
-  version: "1.0.0",
-});
+function errResult(msg: string) {
+  return {
+    content: [{ type: "text" as const, text: JSON.stringify({ error: msg }) }],
+    isError: true,
+  };
+}
 
-// ===== TOOL: list_widget_types ===========================================
-mcp.tool({
-  name: "list_widget_types",
+// ---------------------------------------------------------------------------
+// Auth helper — reads JWT from request context stored in globalThis
+// ---------------------------------------------------------------------------
+function getRequestJwt(argJwt?: string): string | null {
+  return argJwt ?? (globalThis as unknown as Record<string, string>).__mcpJwt ?? null;
+}
+
+// ---------------------------------------------------------------------------
+// MCP Server
+// ---------------------------------------------------------------------------
+const mcp = new McpServer({ name: "widgetify-mcp", version: "1.0.0" });
+
+// ── list_widget_types ────────────────────────────────────────────────────────
+mcp.tool("list_widget_types", {
   description:
     "Returns the full catalogue of widget types supported by Widgetify. No authentication required.",
   inputSchema: {
@@ -177,52 +181,33 @@ mcp.tool({
   },
   handler: async ({ category }: { category?: string }) => {
     const filtered = category
-      ? WIDGET_TYPES.filter(
-          (w) => w.category.toLowerCase() === category.toLowerCase()
-        )
+      ? WIDGET_TYPES.filter((w) => w.category.toLowerCase() === category.toLowerCase())
       : WIDGET_TYPES;
-
     const categories = [...new Set(WIDGET_TYPES.map((w) => w.category))];
-
     return {
       content: [
         {
-          type: "text",
-          text: JSON.stringify(
-            {
-              total: filtered.length,
-              categories,
-              widgets: filtered,
-            },
-            null,
-            2
-          ),
+          type: "text" as const,
+          text: JSON.stringify({ total: filtered.length, categories, widgets: filtered }, null, 2),
         },
       ],
     };
   },
 });
 
-// ===== TOOL: list_templates ==============================================
-mcp.tool({
-  name: "list_templates",
-  description:
-    "Lists all available custom widget templates saved in the platform. No authentication required for public view.",
+// ── list_templates ───────────────────────────────────────────────────────────
+mcp.tool("list_templates", {
+  description: "Lists custom widget templates on the platform. No authentication required.",
   inputSchema: {
     type: "object",
     properties: {
-      limit: {
-        type: "number",
-        description: "Maximum number of templates to return (default 20, max 100).",
-      },
+      limit: { type: "number", description: "Max results (default 20, max 100)." },
       offset: { type: "number", description: "Pagination offset (default 0)." },
     },
   },
-  handler: async ({ limit = 20, offset = 0 }: { limit?: number; offset?: number }) => {
+  handler: async ({ limit, offset }: { limit?: number; offset?: number }) => {
     const safeLimit = Math.min(Number(limit) || 20, 100);
     const safeOffset = Number(offset) || 0;
-
-    // Custom widgets are user-scoped – return public metadata via admin client
     const { data, error, count } = await supabaseAdmin
       .from("custom_widgets")
       .select("id, name, title, description, position, size, button_text, created_at", {
@@ -230,18 +215,11 @@ mcp.tool({
       })
       .range(safeOffset, safeOffset + safeLimit - 1)
       .order("created_at", { ascending: false });
-
-    if (error) {
-      return {
-        content: [{ type: "text", text: JSON.stringify({ error: error.message }) }],
-        isError: true,
-      };
-    }
-
+    if (error) return errResult(error.message);
     return {
       content: [
         {
-          type: "text",
+          type: "text" as const,
           text: JSON.stringify({ total: count, offset: safeOffset, limit: safeLimit, templates: data }, null, 2),
         },
       ],
@@ -249,9 +227,8 @@ mcp.tool({
   },
 });
 
-// ===== TOOL: get_template ================================================
-mcp.tool({
-  name: "get_template",
+// ── get_template ─────────────────────────────────────────────────────────────
+mcp.tool("get_template", {
   description: "Fetches the full configuration of a single custom widget template by its ID.",
   inputSchema: {
     type: "object",
@@ -266,53 +243,29 @@ mcp.tool({
       .select("*")
       .eq("id", template_id)
       .single();
-
-    if (error || !data) {
-      return {
-        content: [{ type: "text", text: JSON.stringify({ error: "Template not found" }) }],
-        isError: true,
-      };
-    }
-
-    return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    if (error || !data) return errResult("Template not found");
+    return { content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }] };
   },
 });
 
-// ===== TOOL: list_widgets ================================================
-mcp.tool({
-  name: "list_widgets",
+// ── list_widgets ─────────────────────────────────────────────────────────────
+mcp.tool("list_widgets", {
   description: "Lists all custom widgets belonging to the authenticated user.",
   inputSchema: {
     type: "object",
     properties: {
-      jwt: { type: "string", description: "User JWT. Pass via Authorization header or this field." },
+      jwt: { type: "string", description: "User JWT. Can also be passed in Authorization header." },
       limit: { type: "number", description: "Max results (default 20, max 100)." },
       offset: { type: "number", description: "Pagination offset (default 0)." },
     },
   },
-  handler: async (
-    args: { jwt?: string; limit?: number; offset?: number },
-    extra: { request?: Request }
-  ) => {
-    const jwt = args.jwt ?? extractJwt(extra?.request ?? new Request("http://localhost"));
-    if (!jwt) {
-      return {
-        content: [{ type: "text", text: JSON.stringify({ error: "Authentication required. Provide a JWT." }) }],
-        isError: true,
-      };
-    }
-
+  handler: async ({ jwt: argJwt, limit, offset }: { jwt?: string; limit?: number; offset?: number }) => {
+    const jwt = getRequestJwt(argJwt);
+    if (!jwt) return errResult("Authentication required. Provide a JWT.");
     const userId = await verifyJwt(jwt);
-    if (!userId) {
-      return {
-        content: [{ type: "text", text: JSON.stringify({ error: "Invalid or expired JWT." }) }],
-        isError: true,
-      };
-    }
-
-    const safeLimit = Math.min(Number(args.limit) || 20, 100);
-    const safeOffset = Number(args.offset) || 0;
-
+    if (!userId) return errResult("Invalid or expired JWT.");
+    const safeLimit = Math.min(Number(limit) || 20, 100);
+    const safeOffset = Number(offset) || 0;
     const db = userClient(jwt);
     const { data, error, count } = await db
       .from("custom_widgets")
@@ -320,18 +273,11 @@ mcp.tool({
       .eq("user_id", userId)
       .range(safeOffset, safeOffset + safeLimit - 1)
       .order("created_at", { ascending: false });
-
-    if (error) {
-      return {
-        content: [{ type: "text", text: JSON.stringify({ error: error.message }) }],
-        isError: true,
-      };
-    }
-
+    if (error) return errResult(error.message);
     return {
       content: [
         {
-          type: "text",
+          type: "text" as const,
           text: JSON.stringify({ total: count, offset: safeOffset, limit: safeLimit, widgets: data }, null, 2),
         },
       ],
@@ -339,54 +285,46 @@ mcp.tool({
   },
 });
 
-// ===== TOOL: get_widget ==================================================
-mcp.tool({
-  name: "get_widget",
+// ── get_widget ───────────────────────────────────────────────────────────────
+mcp.tool("get_widget", {
   description: "Fetches the full configuration of a specific custom widget by ID.",
   inputSchema: {
     type: "object",
     required: ["widget_id"],
     properties: {
-      jwt: { type: "string", description: "User JWT." },
+      jwt: { type: "string" },
       widget_id: { type: "string", description: "UUID of the widget." },
     },
   },
-  handler: async (args: { jwt?: string; widget_id: string }, extra: { request?: Request }) => {
-    const jwt = args.jwt ?? extractJwt(extra?.request ?? new Request("http://localhost"));
-    if (!jwt) return { content: [{ type: "text", text: JSON.stringify({ error: "Authentication required." }) }], isError: true };
-
+  handler: async ({ jwt: argJwt, widget_id }: { jwt?: string; widget_id: string }) => {
+    const jwt = getRequestJwt(argJwt);
+    if (!jwt) return errResult("Authentication required.");
     const userId = await verifyJwt(jwt);
-    if (!userId) return { content: [{ type: "text", text: JSON.stringify({ error: "Invalid JWT." }) }], isError: true };
-
+    if (!userId) return errResult("Invalid JWT.");
     const db = userClient(jwt);
     const { data, error } = await db
       .from("custom_widgets")
       .select("*")
-      .eq("id", args.widget_id)
+      .eq("id", widget_id)
       .eq("user_id", userId)
       .single();
-
-    if (error || !data) {
-      return { content: [{ type: "text", text: JSON.stringify({ error: "Widget not found." }) }], isError: true };
-    }
-
-    return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    if (error || !data) return errResult("Widget not found.");
+    return { content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }] };
   },
 });
 
-// ===== TOOL: create_widget ===============================================
-mcp.tool({
-  name: "create_widget",
+// ── create_widget ────────────────────────────────────────────────────────────
+mcp.tool("create_widget", {
   description:
-    "Creates a new custom widget for the authenticated user. Returns the created widget with its assigned ID.",
+    "Creates a new custom widget for the authenticated user. Returns the created widget with its ID.",
   inputSchema: {
     type: "object",
     required: ["name", "title", "button_text"],
     properties: {
-      jwt: { type: "string", description: "User JWT." },
-      name: { type: "string", description: "Internal widget name (e.g. 'My WhatsApp Button')." },
+      jwt: { type: "string" },
+      name: { type: "string", description: "Internal widget name." },
       title: { type: "string", description: "Visible popup/widget title." },
-      description: { type: "string", description: "Optional description shown in the widget popup." },
+      description: { type: "string", description: "Optional description shown in the popup." },
       button_text: { type: "string", description: "Label on the trigger button." },
       button_color: { type: "string", description: "Hex colour for the button (default #9b87f5)." },
       text_color: { type: "string", description: "Hex text colour (default #1A1F2C)." },
@@ -394,42 +332,37 @@ mcp.tool({
       position: {
         type: "string",
         enum: ["bottom-right", "bottom-left", "top-right", "top-left"],
-        description: "Position on the page (default bottom-right).",
+        description: "Position on the page.",
       },
       size: {
         type: "string",
         enum: ["small", "medium", "large"],
-        description: "Widget size (default medium).",
+        description: "Widget size.",
       },
       border_radius: { type: "string", description: "CSS border-radius (default '12px')." },
-      button_action: { type: "string", description: "URL or action triggered when the button is clicked." },
+      button_action: { type: "string", description: "URL or action triggered on button click." },
       custom_css: { type: "string", description: "Extra CSS injected into the widget." },
     },
   },
-  handler: async (
-    args: {
-      jwt?: string;
-      name: string;
-      title: string;
-      description?: string;
-      button_text: string;
-      button_color?: string;
-      text_color?: string;
-      background_color?: string;
-      position?: string;
-      size?: string;
-      border_radius?: string;
-      button_action?: string;
-      custom_css?: string;
-    },
-    extra: { request?: Request }
-  ) => {
-    const jwt = args.jwt ?? extractJwt(extra?.request ?? new Request("http://localhost"));
-    if (!jwt) return { content: [{ type: "text", text: JSON.stringify({ error: "Authentication required." }) }], isError: true };
-
+  handler: async (args: {
+    jwt?: string;
+    name: string;
+    title: string;
+    description?: string;
+    button_text: string;
+    button_color?: string;
+    text_color?: string;
+    background_color?: string;
+    position?: string;
+    size?: string;
+    border_radius?: string;
+    button_action?: string;
+    custom_css?: string;
+  }) => {
+    const jwt = getRequestJwt(args.jwt);
+    if (!jwt) return errResult("Authentication required.");
     const userId = await verifyJwt(jwt);
-    if (!userId) return { content: [{ type: "text", text: JSON.stringify({ error: "Invalid JWT." }) }], isError: true };
-
+    if (!userId) return errResult("Invalid JWT.");
     const db = userClient(jwt);
     const { data, error } = await db
       .from("custom_widgets")
@@ -450,31 +383,26 @@ mcp.tool({
       })
       .select()
       .single();
-
-    if (error) {
-      return { content: [{ type: "text", text: JSON.stringify({ error: error.message }) }], isError: true };
-    }
-
+    if (error) return errResult(error.message);
     return {
       content: [
         {
-          type: "text",
-          text: JSON.stringify({ success: true, message: "Widget created successfully.", widget: data }, null, 2),
+          type: "text" as const,
+          text: JSON.stringify({ success: true, message: "Widget created.", widget: data }, null, 2),
         },
       ],
     };
   },
 });
 
-// ===== TOOL: update_widget ===============================================
-mcp.tool({
-  name: "update_widget",
+// ── update_widget ────────────────────────────────────────────────────────────
+mcp.tool("update_widget", {
   description: "Updates one or more properties of an existing custom widget.",
   inputSchema: {
     type: "object",
     required: ["widget_id"],
     properties: {
-      jwt: { type: "string", description: "User JWT." },
+      jwt: { type: "string" },
       widget_id: { type: "string", description: "UUID of the widget to update." },
       name: { type: "string" },
       title: { type: "string" },
@@ -490,42 +418,26 @@ mcp.tool({
       custom_css: { type: "string" },
     },
   },
-  handler: async (
-    args: {
-      jwt?: string;
-      widget_id: string;
-      [key: string]: unknown;
-    },
-    extra: { request?: Request }
-  ) => {
-    const jwt = args.jwt ?? extractJwt(extra?.request ?? new Request("http://localhost"));
-    if (!jwt) return { content: [{ type: "text", text: JSON.stringify({ error: "Authentication required." }) }], isError: true };
-
+  handler: async (args: { jwt?: string; widget_id: string; [key: string]: unknown }) => {
+    const jwt = getRequestJwt(args.jwt as string | undefined);
+    if (!jwt) return errResult("Authentication required.");
     const userId = await verifyJwt(jwt);
-    if (!userId) return { content: [{ type: "text", text: JSON.stringify({ error: "Invalid JWT." }) }], isError: true };
-
+    if (!userId) return errResult("Invalid JWT.");
     const { widget_id, jwt: _jwt, ...updates } = args;
-    if (Object.keys(updates).length === 0) {
-      return { content: [{ type: "text", text: JSON.stringify({ error: "No fields to update provided." }) }], isError: true };
-    }
-
+    if (Object.keys(updates).length === 0) return errResult("No fields to update provided.");
     const db = userClient(jwt);
     const { data, error } = await db
       .from("custom_widgets")
       .update(updates)
-      .eq("id", widget_id)
+      .eq("id", widget_id as string)
       .eq("user_id", userId)
       .select()
       .single();
-
-    if (error) {
-      return { content: [{ type: "text", text: JSON.stringify({ error: error.message }) }], isError: true };
-    }
-
+    if (error) return errResult(error.message);
     return {
       content: [
         {
-          type: "text",
+          type: "text" as const,
           text: JSON.stringify({ success: true, message: "Widget updated.", widget: data }, null, 2),
         },
       ],
@@ -533,125 +445,110 @@ mcp.tool({
   },
 });
 
-// ===== TOOL: delete_widget ===============================================
-mcp.tool({
-  name: "delete_widget",
+// ── delete_widget ────────────────────────────────────────────────────────────
+mcp.tool("delete_widget", {
   description: "Permanently deletes a custom widget. This action is irreversible.",
   inputSchema: {
     type: "object",
     required: ["widget_id"],
     properties: {
-      jwt: { type: "string", description: "User JWT." },
+      jwt: { type: "string" },
       widget_id: { type: "string", description: "UUID of the widget to delete." },
     },
   },
-  handler: async (args: { jwt?: string; widget_id: string }, extra: { request?: Request }) => {
-    const jwt = args.jwt ?? extractJwt(extra?.request ?? new Request("http://localhost"));
-    if (!jwt) return { content: [{ type: "text", text: JSON.stringify({ error: "Authentication required." }) }], isError: true };
-
+  handler: async ({ jwt: argJwt, widget_id }: { jwt?: string; widget_id: string }) => {
+    const jwt = getRequestJwt(argJwt);
+    if (!jwt) return errResult("Authentication required.");
     const userId = await verifyJwt(jwt);
-    if (!userId) return { content: [{ type: "text", text: JSON.stringify({ error: "Invalid JWT." }) }], isError: true };
-
+    if (!userId) return errResult("Invalid JWT.");
     const db = userClient(jwt);
     const { error } = await db
       .from("custom_widgets")
       .delete()
-      .eq("id", args.widget_id)
+      .eq("id", widget_id)
       .eq("user_id", userId);
-
-    if (error) {
-      return { content: [{ type: "text", text: JSON.stringify({ error: error.message }) }], isError: true };
-    }
-
+    if (error) return errResult(error.message);
     return {
       content: [
         {
-          type: "text",
-          text: JSON.stringify({ success: true, message: `Widget ${args.widget_id} deleted.` }, null, 2),
+          type: "text" as const,
+          text: JSON.stringify({ success: true, message: `Widget ${widget_id} deleted.` }, null, 2),
         },
       ],
     };
   },
 });
 
-// ===== TOOL: generate_widget_code ========================================
-mcp.tool({
-  name: "generate_widget_code",
+// ── generate_widget_code ─────────────────────────────────────────────────────
+mcp.tool("generate_widget_code", {
   description:
-    "Generates a ready-to-paste HTML embed snippet for a custom widget by its ID. Also returns the direct preview URL.",
+    "Generates a ready-to-paste HTML embed snippet for a custom widget. Also returns the direct preview URL.",
   inputSchema: {
     type: "object",
     required: ["widget_id"],
     properties: {
-      jwt: { type: "string", description: "User JWT." },
+      jwt: { type: "string" },
       widget_id: { type: "string", description: "UUID of the widget." },
     },
   },
-  handler: async (args: { jwt?: string; widget_id: string }, extra: { request?: Request }) => {
-    const jwt = args.jwt ?? extractJwt(extra?.request ?? new Request("http://localhost"));
-    if (!jwt) return { content: [{ type: "text", text: JSON.stringify({ error: "Authentication required." }) }], isError: true };
-
+  handler: async ({ jwt: argJwt, widget_id }: { jwt?: string; widget_id: string }) => {
+    const jwt = getRequestJwt(argJwt);
+    if (!jwt) return errResult("Authentication required.");
     const userId = await verifyJwt(jwt);
-    if (!userId) return { content: [{ type: "text", text: JSON.stringify({ error: "Invalid JWT." }) }], isError: true };
-
+    if (!userId) return errResult("Invalid JWT.");
     const db = userClient(jwt);
-    const { data: widget, error } = await db
+    const { data: w, error } = await db
       .from("custom_widgets")
       .select("*")
-      .eq("id", args.widget_id)
+      .eq("id", widget_id)
       .eq("user_id", userId)
       .single();
+    if (error || !w) return errResult("Widget not found.");
 
-    if (error || !widget) {
-      return { content: [{ type: "text", text: JSON.stringify({ error: "Widget not found." }) }], isError: true };
-    }
-
-    const embedCode = `<!-- Widgetify: ${widget.name} -->
+    const embedCode = `<!-- Widgetify: ${w.name} -->
 <script>
   (function(){
-    var w = {
-      title: ${JSON.stringify(widget.title)},
-      description: ${JSON.stringify(widget.description ?? "")},
-      buttonText: ${JSON.stringify(widget.button_text)},
-      buttonColor: ${JSON.stringify(widget.button_color)},
-      textColor: ${JSON.stringify(widget.text_color)},
-      backgroundColor: ${JSON.stringify(widget.background_color)},
-      position: ${JSON.stringify(widget.position)},
-      size: ${JSON.stringify(widget.size)},
-      borderRadius: ${JSON.stringify(widget.border_radius)},
-      buttonAction: ${JSON.stringify(widget.button_action ?? "")},
+    var cfg = {
+      title: ${JSON.stringify(w.title)},
+      description: ${JSON.stringify(w.description ?? "")},
+      buttonText: ${JSON.stringify(w.button_text)},
+      buttonColor: ${JSON.stringify(w.button_color)},
+      textColor: ${JSON.stringify(w.text_color)},
+      bgColor: ${JSON.stringify(w.background_color)},
+      position: ${JSON.stringify(w.position)},
+      borderRadius: ${JSON.stringify(w.border_radius)},
+      action: ${JSON.stringify(w.button_action ?? "")},
     };
     var btn = document.createElement('button');
-    btn.innerText = w.buttonText;
+    btn.innerText = cfg.buttonText;
     btn.style.cssText = [
-      'position:fixed', w.position.includes('bottom') ? 'bottom:24px' : 'top:24px',
-      w.position.includes('right') ? 'right:24px' : 'left:24px',
-      'background:' + w.buttonColor, 'color:' + w.textColor,
-      'border:none', 'border-radius:' + w.borderRadius,
+      'position:fixed',
+      cfg.position.includes('bottom') ? 'bottom:24px' : 'top:24px',
+      cfg.position.includes('right') ? 'right:24px' : 'left:24px',
+      'background:' + cfg.buttonColor,
+      'color:' + cfg.textColor,
+      'border:none', 'border-radius:' + cfg.borderRadius,
       'padding:12px 20px', 'cursor:pointer', 'z-index:9999',
       'font-size:14px', 'font-weight:600',
       'box-shadow:0 4px 12px rgba(0,0,0,0.18)'
     ].join(';');
-    btn.onclick = function(){ if(w.buttonAction) window.open(w.buttonAction,'_blank'); };
+    btn.onclick = function(){ if(cfg.action) window.open(cfg.action,'_blank'); };
     document.body.appendChild(btn);
   })();
 </script>`;
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const projectId = supabaseUrl.match(/https:\/\/([^.]+)\./)?.[1] ?? "";
-    const previewUrl = `https://${projectId}.supabase.co/functions/v1/widget-preview?id=${widget.id}`;
-
+    const appUrl = "https://widgetify.lovable.app";
     return {
       content: [
         {
-          type: "text",
+          type: "text" as const,
           text: JSON.stringify(
             {
-              widget_id: widget.id,
-              widget_name: widget.name,
-              preview_url: previewUrl,
+              widget_id: w.id,
+              widget_name: w.name,
+              preview_url: `${appUrl}/?widget=${w.id}`,
               embed_code: embedCode,
-              instructions: "Paste the embed_code before </body> on any HTML page.",
+              instructions: "Paste embed_code before </body> on any HTML page.",
             },
             null,
             2
@@ -662,10 +559,10 @@ mcp.tool({
   },
 });
 
-// ===== TOOL: get_lastset_profile =========================================
-mcp.tool({
-  name: "get_lastset_profile",
-  description: "Fetches the LastSet link-in-bio profile for a given username. Public profiles are readable without authentication.",
+// ── get_lastset_profile ──────────────────────────────────────────────────────
+mcp.tool("get_lastset_profile", {
+  description:
+    "Fetches the LastSet link-in-bio profile for a given username. Public profiles are readable without auth.",
   inputSchema: {
     type: "object",
     required: ["username"],
@@ -676,47 +573,49 @@ mcp.tool({
   handler: async ({ username }: { username: string }) => {
     const { data, error } = await supabaseAdmin
       .from("lastset_profiles")
-      .select("username, display_name, bio, avatar_url, theme, shape, links, is_public, view_count, created_at")
+      .select(
+        "username, display_name, bio, avatar_url, theme, shape, links, is_public, view_count, created_at"
+      )
       .eq("username", username.toLowerCase())
       .eq("is_public", true)
       .single();
-
-    if (error || !data) {
-      return { content: [{ type: "text", text: JSON.stringify({ error: "Profile not found or is private." }) }], isError: true };
-    }
-
-    const appUrl = Deno.env.get("APP_URL") ?? "https://widgetify.lovable.app";
+    if (error || !data) return errResult("Profile not found or is private.");
+    const appUrl = "https://widgetify.lovable.app";
     return {
       content: [
         {
-          type: "text",
-          text: JSON.stringify(
-            { ...data, public_url: `${appUrl}/l/${data.username}` },
-            null,
-            2
-          ),
+          type: "text" as const,
+          text: JSON.stringify({ ...data, public_url: `${appUrl}/l/${data.username}` }, null, 2),
         },
       ],
     };
   },
 });
 
-// ===== TOOL: upsert_lastset_profile ======================================
-mcp.tool({
-  name: "upsert_lastset_profile",
-  description: "Creates or updates the authenticated user's LastSet link-in-bio profile.",
+// ── upsert_lastset_profile ───────────────────────────────────────────────────
+mcp.tool("upsert_lastset_profile", {
+  description:
+    "Creates or updates the authenticated user's LastSet link-in-bio profile.",
   inputSchema: {
     type: "object",
     required: ["username", "display_name"],
     properties: {
-      jwt: { type: "string", description: "User JWT." },
+      jwt: { type: "string" },
       username: { type: "string", description: "Unique URL slug (lowercase, alphanumeric + hyphens)." },
-      display_name: { type: "string", description: "Displayed name on the profile page." },
+      display_name: { type: "string", description: "Name shown on the profile page." },
       bio: { type: "string", description: "Short bio / tagline." },
       avatar_url: { type: "string", description: "URL to avatar image." },
-      theme: { type: "string", enum: ["glass", "neon", "aurora", "minimal"], description: "Visual theme." },
-      shape: { type: "string", enum: ["rounded", "pill", "sharp"], description: "Button shape style." },
-      is_public: { type: "boolean", description: "Whether the profile is publicly accessible (default true)." },
+      theme: {
+        type: "string",
+        enum: ["glass", "neon", "aurora", "minimal"],
+        description: "Visual theme.",
+      },
+      shape: {
+        type: "string",
+        enum: ["rounded", "pill", "sharp"],
+        description: "Button shape style.",
+      },
+      is_public: { type: "boolean", description: "Whether the profile is publicly accessible." },
       links: {
         type: "array",
         description: "Array of link objects.",
@@ -732,28 +631,22 @@ mcp.tool({
       },
     },
   },
-  handler: async (
-    args: {
-      jwt?: string;
-      username: string;
-      display_name: string;
-      bio?: string;
-      avatar_url?: string;
-      theme?: string;
-      shape?: string;
-      is_public?: boolean;
-      links?: Array<{ label: string; url: string; icon?: string }>;
-    },
-    extra: { request?: Request }
-  ) => {
-    const jwt = args.jwt ?? extractJwt(extra?.request ?? new Request("http://localhost"));
-    if (!jwt) return { content: [{ type: "text", text: JSON.stringify({ error: "Authentication required." }) }], isError: true };
-
+  handler: async (args: {
+    jwt?: string;
+    username: string;
+    display_name: string;
+    bio?: string;
+    avatar_url?: string;
+    theme?: string;
+    shape?: string;
+    is_public?: boolean;
+    links?: Array<{ label: string; url: string; icon?: string }>;
+  }) => {
+    const jwt = getRequestJwt(args.jwt);
+    if (!jwt) return errResult("Authentication required.");
     const userId = await verifyJwt(jwt);
-    if (!userId) return { content: [{ type: "text", text: JSON.stringify({ error: "Invalid JWT." }) }], isError: true };
-
+    if (!userId) return errResult("Invalid JWT.");
     const username = args.username.toLowerCase().replace(/[^a-z0-9-]/g, "-");
-
     const db = userClient(jwt);
     const { data, error } = await db
       .from("lastset_profiles")
@@ -773,16 +666,12 @@ mcp.tool({
       )
       .select()
       .single();
-
-    if (error) {
-      return { content: [{ type: "text", text: JSON.stringify({ error: error.message }) }], isError: true };
-    }
-
-    const appUrl = Deno.env.get("APP_URL") ?? "https://widgetify.lovable.app";
+    if (error) return errResult(error.message);
+    const appUrl = "https://widgetify.lovable.app";
     return {
       content: [
         {
-          type: "text",
+          type: "text" as const,
           text: JSON.stringify(
             { success: true, profile: data, public_url: `${appUrl}/l/${username}` },
             null,
@@ -794,9 +683,8 @@ mcp.tool({
   },
 });
 
-// ===== TOOL: list_ab_tests ===============================================
-mcp.tool({
-  name: "list_ab_tests",
+// ── list_ab_tests ────────────────────────────────────────────────────────────
+mcp.tool("list_ab_tests", {
   description: "Lists all A/B tests created by the authenticated user.",
   inputSchema: {
     type: "object",
@@ -809,32 +697,33 @@ mcp.tool({
       },
     },
   },
-  handler: async (args: { jwt?: string; status?: string }, extra: { request?: Request }) => {
-    const jwt = args.jwt ?? extractJwt(extra?.request ?? new Request("http://localhost"));
-    if (!jwt) return { content: [{ type: "text", text: JSON.stringify({ error: "Authentication required." }) }], isError: true };
-
+  handler: async ({ jwt: argJwt, status }: { jwt?: string; status?: string }) => {
+    const jwt = getRequestJwt(argJwt);
+    if (!jwt) return errResult("Authentication required.");
     const userId = await verifyJwt(jwt);
-    if (!userId) return { content: [{ type: "text", text: JSON.stringify({ error: "Invalid JWT." }) }], isError: true };
-
+    if (!userId) return errResult("Invalid JWT.");
     const db = userClient(jwt);
     let query = db
       .from("ab_tests")
       .select("id, name, description, status, start_date, end_date, created_at")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
-
-    if (args.status) query = query.eq("status", args.status);
-
+    if (status) query = query.eq("status", status);
     const { data, error } = await query;
-    if (error) return { content: [{ type: "text", text: JSON.stringify({ error: error.message }) }], isError: true };
-
-    return { content: [{ type: "text", text: JSON.stringify({ total: data?.length ?? 0, tests: data }, null, 2) }] };
+    if (error) return errResult(error.message);
+    return {
+      content: [
+        {
+          type: "text" as const,
+          text: JSON.stringify({ total: data?.length ?? 0, tests: data }, null, 2),
+        },
+      ],
+    };
   },
 });
 
-// ===== TOOL: get_ab_test =================================================
-mcp.tool({
-  name: "get_ab_test",
+// ── get_ab_test ──────────────────────────────────────────────────────────────
+mcp.tool("get_ab_test", {
   description: "Fetches details and variations for a specific A/B test.",
   inputSchema: {
     type: "object",
@@ -844,34 +733,27 @@ mcp.tool({
       test_id: { type: "string", description: "UUID of the A/B test." },
     },
   },
-  handler: async (args: { jwt?: string; test_id: string }, extra: { request?: Request }) => {
-    const jwt = args.jwt ?? extractJwt(extra?.request ?? new Request("http://localhost"));
-    if (!jwt) return { content: [{ type: "text", text: JSON.stringify({ error: "Authentication required." }) }], isError: true };
-
+  handler: async ({ jwt: argJwt, test_id }: { jwt?: string; test_id: string }) => {
+    const jwt = getRequestJwt(argJwt);
+    if (!jwt) return errResult("Authentication required.");
     const userId = await verifyJwt(jwt);
-    if (!userId) return { content: [{ type: "text", text: JSON.stringify({ error: "Invalid JWT." }) }], isError: true };
-
+    if (!userId) return errResult("Invalid JWT.");
     const db = userClient(jwt);
-    const { data: test, error: testError } = await db
+    const { data: test, error: testErr } = await db
       .from("ab_tests")
       .select("*")
-      .eq("id", args.test_id)
+      .eq("id", test_id)
       .eq("user_id", userId)
       .single();
-
-    if (testError || !test) {
-      return { content: [{ type: "text", text: JSON.stringify({ error: "A/B test not found." }) }], isError: true };
-    }
-
+    if (testErr || !test) return errResult("A/B test not found.");
     const { data: variations } = await db
       .from("widget_variations")
       .select("*")
-      .eq("ab_test_id", args.test_id);
-
+      .eq("ab_test_id", test_id);
     return {
       content: [
         {
-          type: "text",
+          type: "text" as const,
           text: JSON.stringify({ test, variations: variations ?? [] }, null, 2),
         },
       ],
@@ -879,23 +761,20 @@ mcp.tool({
   },
 });
 
-// ===== TOOL: get_subscription_status =====================================
-mcp.tool({
-  name: "get_subscription_status",
+// ── get_subscription_status ──────────────────────────────────────────────────
+mcp.tool("get_subscription_status", {
   description: "Returns the current subscription status for the authenticated user.",
   inputSchema: {
     type: "object",
     properties: {
-      jwt: { type: "string", description: "User JWT." },
+      jwt: { type: "string" },
     },
   },
-  handler: async (args: { jwt?: string }, extra: { request?: Request }) => {
-    const jwt = args.jwt ?? extractJwt(extra?.request ?? new Request("http://localhost"));
-    if (!jwt) return { content: [{ type: "text", text: JSON.stringify({ error: "Authentication required." }) }], isError: true };
-
+  handler: async ({ jwt: argJwt }: { jwt?: string }) => {
+    const jwt = getRequestJwt(argJwt);
+    if (!jwt) return errResult("Authentication required.");
     const userId = await verifyJwt(jwt);
-    if (!userId) return { content: [{ type: "text", text: JSON.stringify({ error: "Invalid JWT." }) }], isError: true };
-
+    if (!userId) return errResult("Invalid JWT.");
     const db = userClient(jwt);
     const { data, error } = await db
       .from("subscriptions")
@@ -905,21 +784,13 @@ mcp.tool({
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
-
-    if (error) {
-      return { content: [{ type: "text", text: JSON.stringify({ error: error.message }) }], isError: true };
-    }
-
+    if (error) return errResult(error.message);
     return {
       content: [
         {
-          type: "text",
+          type: "text" as const,
           text: JSON.stringify(
-            {
-              has_active_subscription: !!data,
-              subscription: data ?? null,
-              plan: data?.plan_type ?? "free",
-            },
+            { has_active_subscription: !!data, subscription: data ?? null, plan: data?.plan_type ?? "free" },
             null,
             2
           ),
@@ -930,18 +801,19 @@ mcp.tool({
 });
 
 // ---------------------------------------------------------------------------
-// Hono app + Streamable HTTP transport
+// Hono app + transport
 // ---------------------------------------------------------------------------
 const app = new Hono();
 const transport = new StreamableHttpTransport();
 
-app.options("/*", (c) => {
-  return new Response(null, { status: 204, headers: corsHeaders });
-});
+app.options("/*", (c) => new Response(null, { status: 204, headers: corsHeaders }));
 
 app.all("/*", async (c) => {
+  // Stash the JWT in globalThis so handlers can read it without passing Request refs
+  const jwt = extractJwt(c.req.raw);
+  (globalThis as unknown as Record<string, string | null>).__mcpJwt = jwt;
+
   const response = await transport.handleRequest(c.req.raw, mcp);
-  // Attach CORS headers to every response
   const headers = new Headers(response.headers);
   Object.entries(corsHeaders).forEach(([k, v]) => headers.set(k, v));
   return new Response(response.body, { status: response.status, headers });
