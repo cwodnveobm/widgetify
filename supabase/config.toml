@@ -1,1 +1,4 @@
 project_id = "pibinmzsiwzatfljqkiu"
+
+[functions.widgetify-mcp]
+verify_jwt = false
