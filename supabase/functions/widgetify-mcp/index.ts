@@ -803,17 +803,19 @@ mcp.tool("get_subscription_status", {
 // ---------------------------------------------------------------------------
 // Hono app + transport
 // ---------------------------------------------------------------------------
-const app = new Hono();
 const transport = new StreamableHttpTransport();
+const httpHandler = transport.bind(mcp);
+
+const app = new Hono();
 
 app.options("/*", (c) => new Response(null, { status: 204, headers: corsHeaders }));
 
 app.all("/*", async (c) => {
-  // Stash the JWT in globalThis so handlers can read it without passing Request refs
+  // Stash the JWT in globalThis so tool handlers can access it
   const jwt = extractJwt(c.req.raw);
   (globalThis as unknown as Record<string, string | null>).__mcpJwt = jwt;
 
-  const response = await transport.handleRequest(c.req.raw, mcp);
+  const response = await httpHandler(c.req.raw);
   const headers = new Headers(response.headers);
   Object.entries(corsHeaders).forEach(([k, v]) => headers.set(k, v));
   return new Response(response.body, { status: response.status, headers });
