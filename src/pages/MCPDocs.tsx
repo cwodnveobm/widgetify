@@ -514,7 +514,7 @@ function ToolCard({ tool, index }: { tool: MCPTool; index: number }) {
                       <CodeBlock code={JSON.stringify(tool.example, null, 2)} />
                     </div>
                     <div>
-                      <h4 className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> Example Response</h4>
+                      <h4 className="text-xs font-semibold text-muted-foreground mb-2 flex items-center gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-primary" /> Example Response</h4>
                       <CodeBlock code={JSON.stringify(tool.exampleResponse, null, 2)} />
                     </div>
                     {tool.requiresAuth && (
