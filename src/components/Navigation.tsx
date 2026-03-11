@@ -53,6 +53,7 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
     { to: '/creators', label: 'Creators' },
     { to: '/faq', label: 'FAQ' },
     { to: '/support', label: 'Support' },
+    { to: '/mcp-docs', label: 'MCP API' },
   ];
 
   return (

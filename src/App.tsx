@@ -24,6 +24,7 @@ import CreatorPortal from "./pages/CreatorPortal";
 import AdminPanel from "./pages/AdminPanel";
 import LastSetBuilder from "./pages/LastSetBuilder";
 import LastSetPublic from "./pages/LastSetPublic";
+import MCPDocs from "./pages/MCPDocs";
 
 const queryClient = new QueryClient({
   defaultOptions: {
