@@ -254,7 +254,7 @@ function CopyButton({ text, className }: { text: string; className?: string }) {
   };
   return (
     <button onClick={copy} className={cn('p-1.5 rounded hover:bg-muted/60 transition-colors text-muted-foreground hover:text-foreground', className)}>
-      {copied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
+      {copied ? <Check className="w-3.5 h-3.5 text-primary" /> : <Copy className="w-3.5 h-3.5" />}
     </button>
   );
 }
