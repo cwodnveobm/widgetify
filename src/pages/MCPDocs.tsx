@@ -434,8 +434,8 @@ function ToolCard({ tool, index }: { tool: MCPTool; index: number }) {
               {tool.category}
             </span>
             {tool.requiresAuth
-              ? <span className="flex items-center gap-1 text-[10px] text-amber-400 font-semibold"><Lock className="w-3 h-3" /> Auth required</span>
-              : <span className="flex items-center gap-1 text-[10px] text-green-400 font-semibold"><Globe className="w-3 h-3" /> Public</span>}
+              ? <span className="flex items-center gap-1 text-[10px] text-chart-4 font-semibold"><Lock className="w-3 h-3" /> Auth required</span>
+              : <span className="flex items-center gap-1 text-[10px] text-primary font-semibold"><Globe className="w-3 h-3" /> Public</span>}
           </div>
           <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{tool.description}</p>
         </div>
