@@ -518,7 +518,7 @@ function ToolCard({ tool, index }: { tool: MCPTool; index: number }) {
                       <CodeBlock code={JSON.stringify(tool.exampleResponse, null, 2)} />
                     </div>
                     {tool.requiresAuth && (
-                      <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-3 text-xs text-amber-300 flex gap-2">
+                      <div className="rounded-lg bg-chart-4/10 border border-chart-4/20 p-3 text-xs text-foreground flex gap-2">
                         <Lock className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
                         <span>This tool requires authentication. Pass your JWT in the <code>Authorization: Bearer &lt;token&gt;</code> header or as the <code>jwt</code> argument.</span>
                       </div>
