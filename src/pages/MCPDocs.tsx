@@ -384,9 +384,9 @@ function TryItPanel({ tool }: { tool: MCPTool }) {
           >
             <div className="flex items-center gap-2">
               {status === 'success'
-                ? <CheckCircle2 className="w-4 h-4 text-green-400" />
+                ? <CheckCircle2 className="w-4 h-4 text-primary" />
                 : <AlertCircle className="w-4 h-4 text-destructive" />}
-              <span className={cn('text-xs font-semibold', status === 'success' ? 'text-green-400' : 'text-destructive')}>
+              <span className={cn('text-xs font-semibold', status === 'success' ? 'text-primary' : 'text-destructive')}>
                 {status === 'success' ? 'Response received' : 'Error'}
               </span>
               <CopyButton text={response} className="ml-auto" />
