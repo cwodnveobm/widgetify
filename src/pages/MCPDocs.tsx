@@ -619,7 +619,7 @@ const MCPDocs: React.FC = () => {
         <div className="container mx-auto px-4 py-6 max-w-5xl">
           <details className="group">
             <summary className="flex items-center gap-2 cursor-pointer list-none">
-              <Lock className="w-4 h-4 text-amber-400" />
+              <Lock className="w-4 h-4 text-chart-4" />
               <span className="font-semibold text-sm text-foreground">Authentication</span>
               <ChevronRight className="w-4 h-4 text-muted-foreground group-open:rotate-90 transition-transform ml-auto" />
             </summary>
