@@ -393,7 +393,7 @@ function TryItPanel({ tool }: { tool: MCPTool }) {
             </div>
             <pre className={cn(
               'p-3 rounded-lg border text-xs font-mono leading-relaxed overflow-x-auto max-h-64 overflow-y-auto',
-              status === 'success' ? 'bg-green-950/20 border-green-500/20 text-green-100' : 'bg-destructive/10 border-destructive/20 text-destructive'
+              status === 'success' ? 'bg-primary/10 border-primary/20 text-foreground' : 'bg-destructive/10 border-destructive/20 text-destructive'
             )}>
               {response}
             </pre>
