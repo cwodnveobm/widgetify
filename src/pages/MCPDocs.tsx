@@ -640,9 +640,9 @@ curl -X POST '${MCP_ENDPOINT}' \\
   -H 'Accept: application/json, text/event-stream' \\
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_widgets","arguments":{}}}'`}
               />
-              <div className="rounded-lg bg-blue-500/10 border border-blue-500/20 p-3 text-xs text-blue-300 flex gap-2">
+              <div className="rounded-lg bg-accent/20 border border-accent/40 p-3 text-xs text-accent-foreground flex gap-2">
                 <BookOpen className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                <span>Connect to Claude / Cursor / Windsurf: add <code className="bg-blue-900/30 px-1 rounded">{`{ "mcpServers": { "widgetify": { "url": "${MCP_ENDPOINT}", "headers": { "Authorization": "Bearer <jwt>" } } } }`}</code> to your MCP client config.</span>
+                <span>Connect to Claude / Cursor / Windsurf: add <code className="bg-muted px-1 rounded">{`{ "mcpServers": { "widgetify": { "url": "${MCP_ENDPOINT}", "headers": { "Authorization": "Bearer <jwt>" } } } }`}</code> to your MCP client config.</span>
               </div>
             </div>
           </details>
