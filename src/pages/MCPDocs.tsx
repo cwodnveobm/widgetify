@@ -234,11 +234,11 @@ const TOOLS: MCPTool[] = [
 const CATEGORIES = ['All', ...Array.from(new Set(TOOLS.map(t => t.category)))];
 
 const CATEGORY_COLORS: Record<string, string> = {
-  Discovery: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+  Discovery: 'bg-accent/40 text-accent-foreground border-accent',
   'Widget Management': 'bg-primary/15 text-primary border-primary/30',
-  LastSet: 'bg-purple-500/15 text-purple-400 border-purple-500/30',
-  'A/B Testing': 'bg-orange-500/15 text-orange-400 border-orange-500/30',
-  Account: 'bg-green-500/15 text-green-400 border-green-500/30',
+  LastSet: 'bg-secondary/60 text-secondary-foreground border-secondary',
+  'A/B Testing': 'bg-muted text-muted-foreground border-border',
+  Account: 'bg-primary/10 text-primary border-primary/20',
 };
 
 // ─────────────────────────────────────────────
