@@ -78,8 +78,19 @@ export default function LastSetPublic() {
       .eq('username', username)
       .eq('is_public', true)
       .maybeSingle()
-      .then(({ data }) => {
-        if (!data) { setNotFound(true); } else { setProfile(data as any); }
+      .then(({ data, error }) => {
+        if (!data || error) {
+          setNotFound(true);
+        } else {
+          setProfile(data as any);
+          // Increment view count (fire-and-forget, non-blocking)
+          supabase
+            .from('lastset_profiles')
+            .update({ view_count: (data.view_count || 0) + 1 })
+            .eq('id', data.id)
+            .eq('is_public', true)
+            .then(() => {});
+        }
         setLoading(false);
       });
   }, [username]);

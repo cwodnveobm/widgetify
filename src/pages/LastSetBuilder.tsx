@@ -307,7 +307,8 @@ export default function LastSetBuilder() {
     }
   };
 
-  const shareUrl = `${window.location.origin}/l/${profile.username}`;
+  const CANONICAL_BASE = 'https://widgetify.lovable.app';
+  const shareUrl = `${CANONICAL_BASE}/l/${profile.username}`;
 
   const handleCopyLink = () => {
     if (!profile.username) { toast.error('Set a username first'); return; }
