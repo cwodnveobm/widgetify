@@ -62,6 +62,7 @@ interface LastSetProfile {
   shape: string;
   links: LinkItem[];
   is_public: boolean;
+  view_count?: number;
 }
 
 const DEFAULT_PROFILE: LastSetProfile = {
@@ -221,6 +222,7 @@ export default function LastSetBuilder() {
             shape: data.shape,
             links: ((data.links as unknown) as LinkItem[]) || [],
             is_public: data.is_public,
+            view_count: data.view_count ?? 0,
           });
           setUsernameAvailable(true);
         }
@@ -355,25 +357,37 @@ export default function LastSetBuilder() {
                 </div>
               </div>
 
-              {/* Share URL */}
+              {/* Share URL + View Count */}
               {profile.id && profile.username && (
                 <motion.div
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center gap-2 p-3 rounded-xl bg-primary/5 border border-primary/20"
+                  className="space-y-2"
                 >
-                  <Globe className="w-4 h-4 text-primary flex-shrink-0" />
-                  <span className="flex-1 text-sm text-foreground font-mono truncate">{shareUrl}</span>
-                  <button
-                    onClick={handleCopyLink}
-                    className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors"
-                  >
-                    {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
-                  </button>
-                  <a href={`/l/${profile.username}`} target="_blank" rel="noopener noreferrer"
-                    className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors">
-                    <ExternalLink className="w-4 h-4 text-muted-foreground" />
-                  </a>
+                  <div className="flex items-center gap-2 p-3 rounded-xl bg-primary/5 border border-primary/20">
+                    <Globe className="w-4 h-4 text-primary flex-shrink-0" />
+                    <span className="flex-1 text-sm text-foreground font-mono truncate">{shareUrl}</span>
+                    <button
+                      onClick={handleCopyLink}
+                      className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors"
+                    >
+                      {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
+                    </button>
+                    <a href={`/l/${profile.username}`} target="_blank" rel="noopener noreferrer"
+                      className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors">
+                      <ExternalLink className="w-4 h-4 text-muted-foreground" />
+                    </a>
+                  </div>
+                  {/* View count badge */}
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50 w-fit">
+                    <span className="text-xs text-muted-foreground">👁</span>
+                    <span className="text-xs font-semibold text-foreground tabular-nums">
+                      {(profile.view_count ?? 0).toLocaleString()}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {(profile.view_count ?? 0) === 1 ? 'view' : 'views'}
+                    </span>
+                  </div>
                 </motion.div>
               )}
 
