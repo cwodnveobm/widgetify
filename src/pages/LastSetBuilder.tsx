@@ -222,6 +222,7 @@ export default function LastSetBuilder() {
             shape: data.shape,
             links: ((data.links as unknown) as LinkItem[]) || [],
             is_public: data.is_public,
+            view_count: data.view_count ?? 0,
           });
           setUsernameAvailable(true);
         }
