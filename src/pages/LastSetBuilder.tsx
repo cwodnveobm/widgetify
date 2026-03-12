@@ -62,6 +62,7 @@ interface LastSetProfile {
   shape: string;
   links: LinkItem[];
   is_public: boolean;
+  view_count?: number;
 }
 
 const DEFAULT_PROFILE: LastSetProfile = {
