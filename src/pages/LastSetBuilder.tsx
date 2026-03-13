@@ -475,13 +475,77 @@ export default function LastSetBuilder() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">Avatar URL</Label>
-                  <Input
-                    value={profile.avatar_url}
-                    onChange={e => setProfile(p => ({ ...p, avatar_url: e.target.value }))}
-                    placeholder="https://example.com/photo.jpg"
+                  <Label className="text-xs text-muted-foreground">Avatar</Label>
+
+                  {/* Hidden file input */}
+                  <input
+                    ref={avatarInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                    className="hidden"
+                    onChange={e => {
+                      const file = e.target.files?.[0];
+                      if (file) handleAvatarUpload(file);
+                      e.target.value = '';
+                    }}
                   />
+
+                  <div className="flex items-center gap-3">
+                    {/* Avatar preview / placeholder */}
+                    <div className="relative flex-shrink-0">
+                      {profile.avatar_url ? (
+                        <img
+                          src={profile.avatar_url}
+                          alt="Avatar"
+                          className="w-16 h-16 rounded-full object-cover border border-border"
+                        />
+                      ) : (
+                        <div className="w-16 h-16 rounded-full bg-muted border border-border flex items-center justify-center">
+                          <User className="w-6 h-6 text-muted-foreground" />
+                        </div>
+                      )}
+                      {profile.avatar_url && (
+                        <button
+                          onClick={() => setProfile(p => ({ ...p, avatar_url: '' }))}
+                          className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive flex items-center justify-center shadow"
+                          title="Remove avatar"
+                        >
+                          <X className="w-3 h-3 text-destructive-foreground" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Upload button + URL fallback */}
+                    <div className="flex-1 space-y-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="w-full gap-2"
+                        disabled={uploadingAvatar}
+                        onClick={() => {
+                          if (!user) { setAuthMode('signin'); setAuthModalOpen(true); return; }
+                          avatarInputRef.current?.click();
+                        }}
+                      >
+                        {uploadingAvatar ? (
+                          <div className="w-3.5 h-3.5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+                        ) : (
+                          <Camera className="w-3.5 h-3.5" />
+                        )}
+                        {uploadingAvatar ? 'Uploading…' : 'Upload Photo'}
+                      </Button>
+                      <Input
+                        value={profile.avatar_url}
+                        onChange={e => setProfile(p => ({ ...p, avatar_url: e.target.value }))}
+                        placeholder="or paste image URL"
+                        className="h-8 text-xs"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">JPG, PNG, WebP or GIF · max 5 MB</p>
                 </div>
+
               </div>
 
               {/* Theme */}
