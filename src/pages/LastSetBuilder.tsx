@@ -199,7 +199,8 @@ export default function LastSetBuilder() {
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
   const [checkingUsername, setCheckingUsername] = useState(false);
   const usernameTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [dragOver, setDragOver] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   // Load existing profile
   useEffect(() => {
