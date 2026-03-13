@@ -258,6 +258,38 @@ export default function LastSetBuilder() {
     usernameTimeout.current = setTimeout(() => checkUsername(clean), 600);
   };
 
+  const handleAvatarUpload = async (file: File) => {
+    if (!user) { setAuthMode('signin'); setAuthModalOpen(true); return; }
+    if (!file.type.startsWith('image/')) { toast.error('Please select an image file'); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error('Image must be under 5 MB'); return; }
+
+    setUploadingAvatar(true);
+    try {
+      const ext = file.name.split('.').pop() || 'jpg';
+      const path = `${user.id}/avatar.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('lastset-avatars')
+        .upload(path, file, { upsert: true, contentType: file.type });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('lastset-avatars')
+        .getPublicUrl(path);
+
+      // Add cache-busting so the preview refreshes immediately
+      setProfile(p => ({ ...p, avatar_url: `${publicUrl}?t=${Date.now()}` }));
+      toast.success('Avatar uploaded! ✓');
+    } catch (err: any) {
+      toast.error(err.message || 'Upload failed');
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
+
+
   const handleLinkChange = (i: number, field: keyof LinkItem, val: string) => {
     setProfile(p => ({
       ...p,
