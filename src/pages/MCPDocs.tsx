@@ -170,10 +170,10 @@ const TOOLS: MCPTool[] = [
     requiresAuth: false,
     category: 'LastSet',
     params: [
-      { name: 'username', type: 'string', required: true, description: "The unique LastSet username e.g. 'johndoe'" },
+      { name: 'username', type: 'string', required: true, description: "The unique LastSet username e.g. 'thetechcontractorin'" },
     ],
-    example: { jsonrpc: '2.0', id: 10, method: 'tools/call', params: { name: 'get_lastset_profile', arguments: { username: 'johndoe' } } },
-    exampleResponse: { username: 'johndoe', display_name: 'John Doe', bio: 'Builder. Creator.', theme: 'aurora', shape: 'pill', links: [{ label: 'Website', url: 'https://johndoe.com', icon: 'Globe' }], view_count: 421, public_url: 'https://widgetify.lovable.app/l/johndoe' },
+    example: { jsonrpc: '2.0', id: 10, method: 'tools/call', params: { name: 'get_lastset_profile', arguments: { username: 'thetechcontractorin' } } },
+    exampleResponse: { username: 'thetechcontractorin', display_name: 'Muhammed Adnan', bio: 'The Contractor / Online Experience Manager', theme: 'neon', shape: 'pill', links: [{ label: 'LinkedIn', url: 'https://linkedin.com/in/muhammedadnanvv', icon: 'linkedin' }, { label: 'GitHub', url: 'https://github.com/muhammedadnanv', icon: 'github' }], view_count: 1, public_url: 'https://widgetify.lovable.app/l/thetechcontractorin' },
   },
   {
     name: 'upsert_lastset_profile',
