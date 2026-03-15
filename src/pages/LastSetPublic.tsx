@@ -64,6 +64,19 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
+function recordClick(profileId: string, index: number, label: string, url: string) {
+  // Fire-and-forget — never block the navigation
+  supabase
+    .from('lastset_link_clicks' as any)
+    .insert({
+      profile_id: profileId,
+      link_index: index,
+      link_label: label,
+      link_url: url,
+    })
+    .then(() => {});
+}
+
 export default function LastSetPublic() {
   const { username } = useParams<{ username: string }>();
   const [profile, setProfile] = useState<LastSetProfile | null>(null);
@@ -209,15 +222,17 @@ export default function LastSetPublic() {
             >
               {links.map((link, i) => {
                 const IconComp = ICON_MAP[link.icon || 'link'] || Link2;
+                const href = link.url.startsWith('http') ? link.url : `https://${link.url}`;
                 return (
                   <motion.a
                     key={i}
-                    href={link.url.startsWith('http') ? link.url : `https://${link.url}`}
+                    href={href}
                     target="_blank"
                     rel="noopener noreferrer"
                     variants={item}
                     whileHover={{ scale: 1.035, y: -2 }}
                     whileTap={{ scale: 0.97 }}
+                    onClick={() => recordClick(profile.id, i, link.label, href)}
                     className="flex items-center gap-4 px-5 py-4 group cursor-pointer"
                     style={{
                       background: theme.accent,
