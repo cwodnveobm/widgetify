@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Trash2, ExternalLink, Copy, Check, Save, Eye, EyeOff,
-  Sparkles, Link2, User, Palette, Globe, Lock, Upload, ArrowLeft,
+  Sparkles, Link2, User, Palette, Globe, Lock, ArrowLeft,
   GripVertical, Instagram, Twitter, Youtube, Github, Linkedin,
-  Music, ShoppingBag, Mail, Phone, Globe2, Camera, X
+  Music, ShoppingBag, Mail, Phone, Globe2, Camera, X, MousePointerClick
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -197,6 +197,8 @@ export default function LastSetBuilder() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  // click counts keyed by link_index
+  const [clickCounts, setClickCounts] = useState<Record<number, number>>({});
   const [checkingUsername, setCheckingUsername] = useState(false);
   const usernameTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -226,6 +228,20 @@ export default function LastSetBuilder() {
             view_count: data.view_count ?? 0,
           });
           setUsernameAvailable(true);
+
+          // Fetch click counts for this profile
+          supabase
+            .from('lastset_link_clicks' as any)
+            .select('link_index')
+            .eq('profile_id', data.id)
+            .then(({ data: clicks }) => {
+              if (!clicks) return;
+              const counts: Record<number, number> = {};
+              (clicks as unknown as { link_index: number }[]).forEach(c => {
+                counts[c.link_index] = (counts[c.link_index] || 0) + 1;
+              });
+              setClickCounts(counts);
+            });
         }
         setLoading(false);
       });
@@ -411,15 +427,24 @@ export default function LastSetBuilder() {
                       <ExternalLink className="w-4 h-4 text-muted-foreground" />
                     </a>
                   </div>
-                  {/* View count badge */}
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50 w-fit">
-                    <span className="text-xs text-muted-foreground">👁</span>
-                    <span className="text-xs font-semibold text-foreground tabular-nums">
-                      {(profile.view_count ?? 0).toLocaleString()}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {(profile.view_count ?? 0) === 1 ? 'view' : 'views'}
-                    </span>
+                  {/* Stats row: views + total clicks */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50">
+                      <span className="text-xs text-muted-foreground">👁</span>
+                      <span className="text-xs font-semibold text-foreground tabular-nums">
+                        {(profile.view_count ?? 0).toLocaleString()}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {(profile.view_count ?? 0) === 1 ? 'view' : 'views'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50">
+                      <MousePointerClick className="w-3 h-3 text-muted-foreground" />
+                      <span className="text-xs font-semibold text-foreground tabular-nums">
+                        {Object.values(clickCounts).reduce((a, b) => a + b, 0).toLocaleString()}
+                      </span>
+                      <span className="text-xs text-muted-foreground">link clicks</span>
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -593,10 +618,18 @@ export default function LastSetBuilder() {
 
               {/* Links */}
               <div className="space-y-3">
-                <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                  <Link2 className="w-4 h-4 text-primary" /> Links
-                  <span className="ml-auto text-xs text-muted-foreground">{profile.links.length}/12</span>
-                </h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <Link2 className="w-4 h-4 text-primary" /> Links
+                  </h2>
+                  <span className="text-xs text-muted-foreground">{profile.links.length}/12</span>
+                  {Object.keys(clickCounts).length > 0 && (
+                    <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
+                      <MousePointerClick className="w-3 h-3" />
+                      {Object.values(clickCounts).reduce((a, b) => a + b, 0)} total clicks
+                    </span>
+                  )}
+                </div>
 
                 <div className="space-y-2">
                   <AnimatePresence>
@@ -616,6 +649,13 @@ export default function LastSetBuilder() {
                             placeholder="Label (e.g. Instagram)"
                             className="flex-1 h-8 text-sm"
                           />
+                          {/* Click count badge */}
+                          {(clickCounts[i] ?? 0) > 0 && (
+                            <span className="flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 flex-shrink-0">
+                              <MousePointerClick className="w-2.5 h-2.5" />
+                              {clickCounts[i]}
+                            </span>
+                          )}
                           <button
                             onClick={() => removeLink(i)}
                             className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
@@ -656,6 +696,7 @@ export default function LastSetBuilder() {
                   <Plus className="w-4 h-4" /> Add Link
                 </Button>
               </div>
+
 
               {/* Visibility */}
               <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-card">
