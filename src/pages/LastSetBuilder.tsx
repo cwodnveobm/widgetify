@@ -228,6 +228,20 @@ export default function LastSetBuilder() {
             view_count: data.view_count ?? 0,
           });
           setUsernameAvailable(true);
+
+          // Fetch click counts for this profile
+          supabase
+            .from('lastset_link_clicks' as any)
+            .select('link_index')
+            .eq('profile_id', data.id)
+            .then(({ data: clicks }) => {
+              if (!clicks) return;
+              const counts: Record<number, number> = {};
+              (clicks as { link_index: number }[]).forEach(c => {
+                counts[c.link_index] = (counts[c.link_index] || 0) + 1;
+              });
+              setClickCounts(counts);
+            });
         }
         setLoading(false);
       });
