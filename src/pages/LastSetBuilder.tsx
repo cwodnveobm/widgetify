@@ -609,10 +609,18 @@ export default function LastSetBuilder() {
 
               {/* Links */}
               <div className="space-y-3">
-                <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                  <Link2 className="w-4 h-4 text-primary" /> Links
-                  <span className="ml-auto text-xs text-muted-foreground">{profile.links.length}/12</span>
-                </h2>
+                <div className="flex items-center gap-2">
+                  <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <Link2 className="w-4 h-4 text-primary" /> Links
+                  </h2>
+                  <span className="text-xs text-muted-foreground">{profile.links.length}/12</span>
+                  {Object.keys(clickCounts).length > 0 && (
+                    <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground bg-muted/60 px-2 py-0.5 rounded-full">
+                      <MousePointerClick className="w-3 h-3" />
+                      {Object.values(clickCounts).reduce((a, b) => a + b, 0)} total clicks
+                    </span>
+                  )}
+                </div>
 
                 <div className="space-y-2">
                   <AnimatePresence>
@@ -632,6 +640,13 @@ export default function LastSetBuilder() {
                             placeholder="Label (e.g. Instagram)"
                             className="flex-1 h-8 text-sm"
                           />
+                          {/* Click count badge */}
+                          {(clickCounts[i] ?? 0) > 0 && (
+                            <span className="flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 flex-shrink-0">
+                              <MousePointerClick className="w-2.5 h-2.5" />
+                              {clickCounts[i]}
+                            </span>
+                          )}
                           <button
                             onClick={() => removeLink(i)}
                             className="p-1.5 rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
@@ -672,6 +687,7 @@ export default function LastSetBuilder() {
                   <Plus className="w-4 h-4" /> Add Link
                 </Button>
               </div>
+
 
               {/* Visibility */}
               <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-card">
