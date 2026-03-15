@@ -2,7 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown, ChevronRight, Play, Copy, Check, Lock, Globe, Terminal,
-  Zap, BookOpen, Code2, AlertCircle, CheckCircle2, Loader2, ExternalLink
+  Zap, BookOpen, Code2, AlertCircle, CheckCircle2, Loader2, ExternalLink,
+  Settings2
 } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { AuthModal } from '@/components/AuthModal';
@@ -539,6 +540,172 @@ function ToolCard({ tool, index }: { tool: MCPTool; index: number }) {
 }
 
 // ─────────────────────────────────────────────
+// Client Config Section
+// ─────────────────────────────────────────────
+const CLIENT_TABS = ['Cursor', 'Claude Desktop', 'Windsurf', 'Custom HTTP'] as const;
+type ClientTab = typeof CLIENT_TABS[number];
+
+const CLIENT_CONFIGS: Record<ClientTab, { filename: string; language: string; description: string; code: string }> = {
+  Cursor: {
+    filename: '.cursor/mcp.json',
+    language: 'json',
+    description: 'Add this to your Cursor MCP config file to use Widgetify tools inside Cursor AI.',
+    code: JSON.stringify({
+      mcpServers: {
+        widgetify: {
+          url: MCP_ENDPOINT,
+          headers: {
+            Authorization: 'Bearer <your_jwt>',
+            'Content-Type': 'application/json',
+            Accept: 'application/json, text/event-stream',
+          },
+        },
+      },
+    }, null, 2),
+  },
+  'Claude Desktop': {
+    filename: '~/Library/Application Support/Claude/claude_desktop_config.json',
+    language: 'json',
+    description: 'Paste this into your Claude Desktop config file to give Claude access to all Widgetify tools.',
+    code: JSON.stringify({
+      mcpServers: {
+        widgetify: {
+          url: MCP_ENDPOINT,
+          headers: {
+            Authorization: 'Bearer <your_jwt>',
+            'Content-Type': 'application/json',
+            Accept: 'application/json, text/event-stream',
+          },
+        },
+      },
+    }, null, 2),
+  },
+  Windsurf: {
+    filename: '~/.codeium/windsurf/mcp_config.json',
+    language: 'json',
+    description: 'Add this to your Windsurf MCP config file to activate Widgetify tools in Windsurf AI.',
+    code: JSON.stringify({
+      mcpServers: {
+        widgetify: {
+          serverUrl: MCP_ENDPOINT,
+          headers: {
+            Authorization: 'Bearer <your_jwt>',
+            'Content-Type': 'application/json',
+            Accept: 'application/json, text/event-stream',
+          },
+        },
+      },
+    }, null, 2),
+  },
+  'Custom HTTP': {
+    filename: 'curl',
+    language: 'bash',
+    description: 'Call the MCP server directly from any HTTP client — no special tooling required.',
+    code: `# List all widget types (no auth needed)
+curl -X POST '${MCP_ENDPOINT}' \\
+  -H 'Content-Type: application/json' \\
+  -H 'Accept: application/json, text/event-stream' \\
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "list_widget_types",
+      "arguments": {}
+    }
+  }'
+
+# Create a widget (auth required)
+curl -X POST '${MCP_ENDPOINT}' \\
+  -H 'Content-Type: application/json' \\
+  -H 'Accept: application/json, text/event-stream' \\
+  -H 'Authorization: Bearer <your_jwt>' \\
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 2,
+    "method": "tools/call",
+    "params": {
+      "name": "create_widget",
+      "arguments": {
+        "name": "WhatsApp Support",
+        "title": "Chat with us",
+        "button_text": "💬 WhatsApp",
+        "button_color": "#25D366",
+        "button_action": "https://wa.me/1234567890"
+      }
+    }
+  }'`,
+  },
+};
+
+function ClientConfigSection() {
+  const [activeTab, setActiveTab] = useState<ClientTab>('Cursor');
+  const cfg = CLIENT_CONFIGS[activeTab];
+
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay: 0.05 }}
+      className="border-b border-border/50 bg-background"
+    >
+      <div className="container mx-auto px-4 py-6 max-w-5xl">
+        <div className="flex items-center gap-2 mb-4">
+          <Settings2 className="w-4 h-4 text-primary" />
+          <h2 className="font-semibold text-sm text-foreground">Connect to AI Clients</h2>
+          <Badge variant="outline" className="text-[10px] font-mono ml-auto">Plug & Play</Badge>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">
+          Copy the config snippet for your AI client. Replace <code className="bg-muted px-1 rounded text-foreground">{'<your_jwt>'}</code> with your Widgetify JWT — sign in to the app and grab it from <code className="bg-muted px-1 rounded text-foreground">supabase.auth.getSession()</code>.
+        </p>
+
+        {/* Client tabs */}
+        <div className="flex gap-0 border border-border/60 rounded-xl overflow-hidden mb-0 w-fit">
+          {CLIENT_TABS.map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={cn(
+                'px-4 py-2 text-xs font-semibold transition-colors',
+                activeTab === tab
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground'
+              )}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.18 }}
+            className="mt-3 space-y-2"
+          >
+            <div className="flex items-center gap-2 flex-wrap">
+              <code className="text-[11px] bg-muted px-2 py-1 rounded border border-border font-mono text-muted-foreground">{cfg.filename}</code>
+              <p className="text-xs text-muted-foreground">{cfg.description}</p>
+            </div>
+            <CodeBlock code={cfg.code} language={cfg.language} />
+          </motion.div>
+        </AnimatePresence>
+
+        <div className="mt-3 rounded-lg bg-primary/8 border border-primary/20 p-3 text-xs text-foreground flex gap-2">
+          <BookOpen className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-primary" />
+          <span>
+            <strong>Tip:</strong> Use <code className="bg-muted px-1 rounded">list_widget_types</code> and <code className="bg-muted px-1 rounded">list_templates</code> without auth to explore available widgets. For creating or managing widgets, you need a JWT.
+          </span>
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
+// ─────────────────────────────────────────────
 // Page
 // ─────────────────────────────────────────────
 const MCPDocs: React.FC = () => {
@@ -648,6 +815,8 @@ curl -X POST '${MCP_ENDPOINT}' \\
           </details>
         </div>
       </section>
+
+      <ClientConfigSection />
 
       {/* Tools list */}
       <main className="container mx-auto px-4 py-8 max-w-5xl flex-grow">
