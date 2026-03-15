@@ -354,6 +354,41 @@ export type Database = {
         }
         Relationships: []
       }
+      lastset_link_clicks: {
+        Row: {
+          clicked_at: string
+          id: string
+          link_index: number
+          link_label: string
+          link_url: string
+          profile_id: string
+        }
+        Insert: {
+          clicked_at?: string
+          id?: string
+          link_index: number
+          link_label?: string
+          link_url?: string
+          profile_id: string
+        }
+        Update: {
+          clicked_at?: string
+          id?: string
+          link_index?: number
+          link_label?: string
+          link_url?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lastset_link_clicks_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "lastset_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lastset_profiles: {
         Row: {
           avatar_url: string | null
