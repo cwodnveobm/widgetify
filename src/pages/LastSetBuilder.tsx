@@ -237,7 +237,7 @@ export default function LastSetBuilder() {
             .then(({ data: clicks }) => {
               if (!clicks) return;
               const counts: Record<number, number> = {};
-              (clicks as { link_index: number }[]).forEach(c => {
+              (clicks as unknown as { link_index: number }[]).forEach(c => {
                 counts[c.link_index] = (counts[c.link_index] || 0) + 1;
               });
               setClickCounts(counts);
