@@ -427,15 +427,24 @@ export default function LastSetBuilder() {
                       <ExternalLink className="w-4 h-4 text-muted-foreground" />
                     </a>
                   </div>
-                  {/* View count badge */}
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50 w-fit">
-                    <span className="text-xs text-muted-foreground">👁</span>
-                    <span className="text-xs font-semibold text-foreground tabular-nums">
-                      {(profile.view_count ?? 0).toLocaleString()}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {(profile.view_count ?? 0) === 1 ? 'view' : 'views'}
-                    </span>
+                  {/* Stats row: views + total clicks */}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50">
+                      <span className="text-xs text-muted-foreground">👁</span>
+                      <span className="text-xs font-semibold text-foreground tabular-nums">
+                        {(profile.view_count ?? 0).toLocaleString()}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {(profile.view_count ?? 0) === 1 ? 'view' : 'views'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/50">
+                      <MousePointerClick className="w-3 h-3 text-muted-foreground" />
+                      <span className="text-xs font-semibold text-foreground tabular-nums">
+                        {Object.values(clickCounts).reduce((a, b) => a + b, 0).toLocaleString()}
+                      </span>
+                      <span className="text-xs text-muted-foreground">link clicks</span>
+                    </div>
                   </div>
                 </motion.div>
               )}
