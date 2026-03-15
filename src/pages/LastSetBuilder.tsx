@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Trash2, ExternalLink, Copy, Check, Save, Eye, EyeOff,
-  Sparkles, Link2, User, Palette, Globe, Lock, Upload, ArrowLeft,
+  Sparkles, Link2, User, Palette, Globe, Lock, ArrowLeft,
   GripVertical, Instagram, Twitter, Youtube, Github, Linkedin,
-  Music, ShoppingBag, Mail, Phone, Globe2, Camera, X
+  Music, ShoppingBag, Mail, Phone, Globe2, Camera, X, MousePointerClick
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
