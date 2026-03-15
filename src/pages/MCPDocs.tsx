@@ -2,7 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown, ChevronRight, Play, Copy, Check, Lock, Globe, Terminal,
-  Zap, BookOpen, Code2, AlertCircle, CheckCircle2, Loader2, ExternalLink
+  Zap, BookOpen, Code2, AlertCircle, CheckCircle2, Loader2, ExternalLink,
+  Settings2
 } from 'lucide-react';
 import { Navigation } from '@/components/Navigation';
 import { AuthModal } from '@/components/AuthModal';
