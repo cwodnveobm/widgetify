@@ -816,6 +816,8 @@ curl -X POST '${MCP_ENDPOINT}' \\
         </div>
       </section>
 
+      <ClientConfigSection />
+
       {/* Tools list */}
       <main className="container mx-auto px-4 py-8 max-w-5xl flex-grow">
         {/* Filters */}
