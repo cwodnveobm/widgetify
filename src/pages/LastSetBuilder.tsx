@@ -197,6 +197,8 @@ export default function LastSetBuilder() {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [usernameAvailable, setUsernameAvailable] = useState<boolean | null>(null);
+  // click counts keyed by link_index
+  const [clickCounts, setClickCounts] = useState<Record<number, number>>({});
   const [checkingUsername, setCheckingUsername] = useState(false);
   const usernameTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
