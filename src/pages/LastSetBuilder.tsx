@@ -172,7 +172,7 @@ function LivePreview({ profile }: { profile: LastSetProfile }) {
         {/* Watermark */}
         <div className="mt-8 text-center">
           <a
-            href="https://widgetify.lovable.app"
+            href="https://widgetifyai.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
             className={`text-xs ${subColor} hover:opacity-100 transition-opacity`}
