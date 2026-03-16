@@ -193,7 +193,7 @@ const TOOLS: MCPTool[] = [
       { name: 'links', type: 'array', required: false, description: 'Array of { label, url, icon? } link objects' },
     ],
     example: { jsonrpc: '2.0', id: 11, method: 'tools/call', params: { name: 'upsert_lastset_profile', arguments: { username: 'johndoe', display_name: 'John Doe', bio: 'Builder. Creator. Coffee addict.', theme: 'aurora', shape: 'pill', links: [{ label: 'My Website', url: 'https://johndoe.com', icon: 'Globe' }, { label: 'Twitter', url: 'https://twitter.com/johndoe', icon: 'Twitter' }] } } },
-    exampleResponse: { success: true, profile: { username: 'johndoe', display_name: 'John Doe', theme: 'aurora' }, public_url: 'https://widgetify.lovable.app/l/johndoe' },
+    exampleResponse: { success: true, profile: { username: 'johndoe', display_name: 'John Doe', theme: 'aurora' }, public_url: 'https://widgetifyai.vercel.app/l/johndoe' },
   },
   {
     name: 'list_ab_tests',
