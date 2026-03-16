@@ -775,7 +775,7 @@ const WidgetPreview: React.FC<WidgetPreviewProps> = ({ config }) => {
           </div>
         </div>
         <div className="bg-muted/50 border-t border-border p-2 text-center">
-          <a href="https://widgetify.lovable.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
+          <a href="https://widgetifyai.vercel.app" target="_blank" rel="noopener noreferrer" className="text-muted-foreground text-xs hover:text-foreground transition-colors">
             Powered by Widgetify
           </a>
         </div>
