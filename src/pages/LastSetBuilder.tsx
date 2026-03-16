@@ -358,7 +358,7 @@ export default function LastSetBuilder() {
     }
   };
 
-  const CANONICAL_BASE = 'https://widgetify.lovable.app';
+  const CANONICAL_BASE = 'https://widgetifyai.vercel.app';
   const shareUrl = `${CANONICAL_BASE}/l/${profile.username}`;
 
   const handleCopyLink = () => {
