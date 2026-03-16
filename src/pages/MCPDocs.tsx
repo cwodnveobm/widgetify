@@ -163,7 +163,7 @@ const TOOLS: MCPTool[] = [
       { name: 'widget_id', type: 'string', required: true, description: 'UUID of the widget' },
     ],
     example: { jsonrpc: '2.0', id: 9, method: 'tools/call', params: { name: 'generate_widget_code', arguments: { widget_id: 'your-widget-uuid' } } },
-    exampleResponse: { widget_id: 'uuid', widget_name: 'Support Chat', preview_url: 'https://widgetify.lovable.app/?widget=uuid', embed_code: '<script>/* ... */</script>', instructions: 'Paste embed_code before </body> on any HTML page.' },
+    exampleResponse: { widget_id: 'uuid', widget_name: 'Support Chat', preview_url: 'https://widgetifyai.vercel.app/?widget=uuid', embed_code: '<script>/* ... */</script>', instructions: 'Paste embed_code before </body> on any HTML page.' },
   },
   {
     name: 'get_lastset_profile',
