@@ -580,7 +580,7 @@ mcp.tool("get_lastset_profile", {
       .eq("is_public", true)
       .single();
     if (error || !data) return errResult("Profile not found or is private.");
-    const appUrl = "https://widgetify.lovable.app";
+    const appUrl = "https://widgetifyai.vercel.app";
     return {
       content: [
         {
