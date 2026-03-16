@@ -4897,7 +4897,7 @@ Sent via ${contactBusinessName} Contact Form\`;
             <div class="ls-links">
               ${linksHtml}
             </div>
-            ${removeBranding ? '' : '<div class="ls-watermark"><a href="https://widgetify.lovable.app" target="_blank">Built with Widgetify LastSet</a></div>'}
+            ${removeBranding ? '' : '<div class="ls-watermark"><a href="https://widgetifyai.vercel.app" target="_blank">Built with Widgetify LastSet</a></div>'}
           </div>
         </div>`;
     }

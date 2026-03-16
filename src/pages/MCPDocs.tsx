@@ -851,7 +851,7 @@ curl -X POST '${MCP_ENDPOINT}' \\
             {filtered.length} tool{filtered.length !== 1 ? 's' : ''} {selectedCategory !== 'All' ? `in ${selectedCategory}` : ''}
           </h2>
           <a
-            href="https://widgetify.lovable.app"
+            href="https://widgetifyai.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-primary hover:underline flex items-center gap-1"

@@ -667,7 +667,7 @@ mcp.tool("upsert_lastset_profile", {
       .select()
       .single();
     if (error) return errResult(error.message);
-    const appUrl = "https://widgetify.lovable.app";
+    const appUrl = "https://widgetifyai.vercel.app";
     return {
       content: [
         {

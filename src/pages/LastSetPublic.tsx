@@ -278,7 +278,7 @@ export default function LastSetPublic() {
               className="mt-12 text-center"
             >
               <a
-                href="https://widgetify.lovable.app/lastset"
+                href="https://widgetifyai.vercel.app/lastset"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs transition-opacity hover:opacity-100"
