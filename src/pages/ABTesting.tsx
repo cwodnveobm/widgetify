@@ -24,6 +24,7 @@ import { ABTestAnalytics } from '@/components/ABTestAnalytics';
 import { SEOHead } from '@/components/SEOHead';
 import { StructuredData } from '@/components/StructuredData';
 import { usePersonalization } from '@/hooks/usePersonalization';
+import { useSubscription } from '@/hooks/useSubscription';
 
 const ABTesting: React.FC = () => {
   const { user } = useAuth();
