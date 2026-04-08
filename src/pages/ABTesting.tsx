@@ -52,6 +52,10 @@ const ABTesting: React.FC = () => {
       trackClick('ab-testing-auth-modal');
       return;
     }
+    if (!hasAccess('pro')) {
+      window.location.href = '/pricing';
+      return;
+    }
     setSelectedTest(null);
     setShowTestDialog(true);
     trackClick('ab-testing-create-test');
