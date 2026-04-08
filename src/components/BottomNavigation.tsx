@@ -1,11 +1,10 @@
-import { Home, Sparkles, HeadphonesIcon, CreditCard } from "lucide-react";
+import { Home, Sparkles, HeadphonesIcon } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { icon: Home, label: "Home", path: "/" },
   { icon: Sparkles, label: "Generate", path: "/generate" },
-  { icon: CreditCard, label: "Pricing", path: "/pricing" },
   { icon: HeadphonesIcon, label: "Support", path: "/support" },
 ];
 

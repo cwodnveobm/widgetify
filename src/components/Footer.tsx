@@ -35,8 +35,6 @@ const Footer: React.FC = () => {
     { to: '/', label: 'Home', isRoute: true },
     { to: '#widget-generator', label: 'Generate Widget', isRoute: false },
     { to: '#features', label: 'Features', isRoute: false },
-    { to: '/pricing', label: 'Pricing', isRoute: true },
-    { to: '/scripts', label: 'Script Library', isRoute: true },
     { to: '/faq', label: 'FAQ', isRoute: true },
   ];
 

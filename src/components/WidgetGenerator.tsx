@@ -18,7 +18,6 @@ import { useFavoriteWidgets } from '@/hooks/useFavoriteWidgets';
 import { AuthModal } from './AuthModal';
 import { FollowToUnlockModal } from './FollowToUnlockModal';
 import { usePersonalization } from '@/hooks/usePersonalization';
-import { useSubscription } from '@/hooks/useSubscription';
 import { useWidgetPersonalization } from '@/hooks/useWidgetPersonalization';
 import { useHyperPersonalization } from '@/hooks/useHyperPersonalization';
 import { SmartWidgetRecommendations } from './SmartWidgetRecommendations';
@@ -45,7 +44,6 @@ const WidgetGenerator: React.FC = () => {
   const { user } = useAuth();
   const { favorites, toggleFavorite, isFavorite } = useFavoriteWidgets();
   const { trackClick, trackWidgetGeneration } = usePersonalization();
-  const { hasAccess, plan: currentPlan } = useSubscription();
   const { getSmartDefaults, userProfile } = useWidgetPersonalization();
   const { 
     uiPersonalization, 
@@ -298,14 +296,10 @@ const WidgetGenerator: React.FC = () => {
   }, [finalConfig, exportFormat, config.type, toast, user, setAuthMode, setShowAuthModal, trackWidgetGeneration, trackClick]);
 
   const handlePremiumUpgrade = async () => {
-    if (!hasAccess('starter')) {
-      const { default: navigate } = await import('react-router-dom');
-      window.location.href = '/pricing';
-      return;
-    }
+    // Premium is always unlocked now - just show a toast
     toast({
-      title: "Premium Features Active!",
-      description: "All premium features are available on your plan.",
+      title: "Premium Unlocked!",
+      description: "All premium features are now available for free.",
     });
     setIsPremiumUnlocked(true);
     setSelectedTier('premium');
