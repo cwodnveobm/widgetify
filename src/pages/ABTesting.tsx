@@ -35,6 +35,7 @@ const ABTesting: React.FC = () => {
   const [showAnalytics, setShowAnalytics] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const { trackPageView, trackClick } = usePersonalization();
+  const { hasAccess } = useSubscription();
   const hasTrackedPageView = useRef(false);
 
   // Track page view on mount
