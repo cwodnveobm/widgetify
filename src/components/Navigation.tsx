@@ -7,7 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { DonateButton } from '@/components/DonateButton';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAdaptiveUI } from '@/hooks/useAdaptiveUI';
 import { AdaptiveButton } from '@/components/adaptive';
@@ -54,6 +54,7 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
     { to: '/faq', label: 'FAQ' },
     { to: '/support', label: 'Support' },
     { to: '/mcp-docs', label: 'MCP API' },
+    { to: '/pricing', label: 'Pricing' },
   ];
 
   return (
@@ -99,7 +100,7 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
         {/* Right Actions */}
         <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle />
-          <DonateButton variant="outline" size="sm" className="hidden sm:flex" />
+          
           
           {user ? (
             <DropdownMenu>
