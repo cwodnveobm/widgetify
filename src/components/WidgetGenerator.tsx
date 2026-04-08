@@ -298,10 +298,14 @@ const WidgetGenerator: React.FC = () => {
   }, [finalConfig, exportFormat, config.type, toast, user, setAuthMode, setShowAuthModal, trackWidgetGeneration, trackClick]);
 
   const handlePremiumUpgrade = async () => {
-    // Premium is always unlocked now - just show a toast
+    if (!hasAccess('starter')) {
+      const { default: navigate } = await import('react-router-dom');
+      window.location.href = '/pricing';
+      return;
+    }
     toast({
-      title: "Premium Unlocked!",
-      description: "All premium features are now available for free.",
+      title: "Premium Features Active!",
+      description: "All premium features are available on your plan.",
     });
     setIsPremiumUnlocked(true);
     setSelectedTier('premium');
