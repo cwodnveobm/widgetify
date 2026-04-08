@@ -99,7 +99,8 @@ const Support: React.FC = () => {
                 <h3 className="text-base sm:text-lg font-medium mb-2">Is there a cost to use Widgetify?</h3>
                 <p className="text-muted-foreground text-sm sm:text-base">
                   Widgetify offers a free plan with basic features. For advanced customization and
-                  additional features, we offer premium plans starting at ₹99/month.
+                  additional features, we offer premium plans. You can support our development by making
+                  a donation.
                 </p>
               </div>
               

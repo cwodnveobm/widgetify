@@ -18,7 +18,7 @@ import CustomBuilder from "./pages/CustomBuilder";
 import ABTesting from "./pages/ABTesting";
 import FAQ from "./pages/FAQ";
 import Marketplace from "./pages/Marketplace";
-import Pricing from "./pages/Pricing";
+import SupportersWall from "./pages/SupportersWall";
 import ReferralDashboard from "./pages/ReferralDashboard";
 import CreatorPortal from "./pages/CreatorPortal";
 import AdminPanel from "./pages/AdminPanel";
@@ -93,7 +93,7 @@ const App = () => {
                     <Route path="/ab-testing" element={<ABTesting />} />
                     <Route path="/faq" element={<FAQ />} />
                     <Route path="/marketplace" element={<Marketplace />} />
-                    <Route path="/pricing" element={<Pricing />} />
+                    <Route path="/supporters" element={<SupportersWall />} />
                     <Route path="/referrals" element={<ReferralDashboard />} />
                     <Route path="/creators" element={<CreatorPortal />} />
                     <Route path="/admin" element={<AdminPanel />} />

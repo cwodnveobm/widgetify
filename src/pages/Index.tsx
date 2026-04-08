@@ -7,7 +7,9 @@ import PromoPopup from '@/components/PromoPopup';
 import StoreLinkAd from '@/components/StoreLinkAd';
 import BottomNavigation from '@/components/BottomNavigation';
 import FloatingActionButton from '@/components/FloatingActionButton';
+import FloatingDonateButton from '@/components/FloatingDonateButton';
 import { QuizGenerator } from '@/components/QuizGenerator';
+import { DonationBanner } from '@/components/DonationBanner';
 import { PersonalizedHero } from '@/components/PersonalizedHero';
 import { PersonalizedCTA } from '@/components/PersonalizedCTA';
 import { PersonalizedRecommendations } from '@/components/PersonalizedRecommendations';
@@ -174,6 +176,7 @@ const Index: React.FC = () => {
       
       {/* Mobile Navigation Components */}
       <FloatingActionButton />
+      <FloatingDonateButton />
       <BottomNavigation />
       
       {/* Auth Modal */}
@@ -212,6 +215,9 @@ const Index: React.FC = () => {
           onSelectWidget={handleOnboardingWidgetSelect}
         />
       )}
+      
+      {/* Smart Donation Banner - shows after engagement */}
+      <DonationBanner variant="floating" />
       
       {/* Real-Time Behavior Smart Nudge System */}
       <SmartNudgeSystem />
