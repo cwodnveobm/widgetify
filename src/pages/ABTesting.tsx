@@ -24,6 +24,7 @@ import { ABTestAnalytics } from '@/components/ABTestAnalytics';
 import { SEOHead } from '@/components/SEOHead';
 import { StructuredData } from '@/components/StructuredData';
 import { usePersonalization } from '@/hooks/usePersonalization';
+import { useSubscription } from '@/hooks/useSubscription';
 
 const ABTesting: React.FC = () => {
   const { user } = useAuth();
@@ -34,6 +35,7 @@ const ABTesting: React.FC = () => {
   const [showAnalytics, setShowAnalytics] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const { trackPageView, trackClick } = usePersonalization();
+  const { hasAccess } = useSubscription();
   const hasTrackedPageView = useRef(false);
 
   // Track page view on mount
@@ -48,6 +50,10 @@ const ABTesting: React.FC = () => {
     if (!user) {
       setShowAuthModal(true);
       trackClick('ab-testing-auth-modal');
+      return;
+    }
+    if (!hasAccess('pro')) {
+      window.location.href = '/pricing';
       return;
     }
     setSelectedTest(null);
