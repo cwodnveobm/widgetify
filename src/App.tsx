@@ -101,6 +101,7 @@ const App = () => {
                     <Route path="/lastset" element={<LastSetBuilder />} />
                     <Route path="/l/:username" element={<LastSetPublic />} />
                     <Route path="/mcp-docs" element={<MCPDocs />} />
+                    <Route path="/scripts" element={<ScriptLibrary />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
