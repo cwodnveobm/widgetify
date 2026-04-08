@@ -18,6 +18,7 @@ import { useFavoriteWidgets } from '@/hooks/useFavoriteWidgets';
 import { AuthModal } from './AuthModal';
 import { FollowToUnlockModal } from './FollowToUnlockModal';
 import { usePersonalization } from '@/hooks/usePersonalization';
+import { useSubscription } from '@/hooks/useSubscription';
 import { useWidgetPersonalization } from '@/hooks/useWidgetPersonalization';
 import { useHyperPersonalization } from '@/hooks/useHyperPersonalization';
 import { SmartWidgetRecommendations } from './SmartWidgetRecommendations';
