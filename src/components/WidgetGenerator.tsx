@@ -45,6 +45,7 @@ const WidgetGenerator: React.FC = () => {
   const { user } = useAuth();
   const { favorites, toggleFavorite, isFavorite } = useFavoriteWidgets();
   const { trackClick, trackWidgetGeneration } = usePersonalization();
+  const { hasAccess, plan: currentPlan } = useSubscription();
   const { getSmartDefaults, userProfile } = useWidgetPersonalization();
   const { 
     uiPersonalization, 
