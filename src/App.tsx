@@ -25,6 +25,7 @@ import AdminPanel from "./pages/AdminPanel";
 import LastSetBuilder from "./pages/LastSetBuilder";
 import LastSetPublic from "./pages/LastSetPublic";
 import MCPDocs from "./pages/MCPDocs";
+import ScriptLibrary from "./pages/ScriptLibrary";
 
 const queryClient = new QueryClient({
   defaultOptions: {
