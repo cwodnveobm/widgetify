@@ -30,6 +30,7 @@ import { useReferralTracking } from '@/hooks/useReferralTracking';
 import { WifiOff } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { AuthModal } from '@/components/AuthModal';
+import { useRazorpay } from '@/hooks/useRazorpay';
 import type { WidgetType } from '@/types';
 
 const Index: React.FC = () => {
