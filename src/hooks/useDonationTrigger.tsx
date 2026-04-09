@@ -202,9 +202,10 @@ export const useDonationTrigger = () => {
     }
   }, [behavior.timeOnSite, shouldTrigger, selectTrigger]);
 
-  const handleDonate = useCallback(() => {
+  const handleDonate = useCallback((amount?: number) => {
     localStorage.setItem('widgetify_last_donate_click', Date.now().toString());
-    window.open('https://razorpay.me/@adnan4402', '_blank', 'noopener,noreferrer');
+    // Dispatch custom event so the component using this hook can call useRazorpay
+    window.dispatchEvent(new CustomEvent('widgetify:donate', { detail: { amount: amount || 49 } }));
     setShowDonationModal(false);
   }, []);
 
