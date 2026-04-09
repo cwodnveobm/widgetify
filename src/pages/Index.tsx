@@ -46,9 +46,25 @@ const Index: React.FC = () => {
   const { shouldShowOnboarding, extendedProfile, uiPersonalization } = useHyperPersonalization();
   const { trackClick: trackBehaviorClick, psychologicalProfile } = useRealTimeBehavior();
   const isMobile = useIsMobile();
+  const { initiatePayment } = useRazorpay();
   
   // Track referral code from URL
   useReferralTracking();
+
+  // Listen for donation events from banner/trigger
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const amount = (e as CustomEvent).detail?.amount || 49;
+      initiatePayment({
+        amount,
+        purpose: 'donation',
+        metadata: { display_name: user?.email?.split('@')[0] || 'Supporter', is_public: true },
+        prefill: { email: user?.email || '' },
+      });
+    };
+    window.addEventListener('widgetify:donate', handler);
+    return () => window.removeEventListener('widgetify:donate', handler);
+  }, [initiatePayment, user]);
 
   // Track page view on mount (only once)
   useEffect(() => {
