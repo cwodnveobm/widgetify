@@ -1,9 +1,16 @@
 import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useRazorpay } from "@/hooks/useRazorpay";
 
 const FloatingDonateButton = () => {
+  const { initiatePayment } = useRazorpay();
+
   const handleDonate = () => {
-    window.open('https://razorpay.me/@adnan4402', '_blank', 'noopener,noreferrer');
+    initiatePayment({
+      amount: 49,
+      purpose: 'donation',
+      metadata: { display_name: 'Supporter', is_public: true },
+    });
   };
 
   return (

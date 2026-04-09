@@ -59,7 +59,7 @@ export const DonationBanner: React.FC<DonationBannerProps> = ({
 
   const handleDonate = () => {
     localStorage.setItem('widgetify_last_donate_click', Date.now().toString());
-    window.open('https://razorpay.me/@adnan4402', '_blank', 'noopener,noreferrer');
+    window.dispatchEvent(new CustomEvent('widgetify:donate', { detail: { amount: 49 } }));
   };
 
   const currentMessage = MESSAGES[messageIndex];

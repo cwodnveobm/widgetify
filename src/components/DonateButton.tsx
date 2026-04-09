@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Heart } from 'lucide-react';
+import { useRazorpay } from '@/hooks/useRazorpay';
 
 interface DonateButtonProps {
   variant?: 'default' | 'outline' | 'ghost';
@@ -17,8 +18,14 @@ export const DonateButton: React.FC<DonateButtonProps> = ({
   showIcon = true,
   showText = true,
 }) => {
+  const { initiatePayment } = useRazorpay();
+
   const handleDonate = () => {
-    window.open('https://razorpay.me/@adnan4402', '_blank', 'noopener,noreferrer');
+    initiatePayment({
+      amount: 49,
+      purpose: 'donation',
+      metadata: { display_name: 'Supporter', is_public: true },
+    });
   };
 
   return (
