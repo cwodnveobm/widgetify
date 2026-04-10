@@ -25,6 +25,8 @@ import AdminPanel from "./pages/AdminPanel";
 import LastSetBuilder from "./pages/LastSetBuilder";
 import LastSetPublic from "./pages/LastSetPublic";
 import MCPDocs from "./pages/MCPDocs";
+import Dashboard from "./pages/Dashboard";
+import PaymentHistory from "./pages/PaymentHistory";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -100,6 +102,8 @@ const App = () => {
                     <Route path="/lastset" element={<LastSetBuilder />} />
                     <Route path="/l/:username" element={<LastSetPublic />} />
                     <Route path="/mcp-docs" element={<MCPDocs />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/payment-history" element={<PaymentHistory />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
