@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Sparkles, User, LogOut } from 'lucide-react';
+import { Menu, X, Sparkles, User, LogOut, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { DonateButton } from '@/components/DonateButton';
+import { SubscriptionModal } from '@/components/SubscriptionModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAdaptiveUI } from '@/hooks/useAdaptiveUI';
 import { AdaptiveButton } from '@/components/adaptive';
