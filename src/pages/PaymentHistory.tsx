@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
-import { Footer } from '@/components/Footer';
+import Footer from '@/components/Footer';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -192,7 +192,7 @@ const PaymentHistory = () => {
       </main>
 
       <Footer />
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} defaultMode={authMode} />
+      <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} mode={authMode} />
     </div>
   );
 };

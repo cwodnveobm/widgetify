@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
-import { Footer } from '@/components/Footer';
+import Footer from '@/components/Footer';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { useReferrals } from '@/hooks/useReferrals';
@@ -277,9 +277,9 @@ const Dashboard = () => {
         onAuthRequired={() => { setAuthMode('signup'); setAuthModalOpen(true); }}
       />
       <AuthModal
-        isOpen={authModalOpen}
+        open={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
-        defaultMode={authMode}
+        mode={authMode}
       />
     </div>
   );
