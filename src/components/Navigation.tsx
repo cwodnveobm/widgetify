@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Sparkles, User, LogOut } from 'lucide-react';
+import { Menu, X, Sparkles, User, LogOut, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
+import { useSubscription } from '@/hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { DonateButton } from '@/components/DonateButton';
+import { SubscriptionModal } from '@/components/SubscriptionModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAdaptiveUI } from '@/hooks/useAdaptiveUI';
 import { AdaptiveButton } from '@/components/adaptive';
@@ -26,7 +28,9 @@ interface NavigationProps {
 
 export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [subscriptionOpen, setSubscriptionOpen] = useState(false);
   const { user } = useAuth();
+  const { isPremium } = useSubscription();
   const isMobile = useIsMobile();
   const location = useLocation();
   const { config, classes } = useAdaptiveUI();
@@ -100,6 +104,17 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
         <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle />
           <DonateButton variant="outline" size="sm" className="hidden sm:flex" />
+          {!isPremium && (
+            <Button
+              variant="default"
+              size="sm"
+              className="hidden sm:flex gap-1.5"
+              onClick={() => setSubscriptionOpen(true)}
+            >
+              <Crown className="w-3.5 h-3.5" />
+              Subscribe
+            </Button>
+          )}
           
           {user ? (
             <DropdownMenu>
@@ -221,6 +236,12 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
           )}
         </AnimatePresence>
       )}
+
+      <SubscriptionModal
+        open={subscriptionOpen}
+        onOpenChange={setSubscriptionOpen}
+        onAuthRequired={() => onAuthModalOpen?.('signup')}
+      />
     </header>
   );
 };

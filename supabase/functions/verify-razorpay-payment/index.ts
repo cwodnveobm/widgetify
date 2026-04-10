@@ -84,10 +84,9 @@ Deno.serve(async (req) => {
         Deno.env.get("SUPABASE_ANON_KEY")!,
         { global: { headers: { Authorization: authHeader } } }
       );
-      const token = authHeader.replace("Bearer ", "");
-      const { data } = await supabaseUser.auth.getClaims(token);
-      if (data?.claims) {
-        userId = data.claims.sub as string;
+      const { data: { user } } = await supabaseUser.auth.getUser();
+      if (user) {
+        userId = user.id;
       }
     }
 
