@@ -104,6 +104,17 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
         <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle />
           <DonateButton variant="outline" size="sm" className="hidden sm:flex" />
+          {!isPremium && (
+            <Button
+              variant="default"
+              size="sm"
+              className="hidden sm:flex gap-1.5"
+              onClick={() => setSubscriptionOpen(true)}
+            >
+              <Crown className="w-3.5 h-3.5" />
+              Subscribe
+            </Button>
+          )}
           
           {user ? (
             <DropdownMenu>
