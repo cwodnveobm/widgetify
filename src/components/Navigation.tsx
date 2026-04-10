@@ -236,6 +236,12 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
           )}
         </AnimatePresence>
       )}
+
+      <SubscriptionModal
+        open={subscriptionOpen}
+        onOpenChange={setSubscriptionOpen}
+        onAuthRequired={() => onAuthModalOpen?.('signup')}
+      />
     </header>
   );
 };
