@@ -61,7 +61,7 @@ const webApplicationSchema = {
     "No Coding Required",
     "Mobile Responsive"
   ],
-  "screenshot": "https://widgetifyai.vercel.app/og-image.jpg",
+  "screenshot": "https://widgetify.lovable.app/og-image.jpg",
   "softwareVersion": "2.0",
   "aggregateRating": {
     "@type": "AggregateRating",
