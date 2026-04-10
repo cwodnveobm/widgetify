@@ -28,7 +28,9 @@ interface NavigationProps {
 
 export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [subscriptionOpen, setSubscriptionOpen] = useState(false);
   const { user } = useAuth();
+  const { isPremium } = useSubscription();
   const isMobile = useIsMobile();
   const location = useLocation();
   const { config, classes } = useAdaptiveUI();
