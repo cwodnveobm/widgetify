@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Navigation } from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -13,11 +13,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import {
   Crown, User, CreditCard, Users, History,
   Copy, LogOut, Shield, Sparkles, ArrowRight,
-  TrendingUp, Gift, ExternalLink,
+  TrendingUp, Gift, ExternalLink, Camera, Pencil, Save, X,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -34,7 +36,14 @@ const Dashboard = () => {
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [subscriptionOpen, setSubscriptionOpen] = useState(false);
-  const [profile, setProfile] = useState<{ full_name: string | null; email: string } | null>(null);
+  const [profile, setProfile] = useState<{ full_name: string | null; email: string; avatar_url: string | null } | null>(null);
+
+  // Profile editing state
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -46,13 +55,80 @@ const Dashboard = () => {
     if (!user) return;
     supabase
       .from('profiles')
-      .select('full_name, email')
+      .select('full_name, email, avatar_url')
       .eq('user_id', user.id)
       .maybeSingle()
       .then(({ data }) => {
-        setProfile(data || { full_name: null, email: user.email || '' });
+        const p = data || { full_name: null, email: user.email || '', avatar_url: null };
+        setProfile(p);
+        setEditName(p.full_name || '');
       });
   }, [user]);
+
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    setSaving(true);
+    const { error } = await supabase
+      .from('profiles')
+      .update({ full_name: editName.trim() || null })
+      .eq('user_id', user.id);
+
+    if (error) {
+      toast.error('Failed to update profile');
+    } else {
+      setProfile((prev) => prev ? { ...prev, full_name: editName.trim() || null } : prev);
+      toast.success('Profile updated');
+      setIsEditing(false);
+    }
+    setSaving(false);
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Image must be under 2MB');
+      return;
+    }
+
+    setUploading(true);
+    const ext = file.name.split('.').pop();
+    const filePath = `${user.id}/avatar.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('lastset-avatars')
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) {
+      toast.error('Upload failed');
+      setUploading(false);
+      return;
+    }
+
+    const { data: urlData } = supabase.storage
+      .from('lastset-avatars')
+      .getPublicUrl(filePath);
+
+    const avatarUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ avatar_url: avatarUrl })
+      .eq('user_id', user.id);
+
+    if (updateError) {
+      toast.error('Failed to save avatar');
+    } else {
+      setProfile((prev) => prev ? { ...prev, avatar_url: avatarUrl } : prev);
+      toast.success('Avatar updated');
+    }
+    setUploading(false);
+  };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -83,11 +159,37 @@ const Dashboard = () => {
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
         >
-          <div>
-            <h1 className="text-2xl font-bold">Dashboard</h1>
-            <p className="text-muted-foreground text-sm">
-              Welcome back, {profile?.full_name || user.email}
-            </p>
+          <div className="flex items-center gap-4">
+            {/* Avatar */}
+            <div className="relative group">
+              <div className="w-14 h-14 rounded-full bg-muted border-2 border-border overflow-hidden flex items-center justify-center">
+                {profile?.avatar_url ? (
+                  <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <User className="w-6 h-6 text-muted-foreground" />
+                )}
+              </div>
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+              >
+                <Camera className="w-4 h-4 text-white" />
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarUpload}
+              />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold">Dashboard</h1>
+              <p className="text-muted-foreground text-sm">
+                Welcome back, {profile?.full_name || user.email}
+              </p>
+            </div>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" asChild>
@@ -240,10 +342,28 @@ const Dashboard = () => {
         {/* Account */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <User className="w-4 h-4" />
-              Account
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base flex items-center gap-2">
+                <User className="w-4 h-4" />
+                Account
+              </CardTitle>
+              {!isEditing ? (
+                <Button variant="ghost" size="sm" onClick={() => setIsEditing(true)} className="gap-1.5">
+                  <Pencil className="w-3.5 h-3.5" />
+                  Edit
+                </Button>
+              ) : (
+                <div className="flex gap-1">
+                  <Button variant="ghost" size="sm" onClick={() => { setIsEditing(false); setEditName(profile?.full_name || ''); }}>
+                    <X className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button size="sm" onClick={handleSaveProfile} disabled={saving} className="gap-1.5">
+                    <Save className="w-3.5 h-3.5" />
+                    Save
+                  </Button>
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="flex justify-between text-sm">
@@ -251,9 +371,18 @@ const Dashboard = () => {
               <span>{user.email}</span>
             </div>
             <Separator />
-            <div className="flex justify-between text-sm">
+            <div className="flex justify-between text-sm items-center">
               <span className="text-muted-foreground">Name</span>
-              <span>{profile?.full_name || '—'}</span>
+              {isEditing ? (
+                <Input
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-48 h-8 text-sm"
+                  placeholder="Your name"
+                />
+              ) : (
+                <span>{profile?.full_name || '—'}</span>
+              )}
             </div>
             <Separator />
             <div className="flex justify-between text-sm">
