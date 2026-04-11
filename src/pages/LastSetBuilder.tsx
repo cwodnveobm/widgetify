@@ -476,7 +476,7 @@ export default function LastSetBuilder() {
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-destructive">✗ taken</span>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground">widgetifyai.vercel.app/l/{profile.username || 'yourname'}</p>
+                  <p className="text-xs text-muted-foreground">widgetify.lovable.app/l/{profile.username || 'yourname'}</p>
                 </div>
 
                 <div className="space-y-1.5">
