@@ -218,7 +218,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
     if (removeBranding) return '';
     return `
           <div class="widgetify-watermark"${customStyle ? ` style="${customStyle}"` : ''}>
-             <a href="https://widgetifyai.vercel.app" target="_blank">Powered by Widgetify</a>
+             <a href="https://widgetify.lovable.app" target="_blank">Powered by Widgetify</a>
           </div>`;
   };
   
@@ -874,7 +874,7 @@ export const generateWidgetCode = (config: WidgetConfig): string => {
             </form>
             ${!removeBranding ? `
             <div class="lead-popup-footer">
-              <a href="https://widgetifyai.vercel.app" target="_blank">Powered by Widgetify</a>
+              <a href="https://widgetify.lovable.app" target="_blank">Powered by Widgetify</a>
             </div>` : ''}
           </div>
         </div>
@@ -4192,7 +4192,7 @@ Sent via ${contactBusinessName} Contact Form\`;
           </div>
           ${removeBranding ? '' : `
           <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e5e7eb; text-align: center;">
-            <a href="https://widgetifyai.vercel.app" target="_blank" style="color: #9ca3af; text-decoration: none; font-size: 10px;">Powered by Widgetify</a>
+            <a href="https://widgetify.lovable.app" target="_blank" style="color: #9ca3af; text-decoration: none; font-size: 10px;">Powered by Widgetify</a>
           </div>`}
         </div>
 
@@ -4897,7 +4897,7 @@ Sent via ${contactBusinessName} Contact Form\`;
             <div class="ls-links">
               ${linksHtml}
             </div>
-            ${removeBranding ? '' : '<div class="ls-watermark"><a href="https://widgetifyai.vercel.app" target="_blank">Built with Widgetify LastSet</a></div>'}
+            ${removeBranding ? '' : '<div class="ls-watermark"><a href="https://widgetify.lovable.app" target="_blank">Built with Widgetify LastSet</a></div>'}
           </div>
         </div>`;
     }

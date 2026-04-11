@@ -84,7 +84,7 @@ const Footer: React.FC = () => {
             )}
             
             <div className="mt-4 flex flex-col gap-3 items-center md:items-start">
-              <a href="https://widgetifyai.vercel.app/" target="_blank" rel="noopener noreferrer" className="inline-block">
+              <a href="https://widgetify.lovable.app/" target="_blank" rel="noopener noreferrer" className="inline-block">
                 <img 
                   src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=961430&theme=light&t=1746523667957" 
                   alt="Widgetify - Chat widgets | Product Hunt" 
