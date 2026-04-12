@@ -18,7 +18,7 @@ import CustomBuilder from "./pages/CustomBuilder";
 import ABTesting from "./pages/ABTesting";
 import FAQ from "./pages/FAQ";
 import Marketplace from "./pages/Marketplace";
-import SupportersWall from "./pages/SupportersWall";
+
 import ReferralDashboard from "./pages/ReferralDashboard";
 import CreatorPortal from "./pages/CreatorPortal";
 import AdminPanel from "./pages/AdminPanel";
