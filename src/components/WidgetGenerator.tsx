@@ -2437,16 +2437,6 @@ const WidgetGenerator: React.FC = () => {
           handleConfigChange('removeBranding', true);
         }}
       />
-      
-      {/* Donation Modal */}
-      <DonationModal
-        isOpen={showDonationModal}
-        trigger={currentTrigger}
-        appreciationMessage={appreciationMessage}
-        onDonate={handleDonate}
-        onDismiss={handleDismiss}
-        onMaybeLater={handleMaybeLater}
-      />
     </AdaptiveSection>
   );
 };
