@@ -53,7 +53,6 @@ const WidgetGenerator: React.FC = () => {
   } = useHyperPersonalization();
   const { config: adaptiveConfig, classes, shouldShowElement, isVibrantMode } = useAdaptiveUI();
   const [showPreview, setShowPreview] = useState(!isMobile);
-  const [showPreview, setShowPreview] = useState(!isMobile);
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(true); // Always unlocked now
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
