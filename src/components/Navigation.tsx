@@ -102,7 +102,7 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
         {/* Right Actions */}
         <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle />
-          <DonateButton variant="outline" size="sm" className="hidden sm:flex" />
+          
           {!isPremium && (
             <Button
               variant="default"
