@@ -18,8 +18,6 @@ import { useFavoriteWidgets } from '@/hooks/useFavoriteWidgets';
 import { AuthModal } from './AuthModal';
 import { FollowToUnlockModal } from './FollowToUnlockModal';
 import { usePersonalization } from '@/hooks/usePersonalization';
-import { useDonationTrigger } from '@/hooks/useDonationTrigger';
-import { DonationModal } from './DonationModal';
 import { useWidgetPersonalization } from '@/hooks/useWidgetPersonalization';
 import { useHyperPersonalization } from '@/hooks/useHyperPersonalization';
 import { SmartWidgetRecommendations } from './SmartWidgetRecommendations';
@@ -54,15 +52,6 @@ const WidgetGenerator: React.FC = () => {
     formatMessage 
   } = useHyperPersonalization();
   const { config: adaptiveConfig, classes, shouldShowElement, isVibrantMode } = useAdaptiveUI();
-  const {
-    showDonationModal,
-    currentTrigger,
-    appreciationMessage,
-    onWidgetGenerated,
-    handleDonate,
-    handleDismiss,
-    handleMaybeLater
-  } = useDonationTrigger();
   const [showPreview, setShowPreview] = useState(!isMobile);
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
   const [isPremiumUnlocked, setIsPremiumUnlocked] = useState(true); // Always unlocked now
@@ -295,9 +284,8 @@ const WidgetGenerator: React.FC = () => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       
-      // Track widget generation for personalization and donation triggers
+      // Track widget generation for personalization
       trackWidgetGeneration();
-      onWidgetGenerated(); // Trigger donation modal check
       trackClick(`widget-download-${config.type}`);
       
       toast({
@@ -2448,16 +2436,6 @@ const WidgetGenerator: React.FC = () => {
           setBrandingUnlockedViaFollow(true);
           handleConfigChange('removeBranding', true);
         }}
-      />
-      
-      {/* Donation Modal */}
-      <DonationModal
-        isOpen={showDonationModal}
-        trigger={currentTrigger}
-        appreciationMessage={appreciationMessage}
-        onDonate={handleDonate}
-        onDismiss={handleDismiss}
-        onMaybeLater={handleMaybeLater}
       />
     </AdaptiveSection>
   );
