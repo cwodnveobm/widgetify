@@ -19,7 +19,6 @@ import { AuthModal } from './AuthModal';
 import { FollowToUnlockModal } from './FollowToUnlockModal';
 import { usePersonalization } from '@/hooks/usePersonalization';
 import { useWidgetPersonalization } from '@/hooks/useWidgetPersonalization';
-import { useWidgetPersonalization } from '@/hooks/useWidgetPersonalization';
 import { useHyperPersonalization } from '@/hooks/useHyperPersonalization';
 import { SmartWidgetRecommendations } from './SmartWidgetRecommendations';
 import { PersonalizationGuidance } from './PersonalizationGuidance';
@@ -53,7 +52,6 @@ const WidgetGenerator: React.FC = () => {
     formatMessage 
   } = useHyperPersonalization();
   const { config: adaptiveConfig, classes, shouldShowElement, isVibrantMode } = useAdaptiveUI();
-
   const [showPreview, setShowPreview] = useState(!isMobile);
   const [showPreview, setShowPreview] = useState(!isMobile);
   const [selectedTier, setSelectedTier] = useState<'free' | 'premium'>('free');
@@ -287,9 +285,8 @@ const WidgetGenerator: React.FC = () => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
       
-      // Track widget generation for personalization and donation triggers
+      // Track widget generation for personalization
       trackWidgetGeneration();
-      onWidgetGenerated(); // Trigger donation modal check
       trackClick(`widget-download-${config.type}`);
       
       toast({
