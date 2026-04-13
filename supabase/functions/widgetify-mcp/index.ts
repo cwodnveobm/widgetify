@@ -800,6 +800,188 @@ mcp.tool("get_subscription_status", {
   },
 });
 
+// ── list_webhooks ────────────────────────────────────────────────────────────
+mcp.tool("list_webhooks", {
+  description:
+    "Lists all webhook subscriptions for the authenticated user. Webhooks receive POST notifications when widget events occur.",
+  inputSchema: {
+    type: "object",
+    properties: {
+      jwt: { type: "string", description: "User JWT." },
+    },
+  },
+  handler: async ({ jwt: argJwt }: { jwt?: string }) => {
+    const jwt = getRequestJwt(argJwt);
+    if (!jwt) return errResult("Authentication required.");
+    const userId = await verifyJwt(jwt);
+    if (!userId) return errResult("Invalid JWT.");
+    const db = userClient(jwt);
+    const { data, error } = await db
+      .from("webhook_subscriptions")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+    if (error) return errResult(error.message);
+    return {
+      content: [
+        {
+          type: "text" as const,
+          text: JSON.stringify({ total: data?.length ?? 0, webhooks: data ?? [] }, null, 2),
+        },
+      ],
+    };
+  },
+});
+
+// ── create_webhook ──────────────────────────────────────────────────────────
+mcp.tool("create_webhook", {
+  description:
+    "Creates a webhook subscription. The provided URL will receive POST requests with a JSON body whenever subscribed events occur. A signing secret is auto-generated for HMAC verification.",
+  inputSchema: {
+    type: "object",
+    required: ["url", "event_types"],
+    properties: {
+      jwt: { type: "string" },
+      url: { type: "string", description: "HTTPS endpoint to receive webhook payloads." },
+      event_types: {
+        type: "array",
+        items: { type: "string" },
+        description:
+          "Events to subscribe to. Supported: widget.created, widget.updated, widget.deleted, profile.updated, ab_test.started, ab_test.completed",
+      },
+    },
+  },
+  handler: async ({
+    jwt: argJwt,
+    url,
+    event_types,
+  }: {
+    jwt?: string;
+    url: string;
+    event_types: string[];
+  }) => {
+    const jwt = getRequestJwt(argJwt);
+    if (!jwt) return errResult("Authentication required.");
+    const userId = await verifyJwt(jwt);
+    if (!userId) return errResult("Invalid JWT.");
+    if (!url.startsWith("https://")) return errResult("Webhook URL must use HTTPS.");
+    const validEvents = [
+      "widget.created", "widget.updated", "widget.deleted",
+      "profile.updated", "ab_test.started", "ab_test.completed",
+    ];
+    const invalid = event_types.filter((e) => !validEvents.includes(e));
+    if (invalid.length > 0) return errResult(`Invalid event types: ${invalid.join(", ")}. Valid: ${validEvents.join(", ")}`);
+    const db = userClient(jwt);
+    const { data, error } = await db
+      .from("webhook_subscriptions")
+      .insert({ user_id: userId, url, event_types })
+      .select()
+      .single();
+    if (error) return errResult(error.message);
+    return {
+      content: [
+        {
+          type: "text" as const,
+          text: JSON.stringify(
+            {
+              success: true,
+              message: "Webhook created. Store the signing secret securely — it won't be shown again in full.",
+              webhook: data,
+            },
+            null,
+            2
+          ),
+        },
+      ],
+    };
+  },
+});
+
+// ── update_webhook ──────────────────────────────────────────────────────────
+mcp.tool("update_webhook", {
+  description: "Updates an existing webhook subscription. Can change URL, event types, or active status.",
+  inputSchema: {
+    type: "object",
+    required: ["webhook_id"],
+    properties: {
+      jwt: { type: "string" },
+      webhook_id: { type: "string", description: "UUID of the webhook to update." },
+      url: { type: "string", description: "New HTTPS endpoint URL." },
+      event_types: { type: "array", items: { type: "string" }, description: "New event types." },
+      is_active: { type: "boolean", description: "Enable or disable the webhook." },
+    },
+  },
+  handler: async ({
+    jwt: argJwt,
+    webhook_id,
+    url,
+    event_types,
+    is_active,
+  }: {
+    jwt?: string;
+    webhook_id: string;
+    url?: string;
+    event_types?: string[];
+    is_active?: boolean;
+  }) => {
+    const jwt = getRequestJwt(argJwt);
+    if (!jwt) return errResult("Authentication required.");
+    const userId = await verifyJwt(jwt);
+    if (!userId) return errResult("Invalid JWT.");
+    if (url && !url.startsWith("https://")) return errResult("Webhook URL must use HTTPS.");
+    const updates: Record<string, unknown> = {};
+    if (url !== undefined) updates.url = url;
+    if (event_types !== undefined) updates.event_types = event_types;
+    if (is_active !== undefined) updates.is_active = is_active;
+    if (Object.keys(updates).length === 0) return errResult("No fields to update.");
+    const db = userClient(jwt);
+    const { data, error } = await db
+      .from("webhook_subscriptions")
+      .update(updates)
+      .eq("id", webhook_id)
+      .eq("user_id", userId)
+      .select()
+      .single();
+    if (error || !data) return errResult("Webhook not found or update failed.");
+    return {
+      content: [
+        { type: "text" as const, text: JSON.stringify({ success: true, message: "Webhook updated.", webhook: data }, null, 2) },
+      ],
+    };
+  },
+});
+
+// ── delete_webhook ──────────────────────────────────────────────────────────
+mcp.tool("delete_webhook", {
+  description: "Permanently deletes a webhook subscription. No further events will be delivered to the endpoint.",
+  inputSchema: {
+    type: "object",
+    required: ["webhook_id"],
+    properties: {
+      jwt: { type: "string" },
+      webhook_id: { type: "string", description: "UUID of the webhook to delete." },
+    },
+  },
+  handler: async ({ jwt: argJwt, webhook_id }: { jwt?: string; webhook_id: string }) => {
+    const jwt = getRequestJwt(argJwt);
+    if (!jwt) return errResult("Authentication required.");
+    const userId = await verifyJwt(jwt);
+    if (!userId) return errResult("Invalid JWT.");
+    const db = userClient(jwt);
+    const { error } = await db
+      .from("webhook_subscriptions")
+      .delete()
+      .eq("id", webhook_id)
+      .eq("user_id", userId);
+    if (error) return errResult(error.message);
+    return {
+      content: [
+        { type: "text" as const, text: JSON.stringify({ success: true, message: `Webhook ${webhook_id} deleted.` }) },
+      ],
+    };
+  },
+});
+
 // ---------------------------------------------------------------------------
 // Hono app + transport
 // ---------------------------------------------------------------------------
