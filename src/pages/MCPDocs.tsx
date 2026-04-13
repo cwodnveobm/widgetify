@@ -230,6 +230,57 @@ const TOOLS: MCPTool[] = [
     example: { jsonrpc: '2.0', id: 14, method: 'tools/call', params: { name: 'get_subscription_status', arguments: {} } },
     exampleResponse: { has_active_subscription: true, plan: 'pro', subscription: { plan_type: 'pro', status: 'active', start_date: '2026-01-01', amount: 999, currency: 'INR' } },
   },
+  {
+    name: 'list_webhooks',
+    description: "Lists all webhook subscriptions for the authenticated user. Webhooks receive POST notifications when widget events occur.",
+    requiresAuth: true,
+    category: 'Webhooks',
+    params: [
+      { name: 'jwt', type: 'string', required: false, description: 'User JWT' },
+    ],
+    example: { jsonrpc: '2.0', id: 15, method: 'tools/call', params: { name: 'list_webhooks', arguments: {} } },
+    exampleResponse: { total: 1, webhooks: [{ id: 'uuid', url: 'https://example.com/webhook', event_types: ['widget.created'], is_active: true }] },
+  },
+  {
+    name: 'create_webhook',
+    description: "Creates a webhook subscription. The provided URL receives POST requests with a JSON body whenever subscribed events occur. A signing secret is auto-generated for HMAC verification.",
+    requiresAuth: true,
+    category: 'Webhooks',
+    params: [
+      { name: 'jwt', type: 'string', required: false, description: 'User JWT' },
+      { name: 'url', type: 'string', required: true, description: 'HTTPS endpoint to receive webhook payloads' },
+      { name: 'event_types', type: 'array', required: true, description: 'Events to subscribe to: widget.created, widget.updated, widget.deleted, profile.updated, ab_test.started, ab_test.completed' },
+    ],
+    example: { jsonrpc: '2.0', id: 16, method: 'tools/call', params: { name: 'create_webhook', arguments: { url: 'https://example.com/webhook', event_types: ['widget.created', 'widget.updated'] } } },
+    exampleResponse: { success: true, message: 'Webhook created.', webhook: { id: 'uuid', url: 'https://example.com/webhook', secret: 'hex-signing-secret', event_types: ['widget.created', 'widget.updated'], is_active: true } },
+  },
+  {
+    name: 'update_webhook',
+    description: "Updates an existing webhook subscription. Can change URL, event types, or active status.",
+    requiresAuth: true,
+    category: 'Webhooks',
+    params: [
+      { name: 'jwt', type: 'string', required: false, description: 'User JWT' },
+      { name: 'webhook_id', type: 'string', required: true, description: 'UUID of the webhook to update' },
+      { name: 'url', type: 'string', required: false, description: 'New HTTPS endpoint URL' },
+      { name: 'event_types', type: 'array', required: false, description: 'New event types array' },
+      { name: 'is_active', type: 'boolean', required: false, description: 'Enable or disable the webhook' },
+    ],
+    example: { jsonrpc: '2.0', id: 17, method: 'tools/call', params: { name: 'update_webhook', arguments: { webhook_id: 'your-webhook-uuid', is_active: false } } },
+    exampleResponse: { success: true, message: 'Webhook updated.', webhook: { id: 'uuid', is_active: false } },
+  },
+  {
+    name: 'delete_webhook',
+    description: "Permanently deletes a webhook subscription. No further events will be delivered to the endpoint.",
+    requiresAuth: true,
+    category: 'Webhooks',
+    params: [
+      { name: 'jwt', type: 'string', required: false, description: 'User JWT' },
+      { name: 'webhook_id', type: 'string', required: true, description: 'UUID of the webhook to delete' },
+    ],
+    example: { jsonrpc: '2.0', id: 18, method: 'tools/call', params: { name: 'delete_webhook', arguments: { webhook_id: 'your-webhook-uuid' } } },
+    exampleResponse: { success: true, message: 'Webhook your-webhook-uuid deleted.' },
+  },
 ];
 
 const CATEGORIES = ['All', ...Array.from(new Set(TOOLS.map(t => t.category)))];
@@ -240,6 +291,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   LastSet: 'bg-secondary/60 text-secondary-foreground border-secondary',
   'A/B Testing': 'bg-muted text-muted-foreground border-border',
   Account: 'bg-primary/10 text-primary border-primary/20',
+  Webhooks: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
 };
 
 // ─────────────────────────────────────────────
