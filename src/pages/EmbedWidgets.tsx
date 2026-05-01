@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Copy, Trash2, Plus, Code2, Activity } from "lucide-react";
-import Navigation from "@/components/Navigation";
+import { Navigation } from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 
@@ -98,12 +98,12 @@ export default function EmbedWidgets() {
     if (!user) return;
     const { data, error } = await supabase
       .from("embed_widgets")
-      .insert({
+      .insert([{
         user_id: user.id,
         name: newName.trim(),
         widget_type: newType,
-        config: DEFAULT_CONFIG[newType],
-      })
+        config: DEFAULT_CONFIG[newType] as never,
+      }])
       .select()
       .single();
     if (error) return toast.error(error.message);
@@ -117,7 +117,7 @@ export default function EmbedWidgets() {
   async function saveWidget(w: EmbedWidget) {
     const { error } = await supabase
       .from("embed_widgets")
-      .update({ name: w.name, config: w.config, is_active: w.is_active })
+      .update({ name: w.name, config: w.config as never, is_active: w.is_active })
       .eq("id", w.id);
     if (error) return toast.error(error.message);
     toast.success("Saved");
