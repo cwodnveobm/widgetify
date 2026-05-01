@@ -333,6 +333,77 @@ export type Database = {
         }
         Relationships: []
       }
+      embed_chat_sessions: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          messages: Json
+          session_id: string
+          updated_at: string
+          widget_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          messages?: Json
+          session_id: string
+          updated_at?: string
+          widget_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          messages?: Json
+          session_id?: string
+          updated_at?: string
+          widget_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "embed_chat_sessions_widget_id_fkey"
+            columns: ["widget_id"]
+            isOneToOne: false
+            referencedRelation: "embed_widgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      embed_widgets: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+          user_id: string
+          widget_type: Database["public"]["Enums"]["embed_widget_type"]
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+          user_id: string
+          widget_type: Database["public"]["Enums"]["embed_widget_type"]
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+          user_id?: string
+          widget_type?: Database["public"]["Enums"]["embed_widget_type"]
+        }
+        Relationships: []
+      }
       favorite_widgets: {
         Row: {
           created_at: string
@@ -730,6 +801,47 @@ export type Database = {
         }
         Relationships: []
       }
+      widget_interactions: {
+        Row: {
+          created_at: string
+          event_data: Json | null
+          event_type: string
+          id: string
+          referrer: string | null
+          session_id: string | null
+          user_agent: string | null
+          widget_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          widget_id: string
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          widget_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "widget_interactions_widget_id_fkey"
+            columns: ["widget_id"]
+            isOneToOne: false
+            referencedRelation: "embed_widgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       widget_variations: {
         Row: {
           ab_test_id: string
@@ -790,6 +902,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      embed_widget_type: "popup" | "lead-form" | "ai-chat"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -918,6 +1031,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      embed_widget_type: ["popup", "lead-form", "ai-chat"],
     },
   },
 } as const
