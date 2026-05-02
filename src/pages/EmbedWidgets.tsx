@@ -26,6 +26,7 @@ interface EmbedWidget {
   widget_type: WidgetType;
   config: Record<string, unknown>;
   is_active: boolean;
+  is_public: boolean;
   created_at: string;
 }
 
