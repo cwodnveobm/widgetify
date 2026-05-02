@@ -11,10 +11,12 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Copy, Trash2, Plus, Code2, Activity } from "lucide-react";
+import { Copy, Trash2, Plus, Code2, Activity, Link as LinkIcon, ExternalLink } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
+import { InteractionDashboard } from "@/components/InteractionDashboard";
+import { EmbedDocs } from "@/components/EmbedDocs";
 
 type WidgetType = "popup" | "lead-form" | "ai-chat";
 
@@ -137,9 +139,18 @@ export default function EmbedWidgets() {
     return `<script async src="${window.location.origin}/embed.js" data-id="${id}"></script>`;
   }
 
+  function shareUrl(id: string) {
+    return `${window.location.origin}/w/${id}`;
+  }
+
   function copySnippet(id: string) {
     navigator.clipboard.writeText(snippet(id));
     toast.success("Snippet copied to clipboard");
+  }
+
+  function copyLink(id: string) {
+    navigator.clipboard.writeText(shareUrl(id));
+    toast.success("Shareable link copied");
   }
 
   if (loading) {
@@ -220,8 +231,16 @@ export default function EmbedWidgets() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="default" onClick={() => copyLink(w.id)}>
+                    <LinkIcon className="w-3.5 h-3.5 mr-1" /> Copy link
+                  </Button>
+                  <Button size="sm" variant="outline" asChild>
+                    <a href={shareUrl(w.id)} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="w-3.5 h-3.5 mr-1" /> Preview
+                    </a>
+                  </Button>
                   <Button size="sm" variant="outline" onClick={() => copySnippet(w.id)}>
-                    <Copy className="w-3.5 h-3.5 mr-1" /> Copy snippet
+                    <Copy className="w-3.5 h-3.5 mr-1" /> Snippet
                   </Button>
                   <Button size="sm" onClick={() => setEditing(editing?.id === w.id ? null : w)}>
                     {editing?.id === w.id ? "Close" : "Configure"}
@@ -230,13 +249,23 @@ export default function EmbedWidgets() {
                     <Trash2 className="w-3.5 h-3.5 text-destructive" />
                   </Button>
                 </div>
+                <p className="text-xs text-muted-foreground font-mono truncate" title={shareUrl(w.id)}>
+                  {shareUrl(w.id)}
+                </p>
                 {editing?.id === w.id && (
-                  <ConfigEditor widget={editing} onChange={setEditing} onSave={saveWidget} />
+                  <ConfigEditor widget={editing} onChange={setEditing} onSave={saveWidget} shareUrl={shareUrl(w.id)} />
                 )}
               </CardContent>
             </Card>
           ))}
         </div>
+
+        {widgets.length > 0 && (
+          <div className="mt-10 space-y-6">
+            <InteractionDashboard widgets={widgets.map((w) => ({ id: w.id, name: w.name, widget_type: w.widget_type }))} />
+            <EmbedDocs />
+          </div>
+        )}
       </main>
       <Footer />
     </>
@@ -247,10 +276,12 @@ function ConfigEditor({
   widget,
   onChange,
   onSave,
+  shareUrl,
 }: {
   widget: EmbedWidget;
   onChange: (w: EmbedWidget) => void;
   onSave: (w: EmbedWidget) => void;
+  shareUrl?: string;
 }) {
   const cfg = widget.config as Record<string, unknown>;
   function setCfg(patch: Record<string, unknown>) {
@@ -363,6 +394,15 @@ function ConfigEditor({
             <Switch checked={widget.is_active} onCheckedChange={(v) => onChange({ ...widget, is_active: v })} />
             <Label>Widget active</Label>
           </div>
+          {shareUrl && (
+            <div>
+              <Label>Shareable preview link</Label>
+              <Input readOnly value={shareUrl} className="font-mono text-xs" onFocus={(e) => e.currentTarget.select()} />
+              <p className="text-xs text-muted-foreground mt-1">
+                Anyone with this link can interact with the widget — no script install needed.
+              </p>
+            </div>
+          )}
           <div>
             <Label>Embed snippet</Label>
             <Textarea
