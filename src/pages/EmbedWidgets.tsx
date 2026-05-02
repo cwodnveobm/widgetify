@@ -231,8 +231,16 @@ export default function EmbedWidgets() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="default" onClick={() => copyLink(w.id)}>
+                    <LinkIcon className="w-3.5 h-3.5 mr-1" /> Copy link
+                  </Button>
+                  <Button size="sm" variant="outline" asChild>
+                    <a href={shareUrl(w.id)} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="w-3.5 h-3.5 mr-1" /> Preview
+                    </a>
+                  </Button>
                   <Button size="sm" variant="outline" onClick={() => copySnippet(w.id)}>
-                    <Copy className="w-3.5 h-3.5 mr-1" /> Copy snippet
+                    <Copy className="w-3.5 h-3.5 mr-1" /> Snippet
                   </Button>
                   <Button size="sm" onClick={() => setEditing(editing?.id === w.id ? null : w)}>
                     {editing?.id === w.id ? "Close" : "Configure"}
@@ -241,13 +249,23 @@ export default function EmbedWidgets() {
                     <Trash2 className="w-3.5 h-3.5 text-destructive" />
                   </Button>
                 </div>
+                <p className="text-xs text-muted-foreground font-mono truncate" title={shareUrl(w.id)}>
+                  {shareUrl(w.id)}
+                </p>
                 {editing?.id === w.id && (
-                  <ConfigEditor widget={editing} onChange={setEditing} onSave={saveWidget} />
+                  <ConfigEditor widget={editing} onChange={setEditing} onSave={saveWidget} shareUrl={shareUrl(w.id)} />
                 )}
               </CardContent>
             </Card>
           ))}
         </div>
+
+        {widgets.length > 0 && (
+          <div className="mt-10 space-y-6">
+            <InteractionDashboard widgets={widgets.map((w) => ({ id: w.id, name: w.name, widget_type: w.widget_type }))} />
+            <EmbedDocs />
+          </div>
+        )}
       </main>
       <Footer />
     </>
