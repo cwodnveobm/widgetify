@@ -11,10 +11,12 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Copy, Trash2, Plus, Code2, Activity } from "lucide-react";
+import { Copy, Trash2, Plus, Code2, Activity, Link as LinkIcon, ExternalLink } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
+import { InteractionDashboard } from "@/components/InteractionDashboard";
+import { EmbedDocs } from "@/components/EmbedDocs";
 
 type WidgetType = "popup" | "lead-form" | "ai-chat";
 
@@ -137,9 +139,18 @@ export default function EmbedWidgets() {
     return `<script async src="${window.location.origin}/embed.js" data-id="${id}"></script>`;
   }
 
+  function shareUrl(id: string) {
+    return `${window.location.origin}/w/${id}`;
+  }
+
   function copySnippet(id: string) {
     navigator.clipboard.writeText(snippet(id));
     toast.success("Snippet copied to clipboard");
+  }
+
+  function copyLink(id: string) {
+    navigator.clipboard.writeText(shareUrl(id));
+    toast.success("Shareable link copied");
   }
 
   if (loading) {
