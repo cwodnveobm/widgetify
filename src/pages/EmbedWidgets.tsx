@@ -394,6 +394,15 @@ function ConfigEditor({
             <Switch checked={widget.is_active} onCheckedChange={(v) => onChange({ ...widget, is_active: v })} />
             <Label>Widget active</Label>
           </div>
+          {shareUrl && (
+            <div>
+              <Label>Shareable preview link</Label>
+              <Input readOnly value={shareUrl} className="font-mono text-xs" onFocus={(e) => e.currentTarget.select()} />
+              <p className="text-xs text-muted-foreground mt-1">
+                Anyone with this link can interact with the widget — no script install needed.
+              </p>
+            </div>
+          )}
           <div>
             <Label>Embed snippet</Label>
             <Textarea
