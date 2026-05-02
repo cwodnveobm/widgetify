@@ -276,10 +276,12 @@ function ConfigEditor({
   widget,
   onChange,
   onSave,
+  shareUrl,
 }: {
   widget: EmbedWidget;
   onChange: (w: EmbedWidget) => void;
   onSave: (w: EmbedWidget) => void;
+  shareUrl?: string;
 }) {
   const cfg = widget.config as Record<string, unknown>;
   function setCfg(patch: Record<string, unknown>) {
