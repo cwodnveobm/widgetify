@@ -28,6 +28,7 @@ import MCPDocs from "./pages/MCPDocs";
 import Dashboard from "./pages/Dashboard";
 import PaymentHistory from "./pages/PaymentHistory";
 import EmbedWidgets from "./pages/EmbedWidgets";
+import EmbedWidgetView from "./pages/EmbedWidgetView";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -106,6 +107,7 @@ const App = () => {
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/payment-history" element={<PaymentHistory />} />
                     <Route path="/embed-widgets" element={<EmbedWidgets />} />
+                    <Route path="/w/:id" element={<EmbedWidgetView />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
