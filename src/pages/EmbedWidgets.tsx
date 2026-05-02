@@ -11,7 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Copy, Trash2, Plus, Code2, Activity, Link as LinkIcon, ExternalLink } from "lucide-react";
+import { Copy, Trash2, Plus, Code2, Activity, Link as LinkIcon, ExternalLink, Lock, Globe } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -149,9 +149,25 @@ export default function EmbedWidgets() {
     toast.success("Snippet copied to clipboard");
   }
 
-  function copyLink(id: string) {
-    navigator.clipboard.writeText(shareUrl(id));
+  function copyLink(w: EmbedWidget) {
+    if (!w.is_public) {
+      toast.error("This widget is private — enable public sharing first");
+      return;
+    }
+    navigator.clipboard.writeText(shareUrl(w.id));
     toast.success("Shareable link copied");
+  }
+
+  async function togglePublic(w: EmbedWidget) {
+    const next = !w.is_public;
+    const { error } = await supabase
+      .from("embed_widgets")
+      .update({ is_public: next })
+      .eq("id", w.id);
+    if (error) return toast.error(error.message);
+    toast.success(next ? "Widget is now public" : "Widget is now private");
+    setWidgets((ws) => ws.map((x) => (x.id === w.id ? { ...x, is_public: next } : x)));
+    if (editing?.id === w.id) setEditing({ ...editing, is_public: next });
   }
 
   if (loading) {
@@ -222,9 +238,18 @@ export default function EmbedWidgets() {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <CardTitle className="text-base">{w.name}</CardTitle>
-                    <CardDescription className="flex gap-2 mt-1 items-center">
+                    <CardDescription className="flex flex-wrap gap-2 mt-1 items-center">
                       <Badge variant="outline">{w.widget_type}</Badge>
                       {w.is_active ? <Badge>Active</Badge> : <Badge variant="secondary">Inactive</Badge>}
+                      {w.is_public ? (
+                        <Badge variant="outline" className="border-green-500/50 text-green-700 dark:text-green-400">
+                          <Globe className="w-3 h-3 mr-1" /> Public link
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="border-amber-500/50 text-amber-700 dark:text-amber-400">
+                          <Lock className="w-3 h-3 mr-1" /> Private
+                        </Badge>
+                      )}
                       <span className="text-xs flex items-center gap-1"><Activity className="w-3 h-3" /> {interactionCounts[w.id] ?? 0}</span>
                     </CardDescription>
                   </div>
@@ -232,13 +257,22 @@ export default function EmbedWidgets() {
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex flex-wrap gap-2">
-                  <Button size="sm" variant="default" onClick={() => copyLink(w.id)}>
+                  <Button size="sm" variant="default" onClick={() => copyLink(w)} disabled={!w.is_public} title={!w.is_public ? "Enable public sharing first" : undefined}>
                     <LinkIcon className="w-3.5 h-3.5 mr-1" /> Copy link
                   </Button>
-                  <Button size="sm" variant="outline" asChild>
-                    <a href={shareUrl(w.id)} target="_blank" rel="noopener noreferrer">
+                  {w.is_public ? (
+                    <Button size="sm" variant="outline" asChild>
+                      <a href={shareUrl(w.id)} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="w-3.5 h-3.5 mr-1" /> Preview
+                      </a>
+                    </Button>
+                  ) : (
+                    <Button size="sm" variant="outline" disabled title="Enable public sharing first">
                       <ExternalLink className="w-3.5 h-3.5 mr-1" /> Preview
-                    </a>
+                    </Button>
+                  )}
+                  <Button size="sm" variant="outline" onClick={() => togglePublic(w)}>
+                    {w.is_public ? <><Lock className="w-3.5 h-3.5 mr-1" /> Make private</> : <><Globe className="w-3.5 h-3.5 mr-1" /> Make public</>}
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => copySnippet(w.id)}>
                     <Copy className="w-3.5 h-3.5 mr-1" /> Snippet
@@ -250,9 +284,15 @@ export default function EmbedWidgets() {
                     <Trash2 className="w-3.5 h-3.5 text-destructive" />
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground font-mono truncate" title={shareUrl(w.id)}>
-                  {shareUrl(w.id)}
-                </p>
+                {w.is_public ? (
+                  <p className="text-xs text-muted-foreground font-mono truncate" title={shareUrl(w.id)}>
+                    {shareUrl(w.id)}
+                  </p>
+                ) : (
+                  <p className="text-xs text-muted-foreground italic">
+                    Shareable link is disabled. The embed snippet still works on sites you own.
+                  </p>
+                )}
                 {editing?.id === w.id && (
                   <ConfigEditor widget={editing} onChange={setEditing} onSave={saveWidget} shareUrl={shareUrl(w.id)} />
                 )}
