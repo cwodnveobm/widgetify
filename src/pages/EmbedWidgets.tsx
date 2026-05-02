@@ -430,12 +430,29 @@ function ConfigEditor({
           </TabsContent>
         )}
 
-        <TabsContent value="settings" className="space-y-3 pt-3">
-          <div className="flex items-center gap-3">
+        <TabsContent value="settings" className="space-y-4 pt-3">
+          <div className="flex items-center justify-between gap-3 p-3 rounded-lg border">
+            <div>
+              <Label className="text-sm">Widget active</Label>
+              <p className="text-xs text-muted-foreground">Inactive widgets won't render anywhere.</p>
+            </div>
             <Switch checked={widget.is_active} onCheckedChange={(v) => onChange({ ...widget, is_active: v })} />
-            <Label>Widget active</Label>
           </div>
-          {shareUrl && (
+          <div className="flex items-center justify-between gap-3 p-3 rounded-lg border">
+            <div>
+              <Label className="text-sm flex items-center gap-2">
+                {widget.is_public ? <Globe className="w-4 h-4 text-green-600" /> : <Lock className="w-4 h-4 text-amber-600" />}
+                Public shareable link
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                {widget.is_public
+                  ? "Anyone with the /w/ link can preview this widget."
+                  : "Link is disabled. Only the embed snippet on your own sites will work."}
+              </p>
+            </div>
+            <Switch checked={widget.is_public} onCheckedChange={(v) => onChange({ ...widget, is_public: v })} />
+          </div>
+          {shareUrl && widget.is_public && (
             <div>
               <Label>Shareable preview link</Label>
               <Input readOnly value={shareUrl} className="font-mono text-xs" onFocus={(e) => e.currentTarget.select()} />
