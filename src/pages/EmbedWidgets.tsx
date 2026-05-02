@@ -120,7 +120,7 @@ export default function EmbedWidgets() {
   async function saveWidget(w: EmbedWidget) {
     const { error } = await supabase
       .from("embed_widgets")
-      .update({ name: w.name, config: w.config as never, is_active: w.is_active })
+      .update({ name: w.name, config: w.config as never, is_active: w.is_active, is_public: w.is_public })
       .eq("id", w.id);
     if (error) return toast.error(error.message);
     toast.success("Saved");
