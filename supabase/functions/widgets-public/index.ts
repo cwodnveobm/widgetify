@@ -24,9 +24,10 @@ Deno.serve(async (req) => {
 
     const { data, error } = await supabase
       .from("embed_widgets")
-      .select("id, name, widget_type, config, is_active")
+      .select("id, name, widget_type, config, is_active, is_public")
       .eq("id", id)
       .eq("is_active", true)
+      .eq("is_public", true)
       .maybeSingle();
 
     if (error || !data) return json({ error: "Widget not found" }, 404);
