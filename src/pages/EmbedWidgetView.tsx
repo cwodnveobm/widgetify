@@ -1,19 +1,26 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 
 /**
- * Public shareable widget page.
- * Loads embed.js with the given widget id so the widget renders on this host page.
- * Share URL: https://widgetify.lovable.app/w/:id
+ * Public / private shareable widget page.
+ * Loads embed.js with the given widget id (and optional ?token=… for private widgets).
+ *   Public:  /w/:id
+ *   Private: /w/:id?token=…
  */
 export default function EmbedWidgetView() {
   const { id } = useParams<{ id: string }>();
+  const [params] = useSearchParams();
+  const token = params.get("token") ?? "";
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id || !/^[0-9a-f-]{36}$/i.test(id)) {
       setError("Invalid widget ID");
+      return;
+    }
+    if (token && !/^[a-f0-9]{16,128}$/i.test(token)) {
+      setError("Invalid share token");
       return;
     }
     const existing = document.querySelector(`script[data-widgetify-id="${id}"]`);
@@ -23,13 +30,13 @@ export default function EmbedWidgetView() {
     s.src = `${window.location.origin}/embed.js`;
     s.setAttribute("data-id", id);
     s.setAttribute("data-widgetify-id", id);
+    if (token) s.setAttribute("data-token", token);
     s.onerror = () => setError("Failed to load widget script");
     document.body.appendChild(s);
     return () => {
-      // Clean up rendered widget host between navigations
       document.querySelectorAll(`[data-widgetify-id="${id}"]`).forEach((n) => n.remove());
     };
-  }, [id]);
+  }, [id, token]);
 
   return (
     <>
