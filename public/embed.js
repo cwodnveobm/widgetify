@@ -100,13 +100,19 @@
   }
 
   // ---- Shadow root host ----
-  function makeHost(widgetId) {
+  function makeHost(widgetId, mode, target) {
     var host = document.createElement("div");
     host.setAttribute("data-widgetify-id", widgetId);
     host.style.all = "initial";
-    host.style.position = "fixed";
-    host.style.zIndex = "2147483600";
-    document.body.appendChild(host);
+    if (mode === "inline" && target) {
+      host.style.position = "relative";
+      host.style.display = "block";
+      target.appendChild(host);
+    } else {
+      host.style.position = "fixed";
+      host.style.zIndex = "2147483600";
+      document.body.appendChild(host);
+    }
     var shadow = host.attachShadow ? host.attachShadow({ mode: "open" }) : host;
     return { host: host, shadow: shadow };
   }
@@ -128,6 +134,8 @@
       ".wf-fab{position:fixed;bottom:20px;right:20px;width:60px;height:60px;border-radius:50%;background:#e79ca9;border:0;color:#fff;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.18);font-size:26px;display:flex;align-items:center;justify-content:center;transition:transform .2s}",
       ".wf-fab:hover{transform:scale(1.06)}",
       ".wf-chat{position:fixed;bottom:90px;right:20px;width:340px;max-width:calc(100% - 40px);height:480px;max-height:70vh;background:#fff;border-radius:16px;box-shadow:0 16px 48px rgba(0,0,0,.22);display:flex;flex-direction:column;overflow:hidden;animation:wf-pop .25s ease}",
+      ".wf-inline{position:relative !important;width:100%;max-width:100%;height:520px;bottom:auto;right:auto;border-radius:16px;box-shadow:0 4px 16px rgba(0,0,0,.08)}",
+      ".wf-inline-card{position:relative;width:100%;max-width:100%;margin:0;animation:none}",
       ".wf-chat-h{padding:14px 16px;background:#e79ca9;color:#fff;font-weight:600;display:flex;justify-content:space-between;align-items:center}",
       ".wf-chat-body{flex:1;overflow-y:auto;padding:14px;background:#f9fafb;display:flex;flex-direction:column;gap:8px}",
       ".wf-msg{max-width:80%;padding:8px 12px;border-radius:12px;font-size:14px;line-height:1.4;word-wrap:break-word}",
@@ -139,7 +147,7 @@
       ".wf-typing{font-size:12px;color:#6b7280;padding:0 4px}",
       "@keyframes wf-fade{from{opacity:0}to{opacity:1}}",
       "@keyframes wf-pop{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}",
-      "@media (max-width:480px){.wf-chat{right:10px;bottom:80px;width:calc(100% - 20px)}.wf-fab{bottom:14px;right:14px}}"
+      "@media (max-width:480px){.wf-chat:not(.wf-inline){right:10px;bottom:80px;width:calc(100% - 20px)}.wf-fab{bottom:14px;right:14px}}"
     ].join("");
     shadow.appendChild(style);
     if (extra) {
@@ -147,6 +155,13 @@
       s2.textContent = extra;
       shadow.appendChild(s2);
     }
+  }
+
+  // Find inline mount target on host page
+  function findInlineTarget(widgetId) {
+    return document.querySelector('[data-widgetify-mount="' + widgetId + '"]')
+      || document.querySelector('[data-widgetify-mount=""]')
+      || document.querySelector('[data-widgetify-mount]');
   }
 
   // ---- Renderers ----
@@ -169,7 +184,8 @@
         shown = true;
         markSeen();
         track(widget.id, "trigger_fired", { trigger: triggerName }, ctx.base);
-        var rendered = makeHost(widget.id);
+        var inlineTarget = (cfg.display === "inline") ? findInlineTarget(widget.id) : null;
+        var rendered = makeHost(widget.id, inlineTarget ? "inline" : "floating", inlineTarget);
         injectStyles(rendered.shadow, cfg.customCss);
         var overlay = el("div", { class: "wf-overlay" });
         var card = el("div", { class: "wf-card" });
@@ -194,6 +210,8 @@
       }
 
       var triggers = cfg.triggers || { timeDelay: 5 };
+      // autoOpen forces immediate display, bypassing cooldown if set
+      if (cfg.autoOpen) { setTimeout(function () { show("auto"); }, 50); return; }
       // time delay
       if (triggers.timeDelay) setTimeout(function () { show("time"); }, Number(triggers.timeDelay) * 1000);
       // exit intent (desktop)
@@ -217,14 +235,14 @@
 
     "lead-form": function (widget, ctx) {
       var cfg = widget.config || {};
-      var rendered = makeHost(widget.id);
+      var display = cfg.display || "floating";
+      var inlineTarget = display === "inline" ? findInlineTarget(widget.id) : null;
+      var rendered = makeHost(widget.id, inlineTarget ? "inline" : "floating", inlineTarget);
       injectStyles(rendered.shadow, cfg.customCss);
 
-      var fab = el("button", { class: "wf-fab", "aria-label": "Open form" }, ["✉"]);
-      var openForm = function () {
-        var overlay = el("div", { class: "wf-overlay" });
-        var card = el("div", { class: "wf-card" });
-        card.appendChild(el("button", { class: "wf-close", onClick: function () { overlay.remove(); } }, ["×"]));
+      function buildForm(container, isInline) {
+        var card = el("div", { class: "wf-card" + (isInline ? " wf-inline-card" : "") });
+        if (!isInline) card.appendChild(el("button", { class: "wf-close", onClick: function () { container.remove(); } }, ["×"]));
         card.appendChild(el("h3", { class: "wf-h" }, [String(cfg.title || "Get in touch")]));
         if (cfg.description) card.appendChild(el("p", { class: "wf-p" }, [String(cfg.description)]));
 
@@ -241,47 +259,58 @@
           track(widget.id, "submit", payload, ctx.base);
           card.innerHTML = "";
           card.appendChild(el("div", { class: "wf-success" }, [String(cfg.successMessage || "Thanks! We'll be in touch.")]));
-          setTimeout(function () { overlay.remove(); }, 2200);
+          if (!isInline) setTimeout(function () { container.remove(); }, 2200);
         });
         card.appendChild(form);
-        overlay.appendChild(card);
+        container.appendChild(card);
+      }
+
+      if (display === "inline") {
+        buildForm(rendered.shadow, true);
+        track(widget.id, "view", { display: "inline" }, ctx.base);
+        return;
+      }
+
+      var fab = el("button", { class: "wf-fab", "aria-label": "Open form" }, ["✉"]);
+      var openForm = function () {
+        var overlay = el("div", { class: "wf-overlay" });
         overlay.addEventListener("click", function (e) { if (e.target === overlay) overlay.remove(); });
+        buildForm(overlay, false);
         rendered.shadow.appendChild(overlay);
         track(widget.id, "open", {}, ctx.base);
       };
       fab.addEventListener("click", openForm);
       rendered.shadow.appendChild(fab);
       track(widget.id, "view", {}, ctx.base);
+      if (cfg.autoOpen) setTimeout(openForm, Number(cfg.autoOpenDelay || 1) * 1000);
     },
 
     "ai-chat": function (widget, ctx) {
       var cfg = widget.config || {};
-      var rendered = makeHost(widget.id);
+      var display = cfg.display || "floating";
+      var inlineTarget = display === "inline" ? findInlineTarget(widget.id) : null;
+      var rendered = makeHost(widget.id, inlineTarget ? "inline" : "floating", inlineTarget);
       injectStyles(rendered.shadow, cfg.customCss);
       var sessionId = "chat_" + widget.id + "_" + getSessionId();
       var chat = null;
+      var body_el;
 
-      var fab = el("button", { class: "wf-fab", "aria-label": "Open chat" }, ["💬"]);
       function appendMsg(body, who) {
         var m = el("div", { class: "wf-msg " + who });
         m.textContent = body;
         body_el.appendChild(m);
         body_el.scrollTop = body_el.scrollHeight;
       }
-      var body_el;
-      function openChat() {
-        if (chat) return;
-        chat = el("div", { class: "wf-chat" });
+
+      function buildChat(isInline) {
+        var c = el("div", { class: "wf-chat" + (isInline ? " wf-inline" : "") });
         var header = el("div", { class: "wf-chat-h" }, [
           String(cfg.title || "Chat with us"),
-          el("button", { class: "wf-close", style: { color: "#fff" }, onClick: function () { chat.remove(); chat = null; track(widget.id, "close", {}, ctx.base); } }, ["×"])
+          isInline ? null : el("button", { class: "wf-close", style: { color: "#fff" }, onClick: function () { c.remove(); chat = null; track(widget.id, "close", {}, ctx.base); } }, ["×"])
         ]);
         body_el = el("div", { class: "wf-chat-body" });
-        var welcome = String(cfg.welcomeMessage || "Hi! How can I help?");
-        appendMsg(welcome, "bot");
-
+        appendMsg(String(cfg.welcomeMessage || "Hi! How can I help?"), "bot");
         var typing = el("div", { class: "wf-typing", style: { display: "none" } }, ["Thinking…"]);
-
         var form = el("form", { class: "wf-chat-form" });
         var input = el("input", { placeholder: "Type a message…", maxlength: "1000", required: "true" });
         var send = el("button", { type: "submit" }, ["Send"]);
@@ -311,17 +340,29 @@
             appendMsg("Network error, please try again.", "bot");
           });
         });
+        c.appendChild(header); c.appendChild(body_el); c.appendChild(typing); c.appendChild(form);
+        return c;
+      }
 
-        chat.appendChild(header);
-        chat.appendChild(body_el);
-        chat.appendChild(typing);
-        chat.appendChild(form);
+      function openChat() {
+        if (chat) return;
+        chat = buildChat(false);
         rendered.shadow.appendChild(chat);
         track(widget.id, "open", {}, ctx.base);
       }
+
+      if (display === "inline") {
+        chat = buildChat(true);
+        rendered.shadow.appendChild(chat);
+        track(widget.id, "view", { display: "inline" }, ctx.base);
+        return;
+      }
+
+      var fab = el("button", { class: "wf-fab", "aria-label": "Open chat" }, ["💬"]);
       fab.addEventListener("click", openChat);
       rendered.shadow.appendChild(fab);
       track(widget.id, "view", {}, ctx.base);
+      if (cfg.autoOpen) setTimeout(openChat, Number(cfg.autoOpenDelay || 2) * 1000);
     },
   };
 
