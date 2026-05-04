@@ -13,8 +13,12 @@ Deno.serve(async (req) => {
   try {
     const url = new URL(req.url);
     const id = url.searchParams.get("id");
+    const token = url.searchParams.get("token");
     if (!id || !/^[0-9a-f-]{36}$/i.test(id)) {
       return json({ error: "Invalid widget id" }, 400);
+    }
+    if (token && !/^[a-f0-9]{16,128}$/i.test(token)) {
+      return json({ error: "Invalid token" }, 400);
     }
 
     const supabase = createClient(
@@ -27,10 +31,25 @@ Deno.serve(async (req) => {
       .select("id, name, widget_type, config, is_active, is_public")
       .eq("id", id)
       .eq("is_active", true)
-      .eq("is_public", true)
       .maybeSingle();
 
     if (error || !data) return json({ error: "Widget not found" }, 404);
+
+    // Private widgets require a valid share token.
+    if (!data.is_public) {
+      if (!token) return json({ error: "Widget not found" }, 404);
+      const { data: ok } = await supabase.rpc("validate_widget_share_token", {
+        _widget_id: id,
+        _token: token,
+      });
+      if (!ok) return json({ error: "Widget not found" }, 404);
+      // Best-effort usage tracking; ignore failures.
+      await supabase
+        .from("embed_widget_share_tokens")
+        .update({ last_used_at: new Date().toISOString() })
+        .eq("widget_id", id)
+        .eq("token", token);
+    }
 
     return new Response(JSON.stringify(data), {
       headers: {
