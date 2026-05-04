@@ -291,7 +291,7 @@ export default function EmbedWidgets() {
                   </p>
                 ) : (
                   <p className="text-xs text-muted-foreground italic">
-                    Shareable link is disabled. The embed snippet still works on sites you own.
+                    Public link disabled. Generate a private share link below to share with specific people.
                   </p>
                 )}
                 {editing?.id === w.id && (
