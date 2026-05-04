@@ -184,7 +184,8 @@
         shown = true;
         markSeen();
         track(widget.id, "trigger_fired", { trigger: triggerName }, ctx.base);
-        var rendered = makeHost(widget.id);
+        var inlineTarget = (cfg.display === "inline") ? findInlineTarget(widget.id) : null;
+        var rendered = makeHost(widget.id, inlineTarget ? "inline" : "floating", inlineTarget);
         injectStyles(rendered.shadow, cfg.customCss);
         var overlay = el("div", { class: "wf-overlay" });
         var card = el("div", { class: "wf-card" });
@@ -209,6 +210,8 @@
       }
 
       var triggers = cfg.triggers || { timeDelay: 5 };
+      // autoOpen forces immediate display, bypassing cooldown if set
+      if (cfg.autoOpen) { setTimeout(function () { show("auto"); }, 50); return; }
       // time delay
       if (triggers.timeDelay) setTimeout(function () { show("time"); }, Number(triggers.timeDelay) * 1000);
       // exit intent (desktop)
@@ -232,14 +235,14 @@
 
     "lead-form": function (widget, ctx) {
       var cfg = widget.config || {};
-      var rendered = makeHost(widget.id);
+      var display = cfg.display || "floating";
+      var inlineTarget = display === "inline" ? findInlineTarget(widget.id) : null;
+      var rendered = makeHost(widget.id, inlineTarget ? "inline" : "floating", inlineTarget);
       injectStyles(rendered.shadow, cfg.customCss);
 
-      var fab = el("button", { class: "wf-fab", "aria-label": "Open form" }, ["✉"]);
-      var openForm = function () {
-        var overlay = el("div", { class: "wf-overlay" });
-        var card = el("div", { class: "wf-card" });
-        card.appendChild(el("button", { class: "wf-close", onClick: function () { overlay.remove(); } }, ["×"]));
+      function buildForm(container, isInline) {
+        var card = el("div", { class: "wf-card" + (isInline ? " wf-inline-card" : "") });
+        if (!isInline) card.appendChild(el("button", { class: "wf-close", onClick: function () { container.remove(); } }, ["×"]));
         card.appendChild(el("h3", { class: "wf-h" }, [String(cfg.title || "Get in touch")]));
         if (cfg.description) card.appendChild(el("p", { class: "wf-p" }, [String(cfg.description)]));
 
@@ -256,17 +259,30 @@
           track(widget.id, "submit", payload, ctx.base);
           card.innerHTML = "";
           card.appendChild(el("div", { class: "wf-success" }, [String(cfg.successMessage || "Thanks! We'll be in touch.")]));
-          setTimeout(function () { overlay.remove(); }, 2200);
+          if (!isInline) setTimeout(function () { container.remove(); }, 2200);
         });
         card.appendChild(form);
-        overlay.appendChild(card);
+        container.appendChild(card);
+      }
+
+      if (display === "inline") {
+        buildForm(rendered.shadow, true);
+        track(widget.id, "view", { display: "inline" }, ctx.base);
+        return;
+      }
+
+      var fab = el("button", { class: "wf-fab", "aria-label": "Open form" }, ["✉"]);
+      var openForm = function () {
+        var overlay = el("div", { class: "wf-overlay" });
         overlay.addEventListener("click", function (e) { if (e.target === overlay) overlay.remove(); });
+        buildForm(overlay, false);
         rendered.shadow.appendChild(overlay);
         track(widget.id, "open", {}, ctx.base);
       };
       fab.addEventListener("click", openForm);
       rendered.shadow.appendChild(fab);
       track(widget.id, "view", {}, ctx.base);
+      if (cfg.autoOpen) setTimeout(openForm, Number(cfg.autoOpenDelay || 1) * 1000);
     },
 
     "ai-chat": function (widget, ctx) {
