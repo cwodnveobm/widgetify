@@ -226,7 +226,7 @@ export const LANDING_PAGES: LandingPageData[] = [
       { q: "Can I add to a Wix or WordPress site?", a: "Yes — paste the script tag in any HTML embed block. Works everywhere." },
       { q: "Multi-language support?", a: "Set widget content per language and use the language attribute on your page." },
     ],
-    testimonial: { quote: "Demo bookings went from 30 to 110 a week.", option: "", author: "Karthik V.", role: "Founder, JEE coaching" },
+    testimonial: { quote: "Demo bookings went from 30 to 110 a week.", author: "Karthik V.", role: "Founder, JEE coaching" },
     recommendedWidgets: ["ai-chat", "lead-form", "popup"],
   },
   {
