@@ -17,6 +17,7 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { InteractionDashboard } from "@/components/InteractionDashboard";
 import { EmbedDocs } from "@/components/EmbedDocs";
+import { ShareTokensManager } from "@/components/ShareTokensManager";
 
 type WidgetType = "popup" | "lead-form" | "ai-chat";
 
