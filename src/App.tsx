@@ -29,6 +29,9 @@ import Dashboard from "./pages/Dashboard";
 import PaymentHistory from "./pages/PaymentHistory";
 import EmbedWidgets from "./pages/EmbedWidgets";
 import EmbedWidgetView from "./pages/EmbedWidgetView";
+import EmbedFrame from "./pages/EmbedFrame";
+import UseCasesIndex from "./pages/UseCasesIndex";
+import UseCasePage from "./pages/UseCasePage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -108,6 +111,9 @@ const App = () => {
                     <Route path="/payment-history" element={<PaymentHistory />} />
                     <Route path="/embed-widgets" element={<EmbedWidgets />} />
                     <Route path="/w/:id" element={<EmbedWidgetView />} />
+                    <Route path="/embed/:id" element={<EmbedFrame />} />
+                    <Route path="/use-cases" element={<UseCasesIndex />} />
+                    <Route path="/use-cases/:slug" element={<UseCasePage />} />
                     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                     <Route path="*" element={<NotFound />} />
                   </Routes>
