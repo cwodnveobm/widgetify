@@ -439,6 +439,57 @@ function ConfigEditor({
             </div>
             <Switch checked={widget.is_active} onCheckedChange={(v) => onChange({ ...widget, is_active: v })} />
           </div>
+
+          {/* Display mode: inline vs floating */}
+          <div className="p-3 rounded-lg border space-y-3">
+            <div>
+              <Label className="text-sm">Display mode</Label>
+              <p className="text-xs text-muted-foreground">Choose how the widget appears on the host page.</p>
+            </div>
+            <Select
+              value={String(cfg.display ?? "floating")}
+              onValueChange={(v) => setCfg({ display: v })}
+            >
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="floating">Floating (fixed corner / overlay)</SelectItem>
+                <SelectItem value="inline">Inline (mounted into host element)</SelectItem>
+              </SelectContent>
+            </Select>
+            {String(cfg.display ?? "floating") === "inline" && (
+              <p className="text-xs text-muted-foreground">
+                Add <code className="font-mono px-1 bg-muted rounded">{`<div data-widgetify-mount="${widget.id}"></div>`}</code> on the host page where you want it to appear.
+              </p>
+            )}
+          </div>
+
+          {/* Auto-open / popup */}
+          {(widget.widget_type === "lead-form" || widget.widget_type === "ai-chat") && (
+            <div className="flex items-center justify-between gap-3 p-3 rounded-lg border">
+              <div>
+                <Label className="text-sm">Auto-open on page load</Label>
+                <p className="text-xs text-muted-foreground">
+                  Pops the widget open automatically (after a short delay) instead of waiting for a click.
+                </p>
+              </div>
+              <Switch
+                checked={Boolean(cfg.autoOpen)}
+                onCheckedChange={(v) => setCfg({ autoOpen: v })}
+              />
+            </div>
+          )}
+          {(widget.widget_type === "lead-form" || widget.widget_type === "ai-chat") && Boolean(cfg.autoOpen) && (
+            <div>
+              <Label>Auto-open delay (seconds)</Label>
+              <Input
+                type="number"
+                min={0}
+                value={Number(cfg.autoOpenDelay ?? 2)}
+                onChange={(e) => setCfg({ autoOpenDelay: Number(e.target.value) })}
+              />
+            </div>
+          )}
+
           <div className="flex items-center justify-between gap-3 p-3 rounded-lg border">
             <div>
               <Label className="text-sm flex items-center gap-2">
@@ -463,14 +514,45 @@ function ConfigEditor({
             </div>
           )}
           <ShareTokensManager widgetId={widget.id} />
-          <div>
-            <Label>Embed snippet</Label>
-            <Textarea
-              readOnly
-              rows={2}
-              className="font-mono text-xs"
-              value={`<script async src="${window.location.origin}/embed.js" data-id="${widget.id}"></script>`}
-            />
+
+          {/* Multi-format embed snippets */}
+          <div className="space-y-3 pt-2">
+            <Label className="text-base">Embed formats</Label>
+
+            <div>
+              <Label className="text-xs text-muted-foreground">JavaScript SDK (recommended)</Label>
+              <Textarea
+                readOnly
+                rows={2}
+                className="font-mono text-xs"
+                value={`<script async src="${window.location.origin}/embed.js" data-id="${widget.id}"></script>`}
+              />
+            </div>
+
+            {String(cfg.display ?? "floating") === "inline" && (
+              <div>
+                <Label className="text-xs text-muted-foreground">Inline mount target</Label>
+                <Textarea
+                  readOnly
+                  rows={1}
+                  className="font-mono text-xs"
+                  value={`<div data-widgetify-mount="${widget.id}"></div>`}
+                />
+              </div>
+            )}
+
+            <div>
+              <Label className="text-xs text-muted-foreground">iFrame</Label>
+              <Textarea
+                readOnly
+                rows={2}
+                className="font-mono text-xs"
+                value={`<iframe src="${window.location.origin}/embed/${widget.id}" style="border:0;width:100%;height:560px" loading="lazy" title="${widget.name}"></iframe>`}
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Best for sandboxed CMS / Notion / no-script environments. Requires public sharing or a token URL.
+              </p>
+            </div>
           </div>
         </TabsContent>
       </Tabs>
