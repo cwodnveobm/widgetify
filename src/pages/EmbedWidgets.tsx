@@ -462,6 +462,7 @@ function ConfigEditor({
               </p>
             </div>
           )}
+          <ShareTokensManager widgetId={widget.id} />
           <div>
             <Label>Embed snippet</Label>
             <Textarea
