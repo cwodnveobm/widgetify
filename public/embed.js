@@ -100,13 +100,19 @@
   }
 
   // ---- Shadow root host ----
-  function makeHost(widgetId) {
+  function makeHost(widgetId, mode, target) {
     var host = document.createElement("div");
     host.setAttribute("data-widgetify-id", widgetId);
     host.style.all = "initial";
-    host.style.position = "fixed";
-    host.style.zIndex = "2147483600";
-    document.body.appendChild(host);
+    if (mode === "inline" && target) {
+      host.style.position = "relative";
+      host.style.display = "block";
+      target.appendChild(host);
+    } else {
+      host.style.position = "fixed";
+      host.style.zIndex = "2147483600";
+      document.body.appendChild(host);
+    }
     var shadow = host.attachShadow ? host.attachShadow({ mode: "open" }) : host;
     return { host: host, shadow: shadow };
   }
