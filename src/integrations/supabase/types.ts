@@ -371,6 +371,53 @@ export type Database = {
           },
         ]
       }
+      embed_widget_share_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          label: string | null
+          last_used_at: string | null
+          revoked_at: string | null
+          token: string
+          use_count: number
+          user_id: string
+          widget_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          label?: string | null
+          last_used_at?: string | null
+          revoked_at?: string | null
+          token?: string
+          use_count?: number
+          user_id: string
+          widget_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          label?: string | null
+          last_used_at?: string | null
+          revoked_at?: string | null
+          token?: string
+          use_count?: number
+          user_id?: string
+          widget_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "embed_widget_share_tokens_widget_id_fkey"
+            columns: ["widget_id"]
+            isOneToOne: false
+            referencedRelation: "embed_widgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       embed_widgets: {
         Row: {
           config: Json
@@ -902,6 +949,10 @@ export type Database = {
         Returns: boolean
       }
       is_verified_creator: { Args: { p_user_id: string }; Returns: boolean }
+      validate_widget_share_token: {
+        Args: { _token: string; _widget_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

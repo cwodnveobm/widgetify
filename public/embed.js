@@ -334,14 +334,16 @@
         var id = s.getAttribute("data-widgetify-id") || s.getAttribute("data-id");
         if (!id || loaded[id]) return;
         var base = s.getAttribute("data-base") || DEFAULT_BASE;
+        var token = s.getAttribute("data-token") || "";
         loaded[id] = true;
-        Loader.load(id, base);
+        Loader.load(id, base, token);
       });
     },
-    load: function (widgetId, base) {
-      // Lazy-load via requestIdleCallback when supported, otherwise next tick.
+    load: function (widgetId, base, token) {
       var go = function () {
-        safeFetch(base + "/widgets-public?id=" + encodeURIComponent(widgetId), { method: "GET" }, 1)
+        var url = base + "/widgets-public?id=" + encodeURIComponent(widgetId);
+        if (token) url += "&token=" + encodeURIComponent(token);
+        safeFetch(url, { method: "GET" }, 1)
           .then(function (r) { if (!r.ok) throw new Error("404"); return r.json(); })
           .then(function (widget) {
             var renderer = Renderers[widget.widget_type];

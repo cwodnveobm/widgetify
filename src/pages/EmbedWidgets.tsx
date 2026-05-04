@@ -17,6 +17,7 @@ import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { InteractionDashboard } from "@/components/InteractionDashboard";
 import { EmbedDocs } from "@/components/EmbedDocs";
+import { ShareTokensManager } from "@/components/ShareTokensManager";
 
 type WidgetType = "popup" | "lead-form" | "ai-chat";
 
@@ -290,7 +291,7 @@ export default function EmbedWidgets() {
                   </p>
                 ) : (
                   <p className="text-xs text-muted-foreground italic">
-                    Shareable link is disabled. The embed snippet still works on sites you own.
+                    Public link disabled. Generate a private share link below to share with specific people.
                   </p>
                 )}
                 {editing?.id === w.id && (
@@ -461,6 +462,7 @@ function ConfigEditor({
               </p>
             </div>
           )}
+          <ShareTokensManager widgetId={widget.id} />
           <div>
             <Label>Embed snippet</Label>
             <Textarea
