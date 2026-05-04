@@ -287,32 +287,30 @@
 
     "ai-chat": function (widget, ctx) {
       var cfg = widget.config || {};
-      var rendered = makeHost(widget.id);
+      var display = cfg.display || "floating";
+      var inlineTarget = display === "inline" ? findInlineTarget(widget.id) : null;
+      var rendered = makeHost(widget.id, inlineTarget ? "inline" : "floating", inlineTarget);
       injectStyles(rendered.shadow, cfg.customCss);
       var sessionId = "chat_" + widget.id + "_" + getSessionId();
       var chat = null;
+      var body_el;
 
-      var fab = el("button", { class: "wf-fab", "aria-label": "Open chat" }, ["💬"]);
       function appendMsg(body, who) {
         var m = el("div", { class: "wf-msg " + who });
         m.textContent = body;
         body_el.appendChild(m);
         body_el.scrollTop = body_el.scrollHeight;
       }
-      var body_el;
-      function openChat() {
-        if (chat) return;
-        chat = el("div", { class: "wf-chat" });
+
+      function buildChat(isInline) {
+        var c = el("div", { class: "wf-chat" + (isInline ? " wf-inline" : "") });
         var header = el("div", { class: "wf-chat-h" }, [
           String(cfg.title || "Chat with us"),
-          el("button", { class: "wf-close", style: { color: "#fff" }, onClick: function () { chat.remove(); chat = null; track(widget.id, "close", {}, ctx.base); } }, ["×"])
+          isInline ? null : el("button", { class: "wf-close", style: { color: "#fff" }, onClick: function () { c.remove(); chat = null; track(widget.id, "close", {}, ctx.base); } }, ["×"])
         ]);
         body_el = el("div", { class: "wf-chat-body" });
-        var welcome = String(cfg.welcomeMessage || "Hi! How can I help?");
-        appendMsg(welcome, "bot");
-
+        appendMsg(String(cfg.welcomeMessage || "Hi! How can I help?"), "bot");
         var typing = el("div", { class: "wf-typing", style: { display: "none" } }, ["Thinking…"]);
-
         var form = el("form", { class: "wf-chat-form" });
         var input = el("input", { placeholder: "Type a message…", maxlength: "1000", required: "true" });
         var send = el("button", { type: "submit" }, ["Send"]);
@@ -342,17 +340,29 @@
             appendMsg("Network error, please try again.", "bot");
           });
         });
+        c.appendChild(header); c.appendChild(body_el); c.appendChild(typing); c.appendChild(form);
+        return c;
+      }
 
-        chat.appendChild(header);
-        chat.appendChild(body_el);
-        chat.appendChild(typing);
-        chat.appendChild(form);
+      function openChat() {
+        if (chat) return;
+        chat = buildChat(false);
         rendered.shadow.appendChild(chat);
         track(widget.id, "open", {}, ctx.base);
       }
+
+      if (display === "inline") {
+        chat = buildChat(true);
+        rendered.shadow.appendChild(chat);
+        track(widget.id, "view", { display: "inline" }, ctx.base);
+        return;
+      }
+
+      var fab = el("button", { class: "wf-fab", "aria-label": "Open chat" }, ["💬"]);
       fab.addEventListener("click", openChat);
       rendered.shadow.appendChild(fab);
       track(widget.id, "view", {}, ctx.base);
+      if (cfg.autoOpen) setTimeout(openChat, Number(cfg.autoOpenDelay || 2) * 1000);
     },
   };
 
