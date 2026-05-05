@@ -207,6 +207,14 @@ export default function LastSetPublic() {
               transition={{ type: 'spring', stiffness: 160, damping: 20 }}
               className="flex flex-col items-center mb-10 gap-3"
             >
+              {isPrivateAccess && (
+                <div
+                  className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full"
+                  style={{ background: theme.accent, border: `1px solid ${theme.border}`, color: subColor }}
+                >
+                  Private preview
+                </div>
+              )}
               <div className="relative">
                 {profile.avatar_url ? (
                   <img
