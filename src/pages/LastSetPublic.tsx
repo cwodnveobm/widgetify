@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ExternalLink, Sparkles, Link2, Instagram, Twitter, Youtube,
@@ -79,34 +79,67 @@ function recordClick(profileId: string, index: number, label: string, url: strin
 
 export default function LastSetPublic() {
   const { username } = useParams<{ username: string }>();
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get('token') || '';
   const [profile, setProfile] = useState<LastSetProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [isPrivateAccess, setIsPrivateAccess] = useState(false);
 
   useEffect(() => {
     if (!username) return;
-    supabase
-      .from('lastset_profiles')
-      .select('*')
-      .eq('username', username)
-      .eq('is_public', true)
-      .maybeSingle()
-      .then(({ data, error }) => {
-        if (!data || error) {
-          setNotFound(true);
-        } else {
-          setProfile(data as any);
-          // Increment view count (fire-and-forget, non-blocking)
-          supabase
-            .from('lastset_profiles')
-            .update({ view_count: (data.view_count || 0) + 1 })
-            .eq('id', data.id)
-            .eq('is_public', true)
-            .then(() => {});
-        }
+    let cancelled = false;
+
+    (async () => {
+      // Try public profile first
+      const { data } = await supabase
+        .from('lastset_profiles')
+        .select('*')
+        .eq('username', username)
+        .eq('is_public', true)
+        .maybeSingle();
+
+      if (cancelled) return;
+
+      if (data) {
+        setProfile(data as any);
+        supabase
+          .from('lastset_profiles')
+          .update({ view_count: (data.view_count || 0) + 1 })
+          .eq('id', data.id)
+          .eq('is_public', true)
+          .then(() => {});
         setLoading(false);
-      });
-  }, [username]);
+        return;
+      }
+
+      // Fall back to token-based private access
+      if (token && /^[a-f0-9]{16,128}$/i.test(token)) {
+        const { data: rows } = await supabase.rpc('get_lastset_profile_by_token' as any, {
+          _username: username,
+          _token: token,
+        });
+        const priv = Array.isArray(rows) ? rows[0] : rows;
+        if (priv) {
+          setProfile(priv as any);
+          setIsPrivateAccess(true);
+          // Best-effort token usage tracking
+          supabase
+            .from('lastset_share_tokens' as any)
+            .update({ last_used_at: new Date().toISOString(), use_count: ((priv as any).use_count ?? 0) })
+            .eq('token', token)
+            .then(() => {});
+          setLoading(false);
+          return;
+        }
+      }
+
+      setNotFound(true);
+      setLoading(false);
+    })();
+
+    return () => { cancelled = true; };
+  }, [username, token]);
 
   if (loading) {
     return (
@@ -174,6 +207,14 @@ export default function LastSetPublic() {
               transition={{ type: 'spring', stiffness: 160, damping: 20 }}
               className="flex flex-col items-center mb-10 gap-3"
             >
+              {isPrivateAccess && (
+                <div
+                  className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full"
+                  style={{ background: theme.accent, border: `1px solid ${theme.border}`, color: subColor }}
+                >
+                  Private preview
+                </div>
+              )}
               <div className="relative">
                 {profile.avatar_url ? (
                   <img

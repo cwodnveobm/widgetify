@@ -18,6 +18,8 @@ import { Navigation } from '@/components/Navigation';
 import { AuthModal } from '@/components/AuthModal';
 import { cn } from '@/lib/utils';
 import { SEOHead } from '@/components/SEOHead';
+import { LastSetShareTokens } from '@/components/LastSetShareTokens';
+import { LastSetQRCode } from '@/components/LastSetQRCode';
 
 const THEMES = [
   { id: 'glass', label: 'Glass', bg: 'from-slate-900 to-slate-800', accent: 'rgba(255,255,255,0.12)', border: 'rgba(255,255,255,0.2)' },
@@ -759,6 +761,14 @@ export default function LastSetBuilder() {
                 </Button>
               </div>
 
+
+              {/* QR + private share tokens (only after profile saved) */}
+              {profile.id && profile.username && (
+                <div className="space-y-3">
+                  <LastSetQRCode url={shareUrl} filename={`lastset-${profile.username}.png`} />
+                  <LastSetShareTokens profileId={profile.id} username={profile.username} />
+                </div>
+              )}
 
               {/* Visibility */}
               <div className="flex items-center justify-between p-3 rounded-xl border border-border bg-card">

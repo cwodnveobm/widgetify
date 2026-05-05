@@ -558,6 +558,53 @@ export type Database = {
         }
         Relationships: []
       }
+      lastset_share_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          label: string | null
+          last_used_at: string | null
+          profile_id: string
+          revoked_at: string | null
+          token: string
+          use_count: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          label?: string | null
+          last_used_at?: string | null
+          profile_id: string
+          revoked_at?: string | null
+          token?: string
+          use_count?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          label?: string | null
+          last_used_at?: string | null
+          profile_id?: string
+          revoked_at?: string | null
+          token?: string
+          use_count?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lastset_share_tokens_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "lastset_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payout_requests: {
         Row: {
           account_holder_name: string | null
@@ -937,6 +984,30 @@ export type Database = {
     Functions: {
       check_email_rate_limit: { Args: { p_email: string }; Returns: boolean }
       get_creator_multiplier: { Args: { p_user_id: string }; Returns: number }
+      get_lastset_profile_by_token: {
+        Args: { _token: string; _username: string }
+        Returns: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string
+          id: string
+          is_public: boolean
+          links: Json
+          shape: string
+          theme: string
+          updated_at: string
+          user_id: string
+          username: string
+          view_count: number
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "lastset_profiles"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       has_active_subscription: {
         Args: { user_id_param: string }
         Returns: boolean
@@ -949,6 +1020,10 @@ export type Database = {
         Returns: boolean
       }
       is_verified_creator: { Args: { p_user_id: string }; Returns: boolean }
+      validate_lastset_share_token: {
+        Args: { _token: string; _username: string }
+        Returns: boolean
+      }
       validate_widget_share_token: {
         Args: { _token: string; _widget_id: string }
         Returns: boolean
