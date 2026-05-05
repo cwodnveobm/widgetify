@@ -5,7 +5,7 @@ import {
   Plus, Trash2, ExternalLink, Copy, Check, Save, Eye, EyeOff,
   Sparkles, Link2, User, Palette, Globe, Lock, ArrowLeft,
   GripVertical, Instagram, Twitter, Youtube, Github, Linkedin,
-  Music, ShoppingBag, Mail, Phone, Globe2, Camera, X, MousePointerClick
+  Music, ShoppingBag, Mail, Phone, Globe2, Camera, X, MousePointerClick, Share2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
