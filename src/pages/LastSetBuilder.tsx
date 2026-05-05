@@ -471,12 +471,21 @@ export default function LastSetBuilder() {
                     <span className="flex-1 text-sm text-foreground font-mono truncate">{shareUrl}</span>
                     <button
                       onClick={handleCopyLink}
-                      className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors"
+                      aria-label="Copy share link"
+                      className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
                     >
                       {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
                     </button>
+                    <button
+                      onClick={handleShare}
+                      aria-label="Share link"
+                      className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
+                    >
+                      <Share2 className="w-4 h-4 text-muted-foreground" />
+                    </button>
                     <a href={`/l/${profile.username}`} target="_blank" rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors">
+                      aria-label="Open public link in new tab"
+                      className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center">
                       <ExternalLink className="w-4 h-4 text-muted-foreground" />
                     </a>
                   </div>
