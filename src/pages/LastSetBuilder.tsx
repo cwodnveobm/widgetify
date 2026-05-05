@@ -5,7 +5,7 @@ import {
   Plus, Trash2, ExternalLink, Copy, Check, Save, Eye, EyeOff,
   Sparkles, Link2, User, Palette, Globe, Lock, ArrowLeft,
   GripVertical, Instagram, Twitter, Youtube, Github, Linkedin,
-  Music, ShoppingBag, Mail, Phone, Globe2, Camera, X, MousePointerClick
+  Music, ShoppingBag, Mail, Phone, Globe2, Camera, X, MousePointerClick, Share2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -361,12 +361,65 @@ export default function LastSetBuilder() {
   const CANONICAL_BASE = 'https://widgetify.lovable.app';
   const shareUrl = `${CANONICAL_BASE}/l/${profile.username}`;
 
-  const handleCopyLink = () => {
+  const copyToClipboardSafe = async (text: string) => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch {}
+    // Fallback for insecure contexts / older browsers
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return ok;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleCopyLink = async () => {
     if (!profile.username) { toast.error('Set a username first'); return; }
-    navigator.clipboard.writeText(shareUrl);
+    if (!profile.is_public) {
+      toast.warning('Profile is private — make it public so others can view this link.');
+    }
+    const ok = await copyToClipboardSafe(shareUrl);
+    if (!ok) {
+      toast.error('Could not copy automatically. Long-press the link to copy.');
+      return;
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
     toast.success('Link copied!');
+  };
+
+  const handleShare = async () => {
+    if (!profile.username) { toast.error('Set a username first'); return; }
+    if (!profile.is_public) {
+      toast.warning('Profile is private — make it public so others can view this link.');
+    }
+    const shareData = {
+      title: `${profile.display_name || profile.username} on Widgetify LastSet`,
+      text: profile.bio || `Check out @${profile.username} on Widgetify`,
+      url: shareUrl,
+    };
+    try {
+      if (navigator.share && (!navigator.canShare || navigator.canShare(shareData))) {
+        await navigator.share(shareData);
+        return;
+      }
+    } catch (err: any) {
+      if (err?.name === 'AbortError') return;
+    }
+    // Fallback: copy
+    await handleCopyLink();
   };
 
   if (loading) {
@@ -418,12 +471,21 @@ export default function LastSetBuilder() {
                     <span className="flex-1 text-sm text-foreground font-mono truncate">{shareUrl}</span>
                     <button
                       onClick={handleCopyLink}
-                      className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors"
+                      aria-label="Copy share link"
+                      className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
                     >
                       {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
                     </button>
+                    <button
+                      onClick={handleShare}
+                      aria-label="Share link"
+                      className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
+                    >
+                      <Share2 className="w-4 h-4 text-muted-foreground" />
+                    </button>
                     <a href={`/l/${profile.username}`} target="_blank" rel="noopener noreferrer"
-                      className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors">
+                      aria-label="Open public link in new tab"
+                      className="p-1.5 rounded-lg hover:bg-primary/10 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center">
                       <ExternalLink className="w-4 h-4 text-muted-foreground" />
                     </a>
                   </div>
