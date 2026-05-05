@@ -18,6 +18,7 @@ import SEOHead from "@/components/SEOHead";
 import { InteractionDashboard } from "@/components/InteractionDashboard";
 import { EmbedDocs } from "@/components/EmbedDocs";
 import { ShareTokensManager } from "@/components/ShareTokensManager";
+import { AIEmbedAssistant } from "@/components/AIEmbedAssistant";
 
 type WidgetType = "popup" | "lead-form" | "ai-chat";
 
@@ -191,6 +192,8 @@ export default function EmbedWidgets() {
             <Plus className="w-4 h-4 mr-2" /> New Widget
           </Button>
         </div>
+
+        <AIEmbedAssistant onCreated={loadWidgets} />
 
         {creating && (
           <Card className="mb-6">
