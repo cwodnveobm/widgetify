@@ -106,6 +106,7 @@ const App = () => {
                     <Route path="/admin" element={<AdminPanel />} />
                     <Route path="/lastset" element={<LastSetBuilder />} />
                     <Route path="/l/:username" element={<LastSetPublic />} />
+                    <Route path="/embed/lastset/:username" element={<LastSetPublic />} />
                     <Route path="/mcp-docs" element={<MCPDocs />} />
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/payment-history" element={<PaymentHistory />} />
