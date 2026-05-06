@@ -155,7 +155,7 @@ export default function LastSetPublic() {
   if (notFound || !profile) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 gap-6">
-        <SEOHead title="Profile Not Found | Widgetify" description="" />
+        <SEOHead title="Profile Not Found | Widgetify" description="" noindex />
         <div className="text-6xl">🔍</div>
         <h1 className="text-2xl font-bold text-white">@{username} not found</h1>
         <p className="text-white/50 text-sm">This profile doesn't exist or is private.</p>
@@ -181,7 +181,30 @@ export default function LastSetPublic() {
         title={`${profile.display_name} (@${profile.username}) | Widgetify LastSet`}
         description={profile.bio || `Check out ${profile.display_name}'s links on Widgetify LastSet.`}
         image={profile.avatar_url || undefined}
+        type="profile"
+        noindex={isPrivateAccess || !profile.is_public}
       />
+      {profile.is_public && !isPrivateAccess && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'ProfilePage',
+              mainEntity: {
+                '@type': 'Person',
+                name: profile.display_name,
+                alternateName: `@${profile.username}`,
+                description: profile.bio || undefined,
+                image: profile.avatar_url || undefined,
+                url: `https://widgetify.vercel.app/l/${profile.username}`,
+                sameAs: links.map(l => l.url),
+              },
+            }),
+          }}
+        />
+      )}
+      <h1 className="sr-only">{profile.display_name} (@{profile.username}) — Links</h1>
 
       <div
         className={`min-h-screen bg-gradient-to-br ${theme.bg} relative overflow-hidden`}

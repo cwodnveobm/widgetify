@@ -67,4 +67,5 @@ User-agent: Amazonbot
 Allow: /
 
 # Sitemap location
-Sitemap: https://widgetify.app/sitemap.xml
+Sitemap: https://widgetify.vercel.app/sitemap.xml
+Sitemap: https://pibinmzsiwzatfljqkiu.supabase.co/functions/v1/lastset-sitemap

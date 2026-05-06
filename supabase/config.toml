@@ -2,3 +2,5 @@ project_id = "pibinmzsiwzatfljqkiu"
 
 [functions.widgetify-mcp]
 verify_jwt = false
+[functions.lastset-sitemap]
+verify_jwt = false
