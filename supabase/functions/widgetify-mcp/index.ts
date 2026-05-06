@@ -537,7 +537,7 @@ mcp.tool("generate_widget_code", {
   })();
 </script>`;
 
-    const appUrl = "https://widgetify.lovable.app";
+    const appUrl = "https://widgetify.vercel.app";
     return {
       content: [
         {
@@ -580,7 +580,7 @@ mcp.tool("get_lastset_profile", {
       .eq("is_public", true)
       .single();
     if (error || !data) return errResult("Profile not found or is private.");
-    const appUrl = "https://widgetify.lovable.app";
+    const appUrl = "https://widgetify.vercel.app";
     return {
       content: [
         {
@@ -667,7 +667,7 @@ mcp.tool("upsert_lastset_profile", {
       .select()
       .single();
     if (error) return errResult(error.message);
-    const appUrl = "https://widgetify.lovable.app";
+    const appUrl = "https://widgetify.vercel.app";
     return {
       content: [
         {
