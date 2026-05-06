@@ -493,7 +493,7 @@ export default function LastSetBuilder() {
         </div>
       </div>
 
-      <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} initialMode={authMode} />
+      <AuthModal open={authModalOpen} onClose={() => setAuthModalOpen(false)} mode={authMode} />
     </>
   );
 }
