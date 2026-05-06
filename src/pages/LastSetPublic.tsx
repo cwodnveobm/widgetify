@@ -181,7 +181,30 @@ export default function LastSetPublic() {
         title={`${profile.display_name} (@${profile.username}) | Widgetify LastSet`}
         description={profile.bio || `Check out ${profile.display_name}'s links on Widgetify LastSet.`}
         image={profile.avatar_url || undefined}
+        type="profile"
+        noindex={isPrivateAccess || !profile.is_public}
       />
+      {profile.is_public && !isPrivateAccess && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'ProfilePage',
+              mainEntity: {
+                '@type': 'Person',
+                name: profile.display_name,
+                alternateName: `@${profile.username}`,
+                description: profile.bio || undefined,
+                image: profile.avatar_url || undefined,
+                url: `https://widgetify.vercel.app/l/${profile.username}`,
+                sameAs: links.map(l => l.url),
+              },
+            }),
+          }}
+        />
+      )}
+      <h1 className="sr-only">{profile.display_name} (@{profile.username}) — Links</h1>
 
       <div
         className={`min-h-screen bg-gradient-to-br ${theme.bg} relative overflow-hidden`}
