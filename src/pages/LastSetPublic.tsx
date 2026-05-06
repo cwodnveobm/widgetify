@@ -155,7 +155,7 @@ export default function LastSetPublic() {
   if (notFound || !profile) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800 gap-6">
-        <SEOHead title="Profile Not Found | Widgetify" description="" />
+        <SEOHead title="Profile Not Found | Widgetify" description="" noindex />
         <div className="text-6xl">🔍</div>
         <h1 className="text-2xl font-bold text-white">@{username} not found</h1>
         <p className="text-white/50 text-sm">This profile doesn't exist or is private.</p>
