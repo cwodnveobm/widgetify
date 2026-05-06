@@ -16,7 +16,7 @@ const defaultSEO = {
   description: 'Generate customized chat widgets for WhatsApp, Telegram, Messenger, and more. Easy integration with any website platform. Free, no coding required.',
   keywords: 'chat widget, WhatsApp widget, website chat, social media widget, customer support widget, free chat widget, website integration, messenger widget, telegram widget',
   image: '/og-image.jpg',
-  url: 'https://widgetify.lovable.app',
+  url: 'https://widgetify.vercel.app',
   twitterHandle: '@widgetify',
   author: 'Muhammed Adnan',
 };

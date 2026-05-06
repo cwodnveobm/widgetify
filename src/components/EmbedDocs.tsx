@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
-const origin = typeof window !== "undefined" ? window.location.origin : "https://widgetify.lovable.app";
+const origin = typeof window !== "undefined" ? window.location.origin : "https://widgetify.vercel.app";
 
 const Code = ({ children }: { children: string }) => (
   <pre className="bg-muted/50 border rounded-lg p-3 overflow-x-auto text-xs font-mono leading-relaxed">

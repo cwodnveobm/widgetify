@@ -163,7 +163,7 @@ const TOOLS: MCPTool[] = [
       { name: 'widget_id', type: 'string', required: true, description: 'UUID of the widget' },
     ],
     example: { jsonrpc: '2.0', id: 9, method: 'tools/call', params: { name: 'generate_widget_code', arguments: { widget_id: 'your-widget-uuid' } } },
-    exampleResponse: { widget_id: 'uuid', widget_name: 'Support Chat', preview_url: 'https://widgetify.lovable.app/?widget=uuid', embed_code: '<script>/* ... */</script>', instructions: 'Paste embed_code before </body> on any HTML page.' },
+    exampleResponse: { widget_id: 'uuid', widget_name: 'Support Chat', preview_url: 'https://widgetify.vercel.app/?widget=uuid', embed_code: '<script>/* ... */</script>', instructions: 'Paste embed_code before </body> on any HTML page.' },
   },
   {
     name: 'get_lastset_profile',
@@ -174,7 +174,7 @@ const TOOLS: MCPTool[] = [
       { name: 'username', type: 'string', required: true, description: "The unique LastSet username e.g. 'thetechcontractorin'" },
     ],
     example: { jsonrpc: '2.0', id: 10, method: 'tools/call', params: { name: 'get_lastset_profile', arguments: { username: 'thetechcontractorin' } } },
-    exampleResponse: { username: 'thetechcontractorin', display_name: 'Muhammed Adnan', bio: 'The Contractor / Online Experience Manager', theme: 'neon', shape: 'pill', links: [{ label: 'LinkedIn', url: 'https://linkedin.com/in/muhammedadnanvv', icon: 'linkedin' }, { label: 'GitHub', url: 'https://github.com/muhammedadnanv', icon: 'github' }], view_count: 1, public_url: 'https://widgetify.lovable.app/l/thetechcontractorin' },
+    exampleResponse: { username: 'thetechcontractorin', display_name: 'Muhammed Adnan', bio: 'The Contractor / Online Experience Manager', theme: 'neon', shape: 'pill', links: [{ label: 'LinkedIn', url: 'https://linkedin.com/in/muhammedadnanvv', icon: 'linkedin' }, { label: 'GitHub', url: 'https://github.com/muhammedadnanv', icon: 'github' }], view_count: 1, public_url: 'https://widgetify.vercel.app/l/thetechcontractorin' },
   },
   {
     name: 'upsert_lastset_profile',
@@ -193,7 +193,7 @@ const TOOLS: MCPTool[] = [
       { name: 'links', type: 'array', required: false, description: 'Array of { label, url, icon? } link objects' },
     ],
     example: { jsonrpc: '2.0', id: 11, method: 'tools/call', params: { name: 'upsert_lastset_profile', arguments: { username: 'johndoe', display_name: 'John Doe', bio: 'Builder. Creator. Coffee addict.', theme: 'aurora', shape: 'pill', links: [{ label: 'My Website', url: 'https://johndoe.com', icon: 'Globe' }, { label: 'Twitter', url: 'https://twitter.com/johndoe', icon: 'Twitter' }] } } },
-    exampleResponse: { success: true, profile: { username: 'johndoe', display_name: 'John Doe', theme: 'aurora' }, public_url: 'https://widgetify.lovable.app/l/johndoe' },
+    exampleResponse: { success: true, profile: { username: 'johndoe', display_name: 'John Doe', theme: 'aurora' }, public_url: 'https://widgetify.vercel.app/l/johndoe' },
   },
   {
     name: 'list_ab_tests',
@@ -903,7 +903,7 @@ curl -X POST '${MCP_ENDPOINT}' \\
             {filtered.length} tool{filtered.length !== 1 ? 's' : ''} {selectedCategory !== 'All' ? `in ${selectedCategory}` : ''}
           </h2>
           <a
-            href="https://widgetify.lovable.app"
+            href="https://widgetify.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-primary hover:underline flex items-center gap-1"

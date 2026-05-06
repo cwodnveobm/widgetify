@@ -174,7 +174,7 @@ function LivePreview({ profile }: { profile: LastSetProfile }) {
         {/* Watermark */}
         <div className="mt-8 text-center">
           <a
-            href="https://widgetify.lovable.app"
+            href="https://widgetify.vercel.app"
             target="_blank"
             rel="noopener noreferrer"
             className={`text-xs ${subColor} hover:opacity-100 transition-opacity`}
@@ -360,7 +360,7 @@ export default function LastSetBuilder() {
     }
   };
 
-  const CANONICAL_BASE = 'https://widgetify.lovable.app';
+  const CANONICAL_BASE = 'https://widgetify.vercel.app';
   const shareUrl = `${CANONICAL_BASE}/l/${profile.username}`;
 
   const copyToClipboardSafe = async (text: string) => {
@@ -540,7 +540,7 @@ export default function LastSetBuilder() {
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-destructive">✗ taken</span>
                     )}
                   </div>
-                  <p className="text-xs text-muted-foreground">widgetify.lovable.app/l/{profile.username || 'yourname'}</p>
+                  <p className="text-xs text-muted-foreground">widgetify.vercel.app/l/{profile.username || 'yourname'}</p>
                 </div>
 
                 <div className="space-y-1.5">

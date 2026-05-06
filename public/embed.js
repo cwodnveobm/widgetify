@@ -1,5 +1,5 @@
 /* Widgetify Universal Embed v1.0
- * Usage: <script async src="https://widgetify.lovable.app/embed.js" data-id="WIDGET_ID"></script>
+ * Usage: <script async src="https://widgetify.vercel.app/embed.js" data-id="WIDGET_ID"></script>
  * Optionally: data-base="https://your-base" to override API base.
  * Multiple instances on the same page are supported.
  */
@@ -12,7 +12,7 @@
 
   // ---- Configuration ----
   var DEFAULT_BASE = "https://pibinmzsiwzatfljqkiu.supabase.co/functions/v1";
-  var APP_ORIGIN = "https://widgetify.lovable.app";
+  var APP_ORIGIN = "https://widgetify.vercel.app";
 
   // ---- Utilities ----
   function uid() {
