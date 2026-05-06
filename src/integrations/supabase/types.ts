@@ -510,51 +510,110 @@ export type Database = {
           },
         ]
       }
+      lastset_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          payer_email: string | null
+          profile_id: string
+          razorpay_order_id: string | null
+          razorpay_payment_id: string | null
+          status: string
+          widget_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          payer_email?: string | null
+          profile_id: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          status?: string
+          widget_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          payer_email?: string | null
+          profile_id?: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          status?: string
+          widget_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lastset_payments_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "lastset_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lastset_profiles: {
         Row: {
+          accent_color: string
           avatar_url: string | null
           bio: string | null
           created_at: string
           display_name: string
+          font_family: string
           id: string
           is_public: boolean
           links: Json
           shape: string
+          spacing: string
           theme: string
           updated_at: string
           user_id: string
           username: string
           view_count: number
+          widgets: Json
         }
         Insert: {
+          accent_color?: string
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string
+          font_family?: string
           id?: string
           is_public?: boolean
           links?: Json
           shape?: string
+          spacing?: string
           theme?: string
           updated_at?: string
           user_id: string
           username: string
           view_count?: number
+          widgets?: Json
         }
         Update: {
+          accent_color?: string
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string
+          font_family?: string
           id?: string
           is_public?: boolean
           links?: Json
           shape?: string
+          spacing?: string
           theme?: string
           updated_at?: string
           user_id?: string
           username?: string
           view_count?: number
+          widgets?: Json
         }
         Relationships: []
       }
@@ -598,6 +657,44 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "lastset_share_tokens_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "lastset_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lastset_submissions: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          ip_hash: string | null
+          profile_id: string
+          widget_id: string
+          widget_type: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          ip_hash?: string | null
+          profile_id: string
+          widget_id: string
+          widget_type: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          ip_hash?: string | null
+          profile_id?: string
+          widget_id?: string
+          widget_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lastset_submissions_profile_id_fkey"
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "lastset_profiles"
@@ -987,19 +1084,23 @@ export type Database = {
       get_lastset_profile_by_token: {
         Args: { _token: string; _username: string }
         Returns: {
+          accent_color: string
           avatar_url: string | null
           bio: string | null
           created_at: string
           display_name: string
+          font_family: string
           id: string
           is_public: boolean
           links: Json
           shape: string
+          spacing: string
           theme: string
           updated_at: string
           user_id: string
           username: string
           view_count: number
+          widgets: Json
         }[]
         SetofOptions: {
           from: "*"
