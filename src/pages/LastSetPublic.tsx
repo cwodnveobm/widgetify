@@ -30,7 +30,7 @@ export default function LastSetPublic() {
   const { username } = useParams<{ username: string }>();
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token') || '';
-  const isEmbed = searchParams.get('embed') === '1';
+  const isEmbed = searchParams.get('embed') === '1' || (typeof window !== 'undefined' && window.location.pathname.startsWith('/embed/lastset/'));
   const [profile, setProfile] = useState<LastSetProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
