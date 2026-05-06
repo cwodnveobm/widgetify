@@ -370,6 +370,15 @@
   var loaded = {};
   var Loader = {
     scan: function () {
+      // LastSet bio embeds: <script async src=".../embed.js" data-lastset="username" data-mode="floating|inline">
+      var bioScripts = document.querySelectorAll("script[data-lastset]");
+      bioScripts.forEach(function (s) {
+        var u = s.getAttribute("data-lastset");
+        if (!u || loaded["bio_" + u]) return;
+        loaded["bio_" + u] = true;
+        Loader.loadLastSet(u, s.getAttribute("data-mode") || "floating");
+      });
+
       var scripts = document.querySelectorAll("script[data-widgetify-id], script[data-id][src*='embed.js']");
       scripts.forEach(function (s) {
         var id = s.getAttribute("data-widgetify-id") || s.getAttribute("data-id");
@@ -379,6 +388,61 @@
         loaded[id] = true;
         Loader.load(id, base, token);
       });
+    },
+    loadLastSet: function (username, mode) {
+      var src = APP_ORIGIN + "/embed/lastset/" + encodeURIComponent(username);
+      if (mode === "inline") {
+        var host = el("div", { style: { maxWidth: "420px", margin: "16px auto" } });
+        var ifr = el("iframe", {
+          src: src, loading: "lazy", title: "Bio",
+          style: { width: "100%", height: "640px", border: "0", borderRadius: "16px", background: "transparent" }
+        });
+        host.appendChild(ifr);
+        document.body.appendChild(host);
+        return;
+      }
+      // Floating: small bubble bottom-right that opens the bio in a popup card
+      var open = false;
+      var panel = el("iframe", {
+        src: src, loading: "lazy", title: "Bio",
+        style: {
+          position: "fixed", bottom: "92px", right: "20px",
+          width: "360px", height: "560px", maxWidth: "calc(100vw - 32px)",
+          maxHeight: "calc(100vh - 120px)",
+          border: "0", borderRadius: "20px",
+          boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
+          background: "#0f172a", zIndex: "2147483646",
+          display: "none", opacity: "0", transform: "translateY(8px) scale(0.98)",
+          transition: "opacity 200ms ease, transform 200ms ease"
+        }
+      });
+      var btn = el("button", {
+        "aria-label": "Open bio",
+        style: {
+          position: "fixed", bottom: "20px", right: "20px",
+          width: "56px", height: "56px", borderRadius: "999px",
+          border: "0", cursor: "pointer", zIndex: "2147483647",
+          background: "linear-gradient(135deg,#9b87f5,#6d4cf5)",
+          color: "#fff", fontSize: "22px",
+          boxShadow: "0 10px 30px rgba(109,76,245,0.45)",
+        }
+      }, ["✦"]);
+      btn.addEventListener("click", function () {
+        open = !open;
+        if (open) {
+          panel.style.display = "block";
+          requestAnimationFrame(function () {
+            panel.style.opacity = "1"; panel.style.transform = "translateY(0) scale(1)";
+          });
+          btn.innerHTML = "×";
+        } else {
+          panel.style.opacity = "0"; panel.style.transform = "translateY(8px) scale(0.98)";
+          setTimeout(function () { panel.style.display = "none"; }, 200);
+          btn.innerHTML = "✦";
+        }
+      });
+      document.body.appendChild(panel);
+      document.body.appendChild(btn);
     },
     load: function (widgetId, base, token) {
       var go = function () {
