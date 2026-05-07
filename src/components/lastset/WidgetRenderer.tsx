@@ -50,8 +50,9 @@ export function WidgetRenderer({
       const href = widget.url.startsWith('http') ? widget.url : `https://${widget.url}`;
       const variant = widget.style || 'button';
       const trackClick = () => {
+        if (isPreview) return;
         supabase.from('lastset_link_clicks' as any).insert({
-          profile_id: profileId, link_index: 0,
+          profile_id: profileId, link_index: index,
           link_label: widget.label, link_url: href,
         }).then(() => {});
       };
