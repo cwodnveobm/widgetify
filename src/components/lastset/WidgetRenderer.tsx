@@ -27,11 +27,13 @@ interface RenderProps {
   accentColor: string;
   pad: string;
   isEmbed?: boolean; // suppress payment etc. when embedded
+  index?: number; // position for analytics
 }
 
 export function WidgetRenderer({
-  widget, profileId, theme, borderRadius, textColor, subColor, accentColor, pad, isEmbed,
+  widget, profileId, theme, borderRadius, textColor, subColor, accentColor, pad, isEmbed, index = 0,
 }: RenderProps) {
+  const isPreview = profileId === 'preview';
   const baseStyle: React.CSSProperties = {
     background: theme.accent,
     border: `1.5px solid ${theme.border}`,
