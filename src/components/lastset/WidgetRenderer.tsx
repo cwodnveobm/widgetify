@@ -216,13 +216,14 @@ function EmailCaptureBlock({ widget, profileId, baseStyle, accentColor, subColor
   );
 }
 
-function ContactFormBlock({ widget, profileId, baseStyle, accentColor, subColor, textColor, theme }: any) {
+function ContactFormBlock({ widget, profileId, baseStyle, accentColor, subColor, textColor, theme, disabled }: any) {
   const [data, setData] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (disabled) { toast.info('Save your bio to enable submissions'); return; }
     setBusy(true);
     const { error } = await supabase.from('lastset_submissions' as any).insert({
       profile_id: profileId, widget_id: widget.id, widget_type: 'contact-form', data,
