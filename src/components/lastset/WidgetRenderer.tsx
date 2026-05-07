@@ -164,17 +164,6 @@ export function WidgetRenderer({
       return <PaymentBlock widget={widget} profileId={profileId} baseStyle={baseStyle}
         accentColor={accentColor} textColor={textColor} subColor={subColor} disabled={isEmbed || isPreview} />;
 
-    case 'email-capture':
-      return <EmailCaptureBlock widget={widget} profileId={profileId} baseStyle={baseStyle}
-        accentColor={accentColor} subColor={subColor} textColor={textColor} />;
-
-    case 'contact-form':
-      return <ContactFormBlock widget={widget} profileId={profileId} baseStyle={baseStyle}
-        accentColor={accentColor} subColor={subColor} textColor={textColor} theme={theme} />;
-
-    case 'payment':
-      return <PaymentBlock widget={widget} profileId={profileId} baseStyle={baseStyle}
-        accentColor={accentColor} textColor={textColor} subColor={subColor} disabled={isEmbed} />;
 
     case 'header':
       return <h2 className="text-xs font-bold uppercase tracking-widest pt-3 pb-1" style={{ color: subColor }}>{widget.text}</h2>;
