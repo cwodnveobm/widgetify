@@ -139,9 +139,10 @@ export function WidgetRenderer({
       );
     }
 
-    case 'booking':
+    case 'booking': {
+      const bookingHref = widget.url?.startsWith('http') ? widget.url : `https://${widget.url || ''}`;
       return (
-        <motion.a href={widget.url} target="_blank" rel="noopener noreferrer"
+        <motion.a href={bookingHref} target="_blank" rel="noopener noreferrer"
           whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
           style={{ ...baseStyle, background: accentColor, color: '#fff' }}
           className="flex items-center justify-center gap-2 font-semibold">
@@ -149,6 +150,19 @@ export function WidgetRenderer({
           {widget.label}
         </motion.a>
       );
+    }
+
+    case 'email-capture':
+      return <EmailCaptureBlock widget={widget} profileId={profileId} baseStyle={baseStyle}
+        accentColor={accentColor} subColor={subColor} textColor={textColor} disabled={isPreview} />;
+
+    case 'contact-form':
+      return <ContactFormBlock widget={widget} profileId={profileId} baseStyle={baseStyle}
+        accentColor={accentColor} subColor={subColor} textColor={textColor} theme={theme} disabled={isPreview} />;
+
+    case 'payment':
+      return <PaymentBlock widget={widget} profileId={profileId} baseStyle={baseStyle}
+        accentColor={accentColor} textColor={textColor} subColor={subColor} disabled={isEmbed || isPreview} />;
 
     case 'email-capture':
       return <EmailCaptureBlock widget={widget} profileId={profileId} baseStyle={baseStyle}
