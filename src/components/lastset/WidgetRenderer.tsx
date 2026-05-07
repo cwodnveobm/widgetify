@@ -175,13 +175,14 @@ export function WidgetRenderer({
 
 // ─── Sub-blocks ──────────────────────────────────────────────────────────────
 
-function EmailCaptureBlock({ widget, profileId, baseStyle, accentColor, subColor, textColor }: any) {
+function EmailCaptureBlock({ widget, profileId, baseStyle, accentColor, subColor, textColor, disabled }: any) {
   const [email, setEmail] = useState('');
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (disabled) { toast.info('Save your bio to enable submissions'); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast.error('Enter a valid email'); return; }
     setBusy(true);
     const { error } = await supabase.from('lastset_submissions' as any).insert({
