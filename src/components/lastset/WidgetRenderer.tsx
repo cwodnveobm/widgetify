@@ -27,11 +27,13 @@ interface RenderProps {
   accentColor: string;
   pad: string;
   isEmbed?: boolean; // suppress payment etc. when embedded
+  index?: number; // position for analytics
 }
 
 export function WidgetRenderer({
-  widget, profileId, theme, borderRadius, textColor, subColor, accentColor, pad, isEmbed,
+  widget, profileId, theme, borderRadius, textColor, subColor, accentColor, pad, isEmbed, index = 0,
 }: RenderProps) {
+  const isPreview = profileId === 'preview';
   const baseStyle: React.CSSProperties = {
     background: theme.accent,
     border: `1.5px solid ${theme.border}`,
@@ -48,8 +50,9 @@ export function WidgetRenderer({
       const href = widget.url.startsWith('http') ? widget.url : `https://${widget.url}`;
       const variant = widget.style || 'button';
       const trackClick = () => {
+        if (isPreview) return;
         supabase.from('lastset_link_clicks' as any).insert({
-          profile_id: profileId, link_index: 0,
+          profile_id: profileId, link_index: index,
           link_label: widget.label, link_url: href,
         }).then(() => {});
       };
@@ -136,9 +139,10 @@ export function WidgetRenderer({
       );
     }
 
-    case 'booking':
+    case 'booking': {
+      const bookingHref = widget.url?.startsWith('http') ? widget.url : `https://${widget.url || ''}`;
       return (
-        <motion.a href={widget.url} target="_blank" rel="noopener noreferrer"
+        <motion.a href={bookingHref} target="_blank" rel="noopener noreferrer"
           whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
           style={{ ...baseStyle, background: accentColor, color: '#fff' }}
           className="flex items-center justify-center gap-2 font-semibold">
@@ -146,18 +150,20 @@ export function WidgetRenderer({
           {widget.label}
         </motion.a>
       );
+    }
 
     case 'email-capture':
       return <EmailCaptureBlock widget={widget} profileId={profileId} baseStyle={baseStyle}
-        accentColor={accentColor} subColor={subColor} textColor={textColor} />;
+        accentColor={accentColor} subColor={subColor} textColor={textColor} disabled={isPreview} />;
 
     case 'contact-form':
       return <ContactFormBlock widget={widget} profileId={profileId} baseStyle={baseStyle}
-        accentColor={accentColor} subColor={subColor} textColor={textColor} theme={theme} />;
+        accentColor={accentColor} subColor={subColor} textColor={textColor} theme={theme} disabled={isPreview} />;
 
     case 'payment':
       return <PaymentBlock widget={widget} profileId={profileId} baseStyle={baseStyle}
-        accentColor={accentColor} textColor={textColor} subColor={subColor} disabled={isEmbed} />;
+        accentColor={accentColor} textColor={textColor} subColor={subColor} disabled={isEmbed || isPreview} />;
+
 
     case 'header':
       return <h2 className="text-xs font-bold uppercase tracking-widest pt-3 pb-1" style={{ color: subColor }}>{widget.text}</h2>;
@@ -169,13 +175,14 @@ export function WidgetRenderer({
 
 // ─── Sub-blocks ──────────────────────────────────────────────────────────────
 
-function EmailCaptureBlock({ widget, profileId, baseStyle, accentColor, subColor, textColor }: any) {
+function EmailCaptureBlock({ widget, profileId, baseStyle, accentColor, subColor, textColor, disabled }: any) {
   const [email, setEmail] = useState('');
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (disabled) { toast.info('Save your bio to enable submissions'); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast.error('Enter a valid email'); return; }
     setBusy(true);
     const { error } = await supabase.from('lastset_submissions' as any).insert({
@@ -209,13 +216,14 @@ function EmailCaptureBlock({ widget, profileId, baseStyle, accentColor, subColor
   );
 }
 
-function ContactFormBlock({ widget, profileId, baseStyle, accentColor, subColor, textColor, theme }: any) {
+function ContactFormBlock({ widget, profileId, baseStyle, accentColor, subColor, textColor, theme, disabled }: any) {
   const [data, setData] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
   const [busy, setBusy] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (disabled) { toast.info('Save your bio to enable submissions'); return; }
     setBusy(true);
     const { error } = await supabase.from('lastset_submissions' as any).insert({
       profile_id: profileId, widget_id: widget.id, widget_type: 'contact-form', data,

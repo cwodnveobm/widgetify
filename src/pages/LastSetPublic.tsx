@@ -167,11 +167,11 @@ export default function LastSetPublic() {
             <motion.div className="flex flex-col" style={{ gap: spacing.gap }}
               initial="hidden" animate="show"
               variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}>
-              {widgetList.map(w => (
+              {widgetList.map((w, i) => (
                 <motion.div key={w.id}
                   variants={{ hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0 } }}>
                   <WidgetRenderer
-                    widget={w} profileId={profile.id} theme={theme}
+                    widget={w} profileId={profile.id} theme={theme} index={i}
                     borderRadius={borderRadius} textColor={textColor} subColor={subColor}
                     accentColor={accentColor} pad={spacing.pad} isEmbed={isEmbed}
                   />
