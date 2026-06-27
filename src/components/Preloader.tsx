@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface PreloaderProps {
   onComplete: () => void;
@@ -7,42 +7,42 @@ interface PreloaderProps {
 const Preloader = ({ onComplete }: PreloaderProps) => {
   const [isVisible, setIsVisible] = useState(true);
   const [progress, setProgress] = useState(0);
+  const progressRef = useRef(0);
+  const completedRef = useRef(false);
+  const onCompleteRef = useRef(onComplete);
 
-  const completeLoading = useCallback(() => {
-    setIsVisible(false);
-    setTimeout(onComplete, 600); // Wait for fade-out animation
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
   }, [onComplete]);
 
   useEffect(() => {
-    // Fast-track for returning users
     const isReturningUser = localStorage.getItem('widgetify_visit_count');
-    const loadingDuration = isReturningUser ? 1200 : 2000;
-    
-    // Animate progress bar with smoother increments
+    const loadingDuration = isReturningUser ? 800 : 1400;
+
+    const finish = () => {
+      if (completedRef.current) return;
+      completedRef.current = true;
+      setIsVisible(false);
+      setTimeout(() => onCompleteRef.current?.(), 450);
+    };
+
     const progressInterval = setInterval(() => {
       setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        // Smoother progress curve
         const remaining = 100 - prev;
-        const increment = Math.min(remaining * 0.15 + 3, 20);
-        return Math.min(prev + increment, 100);
+        const increment = Math.min(remaining * 0.25 + 4, 22);
+        const next = Math.min(prev + increment, 100);
+        progressRef.current = next;
+        if (next >= 100) clearInterval(progressInterval);
+        return next;
       });
-    }, 100);
+    }, 80);
 
-    const timer = setTimeout(() => {
-      completeLoading();
-    }, loadingDuration);
+    const timer = setTimeout(finish, loadingDuration);
 
-    // Allow skipping for impatient users
     const handleInteraction = () => {
-      if (progress > 50) {
-        completeLoading();
-      }
+      if (progressRef.current > 40) finish();
     };
-    
+
     window.addEventListener('click', handleInteraction);
     window.addEventListener('keydown', handleInteraction);
 
@@ -52,7 +52,7 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
       window.removeEventListener('click', handleInteraction);
       window.removeEventListener('keydown', handleInteraction);
     };
-  }, [completeLoading, progress]);
+  }, []);
 
   return (
     <div className={`preloader ${!isVisible ? 'fade-out' : ''}`}>
