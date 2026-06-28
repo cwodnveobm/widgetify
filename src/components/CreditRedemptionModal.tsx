@@ -90,27 +90,15 @@ export const CreditRedemptionModal = ({
 
       if (error) throw error;
 
-      // Update user credits (mark as redeemed)
-      const { error: creditsError } = await supabase
-        .from('user_credits')
-        .update({
-          redeemed_credits: availableCredits,
-        })
-        .eq('user_id', userId);
-
-      if (creditsError) {
-        console.error('Credits update error:', creditsError);
+      // Update credits + record transaction via server (privilege-safe).
+      const { data: redeemResult, error: redeemErr } = await supabase.functions.invoke(
+        'redeem-credits',
+        { body: { credits_to_redeem: creditsToRedeem, rupees: rupeesToReceive } },
+      );
+      if (redeemErr || (redeemResult && (redeemResult as any).error)) {
+        console.error('Credits redemption error:', redeemErr || redeemResult);
+        throw new Error((redeemResult as any)?.error || redeemErr?.message || 'Failed to update credits');
       }
-
-      // Add transaction record
-      await supabase
-        .from('credit_transactions')
-        .insert({
-          user_id: userId,
-          amount: -creditsToRedeem,
-          transaction_type: 'redeemed',
-          description: `Redeemed ${creditsToRedeem} credits for ₹${rupeesToReceive}`,
-        });
 
       toast.success(`Payout request submitted for ₹${rupeesToReceive}!`);
       onSuccess();
