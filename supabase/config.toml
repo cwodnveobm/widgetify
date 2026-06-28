@@ -4,3 +4,5 @@ project_id = "pibinmzsiwzatfljqkiu"
 verify_jwt = false
 [functions.lastset-sitemap]
 verify_jwt = false
+[functions.notify-admin]
+verify_jwt = false
