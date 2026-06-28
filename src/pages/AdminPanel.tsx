@@ -227,6 +227,30 @@ const AdminPanel: React.FC = () => {
             <h1 className="text-3xl font-bold">Admin Panel</h1>
           </div>
           <p className="text-muted-foreground">Manage creator verification applications</p>
+          <div className="mt-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={async () => {
+                const t = toast.loading('Sending Telegram test...');
+                try {
+                  const { data, error } = await supabase.functions.invoke('notify-admin', {
+                    body: {
+                      event: 'Admin Test Notification',
+                      data: { source: 'AdminPanel', triggered_by: user?.email ?? 'unknown' },
+                    },
+                  });
+                  if (error) throw error;
+                  if ((data as any)?.error) throw new Error((data as any).error);
+                  toast.success('Telegram notification sent ✅', { id: t });
+                } catch (e: any) {
+                  toast.error(e.message || 'Failed to send Telegram message', { id: t });
+                }
+              }}
+            >
+              Send Telegram test
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">

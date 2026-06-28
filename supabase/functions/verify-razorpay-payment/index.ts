@@ -1,5 +1,17 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+function notifyAdmin(event: string, data: Record<string, unknown>): void {
+  const url = `${Deno.env.get("SUPABASE_URL")}/functions/v1/notify-admin`;
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      apikey: Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+    },
+    body: JSON.stringify({ event, data }),
+  }).catch((e) => console.error("notify-admin call failed", e));
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -110,6 +122,13 @@ Deno.serve(async (req) => {
         console.error("Subscription insert error:", error);
         throw new Error("Failed to activate subscription");
       }
+
+      // Fire-and-forget admin notification
+      notifyAdmin("New Premium Subscription", {
+        user_id: userId,
+        amount: `₹${metadata?.amount || 199}`,
+        payment_id: razorpay_payment_id,
+      });
     } else if (purpose === "donation") {
       // Record donation
       const { error } = await supabaseAdmin.from("donations").insert({
