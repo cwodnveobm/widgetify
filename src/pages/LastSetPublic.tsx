@@ -46,9 +46,7 @@ export default function LastSetPublic() {
       if (cancelled) return;
       if (data) {
         setProfile(data as any);
-        supabase.from('lastset_profiles')
-          .update({ view_count: (data.view_count || 0) + 1 })
-          .eq('id', data.id).eq('is_public', true).then(() => {});
+        supabase.rpc('increment_lastset_view_count' as any, { _profile_id: data.id }).then(() => {});
         setLoading(false); return;
       }
       if (token && /^[a-f0-9]{16,128}$/i.test(token)) {
