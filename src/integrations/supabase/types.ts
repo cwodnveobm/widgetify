@@ -1080,6 +1080,24 @@ export type Database = {
     }
     Functions: {
       check_email_rate_limit: { Args: { p_email: string }; Returns: boolean }
+      ensure_user_credits: {
+        Args: never
+        Returns: {
+          created_at: string
+          id: string
+          redeemed_credits: number
+          total_credits: number
+          total_referrals: number
+          updated_at: string
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "user_credits"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       get_creator_multiplier: { Args: { p_user_id: string }; Returns: number }
       get_lastset_profile_by_token: {
         Args: { _token: string; _username: string }
@@ -1119,6 +1137,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_lastset_view_count: {
+        Args: { _profile_id: string }
+        Returns: undefined
       }
       is_verified_creator: { Args: { p_user_id: string }; Returns: boolean }
       validate_lastset_share_token: {
