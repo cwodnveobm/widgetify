@@ -131,13 +131,8 @@ export const useReferrals = () => {
         .maybeSingle();
 
       if (!creditsData) {
-        const { data: newCredits, error } = await supabase
-          .from('user_credits')
-          .insert({ user_id: user.id })
-          .select()
-          .single();
-
-        if (!error && newCredits) creditsData = newCredits;
+        const { data: ensured } = await supabase.rpc('ensure_user_credits' as any);
+        if (ensured) creditsData = Array.isArray(ensured) ? ensured[0] : ensured;
       }
 
       if (creditsData) {
