@@ -147,6 +147,13 @@ Deno.serve(async (req) => {
         console.error("Donation insert error:", error);
         throw new Error("Failed to record donation");
       }
+
+      notifyAdmin("💝 New Donation", {
+        from: metadata?.display_name || "Anonymous",
+        email: metadata?.email || "—",
+        amount: `₹${metadata?.amount || 0}`,
+        payment_id: razorpay_payment_id,
+      });
     }
 
     return new Response(
