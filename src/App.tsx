@@ -32,6 +32,7 @@ import EmbedWidgetView from "./pages/EmbedWidgetView";
 import EmbedFrame from "./pages/EmbedFrame";
 import UseCasesIndex from "./pages/UseCasesIndex";
 import UseCasePage from "./pages/UseCasePage";
+import { AnnouncementBanner } from "./components/AnnouncementBanner";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -88,6 +89,7 @@ const App = () => {
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
+                  <AnnouncementBanner />
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/support" element={<Support />} />

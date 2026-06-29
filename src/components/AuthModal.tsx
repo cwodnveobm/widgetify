@@ -106,6 +106,11 @@ export const AuthModal = ({ open, onClose, mode = "signin" }: AuthModalProps) =>
           }
         }
 
+        // Fire-and-forget admin Telegram notification
+        supabase.functions.invoke('notify-admin', {
+          body: { event: '🆕 New Signup', data: { email, name: fullName } },
+        }).catch(() => {});
+
         toast.success("Account created! You can now sign in.");
         onClose();
       }

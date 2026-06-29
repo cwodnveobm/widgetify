@@ -6,3 +6,7 @@ verify_jwt = false
 verify_jwt = false
 [functions.notify-admin]
 verify_jwt = false
+[functions.telegram-webhook]
+verify_jwt = false
+[functions.support-contact]
+verify_jwt = false
