@@ -905,6 +905,69 @@ export type Database = {
           },
         ]
       }
+      support_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          status: string
+          subject: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          status?: string
+          subject: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          status?: string
+          subject?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      system_announcements: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          level: string
+          message: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          level?: string
+          message: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          level?: string
+          message?: string
+        }
+        Relationships: []
+      }
       user_credits: {
         Row: {
           created_at: string
@@ -931,6 +994,33 @@ export type Database = {
           total_credits?: number
           total_referrals?: number
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          read_at?: string | null
+          title?: string
           user_id?: string
         }
         Relationships: []
