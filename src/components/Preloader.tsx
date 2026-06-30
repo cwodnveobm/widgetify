@@ -56,10 +56,10 @@ const Preloader = ({ onComplete }: PreloaderProps) => {
 
   return (
     <div className={`preloader ${!isVisible ? 'fade-out' : ''}`}>
-      {/* Background gradient orbs */}
-      <div className="preloader-bg-orb preloader-bg-orb-1" />
-      <div className="preloader-bg-orb preloader-bg-orb-2" />
-      <div className="preloader-bg-orb preloader-bg-orb-3" />
+      {/* Floating sticker accents */}
+      <div className="preloader-bg-orb preloader-bg-orb-1">★ BUILD</div>
+      <div className="preloader-bg-orb preloader-bg-orb-2">SHIP IT ↗</div>
+      <div className="preloader-bg-orb preloader-bg-orb-3">NEW DROP</div>
       
       {/* Logo container with glow */}
       <div className="preloader-logo-container">
