@@ -1232,6 +1232,7 @@ export type Database = {
         Args: { _profile_id: string }
         Returns: undefined
       }
+      is_current_user_admin: { Args: never; Returns: boolean }
       is_verified_creator: { Args: { p_user_id: string }; Returns: boolean }
       validate_lastset_share_token: {
         Args: { _token: string; _username: string }
