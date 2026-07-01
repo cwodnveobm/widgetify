@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { AuthModal } from '@/components/AuthModal';
+import { ReauthGate, requestReauth, clearReauth, getCachedReauthPassword } from '@/components/admin/ReauthGate';
 
 /* ---------- Types ---------- */
 interface CreatorVerification {
@@ -39,14 +40,34 @@ interface SupportMsg { id: string; name: string; email: string; subject: string;
 interface Announcement { id: string; message: string; level: string; active: boolean; created_by: string | null; expires_at: string | null; created_at: string }
 
 /* ---------- API helper ---------- */
+const SENSITIVE_ACTIONS = new Set([
+  'grant_premium', 'revoke_premium', 'add_credits',
+  'delete_widget', 'delete_lastset', 'broadcast', 'clear_announcements',
+]);
+
 async function adminCall<T = any>(action: string, payload: Record<string, unknown> = {}): Promise<T> {
-  const { data, error } = await supabase.functions.invoke('admin-actions', {
-    body: { action, payload },
-  });
+  const body: Record<string, unknown> = { action, payload };
+  if (SENSITIVE_ACTIONS.has(action)) {
+    let pw = getCachedReauthPassword();
+    if (!pw) {
+      pw = await requestReauth();
+      if (!pw) throw new Error('Re-authentication cancelled');
+    }
+    body.reauth_password = pw;
+  }
+  const { data, error } = await supabase.functions.invoke('admin-actions', { body });
   if (error) throw new Error(error.message);
-  if ((data as any)?.error) throw new Error((data as any).error);
+  const err = (data as any)?.error;
+  if (err) {
+    if (err === 'reauth_required' || err === 'reauth_failed') {
+      clearReauth();
+      throw new Error((data as any).message || 'Password re-authentication required');
+    }
+    throw new Error(err);
+  }
   return data as T;
 }
+
 
 /* ============================================================
    Stats overview
@@ -725,8 +746,10 @@ const AdminPanel: React.FC = () => {
         </Tabs>
       </main>
       <Footer />
+      <ReauthGate />
     </div>
   );
 };
+
 
 export default AdminPanel;

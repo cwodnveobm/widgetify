@@ -56,7 +56,7 @@ Deno.serve(async (req) => {
   if (!role) return json({ error: "forbidden" }, 403);
 
   // 3. Dispatch action.
-  let body: { action?: string; payload?: Record<string, unknown> };
+  let body: { action?: string; payload?: Record<string, unknown>; reauth_password?: string };
   try {
     body = await req.json();
   } catch {
@@ -65,6 +65,25 @@ Deno.serve(async (req) => {
 
   const action = String(body.action ?? "");
   const p = (body.payload ?? {}) as Record<string, any>;
+
+  // 3a. Sensitive actions require a fresh password re-authentication (2FA-style step-up).
+  const SENSITIVE = new Set([
+    "grant_premium", "revoke_premium", "add_credits",
+    "delete_widget", "delete_lastset", "broadcast", "clear_announcements",
+  ]);
+  if (SENSITIVE.has(action)) {
+    const pw = String(body.reauth_password ?? "");
+    const email = userData.user.email;
+    if (!pw || !email) {
+      return json({ error: "reauth_required", message: "Password re-auth required for this action." }, 401);
+    }
+    const reauthClient = createClient(SUPABASE_URL, ANON_KEY);
+    const { error: reauthErr } = await reauthClient.auth.signInWithPassword({ email, password: pw });
+    if (reauthErr) {
+      return json({ error: "reauth_failed", message: "Password re-authentication failed." }, 401);
+    }
+  }
+
 
   try {
     switch (action) {
