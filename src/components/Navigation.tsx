@@ -254,7 +254,18 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
                   </motion.button>
                 </>
               )}
+              {user && isAdmin && (
+                <Link
+                  to="/admin"
+                  onClick={() => setMenuOpen(false)}
+                  className="py-4 flex items-center gap-2 border-b border-border pb-3 min-h-[44px] font-medium text-primary"
+                >
+                  <Shield className="w-4 h-4" />
+                  Admin Panel
+                </Link>
+              )}
               {user && (
+
                 <motion.button 
                   onClick={() => { handleSignOut(); setMenuOpen(false); }} 
                   className={`text-destructive hover:text-destructive/80 py-4 flex items-center gap-2 min-h-[44px] font-medium ${classes.animation} text-left w-full`}
