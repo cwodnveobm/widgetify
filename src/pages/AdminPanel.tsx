@@ -746,8 +746,10 @@ const AdminPanel: React.FC = () => {
         </Tabs>
       </main>
       <Footer />
+      <ReauthGate />
     </div>
   );
 };
+
 
 export default AdminPanel;
