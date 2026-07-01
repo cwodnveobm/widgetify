@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Sparkles, User, LogOut, Crown, LayoutDashboard } from 'lucide-react';
+import { Menu, X, Sparkles, User, LogOut, Crown, LayoutDashboard, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useAdminRole } from '@/hooks/useAdminRole';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
@@ -12,6 +13,7 @@ import { SubscriptionModal } from '@/components/SubscriptionModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAdaptiveUI } from '@/hooks/useAdaptiveUI';
 import { AdaptiveButton } from '@/components/adaptive';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,7 +32,10 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
   const [subscriptionOpen, setSubscriptionOpen] = useState(false);
   const { user } = useAuth();
   const { isPremium } = useSubscription();
+  const { isAdmin } = useAdminRole();
   const isMobile = useIsMobile();
+
+
   const location = useLocation();
   const { config, classes } = useAdaptiveUI();
 
@@ -102,6 +107,21 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
         {/* Right Actions */}
         <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle />
+
+          {isAdmin && (
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="hidden sm:flex gap-1.5 border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]"
+            >
+              <Link to="/admin">
+                <Shield className="w-3.5 h-3.5" />
+                Admin
+              </Link>
+            </Button>
+          )}
+
           
           {!isPremium && (
             <Button
@@ -135,6 +155,15 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
                     Dashboard
                   </Link>
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin" className="flex items-center">
+                      <Shield className="w-4 h-4 mr-2 text-primary" />
+                      Admin Panel
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="w-4 h-4 mr-2" />
                   Sign Out
@@ -225,7 +254,18 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
                   </motion.button>
                 </>
               )}
+              {user && isAdmin && (
+                <Link
+                  to="/admin"
+                  onClick={() => setMenuOpen(false)}
+                  className="py-4 flex items-center gap-2 border-b border-border pb-3 min-h-[44px] font-medium text-primary"
+                >
+                  <Shield className="w-4 h-4" />
+                  Admin Panel
+                </Link>
+              )}
               {user && (
+
                 <motion.button 
                   onClick={() => { handleSignOut(); setMenuOpen(false); }} 
                   className={`text-destructive hover:text-destructive/80 py-4 flex items-center gap-2 min-h-[44px] font-medium ${classes.animation} text-left w-full`}
