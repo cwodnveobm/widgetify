@@ -32,7 +32,8 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
   const [subscriptionOpen, setSubscriptionOpen] = useState(false);
   const { user } = useAuth();
   const { isPremium } = useSubscription();
-  const isMobile = useIsMobile();
+  const { isAdmin } = useAdminRole();
+
   const location = useLocation();
   const { config, classes } = useAdaptiveUI();
 
