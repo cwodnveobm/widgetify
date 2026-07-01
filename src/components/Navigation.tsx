@@ -140,6 +140,15 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
                     Dashboard
                   </Link>
                 </DropdownMenuItem>
+                {isAdmin && (
+                  <DropdownMenuItem asChild>
+                    <Link to="/admin" className="flex items-center">
+                      <Shield className="w-4 h-4 mr-2 text-primary" />
+                      Admin Panel
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="w-4 h-4 mr-2" />
                   Sign Out
