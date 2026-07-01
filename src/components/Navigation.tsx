@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Sparkles, User, LogOut, Crown, LayoutDashboard } from 'lucide-react';
+import { Menu, X, Sparkles, User, LogOut, Crown, LayoutDashboard, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { useSubscription } from '@/hooks/useSubscription';
+import { useAdminRole } from '@/hooks/useAdminRole';
 import { supabase } from '@/integrations/supabase/client';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { toast } from 'sonner';
@@ -12,6 +13,7 @@ import { SubscriptionModal } from '@/components/SubscriptionModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAdaptiveUI } from '@/hooks/useAdaptiveUI';
 import { AdaptiveButton } from '@/components/adaptive';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
