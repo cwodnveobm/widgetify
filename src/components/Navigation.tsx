@@ -107,6 +107,21 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
         {/* Right Actions */}
         <div className="flex items-center gap-1 sm:gap-2">
           <ThemeToggle />
+
+          {isAdmin && (
+            <Button
+              asChild
+              variant="outline"
+              size="sm"
+              className="hidden sm:flex gap-1.5 border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]"
+            >
+              <Link to="/admin">
+                <Shield className="w-3.5 h-3.5" />
+                Admin
+              </Link>
+            </Button>
+          )}
+
           
           {!isPremium && (
             <Button
