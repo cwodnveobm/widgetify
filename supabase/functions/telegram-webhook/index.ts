@@ -82,6 +82,44 @@ const HELP_TEXT = `<b>🤖 Widgetify Admin Bot</b>
 /delete_widget &lt;id&gt;
 /delete_lastset &lt;username&gt;
 
+<b>🔧 Admin Roles</b>
+/admins — list all admins
+/make_admin &lt;email&gt; — grant admin role
+/remove_admin &lt;email&gt; — revoke admin role
+
+<b>💸 Payouts &amp; Referrals</b>
+/payouts [n] — pending payout requests
+/approve_payout &lt;id&gt; — mark payout paid
+/reject_payout &lt;id&gt; | &lt;reason&gt;
+/top_referrers [n]
+/referrals &lt;email&gt; — user's referral stats
+
+<b>🔗 LastSet Ops</b>
+/lastset &lt;username&gt; — profile snapshot
+/toggle_lastset &lt;username&gt; — flip public/private
+/submissions &lt;username&gt; [n] — form submissions
+/clicks &lt;username&gt; [n] — recent link clicks
+/lastset_token &lt;username&gt; — generate share token
+/revoke_lastset_tokens &lt;username&gt;
+
+<b>🧩 Embed Widget Ops</b>
+/widget &lt;id&gt; — widget snapshot
+/toggle_widget &lt;id&gt; — flip public/private
+/interactions &lt;widget_id&gt; [n]
+/purge_interactions &lt;widget_id&gt; — clear analytics
+/searchwidget &lt;query&gt;
+
+<b>📣 Announcements &amp; Subs</b>
+/banners — list active banners
+/extend &lt;email&gt; &lt;days&gt; — extend active sub
+/sub_status &lt;email&gt;
+/webhooks [n] — active webhook subs
+/revoke_webhook &lt;id&gt;
+
+<b>🛠️ System</b>
+/db — table row counts snapshot
+/version — bot version
+
 /help — this menu`;
 
 async function findUserByEmail(admin: any, email: string) {
