@@ -113,11 +113,12 @@ export const Navigation = ({ onAuthModalOpen }: NavigationProps) => {
               asChild
               variant="outline"
               size="sm"
-              className="hidden sm:flex gap-1.5 border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))]"
+              className="gap-1.5 border-2 border-foreground shadow-[2px_2px_0_0_hsl(var(--foreground))] px-2 sm:px-3"
+              title="Admin Panel"
             >
               <Link to="/admin">
                 <Shield className="w-3.5 h-3.5" />
-                Admin
+                <span className="hidden sm:inline">Admin</span>
               </Link>
             </Button>
           )}
