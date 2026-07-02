@@ -82,6 +82,44 @@ const HELP_TEXT = `<b>🤖 Widgetify Admin Bot</b>
 /delete_widget &lt;id&gt;
 /delete_lastset &lt;username&gt;
 
+<b>🔧 Admin Roles</b>
+/admins — list all admins
+/make_admin &lt;email&gt; — grant admin role
+/remove_admin &lt;email&gt; — revoke admin role
+
+<b>💸 Payouts &amp; Referrals</b>
+/payouts [n] — pending payout requests
+/approve_payout &lt;id&gt; — mark payout paid
+/reject_payout &lt;id&gt; | &lt;reason&gt;
+/top_referrers [n]
+/referrals &lt;email&gt; — user's referral stats
+
+<b>🔗 LastSet Ops</b>
+/lastset &lt;username&gt; — profile snapshot
+/toggle_lastset &lt;username&gt; — flip public/private
+/submissions &lt;username&gt; [n] — form submissions
+/clicks &lt;username&gt; [n] — recent link clicks
+/lastset_token &lt;username&gt; — generate share token
+/revoke_lastset_tokens &lt;username&gt;
+
+<b>🧩 Embed Widget Ops</b>
+/widget &lt;id&gt; — widget snapshot
+/toggle_widget &lt;id&gt; — flip public/private
+/interactions &lt;widget_id&gt; [n]
+/purge_interactions &lt;widget_id&gt; — clear analytics
+/searchwidget &lt;query&gt;
+
+<b>📣 Announcements &amp; Subs</b>
+/banners — list active banners
+/extend &lt;email&gt; &lt;days&gt; — extend active sub
+/sub_status &lt;email&gt;
+/webhooks [n] — active webhook subs
+/revoke_webhook &lt;id&gt;
+
+<b>🛠️ System</b>
+/db — table row counts snapshot
+/version — bot version
+
 /help — this menu`;
 
 async function findUserByEmail(admin: any, email: string) {
@@ -481,6 +519,289 @@ LastSet profiles: ${lc.count ?? 0}`;
         if (error) return `Error: ${error.message}`;
         return `🗑️ LastSet @${args} deleted`;
       }
+
+      /* ============ Admin Roles ============ */
+      case "/admins": {
+        const { data } = await admin.from("user_roles").select("user_id").eq("role", "admin");
+        if (!data?.length) return "No admins.";
+        const ids = data.map((r: any) => r.user_id);
+        const { data: profs } = await admin.from("profiles").select("email, full_name, user_id").in("user_id", ids);
+        return `<b>🛡️ Admins (${data.length})</b>\n` + (profs ?? []).map((p: any) => `• ${p.email} — ${fmt(p.full_name)}`).join("\n");
+      }
+
+      case "/make_admin": {
+        if (!args) return "Usage: /make_admin &lt;email&gt;";
+        const user = await findUserByEmail(admin, args);
+        if (!user) return `User not found: ${args}`;
+        const { error } = await admin.from("user_roles").insert({ user_id: user.user_id, role: "admin" });
+        if (error && !/duplicate/i.test(error.message)) return `Error: ${error.message}`;
+        return `✅ ${args} is now an admin`;
+      }
+
+      case "/remove_admin": {
+        if (!args) return "Usage: /remove_admin &lt;email&gt;";
+        const user = await findUserByEmail(admin, args);
+        if (!user) return `User not found: ${args}`;
+        const { error } = await admin.from("user_roles").delete().eq("user_id", user.user_id).eq("role", "admin");
+        if (error) return `Error: ${error.message}`;
+        return `✅ Removed admin role from ${args}`;
+      }
+
+      /* ============ Payouts & Referrals ============ */
+      case "/payouts": {
+        const n = Math.min(parseInt(args) || 10, 25);
+        const { data } = await admin.from("payout_requests")
+          .select("id, user_id, amount_rupees, amount_credits, status, created_at")
+          .eq("status", "pending").order("created_at", { ascending: false }).limit(n);
+        if (!data?.length) return "No pending payouts.";
+        return `<b>💸 Pending payouts</b>\n` + data.map((p: any) =>
+          `• <code>${p.id.slice(0, 8)}</code> ₹${p.amount_rupees} (${p.amount_credits}c)`
+        ).join("\n");
+      }
+
+      case "/approve_payout": {
+        if (!args) return "Usage: /approve_payout &lt;id&gt;";
+        const { error } = await admin.from("payout_requests")
+          .update({ status: "paid", processed_at: new Date().toISOString() }).eq("id", args);
+        if (error) return `Error: ${error.message}`;
+        return `✅ Payout ${args.slice(0, 8)} marked paid`;
+      }
+
+      case "/reject_payout": {
+        const [idPart, ...reasonParts] = args.split("|").map((s) => s.trim());
+        const reason = reasonParts.join("|") || "Rejected";
+        if (!idPart) return "Usage: /reject_payout &lt;id&gt; | &lt;reason&gt;";
+        const { error } = await admin.from("payout_requests")
+          .update({ status: "rejected", rejection_reason: reason, processed_at: new Date().toISOString() })
+          .eq("id", idPart);
+        if (error) return `Error: ${error.message}`;
+        return `❌ Payout ${idPart.slice(0, 8)} rejected: ${reason}`;
+      }
+
+      case "/top_referrers": {
+        const n = Math.min(parseInt(args) || 10, 25);
+        const { data } = await admin.from("referrals").select("referrer_id");
+        if (!data?.length) return "No referrals yet.";
+        const counts: Record<string, number> = {};
+        for (const r of data) counts[r.referrer_id] = (counts[r.referrer_id] || 0) + 1;
+        const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, n);
+        const { data: profs } = await admin.from("profiles").select("user_id, email").in("user_id", top.map(t => t[0]));
+        const emailFor = (id: string) => profs?.find((p: any) => p.user_id === id)?.email ?? id.slice(0, 8);
+        return `<b>🏅 Top referrers</b>\n` + top.map(([id, c]) => `• ${emailFor(id)} — ${c}`).join("\n");
+      }
+
+      case "/referrals": {
+        if (!args) return "Usage: /referrals &lt;email&gt;";
+        const user = await findUserByEmail(admin, args);
+        if (!user) return `User not found: ${args}`;
+        const { count } = await admin.from("referrals").select("*", { count: "exact", head: true }).eq("referrer_id", user.user_id);
+        return `<b>👥 ${args}</b>\nReferrals: <b>${count ?? 0}</b>`;
+      }
+
+      /* ============ LastSet Ops ============ */
+      case "/lastset": {
+        if (!args) return "Usage: /lastset &lt;username&gt;";
+        const u = args.replace(/^@/, "");
+        const { data } = await admin.from("lastset_profiles")
+          .select("username, display_name, is_public, view_count, widgets, created_at")
+          .eq("username", u).maybeSingle();
+        if (!data) return `No LastSet @${u}`;
+        const widgetCount = Array.isArray(data.widgets) ? data.widgets.length : 0;
+        return `<b>🔗 @${data.username}</b>
+Name: ${fmt(data.display_name)}
+Public: ${data.is_public ? "✅" : "🔒"}
+Views: ${data.view_count ?? 0}
+Widgets: ${widgetCount}
+Created: ${data.created_at?.slice(0, 10)}
+URL: https://widgetify.vercel.app/l/${data.username}`;
+      }
+
+      case "/toggle_lastset": {
+        if (!args) return "Usage: /toggle_lastset &lt;username&gt;";
+        const u = args.replace(/^@/, "");
+        const { data: cur } = await admin.from("lastset_profiles").select("id, is_public").eq("username", u).maybeSingle();
+        if (!cur) return `No LastSet @${u}`;
+        const { error } = await admin.from("lastset_profiles").update({ is_public: !cur.is_public }).eq("id", cur.id);
+        if (error) return `Error: ${error.message}`;
+        return `🔁 @${u} is now ${!cur.is_public ? "public ✅" : "private 🔒"}`;
+      }
+
+      case "/submissions": {
+        const [uRaw, nStr] = args.split(/\s+/);
+        if (!uRaw) return "Usage: /submissions &lt;username&gt; [n]";
+        const n = Math.min(parseInt(nStr) || 10, 25);
+        const u = uRaw.replace(/^@/, "");
+        const { data: prof } = await admin.from("lastset_profiles").select("id").eq("username", u).maybeSingle();
+        if (!prof) return `No LastSet @${u}`;
+        const { data } = await admin.from("lastset_submissions")
+          .select("data, created_at").eq("profile_id", prof.id).order("created_at", { ascending: false }).limit(n);
+        if (!data?.length) return `No submissions for @${u}`;
+        return `<b>📝 Submissions @${u}</b>\n` + data.map((s: any) =>
+          `• ${s.created_at?.slice(0, 16).replace("T", " ")} — ${JSON.stringify(s.data).slice(0, 120)}`
+        ).join("\n");
+      }
+
+      case "/clicks": {
+        const [uRaw, nStr] = args.split(/\s+/);
+        if (!uRaw) return "Usage: /clicks &lt;username&gt; [n]";
+        const n = Math.min(parseInt(nStr) || 10, 25);
+        const u = uRaw.replace(/^@/, "");
+        const { data: prof } = await admin.from("lastset_profiles").select("id").eq("username", u).maybeSingle();
+        if (!prof) return `No LastSet @${u}`;
+        const { data } = await admin.from("lastset_link_clicks")
+          .select("link_url, created_at").eq("profile_id", prof.id).order("created_at", { ascending: false }).limit(n);
+        if (!data?.length) return `No clicks for @${u}`;
+        return `<b>🖱️ Clicks @${u}</b>\n` + data.map((c: any) =>
+          `• ${c.created_at?.slice(0, 16).replace("T", " ")} → ${(c.link_url || "").slice(0, 80)}`
+        ).join("\n");
+      }
+
+      case "/lastset_token": {
+        if (!args) return "Usage: /lastset_token &lt;username&gt;";
+        const u = args.replace(/^@/, "");
+        const { data: prof } = await admin.from("lastset_profiles").select("id").eq("username", u).maybeSingle();
+        if (!prof) return `No LastSet @${u}`;
+        const token = crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "").slice(0, 16);
+        const { error } = await admin.from("lastset_share_tokens").insert({ profile_id: prof.id, token, label: "telegram" });
+        if (error) return `Error: ${error.message}`;
+        return `🔑 Private link:\nhttps://widgetify.vercel.app/l/${u}?token=${token}`;
+      }
+
+      case "/revoke_lastset_tokens": {
+        if (!args) return "Usage: /revoke_lastset_tokens &lt;username&gt;";
+        const u = args.replace(/^@/, "");
+        const { data: prof } = await admin.from("lastset_profiles").select("id").eq("username", u).maybeSingle();
+        if (!prof) return `No LastSet @${u}`;
+        const { error, count } = await admin.from("lastset_share_tokens")
+          .update({ revoked_at: new Date().toISOString() }, { count: "exact" })
+          .eq("profile_id", prof.id).is("revoked_at", null);
+        if (error) return `Error: ${error.message}`;
+        return `🧹 Revoked ${count ?? 0} token(s) for @${u}`;
+      }
+
+      /* ============ Embed Widget Ops ============ */
+      case "/widget": {
+        if (!args) return "Usage: /widget &lt;id&gt;";
+        const { data } = await admin.from("embed_widgets")
+          .select("id, name, widget_type, is_public, user_id, config, created_at")
+          .eq("id", args).maybeSingle();
+        if (!data) return `No widget ${args}`;
+        return `<b>🧩 ${fmt(data.name)}</b>
+ID: <code>${data.id}</code>
+Type: ${data.widget_type}
+Public: ${data.is_public ? "✅" : "🔒"}
+Created: ${data.created_at?.slice(0, 10)}`;
+      }
+
+      case "/toggle_widget": {
+        if (!args) return "Usage: /toggle_widget &lt;id&gt;";
+        const { data: cur } = await admin.from("embed_widgets").select("id, is_public").eq("id", args).maybeSingle();
+        if (!cur) return `No widget ${args}`;
+        const { error } = await admin.from("embed_widgets").update({ is_public: !cur.is_public }).eq("id", cur.id);
+        if (error) return `Error: ${error.message}`;
+        return `🔁 Widget now ${!cur.is_public ? "public ✅" : "private 🔒"}`;
+      }
+
+      case "/interactions": {
+        const [wid, nStr] = args.split(/\s+/);
+        if (!wid) return "Usage: /interactions &lt;widget_id&gt; [n]";
+        const n = Math.min(parseInt(nStr) || 10, 25);
+        const { data } = await admin.from("widget_interactions")
+          .select("event_type, created_at").eq("widget_id", wid)
+          .order("created_at", { ascending: false }).limit(n);
+        if (!data?.length) return `No interactions for ${wid}`;
+        return `<b>📊 Interactions</b>\n` + data.map((i: any) =>
+          `• ${i.created_at?.slice(0, 16).replace("T", " ")} — ${i.event_type}`
+        ).join("\n");
+      }
+
+      case "/purge_interactions": {
+        if (!args) return "Usage: /purge_interactions &lt;widget_id&gt;";
+        const { error, count } = await admin.from("widget_interactions")
+          .delete({ count: "exact" }).eq("widget_id", args);
+        if (error) return `Error: ${error.message}`;
+        return `🧹 Purged ${count ?? 0} interaction(s)`;
+      }
+
+      case "/searchwidget": {
+        if (!args) return "Usage: /searchwidget &lt;query&gt;";
+        const { data } = await admin.from("embed_widgets")
+          .select("id, name, widget_type").ilike("name", `%${args}%`).limit(15);
+        if (!data?.length) return `No match for "${args}"`;
+        return `<b>🔎 Widgets (${data.length})</b>\n` + data.map((w: any) =>
+          `• <code>${w.id.slice(0, 8)}</code> [${w.widget_type}] ${fmt(w.name)}`
+        ).join("\n");
+      }
+
+      /* ============ Announcements, Subs, Webhooks ============ */
+      case "/banners": {
+        const { data } = await admin.from("system_announcements")
+          .select("id, message, level, expires_at").eq("active", true).order("created_at", { ascending: false }).limit(10);
+        if (!data?.length) return "No active banners.";
+        return `<b>📣 Active banners</b>\n` + data.map((b: any) =>
+          `• [${b.level}] ${b.message.slice(0, 80)}\n  <code>${b.id.slice(0, 8)}</code> exp ${b.expires_at?.slice(0, 10) ?? "—"}`
+        ).join("\n\n");
+      }
+
+      case "/extend": {
+        const [email, dStr] = args.split(/\s+/);
+        const days = Math.min(Math.max(parseInt(dStr) || 30, 1), 365);
+        if (!email) return "Usage: /extend &lt;email&gt; &lt;days&gt;";
+        const user = await findUserByEmail(admin, email);
+        if (!user) return `User not found: ${email}`;
+        const { data: sub } = await admin.from("subscriptions").select("id, end_date").eq("user_id", user.user_id).eq("status", "active").maybeSingle();
+        if (!sub) return `${email} has no active subscription`;
+        const base = sub.end_date && new Date(sub.end_date) > new Date() ? new Date(sub.end_date) : new Date();
+        const newEnd = new Date(base.getTime() + days * 86400000).toISOString();
+        const { error } = await admin.from("subscriptions").update({ end_date: newEnd }).eq("id", sub.id);
+        if (error) return `Error: ${error.message}`;
+        return `✅ ${email} extended +${days}d → ${newEnd.slice(0, 10)}`;
+      }
+
+      case "/sub_status": {
+        if (!args) return "Usage: /sub_status &lt;email&gt;";
+        const user = await findUserByEmail(admin, args);
+        if (!user) return `User not found: ${args}`;
+        const { data } = await admin.from("subscriptions").select("plan_type, status, amount, end_date, created_at")
+          .eq("user_id", user.user_id).order("created_at", { ascending: false }).limit(5);
+        if (!data?.length) return `${args} has no subscriptions`;
+        return `<b>💳 ${args}</b>\n` + data.map((s: any) =>
+          `• ${s.plan_type} · ${s.status} · ₹${s.amount} → ${s.end_date?.slice(0, 10) ?? "—"}`
+        ).join("\n");
+      }
+
+      case "/webhooks": {
+        const n = Math.min(parseInt(args) || 10, 25);
+        const { data } = await admin.from("webhook_subscriptions")
+          .select("id, target_url, event_types, is_active, created_at")
+          .order("created_at", { ascending: false }).limit(n);
+        if (!data?.length) return "No webhooks.";
+        return `<b>🪝 Webhooks</b>\n` + data.map((w: any) =>
+          `• <code>${w.id.slice(0, 8)}</code> ${w.is_active ? "✅" : "⏸"} ${w.target_url}\n  events: ${(w.event_types || []).join(", ")}`
+        ).join("\n\n");
+      }
+
+      case "/revoke_webhook": {
+        if (!args) return "Usage: /revoke_webhook &lt;id&gt;";
+        const { error } = await admin.from("webhook_subscriptions").update({ is_active: false }).eq("id", args);
+        if (error) return `Error: ${error.message}`;
+        return `🧹 Webhook ${args.slice(0, 8)} disabled`;
+      }
+
+      /* ============ System ============ */
+      case "/db": {
+        const tables = ["profiles", "subscriptions", "embed_widgets", "lastset_profiles",
+          "widget_interactions", "lastset_link_clicks", "lastset_submissions",
+          "user_notifications", "support_messages", "referrals", "payout_requests"];
+        const rows = await Promise.all(tables.map(async (t) => {
+          const { count } = await admin.from(t).select("*", { count: "exact", head: true });
+          return `• ${t}: <b>${count ?? 0}</b>`;
+        }));
+        return `<b>🗄️ Table counts</b>\n${rows.join("\n")}`;
+      }
+
+      case "/version":
+        return `<b>🤖 Widgetify Admin Bot</b>\nv2.0 · commands: 55+\nDomain: widgetify.vercel.app`;
 
       default:
         return `Unknown command: ${cmd}\nSend /help for the menu.`;
